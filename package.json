@@ -1,0 +1,33 @@
+{
+  "name": "bpmn-modeler",
+  "version": "1.0.0",
+  "description": "BPMN Modeler with customised Properties Panel",
+  "main": "index.js",
+  "scripts": {
+    "build-all": "npm-run-all build-prod build-dev",
+    "build-prod": "webpack --mode development --config webpack.config.dev.js",
+    "build-dev": "webpack --mode production --config webpack.config.prod.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mt-ag/bpmn-modeler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mt-ag/bpmn-modeler/issues"
+  },
+  "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
+  "dependencies": {
+    "bpmn-js": "^7.3.0",
+    "bpmn-js-properties-panel": "^0.32.0",
+    "camunda-bpmn-moddle": "^4.0.1",
+    "diagram-js": "^5.0.0"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
