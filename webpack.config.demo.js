@@ -15,6 +15,9 @@ module.exports = {
         {
           from: path.resolve(__dirname, "demo.html"),
         },
+        {
+          from: path.resolve(__dirname, "assets/css/*")
+        },
       ],
     }),
   ],

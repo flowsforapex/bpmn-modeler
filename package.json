@@ -4,9 +4,10 @@
   "description": "BPMN Modeler with customised Properties Panel",
   "main": "index.js",
   "scripts": {
-    "build-all": "npm-run-all build-prod build-dev",
+    "build-all": "npm-run-all build-prod build-dev build-demo",
     "build-dev": "webpack --mode development --config webpack.config.dev.js",
-    "build-prod": "webpack --mode production --config webpack.config.prod.js"
+    "build-prod": "webpack --mode production --config webpack.config.prod.js",
+    "build-demo": "webpack --mode development --config webpack.config.demo.js"
   },
   "repository": {
     "type": "git",
