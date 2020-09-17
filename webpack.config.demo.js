@@ -16,7 +16,13 @@ module.exports = {
           from: path.resolve(__dirname, "demo.html"),
         },
         {
-          from: path.resolve(__dirname, "assets/css/*")
+          from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.css")
+        },
+        {
+          from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.font.css")
+        },
+        {
+          from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.properties-panel.css")
         },
       ],
     }),
