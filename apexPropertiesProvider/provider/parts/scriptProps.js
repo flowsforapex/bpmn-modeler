@@ -8,14 +8,17 @@ import {
 export default function(group, element) {
 
   // Only return an entry, if the currently selected
-  // element is a start event.
+  // element is a ScriptTask.
 
-  if (is(element, 'bpmn:StartEvent')) {
+  if (is(element, 'bpmn:ScriptTask')) {
+    
     group.entries.push(entryFactory.textField({
-      id : 'spell',
-      description : 'Apply a  spell',
-      label : 'Spell',
-      modelProperty : 'spell'
-    }));
+        id : 'spell',
+        description : 'Apply a script',
+        label : 'Script',
+        modelProperty : 'spell'
+      }));
+   
+        
   }
 }
