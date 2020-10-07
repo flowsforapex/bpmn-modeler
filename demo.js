@@ -1,7 +1,10 @@
 import BpmnModeler from "bpmn-js/lib/Modeler";
 
 import propertiesPanelModule from "bpmn-js-properties-panel";
-import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/bpmn";
+import propertiesProviderModule from "./apexPropertiesProvider/provider";
+
+import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apex.json';
+
 
 async function init() {
   // viewer instance
@@ -13,7 +16,10 @@ async function init() {
     additionalModules: [
       propertiesPanelModule,
       propertiesProviderModule
-    ]
+    ],
+    moddleExtensions: {
+      apex: apexModdleDescriptor
+    }
   });
 
   openDiagram();
