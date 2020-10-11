@@ -3,6 +3,11 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/bpmn";
 
+
+import lintModule from 'bpmn-js-bpmnlint';
+import bpmnlintConfig from 'bpmnlint-Rules/.bpmnlintrc';
+
+
 async function init() {
   // viewer instance
   var bpmnModeler = new BpmnModeler({
@@ -10,9 +15,14 @@ async function init() {
     propertiesPanel: {
       parent: '#properties'
     },
+    linting: {
+      bpmnlint: bpmnlintConfig,
+      active: getUrlParam('linting')
+    },
     additionalModules: [
       propertiesPanelModule,
-      propertiesProviderModule
+      propertiesProviderModule,
+      lintModule
     ]
   });
 
@@ -42,6 +52,35 @@ async function init() {
       console.error("could not import BPMN 2.0 diagram", err);
     }
   }
+
+
+bpmnModeler.on('linting.toggle', function(event) {
+
+  var active = event.active;
+
+  setUrlParam('linting', active);
+});
+
+
+// helpers /////////////////////////////////
+
+function setUrlParam(name, value) {
+
+  var url = new URL(window.location.href);
+
+  if (value) {
+    url.searchParams.set(name, 1);
+  } else {
+    url.searchParams.delete(name);
+  }
+
+  window.history.replaceState({}, null, url.href);
 }
 
+function getUrlParam(name) {
+  var url = new URL(window.location.href);
+
+  return url.searchParams.has(name);
+}
+}
 init();
