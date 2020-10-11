@@ -24,8 +24,23 @@ module.exports = {
         {
           from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.properties-panel.css")
         },
+        {
+          from: path.resolve(__dirname, "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css")
+        },
       ],
     }),
   ],
   devtool: "source-map",
+  module: {
+    rules: [
+      {
+        test: /\.bpmnlintrc$/,
+        use: [
+          {
+            loader: 'bpmnlint-loader',
+          }
+        ]
+      }
+    ]
+  },
 };
