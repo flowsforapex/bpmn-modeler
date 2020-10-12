@@ -1,5 +1,4 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-
 import {
   is
 } from 'bpmn-js/lib/util/ModelUtil';
@@ -11,31 +10,22 @@ export default function(group, element) {
   // element is a UserTask.
 
   if (is(element, 'bpmn:UserTask')) {
-    
-    group.entries.push(entryFactory.selectBox({
-      id: 'usertask-definition-type',
-      label: ('User Task Type'),
-      selectOptions: [ { name: 'Apex', value: 'apex' }, { name: 'Url', value: 'url' } ],
-      emptyParameter: false,
-      modelProperty: 'userTaskDefinitionType'
-    }));
-    
-    
+
     group.entries.push(entryFactory.textBox({
         id : 'spell',
-        description : 'Apply an application',
+        description : 'Apply an Application',
         label : 'Application',
         modelProperty : 'spell'
     }));  
     group.entries.push(entryFactory.textBox({
         id : 'spell',
-        description : 'Apply a page',
+        description : 'Apply a Page',
         label : 'Page',
         modelProperty : 'spell'
     }));  
     group.entries.push(entryFactory.textBox({
       id : 'spell',
-      description : 'Apply a request',
+      description : 'Apply a Request',
       label : 'Request',
       modelProperty : 'spell'
     }));  

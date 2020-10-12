@@ -13,7 +13,8 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 
 
 // Require your custom property entries.
-import userProps from './parts/userProps.js';
+import apexProps from './parts/apexProps.js';
+import urlProps from './parts/urlProps.js';
 import emailProps from './parts/emailProps.js';
 import scriptProps from './parts/scriptProps.js';
 
@@ -55,19 +56,35 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 }
 
 // Create the custom User tab
-function createUserTabGroups(element) {
+function createApexTabGroups(element) {
 
-  // Create a group called "User Task".
-  var UserGroup = {
-    id: 'User-Group',
-    label: "User Properties",
+  // Create a group called "Apex Task".
+  var ApexGroup = {
+    id: 'Apex-Group',
+    label: "Apex Properties",
     entries: []
   };
 
-  // Add the spell props to the User group.
-  userProps(UserGroup, element);
+  // Add the props to the Apex group.
+  apexProps(ApexGroup, element);
   return [
-    UserGroup
+    ApexGroup
+  ];
+}
+
+function createUrlTabGroups(element) {
+
+  // Create a group called "Url Task".
+  var UrlGroup = {
+    id: 'Url-Group',
+    label: "Url Properties",
+    entries: []
+  };
+
+  // Add the props to the Url group.
+  urlProps(UrlGroup, element);
+  return [
+    UrlGroup
   ];
 }
 
@@ -85,9 +102,9 @@ function createServiceTabGroups(element) {
     return [
       ServiceGroup
     ];
-  }
+}
 
-  function createScriptTabGroups(element) {
+function createScriptTabGroups(element) {
 
     // Create a group called "Script".
     var ScriptGroup = {
@@ -101,7 +118,7 @@ function createServiceTabGroups(element) {
     return [
       ScriptGroup
     ];
-  } 
+} 
 
 export default function apexPropertiesProvider(
     eventBus, bpmnFactory, canvas,
@@ -118,10 +135,16 @@ export default function apexPropertiesProvider(
     };
 
     // The "APEX" tab
-    var UserTab = {
-      id: 'User-Tab',
-      label: 'User Task',
-      groups: createUserTabGroups(element)
+    var ApexTab = {
+      id: 'Apex-Tab',
+      label: 'Apex Task',
+      groups: createApexTabGroups(element)
+    };
+
+    var UrlTab = {
+      id: 'Url-Tab',
+      label: 'Url Task',
+      groups: createUrlTabGroups(element)
     };
 
     var ServiceTab = {
@@ -136,10 +159,11 @@ export default function apexPropertiesProvider(
         groups: createScriptTabGroups(element)
     };
 
-    // Show general + "APEX" tab
+    // Show general + additional tabs
     return [
       generalTab,
-      UserTab,
+      ApexTab,
+      UrlTab,
       ServiceTab,
       ScriptTab
     ];
