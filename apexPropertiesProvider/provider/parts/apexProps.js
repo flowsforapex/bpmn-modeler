@@ -12,40 +12,40 @@ export default function(group, element) {
   if (is(element, 'bpmn:UserTask')) {
 
     group.entries.push(entryFactory.textBox({
-        id : 'spell',
+        id : 'apex-application',
         description : 'Apply an Application',
         label : 'Application',
-        modelProperty : 'spell'
+        modelProperty : 'apex-application'
     }));  
     group.entries.push(entryFactory.textBox({
-        id : 'spell',
+        id : 'apex-page',
         description : 'Apply a Page',
         label : 'Page',
-        modelProperty : 'spell'
+        modelProperty : 'apex-page'
     }));  
     group.entries.push(entryFactory.textBox({
-      id : 'spell',
+      id : 'apex-request',
       description : 'Apply a Request',
       label : 'Request',
-      modelProperty : 'spell'
+      modelProperty : 'apex-request'
     }));  
     group.entries.push(entryFactory.textBox({
-      id : 'spell',
+      id : 'apex-cache',
       description : 'Clear the Cache',
       label : 'Clear Cache',
-      modelProperty : 'spell'
+      modelProperty : 'apex-cache'
     }));  
     group.entries.push(entryFactory.textBox({
-      id : 'spell',
+      id : 'apex-item',
       description : 'Apply an Item',
       label : 'Item',
-      modelProperty : 'spell'
+      modelProperty : 'apex-item'
     }));  
     group.entries.push(entryFactory.textBox({
-      id : 'spell',
+      id : 'apex-value',
       description : 'Apply a Value',
       label : 'Value',
-      modelProperty : 'spell'
+      modelProperty : 'apex-value'
     }));  
   }
 }

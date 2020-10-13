@@ -3,7 +3,7 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "./apexPropertiesProvider/provider";
 
-import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apex.json';
+import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apex';
 
 
 async function init() {

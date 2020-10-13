@@ -8,13 +8,38 @@
     "associations": [],
     "types": [
       {
-        "name": "BewitchedStartEvent",
+        "name": "UserTaskEvent",
         "extends": [
           "bpmn:UserTask"
         ],
         "properties": [
           {
-            "name": "spell",
+            "name": "apex-application",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "apex-page",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "apex-request",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "apex-cache",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "apex-item",
+            "isAttr": true,
+            "type": "String"
+          },
+          {
+            "name": "apex-value",
             "isAttr": true,
             "type": "String"
           }
