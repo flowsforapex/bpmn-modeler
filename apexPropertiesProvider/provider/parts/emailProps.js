@@ -13,10 +13,10 @@ export default function(group, element) {
   if (is(element, 'bpmn:ServiceTask')) {
     
     group.entries.push(entryFactory.textBox({
-        id : 'spell',
+        id : 'insertEmail',
         description : 'Apply an email',
         label : 'Email',
-        modelProperty : 'spell'
+        modelProperty : 'insertEmail'
       }));
    
         

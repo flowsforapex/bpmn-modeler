@@ -13,10 +13,10 @@ export default function(group, element) {
   if (is(element, 'bpmn:ScriptTask')) {
     
     group.entries.push(entryFactory.textField({
-        id : 'spell',
+        id : 'insertScript',
         description : 'Apply a script',
         label : 'Script',
-        modelProperty : 'spell'
+        modelProperty : 'insertScript'
       }));
    
         

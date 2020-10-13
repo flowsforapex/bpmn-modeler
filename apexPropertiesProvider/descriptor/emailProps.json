@@ -1,0 +1,24 @@
+{
+    "name": "EmailProps",
+    "prefix": "emailProps",
+    "uri": "http://www.apex.mt-ag.com",
+    "xml": {
+      "tagAlias": "lowerCase"
+    },
+    "associations": [],
+    "types": [
+      {
+        "name": "UserTaskEvent",
+        "extends": [
+          "bpmn:UserTask"
+        ],
+        "properties": [
+          {
+            "name": "insertEmail",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      }
+    ]
+  }

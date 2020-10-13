@@ -1,0 +1,24 @@
+{
+    "name": "ScriptProps",
+    "prefix": "scriptProps",
+    "uri": "http://www.apex.mt-ag.com",
+    "xml": {
+      "tagAlias": "lowerCase"
+    },
+    "associations": [],
+    "types": [
+      {
+        "name": "UserTaskEvent",
+        "extends": [
+          "bpmn:UserTask"
+        ],
+        "properties": [
+          {
+            "name": "insertScript",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      }
+    ]
+  }

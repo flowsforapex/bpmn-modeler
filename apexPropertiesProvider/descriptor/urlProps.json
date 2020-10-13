@@ -1,0 +1,24 @@
+{
+    "name": "UrlProps",
+    "prefix": "urlProps",
+    "uri": "http://www.apex.mt-ag.com",
+    "xml": {
+      "tagAlias": "lowerCase"
+    },
+    "associations": [],
+    "types": [
+      {
+        "name": "UserTaskEvent",
+        "extends": [
+          "bpmn:UserTask"
+        ],
+        "properties": [
+          {
+            "name": "insertUrl",
+            "isAttr": true,
+            "type": "String"
+          }
+        ]
+      }
+    ]
+  }

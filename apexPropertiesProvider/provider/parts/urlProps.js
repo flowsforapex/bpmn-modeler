@@ -13,10 +13,10 @@ export default function(group, element) {
   if (is(element, 'bpmn:UserTask')) {
 
     group.entries.push(entryFactory.textBox({
-        id : 'spell',
+        id : 'insertUrl',
         description : 'Apply an url',
         label : 'URL',
-        modelProperty : 'spell'
+        modelProperty : 'insertUrl'
     }));  
   }
 }
