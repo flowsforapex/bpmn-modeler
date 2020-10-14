@@ -3,7 +3,10 @@ import BpmnModeler from "bpmn-js/lib/Modeler";
 import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "./apexPropertiesProvider/provider";
 
-import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apex';
+import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
+import emailModdleDescriptor from './apexPropertiesProvider/descriptor/emailProps';
+import scriptModdleDescriptor from './apexPropertiesProvider/descriptor/scriptProps';
+import urlModdleDescriptor from './apexPropertiesProvider/descriptor/urlProps';
 
 
 async function init() {
@@ -18,7 +21,10 @@ async function init() {
       propertiesProviderModule
     ],
     moddleExtensions: {
-      apex: apexModdleDescriptor
+      apex: apexModdleDescriptor,
+      email: emailModdleDescriptor,
+      script: scriptModdleDescriptor,
+      url: urlModdleDescriptor
     }
   });
 
