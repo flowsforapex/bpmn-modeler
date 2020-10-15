@@ -28,6 +28,12 @@ module.exports = {
             "assets/css/mtag.bpmnmodeler.properties-panel.css"
           ),
         },
+        {
+          from: path.resolve(__dirname, "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css")
+        },
+        {
+          from: path.resolve(__dirname, "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css")
+        },
       ],
     }),
   ],
@@ -36,5 +42,17 @@ module.exports = {
     contentBase: path.join(__dirname, "demo"),
     compress: true,
     port: 8082,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.bpmnlintrc$/,
+        use: [
+          {
+            loader: 'bpmnlint-loader',
+          }
+        ]
+      }
+    ]
   },
 };

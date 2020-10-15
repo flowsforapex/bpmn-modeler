@@ -23,7 +23,10 @@
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
     "bpmn-js": "^7.3.1",
+    "bpmn-js-bpmnlint": "^0.15.0",
     "bpmn-js-properties-panel": "^0.32.0",
+    "bpmnlint": "^6.4.0",
+    "bpmnlint-loader": "^0.1.4",
     "camunda-bpmn-moddle": "^4.0.1",
     "diagram-js": "^5.0.0"
   },
