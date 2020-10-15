@@ -51,6 +51,5 @@ async function init() {
       console.error("could not import BPMN 2.0 diagram", err);
     }
   }
-
 }
 init();

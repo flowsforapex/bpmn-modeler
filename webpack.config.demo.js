@@ -31,6 +31,9 @@ module.exports = {
         {
           from: path.resolve(__dirname, "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css")
         },
+        {
+          from: path.resolve(__dirname, "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css")
+        },
       ],
     }),
   ],
