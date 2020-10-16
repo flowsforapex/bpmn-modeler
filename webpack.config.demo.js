@@ -8,6 +8,9 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "demo"),
     filename: "bundle.js",
+    library: "bpmnModeler",
+    libraryTarget: "var",
+    libraryExport: "default"
   },
   plugins: [
     new CopyPlugin({

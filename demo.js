@@ -4,12 +4,10 @@ import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "./apexPropertiesProvider/provider";
 
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
-import emailModdleDescriptor from './apexPropertiesProvider/descriptor/emailProps';
-import scriptModdleDescriptor from './apexPropertiesProvider/descriptor/scriptProps';
-import urlModdleDescriptor from './apexPropertiesProvider/descriptor/urlProps';
+//import emailModdleDescriptor from './apexPropertiesProvider/descriptor/emailProps';
+//import scriptModdleDescriptor from './apexPropertiesProvider/descriptor/scriptProps';
+//import urlModdleDescriptor from './apexPropertiesProvider/descriptor/urlProps';
 
-
-async function init() {
   // viewer instance
   var bpmnModeler = new BpmnModeler({
     container: "#canvas",
@@ -21,12 +19,12 @@ async function init() {
       propertiesProviderModule
     ],
     moddleExtensions: {
-      apex: apexModdleDescriptor,
-      email: emailModdleDescriptor,
-      script: scriptModdleDescriptor,
-      url: urlModdleDescriptor
+      apex: apexModdleDescriptor
     }
   });
+
+
+async function init() {
 
   openDiagram();
 
@@ -57,3 +55,5 @@ async function init() {
 }
 
 init();
+
+export default { modeler: bpmnModeler, init: init };
