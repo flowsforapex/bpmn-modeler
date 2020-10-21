@@ -1,9 +1,13 @@
 {
-  "extends": "bpmnlint:recommended",
+  "extends": [
+    "bpmnlint:recommended",
+    "plugin:apex/recommended"
+  ],
   "rules": {
     "conditional-flows": "off",
     "no-inclusive-gateway": "off",
     "no-gateway-join-fork": "off",
-    "label-required": "warn"
+    "label-required": "warn",
+    "apex/max-id-length": "error"
   }
 }
