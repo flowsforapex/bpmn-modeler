@@ -4,9 +4,6 @@ import propertiesPanelModule from "bpmn-js-properties-panel";
 import propertiesProviderModule from "./apexPropertiesProvider/provider";
 
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
-//import emailModdleDescriptor from './apexPropertiesProvider/descriptor/emailProps';
-//import scriptModdleDescriptor from './apexPropertiesProvider/descriptor/scriptProps';
-//import urlModdleDescriptor from './apexPropertiesProvider/descriptor/urlProps';
 
   // viewer instance
   var bpmnModeler = new BpmnModeler({

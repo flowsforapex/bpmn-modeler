@@ -1,49 +1,92 @@
 {
-    "name": "APEX",
-    "prefix": "apex",
-    "uri": "http://www.apex.mt-ag.com",
-    "xml": {
-      "tagAlias": "lowerCase"
+  "name": "APEX",
+  "prefix": "apex",
+  "uri": "http://www.apex.mt-ag.com",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "UserTaskEvent",
+      "extends": [
+        "bpmn:UserTask"
+      ],
+      "properties": [
+        {
+          "name": "apex-application",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "apex-page",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "apex-request",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "apex-cache",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "apex-item",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "apex-value",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     },
-    "associations": [],
-    "types": [
-      {
-        "name": "UserTaskEvent",
-        "extends": [
-          "bpmn:UserTask"
-        ],
-        "properties": [
-          {
-            "name": "apex-application",
-            "isAttr": true,
-            "type": "String"
-          },
-          {
-            "name": "apex-page",
-            "isAttr": true,
-            "type": "String"
-          },
-          {
-            "name": "apex-request",
-            "isAttr": true,
-            "type": "String"
-          },
-          {
-            "name": "apex-cache",
-            "isAttr": true,
-            "type": "String"
-          },
-          {
-            "name": "apex-item",
-            "isAttr": true,
-            "type": "String"
-          },
-          {
-            "name": "apex-value",
-            "isAttr": true,
-            "type": "String"
-          }
-        ]
-      }
-    ]
-  }
+
+    {
+      "name": "UserTaskEvent",
+      "extends": [
+        "bpmn:UserTask"
+      ],
+      "properties": [
+        {
+          "name": "insertEmail",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+
+    {
+      "name": "UserTaskEvent",
+      "extends": [
+        "bpmn:UserTask"
+      ],
+      "properties": [
+        {
+          "name": "insertScript",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+
+
+    {
+      "name": "UserTaskEvent",
+      "extends": [
+        "bpmn:UserTask"
+      ],
+      "properties": [
+        {
+          "name": "insertUrl",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    }
+  ]
+}
