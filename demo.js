@@ -13,7 +13,7 @@ import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps'
     },
     additionalModules: [
       propertiesPanelModule,
-      propertiesProviderModule
+      propertiesProviderModule  
     ],
     moddleExtensions: {
       apex: apexModdleDescriptor
