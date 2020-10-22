@@ -16,7 +16,7 @@ export default function(group, element) {
         id : 'insertUrl',
         description : 'Apply an url',
         label : 'URL',
-        modelProperty : 'insertUrl'
+        modelProperty : 'apex-insertUrl'
     }));  
   }
 }
