@@ -36,13 +36,20 @@
         {
           "name": "apex-value",
           "type": "String"
+        },
+
+        
+        
+        {
+          "name": "apex-insertUrl",
+          "type": "String"
         }
       ]
     },
     {
-      "name": "UserTaskEvent",
+      "name": "servicePage",
       "extends": [
-        "bpmn:UserTask"
+        "bpmn:ServiceTask"
       ],
       "properties": [
         {
@@ -53,9 +60,9 @@
     },
 
     {
-      "name": "UserTaskEvent",
+      "name": "scriptPage",
       "extends": [
-        "bpmn:UserTask"
+        "bpmn:ScriptTask"
       ],
       "properties": [
         {
@@ -63,20 +70,8 @@
           "type": "String"
         }
       ]
-    },
-
-
-    {
-      "name": "UserTaskEvent",
-      "extends": [
-        "bpmn:UserTask"
-      ],
-      "properties": [
-        {
-          "name": "insertUrl",
-          "type": "String"
-        }
-      ]
     }
+
+
   ]
 }

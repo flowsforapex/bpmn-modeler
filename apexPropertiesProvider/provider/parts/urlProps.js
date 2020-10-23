@@ -13,7 +13,7 @@ export default function(group, element) {
   if (is(element, 'bpmn:UserTask')) {
 
     group.entries.push(entryFactory.textBox({
-        id : 'insertUrl',
+        id : 'apex-insertUrl',
         description : 'Apply an url',
         label : 'URL',
         modelProperty : 'apex-insertUrl'
