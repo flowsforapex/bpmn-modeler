@@ -1,0 +1,77 @@
+{
+  "name": "APEX",
+  "prefix": "apex",
+  "uri": "http://www.apex.mt-ag.com",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "associations": [],
+  "types": [
+    {
+      "name": "apexPage",
+      "extends": [
+        "bpmn:UserTask"
+      ],
+      "properties": [
+        {
+          "name": "apex-application",
+          "type": "String"
+        },
+        {
+          "name": "apex-page",
+          "type": "String"
+        },
+        {
+          "name": "apex-request",
+          "type": "String"
+        },
+        {
+          "name": "apex-cache",
+          "type": "String"
+        },
+        {
+          "name": "apex-item",
+          "type": "String"
+        },
+        {
+          "name": "apex-value",
+          "type": "String"
+        },
+
+        
+        
+        {
+          "name": "apex-insertUrl",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "servicePage",
+      "extends": [
+        "bpmn:ServiceTask"
+      ],
+      "properties": [
+        {
+          "name": "insertEmail",
+          "type": "String"
+        }
+      ]
+    },
+
+    {
+      "name": "scriptPage",
+      "extends": [
+        "bpmn:ScriptTask"
+      ],
+      "properties": [
+        {
+          "name": "insertScript",
+          "type": "String"
+        }
+      ]
+    }
+
+
+  ]
+}

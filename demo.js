@@ -1,8 +1,8 @@
 import BpmnModeler from "bpmn-js/lib/Modeler";
 
 import propertiesPanelModule from "bpmn-js-properties-panel";
-import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/bpmn";
-
+import propertiesProviderModule from "./apexPropertiesProvider/provider";
+import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
 
 import lintModule from 'bpmn-js-bpmnlint';
 import bpmnlintConfig from './.bpmnlintrc';
@@ -22,8 +22,14 @@ async function init() {
       propertiesPanelModule,
       propertiesProviderModule,
       lintModule
-    ]
+    ],
+    moddleExtensions: {
+      apex: apexModdleDescriptor
+    }
   });
+
+
+async function init() {
 
   openDiagram();
 
@@ -53,3 +59,5 @@ async function init() {
   }
 }
 init();
+
+export default { modeler: bpmnModeler, init: init };
