@@ -1,3 +1,4 @@
+const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
 module.exports = { 
@@ -15,5 +16,18 @@ module.exports = {
     minimize: false
   },
   devtool: "source-map",
+  
+  module: {
+    rules: [
+      {
+        test: /\.bpmnlintrc$/,
+        use: [
+          {
+            loader: 'bpmnlint-loader',
+          }
+        ]
+      }
+    ]
+  },
 }
 ;

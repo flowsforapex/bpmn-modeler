@@ -1,0 +1,7 @@
+{
+  "name": "bpmnlint-plugin-apex",
+  "version": "0.0.0",
+  "private": true,
+  "description": "bpmnlint custom rules",
+  "main": "index.js"
+}
