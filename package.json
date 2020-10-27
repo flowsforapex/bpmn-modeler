@@ -27,6 +27,7 @@
     "bpmn-js-properties-panel": "^0.32.0",
     "bpmnlint": "^6.4.0",
     "bpmnlint-loader": "^0.1.4",
+    "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
     "camunda-bpmn-moddle": "^4.0.1",
     "diagram-js": "^5.0.0"
   },
