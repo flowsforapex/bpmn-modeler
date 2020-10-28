@@ -8,26 +8,24 @@ import lintModule from 'bpmn-js-bpmnlint';
 import bpmnlintConfig from './.bpmnlintrc';
 
 
-async function init() {
-  // viewer instance
-  var bpmnModeler = new BpmnModeler({
-    container: "#canvas",
-    propertiesPanel: {
-      parent: '#properties'
-    },
-    linting: {
-      bpmnlint: bpmnlintConfig
-    },
-    additionalModules: [
-      propertiesPanelModule,
-      propertiesProviderModule,
-      lintModule
-    ],
-    moddleExtensions: {
-      apex: apexModdleDescriptor
-    }
-  });
-
+// viewer instance
+var bpmnModeler = new BpmnModeler({
+  container: "#canvas",
+  propertiesPanel: {
+    parent: '#properties'
+  },
+  linting: {
+    bpmnlint: bpmnlintConfig
+  },
+  additionalModules: [
+    propertiesPanelModule,
+    propertiesProviderModule,
+    lintModule
+  ],
+  moddleExtensions: {
+    apex: apexModdleDescriptor
+  }
+});
 
 async function init() {
 
@@ -58,6 +56,7 @@ async function init() {
     }
   }
 }
+
 init();
 
 export default { modeler: bpmnModeler, init: init };
