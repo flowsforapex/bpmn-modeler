@@ -9,10 +9,8 @@ import bpmnlintConfig from './.bpmnlintrc';
 
 var bpmnModeler = {
   Modeler: BpmnModeler,
-  linting: {
-    bpmnlint: bpmnlintConfig
-  },
-  modules: {
+  linting: { apexLinting: bpmnlintConfig },
+  customModules: {
     propertiesPanelModule,
     propertiesProviderModule,
     lintModule

@@ -1,29 +1,22 @@
-import BpmnModeler from "bpmn-js/lib/Modeler";
-
-import propertiesPanelModule from "bpmn-js-properties-panel";
-import propertiesProviderModule from "./apexPropertiesProvider/provider";
-import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
-
-import lintModule from 'bpmn-js-bpmnlint';
-import bpmnlintConfig from './.bpmnlintrc';
+import bpmnModeler from "./index.js";
 
 
 // viewer instance
-var bpmnModeler = new BpmnModeler({
+var myModeler = new bpmnModeler.Modeler({
   container: "#canvas",
   propertiesPanel: {
     parent: '#properties'
   },
   linting: {
-    bpmnlint: bpmnlintConfig
+    bpmnlint: bpmnModeler.linting.apexLinting
   },
   additionalModules: [
-    propertiesPanelModule,
-    propertiesProviderModule,
-    lintModule
+    bpmnModeler.customModules.propertiesPanelModule,
+    bpmnModeler.customModules.propertiesProviderModule,
+    bpmnModeler.customModules.lintModule
   ],
   moddleExtensions: {
-    apex: apexModdleDescriptor
+    apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
   }
 });
 
@@ -43,11 +36,11 @@ async function init() {
 
     // import diagram
     try {
-      await bpmnModeler.importXML(defaultDiagram);
+      await myModeler.importXML(defaultDiagram);
 
       // access viewer components
-      var canvas = bpmnModeler.get("canvas");
-      var overlays = bpmnModeler.get("overlays");
+      var canvas = myModeler.get("canvas");
+      var overlays = myModeler.get("overlays");
 
       // zoom to fit full viewport
       canvas.zoom("fit-viewport");
@@ -59,4 +52,4 @@ async function init() {
 
 init();
 
-export default { modeler: bpmnModeler, init: init };
+export default { modeler: myModeler, init: init };
