@@ -118,3 +118,5 @@ export default function apexPropertiesProvider(
 }
 
 inherits(apexPropertiesProvider, PropertiesActivator);
+
+apexPropertiesProvider.$inject = [ 'eventBus', 'bpmnFactory', 'canvas', 'elementRegistry', 'translate' ];

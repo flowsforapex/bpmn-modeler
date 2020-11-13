@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev-demo": "webpack-dev-server --mode development --config webpack.config.demo.js",
+    "dev-demo-prod": "webpack-dev-server --mode production --config webpack.config.demo.js",
     "build-all": "npm-run-all build-prod build-dev build-demo",
     "build-dev": "webpack --mode development --config webpack.config.dev.js",
     "build-prod": "webpack --mode production --config webpack.config.prod.js",
