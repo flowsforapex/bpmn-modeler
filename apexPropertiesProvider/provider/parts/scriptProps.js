@@ -16,5 +16,20 @@ export default function(group, element) {
         modelProperty : "plsqlCode"
       })
     );
+
+    group.entries.push(
+      entryFactory.selectBox(
+        {
+          id: "autoBinds",
+          description: "Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.",
+          label: "Bind Page Item Values",
+          modelProperty: "autoBinds",
+          selectOptions: [ 
+            { name: "No", value: "false" },
+            { name: "Yes", value: "true" }
+          ]     
+        }
+      )
+    );
   }
 }

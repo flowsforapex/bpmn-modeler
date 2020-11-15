@@ -37,9 +37,6 @@
           "name": "apex-value",
           "type": "String"
         },
-
-        
-        
         {
           "name": "apex-insertUrl",
           "type": "String"
@@ -58,9 +55,8 @@
         }
       ]
     },
-
     {
-      "name": "scriptPage",
+      "name": "apexScript",
       "extends": [
         "bpmn:ScriptTask"
       ],
@@ -68,10 +64,13 @@
         {
           "name": "plsqlCode",
           "type": "String"
+        },
+        {
+          "name": "autoBinds",
+          "type": "String",
+          "default": "false"
         }
       ]
     }
-
-
   ]
 }
