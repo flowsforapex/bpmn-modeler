@@ -67,8 +67,7 @@
         },
         {
           "name": "autoBinds",
-          "type": "String",
-          "default": "false"
+          "type": "String"
         }
       ]
     }
