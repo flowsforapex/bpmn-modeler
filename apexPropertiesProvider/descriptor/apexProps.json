@@ -44,21 +44,10 @@
       ]
     },
     {
-      "name": "servicePage",
-      "extends": [
-        "bpmn:ServiceTask"
-      ],
-      "properties": [
-        {
-          "name": "insertEmail",
-          "type": "String"
-        }
-      ]
-    },
-    {
       "name": "apexScript",
       "extends": [
-        "bpmn:ScriptTask"
+        "bpmn:ScriptTask",
+        "bpmn:ServiceTask"
       ],
       "properties": [
         {

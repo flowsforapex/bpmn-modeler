@@ -7,7 +7,7 @@ export default function(group, element) {
 
   // PL/SQL Code Property will only be available
   // for elements of type ScriptTask
-  if ( is(element, "bpmn:ScriptTask") ) {
+  if ( is(element, "bpmn:ScriptTask") || is( element, "bpmn:ServiceTask" ) ) {
     group.entries.push(
       entryFactory.textBox({
         id : "plsqlCode",

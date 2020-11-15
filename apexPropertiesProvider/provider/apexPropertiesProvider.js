@@ -67,13 +67,6 @@ function createApexTabGroups(element) {
   };
   apexUsertaskProps(apexPageGroup, element);
 
-  var apexMailGroup = {
-    id: "apex-mail-group",
-    label: "APEX Mail",
-    entries: []
-  };
-  emailProps(apexMailGroup, element);
-
   var apexScriptGroup = {
     id: "apex-script-group",
     label: "PL/SQL Script",
@@ -83,7 +76,6 @@ function createApexTabGroups(element) {
 
   return [
     apexPageGroup,
-    apexMailGroup,
     apexScriptGroup
   ];
 }
