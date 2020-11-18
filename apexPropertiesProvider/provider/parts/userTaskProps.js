@@ -44,7 +44,7 @@ export default function(group, element) {
       })
     );  
     group.entries.push(
-      entryFactory.textField({
+      entryFactory.textBox({
         id : 'apex-item',
         description : 'Page Items to set',
         label : 'Page Items',
@@ -52,7 +52,7 @@ export default function(group, element) {
       })
     );  
     group.entries.push(
-      entryFactory.textField({
+      entryFactory.textBox({
         id : 'apex-value',
         description : 'Page Item Values',
         label : 'Item Values',
