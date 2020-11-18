@@ -14,8 +14,6 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 
 // Require your custom property entries.
 import apexUsertaskProps from './parts/userTaskProps.js';
-//import urlProps from './parts/urlProps.js';
-import emailProps from './parts/emailProps.js';
 import scriptProps from './parts/scriptProps.js';
 
 
