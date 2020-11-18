@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev-demo": "webpack-dev-server --mode development --config webpack.config.demo.js",
+    "dev-demo-prod": "webpack-dev-server --mode production --config webpack.config.demo.js",
     "build-all": "npm-run-all build-prod build-dev build-demo",
     "build-dev": "webpack --mode development --config webpack.config.dev.js",
     "build-prod": "webpack --mode production --config webpack.config.prod.js",
-    "build-demo": "webpack --mode development --config webpack.config.demo.js"
+    "build-demo": "webpack --mode production --config webpack.config.demo.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,7 @@
   "dependencies": {
     "bpmn-js": "^7.3.1",
     "bpmn-js-bpmnlint": "^0.15.0",
-    "bpmn-js-properties-panel": "^0.32.0",
+    "bpmn-js-properties-panel": "^0.32.2",
     "bpmnlint": "^6.4.0",
     "bpmnlint-loader": "^0.1.4",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
@@ -32,9 +33,10 @@
     "diagram-js": "^5.0.0"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^6.2.0",
+    "copy-webpack-plugin": "^6.3.0",
     "npm-run-all": "^4.1.5",
-    "webpack": "^4.44.2",
+    "terser-webpack-plugin": "^5.0.3",
+    "webpack": "^5.4.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   }

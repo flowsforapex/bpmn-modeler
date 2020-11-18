@@ -13,8 +13,8 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 
 
 // Require your custom property entries.
-import apexProps from './parts/apexProps.js';
-import urlProps from './parts/urlProps.js';
+import apexUsertaskProps from './parts/userTaskProps.js';
+//import urlProps from './parts/urlProps.js';
 import emailProps from './parts/emailProps.js';
 import scriptProps from './parts/scriptProps.js';
 
@@ -24,8 +24,8 @@ import scriptProps from './parts/scriptProps.js';
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
 
   var generalGroup = {
-    id: 'general',
-    label: 'General',
+    id: "general",
+    label: "General",
     entries: []
   };
   idProps(generalGroup, element, translate);
@@ -33,16 +33,16 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   processProps(generalGroup, element, translate);
 
   var detailsGroup = {
-    id: 'details',
-    label: 'Details',
+    id: "details",
+    label: "Details",
     entries: []
   };
   linkProps(detailsGroup, element, translate);
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
 
   var documentationGroup = {
-    id: 'documentation',
-    label: 'Documentation',
+    id: "documentation",
+    label: "Documentation",
     entries: []
   };
 
@@ -55,70 +55,30 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   ];
 }
 
-// Create the custom User tab
+// Create custom APEX TabGroup
 function createApexTabGroups(element) {
 
-  // Create a group called "Apex Task".
-  var ApexGroup = {
-    id: 'Apex-Group',
-    label: "Apex Properties",
+
+  // Create a group called for APEX-Page Call
+  var apexPageGroup = {
+    id: "apex-page-call",
+    label: "Call APEX Page",
     entries: []
   };
+  apexUsertaskProps(apexPageGroup, element);
 
-  // Add the props to the Apex group.
-  apexProps(ApexGroup, element);
-  return [
-    ApexGroup
-  ];
-}
-
-function createUrlTabGroups(element) {
-
-  // Create a group called "Url Task".
-  var UrlGroup = {
-    id: 'Url-Group',
-    label: "Url Properties",
+  var apexScriptGroup = {
+    id: "apex-script-group",
+    label: "PL/SQL Script",
     entries: []
   };
+  scriptProps(apexScriptGroup, element);
 
-  // Add the props to the Url group.
-  urlProps(UrlGroup, element);
   return [
-    UrlGroup
+    apexPageGroup,
+    apexScriptGroup
   ];
 }
-
-function createServiceTabGroups(element) {
-
-    // Create a group called "Service".
-    var ServiceGroup = {
-      id: 'Service-Group',
-      label: "Email Service",
-      entries: []
-    };
-  
-    // Add the spell props to the APEX group.
-    emailProps(ServiceGroup, element);
-    return [
-      ServiceGroup
-    ];
-}
-
-function createScriptTabGroups(element) {
-
-    // Create a group called "Script".
-    var ScriptGroup = {
-      id: 'Script-Group',
-      label: "",
-      entries: []
-    };
-  
-    // Add the spell props to the Script group.
-    scriptProps(ScriptGroup, element);
-    return [
-      ScriptGroup
-    ];
-} 
 
 export default function apexPropertiesProvider(
     eventBus, bpmnFactory, canvas,
@@ -136,38 +96,19 @@ export default function apexPropertiesProvider(
 
     // The "APEX" tab
     var ApexTab = {
-      id: 'Apex-Tab',
-      label: 'Apex Task',
+      id: 'apex',
+      label: 'APEX',
       groups: createApexTabGroups(element)
     };
 
-    var UrlTab = {
-      id: 'Url-Tab',
-      label: 'Url Task',
-      groups: createUrlTabGroups(element)
-    };
-
-    var ServiceTab = {
-        id: 'Service-Tab',
-        label: 'Service Task',
-        groups: createServiceTabGroups(element)
-    };
-
-    var ScriptTab = {
-        id: 'Script-Tab',
-        label: 'Script Task',
-        groups: createScriptTabGroups(element)
-    };
-
-    // Show general + additional tabs
+    // Show general + APEX tabs
     return [
       generalTab,
-      ApexTab,
-      UrlTab,
-      ServiceTab,
-      ScriptTab
+      ApexTab
     ];
   };
 }
 
 inherits(apexPropertiesProvider, PropertiesActivator);
+
+apexPropertiesProvider.$inject = [ 'eventBus', 'bpmnFactory', 'canvas', 'elementRegistry', 'translate' ];
