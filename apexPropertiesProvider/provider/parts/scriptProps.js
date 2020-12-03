@@ -31,5 +31,36 @@ export default function(group, element) {
         }
       )
     );
+    group.entries.push(
+      entryFactory.selectBox(
+        {
+          id: "serviceTaskType",
+          description: "choose the Type of the Service Task",
+          modelProperty: "serviceTaskType",
+          selectOptions: [ 
+            { name: "Run PL/SQL Code", value: "PL/SQL" },
+            { name: "Send Mail using APEX Template", value: "Template" }
+          ] ,    
+          
+          get: function (element, node) {
+            var bo = getBusinessObject(element);
+            return {externalTopic: bo.get('camunda:topic')};
+          },
+          
+          set: function (element, values, node) {
+            var bo = getBusinessObject(element);
+            return cmdHelper.updateBusinessObject(element, bo, {
+                'camunda:topic': values.externalTopic
+            });
+          }
+        }
+      ),      
+    );
+    console.log("1");
+    console.log(group.entries[2]);
+    console.log("2");
+    console.log(entryFactory.selectBox.get);
+
+    
   }
 }
