@@ -1,35 +1,32 @@
 import entryFactory from "bpmn-js-properties-panel/lib/factory/EntryFactory";
 import cmdHelper from "bpmn-js-properties-panel/lib/helper/CmdHelper";
-import {selectedOption} from "bpmn-js-properties-panel/lib/Utils";
-import { printXml } from "./debug";
-import { isOptionSelected } from "./formsHelper";
-
 import { is, getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
-
+import { printXml } from "../../../lib/debug";
+import { isOptionSelected } from "../../../lib/formsHelper";
 
 export default function (group, element) {
-  group.entries.push(
-    entryFactory.selectBox(
-      {
-        id: "serviceTaskType",
-        description: "choose the Type of the Service Task",
-        modelProperty: "serviceTaskType",
-        selectOptions: [
-          { name: "Run PL/SQL Code", value: "PL/SQL" },
-          { name: "Send Mail using APEX Template", value: "Template" }
-        ],
-        set: function (element, values, node) {
-          var bo = getBusinessObject(element);
-          return cmdHelper.updateBusinessObject(element, bo, {
-            'serviceTaskType': values.serviceTaskType
-          });
-        }
-      }
-    ),
-  );
-
   // PL/SQL Code Property will only be available for elements of type ScriptTask
-  if (is(element, "bpmn:ScriptTask") || is(element, "bpmn:ServiceTask")) {
+  if (is(element, "bpmn:ServiceTask")) {
+    group.entries.push(
+      entryFactory.selectBox(
+        {
+          id: "serviceTaskType",
+          description: "choose the Type of the Service Task",
+          modelProperty: "serviceTaskType",
+          selectOptions: [
+            { name: "Run PL/SQL Code", value: "PL/SQL" },
+            { name: "Send Mail using APEX Template", value: "Template" }
+          ],
+          set: function (element, values, node) {
+            var bo = getBusinessObject(element);
+            return cmdHelper.updateBusinessObject(element, bo, {
+              'serviceTaskType': values.serviceTaskType
+            });
+          }
+        }
+      ),
+    );
+    
     // Run PL/SQL Code
     group.entries.push(
       entryFactory.textBox({
