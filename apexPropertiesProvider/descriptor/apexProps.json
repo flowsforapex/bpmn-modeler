@@ -57,6 +57,30 @@
         {
           "name": "autoBinds",
           "type": "String"
+        },
+        {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "pageId",
+          "type": "String"
+        },
+        {
+          "name": "username",
+          "type": "String"
+        },
+        {
+          "name": "templateIdentifier",
+          "type": "String"
+        },
+        {
+          "name": "emailFrom",
+          "type": "String"
+        },
+        {
+          "name": "emailTo",
+          "type": "String"
         }
       ]
     }
