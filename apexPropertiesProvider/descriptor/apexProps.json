@@ -51,6 +51,10 @@
       ],
       "properties": [
         {
+          "name": "serviceTaskType",
+          "type": "String"
+        },
+        {
           "name": "plsqlCode",
           "type": "String"
         },
