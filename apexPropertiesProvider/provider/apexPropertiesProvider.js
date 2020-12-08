@@ -1,5 +1,4 @@
 import inherits from 'inherits';
-
 import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
 
 // Require all properties you need from existing providers.
@@ -11,10 +10,10 @@ import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts
 import idProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/IdProps';
 import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
 
-
 // Require your custom property entries.
 import apexUsertaskProps from './parts/userTaskProps.js';
-import scriptProps from './parts/scriptProps.js';
+import apexScriptTaskProps from './parts/scriptTaskProps.js';
+import apexServiceTaskProps from './parts/serviceTaskProps.js';
 
 
 // The general tab contains all bpmn relevant properties.
@@ -70,7 +69,8 @@ function createApexTabGroups(element) {
     label: "PL/SQL Script",
     entries: []
   };
-  scriptProps(apexScriptGroup, element);
+  apexScriptTaskProps(apexScriptGroup, element);
+  apexServiceTaskProps(apexScriptGroup, element);
 
   return [
     apexPageGroup,
