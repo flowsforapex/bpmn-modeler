@@ -1,8 +1,6 @@
 import entryFactory from "bpmn-js-properties-panel/lib/factory/EntryFactory";
 import cmdHelper from "bpmn-js-properties-panel/lib/helper/CmdHelper";
 import { is, getBusinessObject } from "bpmn-js/lib/util/ModelUtil";
-import { printXml } from "../../../lib/debug";
-import { isOptionSelected } from "../../../lib/formsHelper";
 
 export default function (group, element) {
   // PL/SQL Code Property will only be available for elements of type ScriptTask
