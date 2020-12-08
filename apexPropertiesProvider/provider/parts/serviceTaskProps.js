@@ -173,7 +173,4 @@ export default function (group, element) {
       })
     );
   }
-
-  // Debug output
-  printXml();
 }
