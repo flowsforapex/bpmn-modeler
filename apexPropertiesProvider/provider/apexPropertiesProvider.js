@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import inherits from 'inherits';
 import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
 
@@ -19,33 +20,32 @@ import apexServiceTaskProps from './parts/serviceTaskProps.js';
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
-
   var generalGroup = {
-    id: "general",
-    label: "General",
+    id: 'general',
+    label: 'General',
     entries: []
   };
+  var detailsGroup = {
+    id: 'details',
+    label: 'Details',
+    entries: []
+  };
+  var documentationGroup = {
+    id: 'documentation',
+    label: 'Documentation',
+    entries: []
+  };
+
   idProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
   processProps(generalGroup, element, translate);
 
-  var detailsGroup = {
-    id: "details",
-    label: "Details",
-    entries: []
-  };
   linkProps(detailsGroup, element, translate);
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
 
-  var documentationGroup = {
-    id: "documentation",
-    label: "Documentation",
-    entries: []
-  };
-
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
-  return[
+  return [
     generalGroup,
     detailsGroup,
     documentationGroup
@@ -54,21 +54,20 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
 // Create custom APEX TabGroup
 function createApexTabGroups(element) {
-
-
   // Create a group called for APEX-Page Call
   var apexPageGroup = {
-    id: "apex-page-call",
-    label: "Call APEX Page",
+    id: 'apex-page-call',
+    label: 'Call APEX Page',
     entries: []
   };
+  var apexScriptGroup = {
+    id: 'apex-script-group',
+    label: 'PL/SQL Script',
+    entries: []
+  };
+
   apexUsertaskProps(apexPageGroup, element);
 
-  var apexScriptGroup = {
-    id: "apex-script-group",
-    label: "PL/SQL Script",
-    entries: []
-  };
   apexScriptTaskProps(apexScriptGroup, element);
   apexServiceTaskProps(apexScriptGroup, element);
 
@@ -84,7 +83,7 @@ export default function apexPropertiesProvider(
 
   PropertiesActivator.call(this, eventBus);
 
-  this.getTabs = function(element) {
+  this.getTabs = function (element) {
 
     var generalTab = {
       id: 'general',
@@ -109,4 +108,4 @@ export default function apexPropertiesProvider(
 
 inherits(apexPropertiesProvider, PropertiesActivator);
 
-apexPropertiesProvider.$inject = [ 'eventBus', 'bpmnFactory', 'canvas', 'elementRegistry', 'translate' ];
+apexPropertiesProvider.$inject = ['eventBus', 'bpmnFactory', 'canvas', 'elementRegistry', 'translate'];
