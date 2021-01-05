@@ -15,14 +15,13 @@ import apexUsertaskProps from './parts/userTaskProps.js';
 import apexScriptTaskProps from './parts/scriptTaskProps.js';
 import apexServiceTaskProps from './parts/serviceTaskProps.js';
 
-
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
 
   var generalGroup = {
-    id: "general",
-    label: "General",
+    id: 'general',
+    label: 'General',
     entries: []
   };
   idProps(generalGroup, element, translate);
@@ -30,16 +29,16 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   processProps(generalGroup, element, translate);
 
   var detailsGroup = {
-    id: "details",
-    label: "Details",
+    id: 'details',
+    label: 'Details',
     entries: []
   };
   linkProps(detailsGroup, element, translate);
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
 
   var documentationGroup = {
-    id: "documentation",
-    label: "Documentation",
+    id: 'documentation',
+    label: 'Documentation',
     entries: []
   };
 
@@ -53,24 +52,22 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 }
 
 // Create custom APEX TabGroup
-function createApexTabGroups(element) {
-
-
+function createApexTabGroups(element, translate) {
   // Create a group called for APEX-Page Call
   var apexPageGroup = {
-    id: "apex-page-call",
-    label: "Call APEX Page",
+    id: 'apex-page-call',
+    label: 'Call APEX Page',
     entries: []
   };
-  apexUsertaskProps(apexPageGroup, element);
+  apexUsertaskProps(apexPageGroup, element, translate);
 
   var apexScriptGroup = {
-    id: "apex-script-group",
-    label: "PL/SQL Script",
+    id: 'apex-script-group',
+    label: 'PL/SQL Script',
     entries: []
   };
-  apexScriptTaskProps(apexScriptGroup, element);
-  apexServiceTaskProps(apexScriptGroup, element);
+  apexScriptTaskProps(apexScriptGroup, element, translate);
+  apexServiceTaskProps(apexScriptGroup, element, translate);
 
   return [
     apexPageGroup,
@@ -92,11 +89,11 @@ export default function apexPropertiesProvider(
       groups: createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate)
     };
 
-    // The "APEX" tab
+    // The 'APEX' tab
     var ApexTab = {
       id: 'apex',
       label: 'APEX',
-      groups: createApexTabGroups(element)
+      groups: createApexTabGroups(element, translate)
     };
 
     // Show general + APEX tabs
