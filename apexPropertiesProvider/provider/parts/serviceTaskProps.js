@@ -22,7 +22,7 @@ export default function (group, element, translate) {
             'serviceTaskType': values.serviceTaskType
           });
         }
-      }),
+      })
     );
 
     // Run PL/SQL Code
