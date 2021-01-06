@@ -16,7 +16,6 @@ import apexUsertaskProps from './parts/userTaskProps.js';
 import apexScriptTaskProps from './parts/scriptTaskProps.js';
 import apexServiceTaskProps from './parts/serviceTaskProps.js';
 
-
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
@@ -39,10 +38,8 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   idProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
   processProps(generalGroup, element, translate);
-
   linkProps(detailsGroup, element, translate);
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
-
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
   return [
@@ -52,9 +49,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
   ];
 }
 
-// Create custom APEX TabGroup
-function createApexTabGroups(element) {
-  // Create a group called for APEX-Page Call
+function createApexTabGroups(element, translate) {
   var apexPageGroup = {
     id: 'apex-page-call',
     label: 'Call APEX Page',
@@ -66,10 +61,9 @@ function createApexTabGroups(element) {
     entries: []
   };
 
-  apexUsertaskProps(apexPageGroup, element);
-
-  apexScriptTaskProps(apexScriptGroup, element);
-  apexServiceTaskProps(apexScriptGroup, element);
+  apexUsertaskProps(apexPageGroup, element, translate);
+  apexScriptTaskProps(apexScriptGroup, element, translate);
+  apexServiceTaskProps(apexScriptGroup, element, translate);
 
   return [
     apexPageGroup,
@@ -91,11 +85,11 @@ export default function apexPropertiesProvider(
       groups: createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate)
     };
 
-    // The "APEX" tab
+    // The 'APEX' tab
     var ApexTab = {
       id: 'apex',
       label: 'APEX',
-      groups: createApexTabGroups(element)
+      groups: createApexTabGroups(element, translate)
     };
 
     // Show general + APEX tabs

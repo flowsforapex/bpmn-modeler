@@ -25,9 +25,9 @@
   },
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
-    "bpmn-js": "^7.4.1",
+    "bpmn-js": "^7.5.0",
     "bpmn-js-bpmnlint": "^0.15.0",
-    "bpmn-js-properties-panel": "0.36.0",
+    "bpmn-js-properties-panel": "0.38.0",
     "bpmnlint": "^6.4.0",
     "bpmnlint-loader": "^0.1.4",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",

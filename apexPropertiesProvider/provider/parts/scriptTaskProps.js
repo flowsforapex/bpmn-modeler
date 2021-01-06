@@ -2,12 +2,11 @@ import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
-export default function (group, element) {
-  // PL/SQL Code Property will only be available for elements of type ScriptTask
+export default function (group, element, translate) {
   if (is(element, 'bpmn:ScriptTask')) {
     // Run PL/SQL Code
     group.entries.push(
-      entryFactory.textBox({
+      entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
         label: 'PL/SQL Code',
@@ -22,8 +21,7 @@ export default function (group, element) {
     );
 
     group.entries.push(
-      entryFactory.selectBox(
-        {
+      entryFactory.selectBox(translate, {
           id: 'autoBinds',
           description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
           label: 'Bind Page Item Values',
