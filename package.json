@@ -32,7 +32,7 @@
     "bpmnlint-loader": "^0.1.4",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
     "camunda-bpmn-moddle": "^4.4.1",
-    "diagram-js": "^5.0.0"
+    "diagram-js": "^7.0.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.3.1",
