@@ -9,10 +9,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-allow:
-  - dependency-name: "bpmn*"
-  - dependency-name: "bpmnlint*"
-  - dependency-name: "camunda-bpmn-moddle*
-  - dependency-name: "diagram-js*
-ignore:
-  - dependency-name: "bpmnlint-plugin-apex"
+    allow:
+      - dependency-name: "bpmn*"
+      - dependency-name: "bpmnlint*"
+      - dependency-name: "camunda-bpmn-moddle*
+      - dependency-name: "diagram-js*
+    ignore:
+      - dependency-name: "bpmnlint-plugin-apex"
