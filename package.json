@@ -11,7 +11,8 @@
     "build-prod": "webpack --mode production --config webpack.config.prod.js",
     "dev-demo": "webpack-dev-server --mode development --config webpack.config.demo.js",
     "dev-demo-prod": "webpack-dev-server --mode production --config webpack.config.demo.js",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "update-packages": "npx remove-node-modules && npm i"
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,8 @@
     "bpmnlint-loader": "^0.1.4",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
     "camunda-bpmn-moddle": "^4.4.1",
-    "diagram-js": "^7.0.0"
+    "diagram-js": "^7.0.0",
+    "remove-node-modules": "^1.7.6"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.3.1",
