@@ -2,7 +2,7 @@
 
 ## Description
 
-BPMN Modeler with customised Properties Panel
+BPMN Modeler with customised Properties Panel, that is used in Flows for APEX.
 
 ## Run the app
 
