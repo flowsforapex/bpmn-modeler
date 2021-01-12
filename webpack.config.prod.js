@@ -1,11 +1,14 @@
 const path = require("path");
 
 module.exports = {
+  mode: 'production',
   entry: {
-    "mtag.bpmnmodeler": [path.resolve(__dirname, "index.js")],
+    "mtag.bpmnmodeler": [path.resolve(__dirname, "src/index.js")]
+  },
+  optimization: {
+    minimize: true
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
     filename: "[name].min.js",
     library: "bpmnModeler",
     libraryTarget: "var",
@@ -22,8 +25,5 @@ module.exports = {
         ],
       },
     ],
-  },
-  optimization: {
-    minimize: true
-  },
+  }
 };

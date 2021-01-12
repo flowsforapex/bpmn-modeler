@@ -1,22 +1,21 @@
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
 
-module.exports = { 
+module.exports = {
+  mode: 'development',
   entry: {
-    "mtag.bpmnmodeler": [path.resolve(__dirname, "index.js")],
+    "mtag.bpmnmodeler": [path.resolve(__dirname, "src/index.js")]
   },
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: '[name].js',
-    library: "bpmnModeler",
-    libraryTarget: "var",
-    libraryExport: "default",
-  },
+  devtool: "source-map",
   optimization: {
     minimize: false
   },
-  devtool: "source-map",
-  
+  output: {
+    filename: '[name].js',
+    library: "bpmnModeler",
+    libraryTarget: "var",
+    libraryExport: "default"
+  },
   module: {
     rules: [
       {
@@ -29,5 +28,4 @@ module.exports = {
       }
     ]
   },
-}
-;
+};
