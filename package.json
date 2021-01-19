@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run dev-demo",
+    "browser": "npm start -- -- --open --hot",
     "build-all": "npm-run-all build-prod build-dev build-demo",
     "build-demo": "webpack --mode production --config webpack.config.demo.js",
     "build-dev": "webpack --mode development --config webpack.config.dev.js",
