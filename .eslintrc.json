@@ -1,7 +1,7 @@
 {
     "extends": ["webpack", "eslint:recommended"],
     "parserOptions": {
-        "ecmaVersion": 6
+        "ecmaVersion": 8
     },
     "rules": {
         "array-bracket-spacing": "warn",
