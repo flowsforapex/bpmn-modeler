@@ -4,7 +4,7 @@ import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
 export default function (group, element, translate) {
-  var serviceTaskElementSelector = '[name="serviceTaskType"]';
+  const serviceTaskElementSelector = '[name="serviceTaskType"]';
 
   if (is(element, 'bpmn:ServiceTask')) {
     group.entries.push(
