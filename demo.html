@@ -49,13 +49,17 @@
   propertiesPanel: {
     parent: '#properties'
   },
+  propertiesConnector: {
+
+  },
   linting: {
     bpmnlint: bpmnModeler.linting.apexLinting
   },
   additionalModules: [
     bpmnModeler.customModules.propertiesPanelModule,
     bpmnModeler.customModules.propertiesProviderModule,
-    bpmnModeler.customModules.lintModule
+    bpmnModeler.customModules.lintModule,
+    bpmnModeler.customModules.propertiesConnector
   ],
   moddleExtensions: {
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
