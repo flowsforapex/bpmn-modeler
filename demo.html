@@ -46,17 +46,19 @@
   <script>
     var myModeler = new bpmnModeler.Modeler({
   container: "#canvas",
-  propertiesPanel: {
-    parent: '#properties'
-  },
+  // propertiesPanel: {
+  //  parent: '#properties'
+  // },
   propertiesConnector: {
-
+    showDemoBox: true,
+    showObjBtn: true,
+    showSaveBtn: false
   },
   linting: {
     bpmnlint: bpmnModeler.linting.apexLinting
   },
   additionalModules: [
-    bpmnModeler.customModules.propertiesPanelModule,
+    // bpmnModeler.customModules.propertiesPanelModule,
     bpmnModeler.customModules.propertiesProviderModule,
     bpmnModeler.customModules.lintModule,
     bpmnModeler.customModules.propertiesConnector
