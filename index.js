@@ -1,7 +1,7 @@
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 
-import propertiesConnector from './modules/properties-connector';
-import propertiesPanelModule from 'bpmn-js-properties-panel';
+import propertiesConnectorModule from './modules/properties-connector';
+// import propertiesPanelModule from 'bpmn-js-properties-panel';
 import propertiesProviderModule from './apexPropertiesProvider/provider';
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
 
@@ -12,10 +12,10 @@ var bpmnModeler = {
   Modeler: BpmnModeler,
   linting: { apexLinting: bpmnlintConfig },
   customModules: {
-    propertiesPanelModule,
+    // propertiesPanelModule,
     propertiesProviderModule,
     lintModule,
-    propertiesConnector
+    propertiesConnector: propertiesConnectorModule
   },
   moddleExtensions: {
     apexModdleDescriptor
