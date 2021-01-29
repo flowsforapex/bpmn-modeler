@@ -13,9 +13,9 @@ var bpmnModeler = {
   linting: { apexLinting: bpmnlintConfig },
   customModules: {
     // propertiesPanelModule,
-    propertiesProviderModule,
+    // propertiesProviderModule,
     lintModule,
-    propertiesConnector: propertiesConnectorModule
+    propertiesConnectorModule
   },
   moddleExtensions: {
     apexModdleDescriptor

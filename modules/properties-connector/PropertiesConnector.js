@@ -1,8 +1,6 @@
 var BpmnViewer = require('bpmn-js/lib/Modeler');
 
 /**
- * A properties panel implementation.
- *
  * To use it provide a `propertiesProvider` component that knows
  * about which properties to display.
  *
@@ -19,13 +17,19 @@ var BpmnViewer = require('bpmn-js/lib/Modeler');
  * @param {Canvas} canvas
  * @param {CommandStack} commandStack
  */
-function PropertiesConnector(config, eventBus, modeling, propertiesProvider, commandStack, canvas) {
+function PropertiesConnector(
+    config, 
+    eventBus, 
+    modeling, 
+    // propertiesProvider, 
+    commandStack, 
+    canvas) {
 
     this._eventBus = eventBus;
     this._modeling = modeling;
     this._commandStack = commandStack;
     this._canvas = canvas;
-    this._propertiesProvider = propertiesProvider;
+    // this._propertiesProvider = propertiesProvider;
 
     this._demoRootNode = null;
     this._currentXml = null;
@@ -38,7 +42,7 @@ PropertiesConnector.$inject = [
     'config.propertiesConnector',
     'eventBus',
     'modeling',
-    'propertiesProvider',
+    // 'propertiesProvider',
     'commandStack',
     'canvas'
 ];
