@@ -1,18 +1,15 @@
+/**
+ * A rule that checks the length of a businessObjects's ID.
+ */
+module.exports = function () {
+  function check(businessObject, reporter) {
+    const { id } = businessObject;
+    const isIdTooLong = id && id.length > 50;
 
-  /**
-   * A rule that checks the length of a node's ID.
-   */
-  module.exports = function () {
-  
-    function check(node, reporter) {
-
-        const {id} = node;
-
-        if (id && id.length > 50) {
-          reporter.report(node.id, 'Element ID is longer than 50 characters');
-        }
+    if (isIdTooLong) {
+      reporter.report(businessObject.id, 'Element ID is longer than 50 characters');
     }
-  
-    return { check };
-  };
-  
+  }
+
+  return { check };
+};

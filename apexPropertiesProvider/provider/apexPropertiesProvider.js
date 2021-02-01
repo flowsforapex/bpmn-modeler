@@ -8,10 +8,10 @@ import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/Proce
 import eventProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps';
 import linkProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps';
 import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps';
-import idProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/IdProps';
 import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
 
 // Require your custom property entries.
+import globalProps from './parts/globalProps.js';
 import apexUsertaskProps from './parts/userTaskProps.js';
 import apexScriptTaskProps from './parts/scriptTaskProps.js';
 import apexServiceTaskProps from './parts/serviceTaskProps.js';
@@ -35,7 +35,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
     entries: []
   };
 
-  idProps(generalGroup, element, translate);
+  globalProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
   processProps(generalGroup, element, translate);
   linkProps(detailsGroup, element, translate);
