@@ -3,13 +3,13 @@ module.exports = {
     recommended: {
       rules: {
         'apex/max-id-length': 'error',
-        'apex/id-was-changed': 'error'
+        'apex/id-was-changed': 'warn'
       }
     },
     all: {
       rules: {
         'apex/max-id-length': 'error',
-        'apex/id-was-changed': 'error'
+        'apex/id-was-changed': 'warn'
       }
     }
   }
