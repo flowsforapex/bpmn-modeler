@@ -25,13 +25,7 @@ export default function (group, element, translate) {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
         label: 'PL/SQL Code',
-        modelProperty: 'plsqlCode',
-        set: function (element, values, node) {
-          var bo = getBusinessObject(element);
-          return cmdHelper.updateBusinessObject(element, bo, {
-            plsqlCode: values.plsqlCode
-          });
-        }
+        modelProperty: 'plsqlCode'
       })
     );
 
