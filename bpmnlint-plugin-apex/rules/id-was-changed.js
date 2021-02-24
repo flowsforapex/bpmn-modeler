@@ -8,7 +8,8 @@ module.exports = function () {
       'bpmndi:BPMNPlane',
       'bpmndi:BPMNShape',
       'bpmndi:BPMNEdge',
-      'bpmn:Definitions'
+      'bpmn:Definitions',
+      'bpmn:SequenceFlow'
     ];
     const { id } = businessObject;
     const isBoAccessableInUi = id && notChangeableTypes.indexOf(businessObject.$type) < 0;
