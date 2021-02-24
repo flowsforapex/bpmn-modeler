@@ -12,15 +12,9 @@ export default function (group, element, translate) {
       return getBusinessObject(element).id;
     },
     setProperty: function (element, properties) {
-      const bo = getBusinessObject(element);
-      const initialId = bo.$attrs.initialId || bo.id;
       const updatedElement = element.labelTarget || element;
-      const updatedProperties = {
-        initialId,
-        ...properties
-      };
 
-      return cmdHelper.updateProperties(updatedElement, updatedProperties);
+      return cmdHelper.updateProperties(updatedElement, properties);
     },
     validate: function (element, values) {
       var idValue = values.id;

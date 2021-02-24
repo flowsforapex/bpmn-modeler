@@ -10,15 +10,20 @@ module.exports = function () {
       'bpmndi:BPMNEdge',
       'bpmn:Definitions'
     ];
-    const { id } = businessObject;
+    const { id, $type, name } = businessObject;
     const isBoAccessableInUi = id && notChangeableTypes.indexOf(businessObject.$type) < 0;
-    const { initialId } = businessObject.$attrs;
 
     if (isBoAccessableInUi) {
-      const isIdUnchanged = !initialId || initialId === id;
+      const stringAfterUnderscore = id.substr(id.indexOf('_') + 1);
+      const patternUnchangedId = /^[0,1]{1}[\da-z]{6}$/;
+      const isIdUnchanged = patternUnchangedId.test(stringAfterUnderscore);
 
       if (isIdUnchanged) {
-        reporter.report(businessObject.id, 'Element ID was not changed yet');
+        const isSequenceFlowWithoutName = $type === 'bpmn:SequenceFlow' && (!name || !name.length);
+
+        if (!isSequenceFlowWithoutName) {
+          reporter.report(businessObject.id, 'Element ID was not changed yet');
+        }
       }
     }
   }
