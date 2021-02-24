@@ -8,10 +8,9 @@ module.exports = function () {
       'bpmndi:BPMNPlane',
       'bpmndi:BPMNShape',
       'bpmndi:BPMNEdge',
-      'bpmn:Definitions',
-      'bpmn:SequenceFlow'
+      'bpmn:Definitions'
     ];
-    const { id } = businessObject;
+    const { id, $type, name } = businessObject;
     const isBoAccessableInUi = id && notChangeableTypes.indexOf(businessObject.$type) < 0;
 
     if (isBoAccessableInUi) {
@@ -20,7 +19,11 @@ module.exports = function () {
       const isIdUnchanged = patternUnchangedId.test(stringAfterUnderscore);
 
       if (isIdUnchanged) {
-        reporter.report(businessObject.id, 'Element ID was not changed yet');
+        const isSequenceFlowWithoutName = $type === 'bpmn:SequenceFlow' && (!name || !name.length);
+
+        if (!isSequenceFlowWithoutName) {
+          reporter.report(businessObject.id, 'Element ID was not changed yet');
+        }
       }
     }
   }
