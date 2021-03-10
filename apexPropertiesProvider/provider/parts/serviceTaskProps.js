@@ -4,7 +4,11 @@ import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
 export default function (group, element, translate) {
-  const serviceTaskElementSelector = '[name="serviceTaskType"]';
+  const serviceTaskEngine = '[name="engine"]';
+  const engineNo = 0;
+  const serviceTaskType = '[name="serviceTaskType"]';
+  const typePlsql = 0;
+  const typeEmail = 1;
 
   if (is(element, 'bpmn:ServiceTask')) {
     group.entries.push(
@@ -25,6 +29,22 @@ export default function (group, element, translate) {
       })
     );
 
+    // engine: if 'yes' then add 'autoBinds' 
+    group.entries.push(
+      entryFactory.selectBox(translate, {
+        id: 'engine',
+        description: 'Use APEX_EXEC',
+        modelProperty: 'engine',
+        selectOptions: [
+          { name: 'No', value: 'false' },
+          { name: 'Yes', value: 'true' }
+        ],
+        hidden: function () {
+          return isOptionSelected(serviceTaskType, typeEmail);
+        }
+      })
+    );
+
     // Run PL/SQL Code
     group.entries.push(
       entryFactory.textBox(translate, {
@@ -39,7 +59,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 0);
+          return isOptionSelected(serviceTaskType, typePlsql);
         }
       })
     );
@@ -55,7 +75,8 @@ export default function (group, element, translate) {
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail)
+            || isOptionSelected(serviceTaskEngine, engineNo);
         }
       })
     );
@@ -74,7 +95,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
@@ -92,7 +113,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
@@ -110,7 +131,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
@@ -128,7 +149,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
@@ -146,7 +167,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
@@ -164,7 +185,7 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );

@@ -57,7 +57,7 @@ function createApexTabGroups(element, translate) {
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
-    label: 'PL/SQL Script',
+    label: 'Task',
     entries: []
   };
 

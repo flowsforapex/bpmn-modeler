@@ -1,12 +1,13 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
 export default function (group, element, translate) {
-  const scriptTaskElementSelector = '[name="engine"]';
+  const scriptTaskEngine = '[name="engine"]';
+  const engineNo = 0;
   
   if (is(element, 'bpmn:ScriptTask')) {
+    // if 'yes' then add 'autoBinds' 
     group.entries.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
@@ -41,7 +42,7 @@ export default function (group, element, translate) {
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return isOptionSelected(scriptTaskElementSelector, 0);
+          return isOptionSelected(scriptTaskEngine, engineNo);
         }
       }
       )
