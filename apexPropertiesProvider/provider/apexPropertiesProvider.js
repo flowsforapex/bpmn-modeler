@@ -12,9 +12,9 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
-import apexUsertaskProps from './parts/userTaskProps.js';
-import apexScriptTaskProps from './parts/scriptTaskProps.js';
-import apexServiceTaskProps from './parts/serviceTaskProps.js';
+import generateUserTaskEntries from './parts/userTaskProps.js';
+import generateScriptTaskEntries from './parts/scriptTaskProps.js';
+import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -53,21 +53,23 @@ function createApexTabGroups(element, translate) {
   var apexPageGroup = {
     id: 'apex-page-call',
     label: 'Call APEX Page',
-    entries: []
+    entries: generateUserTaskEntries(element, translate)
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
-    label: 'PL/SQL Script',
-    entries: []
+    label: 'Script Task',
+    entries: generateScriptTaskEntries(element, translate)
   };
-
-  apexUsertaskProps(apexPageGroup, element, translate);
-  apexScriptTaskProps(apexScriptGroup, element, translate);
-  apexServiceTaskProps(apexScriptGroup, element, translate);
+  var apexServiceGroup = {
+    id: 'apex-service-group',
+    label: 'Service Task',
+    entries: generateServiceTaskEntries(element, translate)
+  };
 
   return [
     apexPageGroup,
-    apexScriptGroup
+    apexScriptGroup,
+    apexServiceGroup
   ];
 }
 

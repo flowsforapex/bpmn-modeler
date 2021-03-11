@@ -3,11 +3,16 @@ import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
 import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
-export default function (group, element, translate) {
-  const serviceTaskElementSelector = '[name="serviceTaskType"]';
+export default function (element, translate) {
+  const serviceTaskEngine = '[name="engine"]';
+  const engineNo = 0;
+  const serviceTaskType = '[name="serviceTaskType"]';
+  const typePlsql = 0;
+  const typeEmail = 1;
+  const serviceTaskProps = [];
 
   if (is(element, 'bpmn:ServiceTask')) {
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'serviceTaskType',
         description: 'choose the Type of the Service Task',
@@ -25,8 +30,25 @@ export default function (group, element, translate) {
       })
     );
 
+    // engine: if 'yes' then add 'autoBinds' 
+    serviceTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'engine',
+        description: 'Use APEX_EXEC',
+        modelProperty: 'engine',
+        label: 'Engine',
+        selectOptions: [
+          { name: 'No', value: 'false' },
+          { name: 'Yes', value: 'true' }
+        ],
+        hidden: function () {
+          return isOptionSelected(serviceTaskType, typeEmail);
+        }
+      })
+    );
+
     // Run PL/SQL Code
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
@@ -39,12 +61,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 0);
+          return isOptionSelected(serviceTaskType, typePlsql);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
         description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
@@ -55,13 +77,14 @@ export default function (group, element, translate) {
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail)
+            || isOptionSelected(serviceTaskEngine, engineNo);
         }
       })
     );
 
     // Send Mail Using Template
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'applicationId',
         description: 'Enter the Application ID.',
@@ -74,12 +97,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'pageId',
         description: 'Enter the Page ID.',
@@ -92,12 +115,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'username',
         description: 'Enter the Username.',
@@ -110,12 +133,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'templateIdentifier',
         description: 'Enter the Template Identifier.',
@@ -128,12 +151,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'emailFrom',
         description: 'Enter the email sender.',
@@ -146,12 +169,12 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
 
-    group.entries.push(
+    serviceTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'emailTo',
         description: 'Enter the email recipient.',
@@ -164,9 +187,11 @@ export default function (group, element, translate) {
           });
         },
         show: function () {
-          return isOptionSelected(serviceTaskElementSelector, 1);
+          return isOptionSelected(serviceTaskType, typeEmail);
         }
       })
     );
   }
+
+  return serviceTaskProps;
 }

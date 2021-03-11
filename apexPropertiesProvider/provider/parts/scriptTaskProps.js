@@ -1,17 +1,20 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import cmdHelper from 'bpmn-js-properties-panel/lib/helper/CmdHelper';
-import { is, getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
-export default function (group, element, translate) {
-  const scriptTaskElementSelector = '[name="engine"]';
+export default function (element, translate) {
+  const scriptTaskEngine = '[name="engine"]';
+  const engineNo = 0;
+  const scriptTaskProps = [];
   
   if (is(element, 'bpmn:ScriptTask')) {
-    group.entries.push(
+    // if 'yes' then add 'autoBinds' 
+    scriptTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
         description: 'Use APEX_EXEC',
         modelProperty: 'engine',
+        label: 'Engine',
         selectOptions: [
           { name: 'No', value: 'false' },
           { name: 'Yes', value: 'true' }
@@ -20,7 +23,7 @@ export default function (group, element, translate) {
     );
 
     // Run PL/SQL Code
-    group.entries.push(
+    scriptTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: 'Enter the PL/SQL code to be executed.',
@@ -30,7 +33,7 @@ export default function (group, element, translate) {
     );
 
     // only shown, when APEX_EXEC is used
-    group.entries.push(
+    scriptTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
         description: 'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.',
@@ -41,10 +44,12 @@ export default function (group, element, translate) {
           { name: 'Yes', value: 'true' }
         ],
         hidden: function () {
-          return isOptionSelected(scriptTaskElementSelector, 0);
+          return isOptionSelected(scriptTaskEngine, engineNo);
         }
       }
       )
     );
   }
+
+  return scriptTaskProps;
 }
