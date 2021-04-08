@@ -29,7 +29,7 @@
   "dependencies": {
     "bpmn-js": "^8.2.2",
     "bpmn-js-bpmnlint": "^0.16.0",
-    "bpmn-js-properties-panel": "^0.41.0",
+    "bpmn-js-properties-panel": "^0.42.0",
     "bpmnlint": "^7.2.1",
     "bpmnlint-loader": "^0.1.5",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
