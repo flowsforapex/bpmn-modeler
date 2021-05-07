@@ -54,11 +54,14 @@
   },
   additionalModules: [
     bpmnModeler.customModules.propertiesPanelModule,
+    bpmnModeler.customModules.lintModule,
     bpmnModeler.customModules.propertiesProviderModule,
-    bpmnModeler.customModules.lintModule
+    bpmnModeler.customModules.camundaModule
+    
   ],
   moddleExtensions: {
-    apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
+    apex: bpmnModeler.moddleExtensions.apexModdleDescriptor,
+    camunda: bpmnModeler.moddleExtensions.camundaModdleDescriptor
   }
 });
 
