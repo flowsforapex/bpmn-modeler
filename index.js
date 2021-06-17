@@ -14,13 +14,13 @@ var bpmnModeler = {
   linting: { apexLinting: bpmnlintConfig },
   customModules: {
     propertiesPanelModule,
-    camundaModule,
+    //camundaModule,
     propertiesProviderModule,
     lintModule
   },
   moddleExtensions: {
     apexModdleDescriptor,
-    camundaModdleDescriptor
+    //camundaModdleDescriptor
   }
 };
 

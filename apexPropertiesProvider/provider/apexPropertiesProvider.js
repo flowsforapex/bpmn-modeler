@@ -16,12 +16,7 @@ import generateUserTaskEntries from './parts/userTaskProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 
-// ***************************** New partials ***********************************************************
-import generateEventBefore from './parts/eventBefore.js';
-import generateTaskBefore from './parts/taskBefore.js';
-
-import generateEventAfter from './parts/eventAfter.js';
-import generateTaskAfter from './parts/taskAfter.js';
+import generateTaskProcVarProps from './parts/process_variables/taskProcVarProps.js';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -58,7 +53,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
 function createApexTabGroups(element, translate) {
   var apexPageGroup = {
-    id: 'apex-page-call',
+    id: 'apex-page-calls',
     label: 'Call APEX Page',
     entries: generateUserTaskEntries(element, translate)
   };
@@ -80,41 +75,16 @@ function createApexTabGroups(element, translate) {
   ];
 }
 
-// ********************** BEFORE *****************************************
-function createProcVarsBeforeTabGroups(element, translate) {
-  var apexPageGroup = {
-    id: 'apex-page-call',
-    label: 'Before event',
-    entries: generateEventBefore(element, translate)
-  };
-  var apexScriptGroup = {
-    id: 'apex-script-group',
-    label: 'Before task',
-    entries: generateTaskBefore(element, translate)
+function createVariablesTabGroup(element, bpmnFactory, translate) {
+
+  var preTaskGroup = {
+    id: 'apex-task',
+    label: 'Pre-Task',
+    entries: generateTaskProcVarProps(element, bpmnFactory, translate)
   };
 
   return [
-    apexPageGroup,
-    apexScriptGroup
-  ];
-}
-
-// ********************** AFTER *****************************************
-function createProcvarsAfterGroups(element, translate) {
-  var apexPageGroup = {
-    id: 'apex-page-call',
-    label: 'After event',
-    entries: generateEventAfter(element, translate)
-  };
-  var apexScriptGroup = {
-    id: 'apex-script-group',
-    label: 'After task',
-    entries: generateTaskAfter(element, translate)
-  };
-
-  return [
-    apexPageGroup,
-    apexScriptGroup
+    preTaskGroup
   ];
 }
 
@@ -139,26 +109,17 @@ export default function apexPropertiesProvider(
       groups: createApexTabGroups(element, translate)
     };
 
-    // The 'Variables' tab (before)
-    var VariablesTabBefore = {
-      id: 'procVarsBefore',
-      label: 'Before',
-      groups: createProcVarsBeforeTabGroups(element, translate)
-    };
-
-    // The 'Variables' tab (after)
-    var VariablesTabAfter = {
-      id: 'procVarsAfter',
-      label: 'After',
-      groups: createProcvarsAfterGroups(element, translate)
+    var VariablesTab = {
+      id: 'variables',
+      label: 'Variables',
+      groups: createVariablesTabGroup(element, bpmnFactory, translate)
     };
 
     // Show general + APEX tabs
     return [
       generalTab,
       ApexTab,
-      VariablesTabBefore,
-      VariablesTabAfter,
+      VariablesTab,
     ];
   };
 }

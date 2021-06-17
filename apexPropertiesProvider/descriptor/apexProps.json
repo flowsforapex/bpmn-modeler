@@ -91,6 +91,33 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "apexProcessVar",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "sequence",
+          "type": "String"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "dataType",
+          "type": "String"
+        },
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
     }
   ]
 }
