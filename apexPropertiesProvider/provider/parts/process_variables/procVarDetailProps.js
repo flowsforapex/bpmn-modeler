@@ -34,16 +34,16 @@ export default function(element, bpmnFactory, options, translate) {
     // sequence field
     detailProps.push(
         entryFactory.textField(translate, {
-          id: 'varSeq',
+          id: 'varSequence',
           description: 'Execution sequence',
           label: 'Sequence',
-          modelProperty: 'sequence',
+          modelProperty: 'varSequence',
   
           get: function(element, node) {
             var entry = getSelectedEntry(element, node);
             
             return {
-              sequence: (entry && entry.get('sequence')) || undefined
+              varSequence: (entry && entry.get('varSequence')) || undefined
             }
           },
       
@@ -51,7 +51,7 @@ export default function(element, bpmnFactory, options, translate) {
             var entry = getSelectedEntry(element, node);
 
             return cmdHelper.updateBusinessObject(element, entry, {
-              sequence: values.sequence || ''
+              varSequence: values.varSequence || ''
             });
           },
 
@@ -67,13 +67,13 @@ export default function(element, bpmnFactory, options, translate) {
         id: 'varName',
         description: 'Variable name',
         label: 'Name',
-        modelProperty: 'name',
+        modelProperty: 'varName',
   
         get: function(element, node) {
           var entry = getSelectedEntry(element, node);
     
           return {
-            name: (entry && entry.get('name')) || undefined
+            varName: (entry && entry.get('varName')) || undefined
           }
         },
     
@@ -81,7 +81,7 @@ export default function(element, bpmnFactory, options, translate) {
           var entry = getSelectedEntry(element, node);
     
           return cmdHelper.updateBusinessObject(element, entry, {
-            name: values.name || ''
+            varName: values.varName || ''
           });
         },
 
@@ -95,15 +95,15 @@ export default function(element, bpmnFactory, options, translate) {
     detailProps.push(
       entryFactory.selectBox(translate, {
         id: 'varDataType',
-        //description: 'Data Type',
+        description: 'Data Type',
         label: 'Data Type',
-        modelProperty: 'dataType',
+        modelProperty: 'varDataType',
   
         get: function(element, node) {
           var entry = getSelectedEntry(element, node);
     
           return {
-            dataType: (entry && entry.get('dataType')) || undefined
+            varDataType: (entry && entry.get('varDataType')) || undefined
           }
         },
     
@@ -111,7 +111,7 @@ export default function(element, bpmnFactory, options, translate) {
           var entry = getSelectedEntry(element, node);
     
           return cmdHelper.updateBusinessObject(element, entry, {
-            dataType: values.dataType || ''
+            varDataType: values.varDataType || ''
           });
         },
 
@@ -126,16 +126,16 @@ export default function(element, bpmnFactory, options, translate) {
     // expression type
     detailProps.push(
       entryFactory.selectBox(translate, {
-        id: 'varExprType',
+        id: 'varExpressionType',
         //description: 'Expression type',
         label: 'Expression Type',
-        modelProperty: 'expressionType',
+        modelProperty: 'varExpressionType',
   
         get: function(element, node) {
           var entry = getSelectedEntry(element, node);
   
           return {
-            expressionType: (entry && entry.get('expressionType')) || undefined
+            varExpressionType: (entry && entry.get('varExpressionType')) || undefined
           };
         },
   
@@ -143,7 +143,7 @@ export default function(element, bpmnFactory, options, translate) {
           var entry = getSelectedEntry(element, node);
               
           return cmdHelper.updateBusinessObject(element, entry, {
-              expressionType: values.expressionType || ''
+            varExpressionType: values.varExpressionType || ''
             });
         },
   
@@ -168,11 +168,11 @@ export default function(element, bpmnFactory, options, translate) {
     // expression
     detailProps.push(
       entryFactory.textBox(translate, {
-        id: 'varExpr',
+        id: 'varExpression',
         //description: 'Expression',
         label: 'Expression',
         //dataValueLabel: 'expressionLabel',
-        modelProperty: 'expression',
+        modelProperty: 'varExpression',
   
         get: function(element, node) {
 
@@ -180,7 +180,7 @@ export default function(element, bpmnFactory, options, translate) {
           //var expressionType = (entry && entry.get('expressionType')) || undefined;
     
           return {
-            expression: (entry && entry.get('expression')) || undefined,
+            varExpression: (entry && entry.get('varExpression')) || undefined,
             //expressionLabel: EXPRESSION_LABEL[expressionType] || ''
           }
         },
@@ -189,7 +189,7 @@ export default function(element, bpmnFactory, options, translate) {
           var entry = getSelectedEntry(element, node);
     
           return cmdHelper.updateBusinessObject(element, entry, {
-            expression: values.expression || ''
+            varExpression: values.varExpression || ''
           });
         },
 

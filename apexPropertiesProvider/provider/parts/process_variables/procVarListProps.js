@@ -22,7 +22,7 @@ export default function(element, bpmnFactory, options, translate) {
     function getSelectedEntry(element, node) {
       var selection = (processVariablesEntry && processVariablesEntry.getSelected(element, node)) || { idx: -1 };
   
-      var entry = getEntries(bo, 'apex:apexProcessVar')[selection.idx];
+      var entry = getEntries(bo, 'apex:apexProcessVariable')[selection.idx];
   
       return entry;
     }
@@ -32,7 +32,7 @@ export default function(element, bpmnFactory, options, translate) {
         var entries = getEntries(bo, type);
         var entry = entries[idx];
   
-        var label = ('(' + entry.get('sequence') + ') ' + entry.get('name') + ' : ' + entry.get('expression'));
+        var label = ('(' + entry.get('varSequence') + ') ' + entry.get('varName') + ' : ' + entry.get('varExpression'));
   
         option.text = label;
       };
@@ -41,9 +41,11 @@ export default function(element, bpmnFactory, options, translate) {
     var newElement = function(element, type) {
       return function(element, extensionElements, value) {
         var props = {
-          sequence: getEntries(bo, type).length + 1,
-          name: '',
-          expression: ''
+          varSequence: String(getEntries(bo, type).length + 1),
+          varName: '',
+          varDataType: 'varchar2',
+          varExpression: '',
+          varExpressionType: 'static',
         };
   
         var newElem = elementHelper.createElement(type, props, extensionElements, bpmnFactory);
@@ -67,18 +69,18 @@ export default function(element, bpmnFactory, options, translate) {
     if (bo) {
 
       var processVariablesEntry = extensionElementsEntry(element, bpmnFactory, {
-        id : 'processVariables',
+        id : 'procVar',
         label : 'Process Variables',
-        modelProperty: 'apexProcessVar',
+        // modelProperty: 'apexProcessVariable',
 
-        createExtensionElement: newElement(element, 'apex:apexProcessVar'),
-        removeExtensionElement: removeElement(element, 'apex:apexProcessVar'),
+        createExtensionElement: newElement(element, 'apex:apexProcessVariable'),
+        removeExtensionElement: removeElement(element, 'apex:apexProcessVariable'),
 
         getExtensionElements: function(element) {
-          return getEntries(bo, 'apex:apexProcessVar');
+          return getEntries(bo, 'apex:apexProcessVariable');
         },
 
-        setOptionLabelValue: setOptionLabelValue('apex:apexProcessVar')
+        setOptionLabelValue: setOptionLabelValue('apex:apexProcessVariable')
 
       });
       entries.push(processVariablesEntry);

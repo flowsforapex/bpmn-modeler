@@ -93,28 +93,28 @@
       ]
     },
     {
-      "name": "apexProcessVar",
+      "name": "apexProcessVariable",
       "extends": [
       ],
       "properties": [
         {
-          "name": "sequence",
+          "name": "varSequence",
           "type": "String"
         },
         {
-          "name": "name",
+          "name": "varName",
           "type": "String"
         },
         {
-          "name": "dataType",
+          "name": "varDataType",
           "type": "String"
         },
         {
-          "name": "expressionType",
+          "name": "varExpressionType",
           "type": "String"
         },
         {
-          "name": "expression",
+          "name": "varExpression",
           "type": "String"
         }
       ]
