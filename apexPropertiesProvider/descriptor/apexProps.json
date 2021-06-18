@@ -116,6 +116,10 @@
         {
           "name": "varExpression",
           "type": "String"
+        },
+        {
+          "name": "varScope",
+          "type": "String"
         }
       ]
     }

@@ -79,7 +79,7 @@ function createVariablesTabGroup(element, bpmnFactory, translate) {
 
   var preTaskGroup = {
     id: 'apex-task',
-    label: 'Pre-Task',
+    label: 'ProcessVariables',
     entries: generateTaskProcVarProps(element, bpmnFactory, translate)
   };
 

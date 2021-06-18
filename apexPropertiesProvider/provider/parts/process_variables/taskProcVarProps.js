@@ -1,11 +1,10 @@
 var is = require('bpmn-js/lib/util/ModelUtil').is;
 
-import generateProcVarListProps from './procVarListProps';
-import generateProcVarDetailProps from './procVarDetailProps';
+import procVarProps from './procVarProps';
 
 export default function (element, bpmnFactory, translate) {
 
-  var procVarProps = [];
+  var taskProcVarProps = [];
 
   if (
     is(element, 'bpmn:Task') ||
@@ -15,15 +14,11 @@ export default function (element, bpmnFactory, translate) {
     is(element, 'bpmn:ManualTask')
   ) {
 
-    var listElement = generateProcVarListProps(element, bpmnFactory, {}, translate);
-
-    listElement.entries.forEach(element => procVarProps.push(element));
-
-
-    var detailProps = generateProcVarDetailProps(element, bpmnFactory, listElement, translate);
-
-    detailProps.forEach(element => procVarProps.push(element));
+    taskProcVarProps = procVarProps(element, bpmnFactory, translate, {
+      prePanelLabel: 'Pre-Task',
+      postPanelLabel: 'Post-Task'
+    });
   }
-  
-  return procVarProps;
+
+  return taskProcVarProps;
 }
