@@ -22,7 +22,7 @@ export default function(element, bpmnFactory, options, translate) {
     function getSelectedEntry(element, node) {
       var selection = (processVariablesEntry && processVariablesEntry.getSelected(element, node)) || { idx: -1 };
   
-      var entry = getEntries(bo, 'apex:apexProcessVariable')[selection.idx];
+      var entry = getEntries(bo, 'apex:processVariable')[selection.idx];
   
       return entry;
     }
@@ -73,14 +73,14 @@ export default function(element, bpmnFactory, options, translate) {
         label : 'Process Variables',
         // modelProperty: 'apexProcessVariable',
 
-        createExtensionElement: newElement(element, 'apex:apexProcessVariable'),
-        removeExtensionElement: removeElement(element, 'apex:apexProcessVariable'),
+        createExtensionElement: newElement(element, 'apex:processVariable'),
+        removeExtensionElement: removeElement(element, 'apex:processVariable'),
 
         getExtensionElements: function(element) {
-          return getEntries(bo, 'apex:apexProcessVariable');
+          return getEntries(bo, 'apex:processVariable');
         },
 
-        setOptionLabelValue: setOptionLabelValue('apex:apexProcessVariable')
+        setOptionLabelValue: setOptionLabelValue('apex:processVariable')
 
       });
       entries.push(processVariablesEntry);

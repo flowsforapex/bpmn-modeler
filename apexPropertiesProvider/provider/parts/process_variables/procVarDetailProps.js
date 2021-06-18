@@ -14,6 +14,10 @@ export default function(element, bpmnFactory, options, translate) {
       return getSelectedEntry(element, node);
     };
 
+    var notSelected = function(element, node) {
+      return (typeof getSelectedEntry(element, node) == 'undefined');
+    }
+
     var dataTypeOptions = [
       {name: 'Varchar2', value: 'varchar2'},
       {name: 'Number', value: 'number'},
@@ -30,6 +34,24 @@ export default function(element, bpmnFactory, options, translate) {
       {name: 'PLSQL Expression', value: 'plsqlExpression'},
       {name: 'PLSQL Function Body', value: 'plsqlFunctionBody'},
     ]
+
+    var getProperty = function(property) {
+      return function(element, node) {
+        var entry = getSelectedEntry(element, node);
+
+        return {
+          [property]: (entry && entry.get(property)) || undefined
+        }
+      }
+    }
+
+    var setProperty = function() {
+      return function(element, values, node) {
+        var entry = getSelectedEntry(element, node);
+
+        return cmdHelper.updateBusinessObject(element, entry, values);
+      }
+    }
   
     // sequence field
     detailProps.push(
@@ -39,25 +61,11 @@ export default function(element, bpmnFactory, options, translate) {
           label: 'Sequence',
           modelProperty: 'varSequence',
   
-          get: function(element, node) {
-            var entry = getSelectedEntry(element, node);
-            
-            return {
-              varSequence: (entry && entry.get('varSequence')) || undefined
-            }
-          },
+          get: getProperty('varSequence'),
       
-          set: function(element, values, node) {
-            var entry = getSelectedEntry(element, node);
+          set: setProperty(),
 
-            return cmdHelper.updateBusinessObject(element, entry, {
-              varSequence: values.varSequence || ''
-            });
-          },
-
-          hidden: function(element, node) {
-            return !isSelected(element, node);
-          }
+          hidden: notSelected
         })
     );
   
@@ -69,25 +77,11 @@ export default function(element, bpmnFactory, options, translate) {
         label: 'Name',
         modelProperty: 'varName',
   
-        get: function(element, node) {
-          var entry = getSelectedEntry(element, node);
+        get: getProperty('varName'),
     
-          return {
-            varName: (entry && entry.get('varName')) || undefined
-          }
-        },
-    
-        set: function(element, values, node) {
-          var entry = getSelectedEntry(element, node);
-    
-          return cmdHelper.updateBusinessObject(element, entry, {
-            varName: values.varName || ''
-          });
-        },
+        set: setProperty(),
 
-        hidden: function(element, node) {
-          return !isSelected(element, node);
-        }
+        hidden: notSelected
       })
     );
 
@@ -99,27 +93,13 @@ export default function(element, bpmnFactory, options, translate) {
         label: 'Data Type',
         modelProperty: 'varDataType',
   
-        get: function(element, node) {
-          var entry = getSelectedEntry(element, node);
+        get: getProperty('varDataType'),
     
-          return {
-            varDataType: (entry && entry.get('varDataType')) || undefined
-          }
-        },
-    
-        set: function(element, values, node) {
-          var entry = getSelectedEntry(element, node);
-    
-          return cmdHelper.updateBusinessObject(element, entry, {
-            varDataType: values.varDataType || ''
-          });
-        },
+        set: setProperty(),
 
         selectOptions: dataTypeOptions,
 
-        hidden: function(element, node) {
-          return !isSelected(element, node);
-        }
+        hidden: notSelected
       })
     );
   
@@ -131,39 +111,25 @@ export default function(element, bpmnFactory, options, translate) {
         label: 'Expression Type',
         modelProperty: 'varExpressionType',
   
-        get: function(element, node) {
-          var entry = getSelectedEntry(element, node);
+        get: getProperty('varExpressionType'),
   
-          return {
-            varExpressionType: (entry && entry.get('varExpressionType')) || undefined
-          };
-        },
-  
-        set: function(element, values, node) {
-          var entry = getSelectedEntry(element, node);
-              
-          return cmdHelper.updateBusinessObject(element, entry, {
-            varExpressionType: values.varExpressionType || ''
-            });
-        },
+        set: setProperty(),
   
         selectOptions: expressionTypeOptions,
   
-        hidden: function(element, node) {
-          return !isSelected(element, node);
-        }
+        hidden: notSelected
       })
     );
 
-    var EXPRESSION_LABEL = {
-      static: 'Static',
-      processVariable: 'Process Variable',
-      pageItem: 'Page Item',
-      sqlQuerySingle: 'SQL query returning a single value',
-      sqlQueryList: 'SQL query returning a colon delimited list',
-      plsqlExpression: 'PLSQL Expression',
-      plsqlFunctionBody: 'PLSQL Function Body'
-    };
+    // var EXPRESSION_LABEL = {
+    //   static: 'Static',
+    //   processVariable: 'Process Variable',
+    //   pageItem: 'Page Item',
+    //   sqlQuerySingle: 'SQL query returning a single value',
+    //   sqlQueryList: 'SQL query returning a colon delimited list',
+    //   plsqlExpression: 'PLSQL Expression',
+    //   plsqlFunctionBody: 'PLSQL Function Body'
+    // };
   
     // expression
     detailProps.push(
@@ -174,28 +140,33 @@ export default function(element, bpmnFactory, options, translate) {
         //dataValueLabel: 'expressionLabel',
         modelProperty: 'varExpression',
   
-        get: function(element, node) {
+        // get: function(element, node) {
 
-          var entry = getSelectedEntry(element, node);
-          //var expressionType = (entry && entry.get('expressionType')) || undefined;
+        //   var entry = getSelectedEntry(element, node);
+        //   //var expressionType = (entry && entry.get('expressionType')) || undefined;
     
-          return {
-            varExpression: (entry && entry.get('varExpression')) || undefined,
-            //expressionLabel: EXPRESSION_LABEL[expressionType] || ''
-          }
-        },
-    
-        set: function(element, values, node) {
-          var entry = getSelectedEntry(element, node);
-    
-          return cmdHelper.updateBusinessObject(element, entry, {
-            varExpression: values.varExpression || ''
-          });
-        },
+        //   return {
+        //     varExpression: (entry && entry.get('varExpression')) || undefined,
+        //     //expressionLabel: EXPRESSION_LABEL[expressionType] || ''
+        //   }
+        // },
 
-        show: function(element, node) {
-          return isSelected(element, node);
-        }
+        get: getProperty('varExpression'),
+    
+        set: setProperty(),
+
+        show: isSelected
+
+        // validate: function(element, values, node) {
+        //   var varExpression = values.varExpression,
+        //   validate = {};
+
+        //   if (typeof varExpression == 'undefined' || (varExpression && varExpression.length < 1)) {
+        //     validate.varExpression = 'Enter expression';
+        //   }
+        //   return validate;
+        // }
+
       })
     );
 

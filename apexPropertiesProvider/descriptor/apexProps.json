@@ -93,7 +93,7 @@
       ]
     },
     {
-      "name": "apexProcessVariable",
+      "name": "processVariable",
       "extends": [
       ],
       "properties": [
