@@ -16,7 +16,9 @@ import generateUserTaskEntries from './parts/userTaskProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 
-import generateTaskProcVarProps from './parts/process_variables/taskProcVarProps.js';
+import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+
+import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -77,14 +79,21 @@ function createApexTabGroups(element, translate) {
 
 function createVariablesTabGroup(element, bpmnFactory, translate) {
 
-  var preTaskGroup = {
+  var taskGroup = {
     id: 'apex-task',
-    label: 'ProcessVariables',
-    entries: generateTaskProcVarProps(element, bpmnFactory, translate)
+    label: 'Process Variables',
+    entries: generateUserTaskProcessVariableLists(element, bpmnFactory, translate)
   };
 
+  var detailGroup = {
+    id: 'details',
+    label: 'Variable Details',
+    entries: procVarDetailProps(element, bpmnFactory, translate)
+  }
+
   return [
-    preTaskGroup
+    taskGroup,
+    detailGroup
   ];
 }
 
