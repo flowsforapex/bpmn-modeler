@@ -13,13 +13,8 @@ export default function (element, bpmnFactory, translate) {
   ) {
 
     return procVarLists(element, bpmnFactory, translate, {
-      id1: 'preTask',
-      label1: 'Pre Task',
-      scope1: 'preTask',
-      id2: 'postTask',
-      label2: 'Post Task',
-      scope2: 'postTask'
+      type1: 'apex:preTask', label1: 'Pre Task',
+      type2: 'apex:postTask', label2: 'Post Task'
     });
-
   }
 }

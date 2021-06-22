@@ -5,12 +5,16 @@ var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camu
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
     elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
-const TYPE = 'apex:processVariable';
+const TYPE_PROCESS_VARIABLE = 'apex:processVariable';
 var listElements;
 
-function getEntries(element, scope) {
+function getEntries(element, type) {
     var bo = getBusinessObject(element);
-    return bo && extensionElementsHelper.getExtensionElements(bo, TYPE) && extensionElementsHelper.getExtensionElements(bo, TYPE).filter(e => e.varScope == scope) || [];
+    return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars || [];
+}
+
+export function isSelected(element, node) {
+    return (typeof getSelectedEntry(element, node) != 'undefined');
 }
 
 export function getSelectedEntry(element, node) {
@@ -22,7 +26,7 @@ export function getSelectedEntry(element, node) {
         listElements.forEach(e => {
             if (e.listObject && e.listObject.getSelected(element, node).idx > -1) {
                 selection = e.listObject.getSelected(element, node);
-                entry = getEntries(element, e.scope)[selection.idx];
+                entry = getEntries(element, e.type)[selection.idx];
             }
         });
     }
@@ -30,9 +34,9 @@ export function getSelectedEntry(element, node) {
     return entry;
 }
 
-var setOptionLabelValue = function(scope) {
+var setOptionLabelValue = function(type) {
     return function(element, node, option, property, value, idx) {
-        var entries = getEntries(element, scope);
+        var entries = getEntries(element, type);
         var entry = entries[idx];
 
         var label = entry ? ('(' + entry.get('varSequence') + ') ' + entry.get('varName') + (entry.get('varExpression') && (' : ' + entry.get('varExpression')))) : '';
@@ -41,28 +45,39 @@ var setOptionLabelValue = function(scope) {
     };
 };
 
-var newElement = function(bpmnFactory, props) {
+var newElement = function(bpmnFactory, type, props) {
     return function(element, extensionElements, values) {
-        // retrieve counter
-        var nextSequence = getEntries(element, props.varScope).length + 1;
 
-        values = {
-        varSequence: String(nextSequence),
-        varName: props.varName + '_' + nextSequence,
-        varDataType: props.varDataType,
-        varExpression: props.varExpression,
-        varExpressionType: props.varExpressionType,
-        varScope: props.varScope,
+        var commands = [];
+
+        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), type)[0];
+
+        if (!container) {
+            container = elementHelper.createElement(type, {}, extensionElements, bpmnFactory);
+            commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ container ]));
         }
 
-        var newElem = elementHelper.createElement(TYPE, values, extensionElements, bpmnFactory);
-        return cmdHelper.addElementsTolist(element, extensionElements, 'values', [ newElem ]);
+        // retrieve counter
+        var nextSequence = getEntries(element, type).length + 1;
+
+        values = {
+            varSequence: String(nextSequence),
+            varName: props.varName + '_' + nextSequence,
+            varDataType: props.varDataType,
+            varExpression: props.varExpression,
+            varExpressionType: props.varExpressionType
+        }
+
+        var newElem = elementHelper.createElement(TYPE_PROCESS_VARIABLE, values, container, bpmnFactory);
+        commands.push(cmdHelper.addElementsTolist(element, container, 'procVars', [ newElem ]));
+
+        return commands;
     };
 };
 
-var removeElement = function(scope) {
+var removeElement = function(type) {
     return function(element, extensionElements, value, idx) {
-        var entries = getEntries(element, scope);
+        var entries = getEntries(element, type);
         var entry = entries[idx];
         if (entry) {
             var bo = getBusinessObject(element);
@@ -75,65 +90,63 @@ export function procVarLists(element, bpmnFactory, translate, options) {
 
     var procVarProps = [];
 
-    var scope1 = options.scope1,
-        label1 = options.label1
+    var type1 = options.type1,
+        label1 = options.label1;
 
     // create first list element
     var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-      id : scope1,
+      id : 'pre',
       label : label1,
 
-      createExtensionElement: newElement(bpmnFactory, {
+      createExtensionElement: newElement(bpmnFactory, type1, {
           varSequence: '0', // TODO count gesamtzahl
           varName: 'pre',
           varDataType: 'varchar2',
           varExpression: '',
-          varExpressionType: 'static',
-          varScope: scope1
+          varExpressionType: 'static'
       }),
-      removeExtensionElement: removeElement(scope1),
+      removeExtensionElement: removeElement(type1),
 
       getExtensionElements: function(element) {
-          return getEntries(element, scope1);
+          return getEntries(element, type1);
       },
 
       onSelectionChange: function(element, node) {
           postProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(scope1)
+      setOptionLabelValue: setOptionLabelValue(type1)
     });
 
     procVarProps.push(preProcessVariables);
 
-    var scope2 = options.scope2,
+    var type2 = options.type2,
         label2 = options.label2;
 
     // create second list element
     var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-      id : scope2,
+      id : 'post',
       label : label2,
 
-      createExtensionElement: newElement(bpmnFactory, {
+      createExtensionElement: newElement(bpmnFactory, type2, {
         varSequence: '0', // TODO count gesamtzahl
         varName: 'post',
         varDataType: 'varchar2',
         varExpression: '',
-        varExpressionType: 'static',
-        varScope: scope2
+        varExpressionType: 'static'
       }),
 
-      removeExtensionElement: removeElement(scope2),
+      removeExtensionElement: removeElement(type2),
 
       getExtensionElements: function(element) {
-          return getEntries(element, scope2);
+          return getEntries(element, type2);
       },
 
       onSelectionChange: function(element, node) {
           preProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(scope2)
+      setOptionLabelValue: setOptionLabelValue(type2)
     });
     
     procVarProps.push(postProcessVariables);
@@ -142,11 +155,11 @@ export function procVarLists(element, bpmnFactory, translate, options) {
     listElements = [
       {
         listObject: preProcessVariables,
-        scope: scope1
+        type: type1
       },
       {
         listObject: postProcessVariables,
-        scope: scope2
+        type: type2
       }
     ];
     

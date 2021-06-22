@@ -116,10 +116,30 @@
         {
           "name": "varExpression",
           "type": "String"
-        },
+        }
+      ]
+    },
+    {
+      "name": "preTask",
+      "extends": [
+      ],
+      "properties": [
         {
-          "name": "varScope",
-          "type": "String"
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "postTask",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
         }
       ]
     }

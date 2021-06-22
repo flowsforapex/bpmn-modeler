@@ -1,15 +1,8 @@
-var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
+var is = require('bpmn-js/lib/util/ModelUtil').is,
+    entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory'),
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 import { getSelectedEntry } from './procVarLists';
-
-function isSelected(element, node) {
-    return getSelectedEntry(element, node);
-};
-
-function notSelected(element, node) {
-    return (typeof getSelectedEntry(element, node) == 'undefined');
-}
 
 var getProperty = function(property) {
     return function(element, node) {
@@ -34,100 +27,111 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
 
     var procVarProps = [];
 
-    // sequence field
-    procVarProps.push(
-        entryFactory.textField(translate, {
-        id: 'varSequence',
-        description: 'Execution sequence',
-        label: 'Sequence',
-        modelProperty: 'varSequence',
+    if (
+        // task elements
+        is(element, 'bpmn:Task') ||
+        is(element, 'bpmn:UserTask') ||
+        is(element, 'bpmn:ScriptTask') ||
+        is(element, 'bpmn:ServiceTask') ||
+        is(element, 'bpmn:ManualTask') ||
+        // gateway elements
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway') ||
+        // event elements
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
 
-        get: getProperty('varSequence'),
+        // sequence field
+        procVarProps.push(
+            entryFactory.textField(translate, {
+            id: 'varSequence',
+            description: 'Execution sequence',
+            label: 'Sequence',
+            modelProperty: 'varSequence',
 
-        set: setProperty(),
+            get: getProperty('varSequence'),
 
-        hidden: notSelected()
-        })
-    );
+            set: setProperty()
+            })
+        );
 
-    // name field
-    procVarProps.push(
-        entryFactory.textField(translate, {
-            id: 'varName',
-            description: 'Variable name',
-            label: 'Name',
-            modelProperty: 'varName',
+        // name field
+        procVarProps.push(
+            entryFactory.textField(translate, {
+                id: 'varName',
+                description: 'Variable name',
+                label: 'Name',
+                modelProperty: 'varName',
 
-            get: getProperty('varName'),
+                get: getProperty('varName'),
 
-            set: setProperty(),
+                set: setProperty()
+            })
+        );
 
-            hidden: notSelected()
-        })
-    );
+        // datatype field
+        procVarProps.push(
+            entryFactory.selectBox(translate, {
+                id: 'varDataType',
+                description: 'Data Type',
+                label: 'Data Type',
+                modelProperty: 'varDataType',
 
-    // datatype field
-    procVarProps.push(
-        entryFactory.selectBox(translate, {
-            id: 'varDataType',
-            description: 'Data Type',
-            label: 'Data Type',
-            modelProperty: 'varDataType',
+                get: getProperty('varDataType'),
 
-            get: getProperty('varDataType'),
+                set: setProperty(),
 
-            set: setProperty(),
+                selectOptions: [
+                {name: 'Varchar2', value: 'varchar2'},
+                {name: 'Number', value: 'number'},
+                {name: 'Date', value: 'date'},
+                {name: 'Clob', value: 'clob'},
+                ]
+            })
+        );
 
-            selectOptions: [
-            {name: 'Varchar2', value: 'varchar2'},
-            {name: 'Number', value: 'number'},
-            {name: 'Date', value: 'date'},
-            {name: 'Clob', value: 'clob'},
-            ],
+        // expression type
+        procVarProps.push(
+            entryFactory.selectBox(translate, {
+                id: 'varExpressionType',
+                label: 'Expression Type',
+                modelProperty: 'varExpressionType',
 
-            hidden: notSelected()
-        })
-    );
+                get: getProperty('varExpressionType'),
 
-    // expression type
-    procVarProps.push(
-        entryFactory.selectBox(translate, {
-            id: 'varExpressionType',
-            label: 'Expression Type',
-            modelProperty: 'varExpressionType',
+                set: setProperty(),
 
-            get: getProperty('varExpressionType'),
+                selectOptions: [
+                {name: 'Static', value: 'static'},
+                {name: 'Process Variable', value: 'processVariable'},
+                {name: 'Page Item', value: 'pageItem'},
+                {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
+                {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
+                {name: 'PLSQL Expression', value: 'plsqlExpression'},
+                {name: 'PLSQL Function Body', value: 'plsqlFunctionBody'},
+                ]
+            })
+        );
 
-            set: setProperty(),
+        // expression
+        procVarProps.push(
+            entryFactory.textBox(translate, {
+                id: 'varExpression',
+                label: 'Expression',
+                modelProperty: 'varExpression',
 
-            selectOptions: [
-            {name: 'Static', value: 'static'},
-            {name: 'Process Variable', value: 'processVariable'},
-            {name: 'Page Item', value: 'pageItem'},
-            {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
-            {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
-            {name: 'PLSQL Expression', value: 'plsqlExpression'},
-            {name: 'PLSQL Function Body', value: 'plsqlFunctionBody'},
-            ],
+                get: getProperty('varExpression'),
 
-            hidden: notSelected()
-        })
-    );
-
-    // expression
-    procVarProps.push(
-        entryFactory.textBox(translate, {
-            id: 'varExpression',
-            label: 'Expression',
-            modelProperty: 'varExpression',
-
-            get: getProperty('varExpression'),
-
-            set: setProperty(),
-
-            show: isSelected()
-        })
-    );
+                set: setProperty()
+            })
+        );
+    }
 
     return procVarProps;
 }

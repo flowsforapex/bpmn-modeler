@@ -19,6 +19,7 @@ import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
 
 import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
+import  { isSelected } from './parts/process_variables/procVarLists.js';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -88,7 +89,8 @@ function createVariablesTabGroup(element, bpmnFactory, translate) {
   var detailGroup = {
     id: 'details',
     label: 'Variable Details',
-    entries: procVarDetailProps(element, bpmnFactory, translate)
+    entries: procVarDetailProps(element, bpmnFactory, translate),
+    enabled: isSelected
   }
 
   return [
