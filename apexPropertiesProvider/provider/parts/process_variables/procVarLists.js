@@ -10,6 +10,7 @@ var listElements;
 
 function getEntries(element, type) {
     var bo = getBusinessObject(element);
+    // return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars.sort((a,b) => (a.varSequence > b.varSequence) ? 1 : -1) || [];
     return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars || [];
 }
 
