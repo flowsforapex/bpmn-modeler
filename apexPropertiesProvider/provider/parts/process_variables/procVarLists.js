@@ -78,11 +78,16 @@ var newElement = function(bpmnFactory, type, props) {
 
 var removeElement = function(type) {
     return function(element, extensionElements, value, idx) {
+
+        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), type)[0];
+
         var entries = getEntries(element, type);
         var entry = entries[idx];
         if (entry) {
-            var bo = getBusinessObject(element);
-            return extensionElementsHelper.removeEntry(bo, element, entry);
+            var command = (container.procVars.length > 1) ? 
+                cmdHelper.removeElementsFromList(element, container, 'procVars', 'extensionElements', [ entry ]) :
+                cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [ container ]);
+            return command;
         }
     };
 };
