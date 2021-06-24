@@ -4,16 +4,6 @@ var is = require('bpmn-js/lib/util/ModelUtil').is,
 
 import { getSelectedEntry } from './procVarLists';
 
-// var EXPRESSION_LABEL = {
-//     static: 'Static',
-//     processVariable: 'Process Variable',
-//     pageItem: 'Page Item',
-//     sqlQuerySingle: 'SQL query',
-//     sqlQueryList: 'SQL query',
-//     plsqlExpression: 'PLSQL Code',
-//     plsqlFunctionBody: 'PLSQL Code'
-// }
-
 var EXPRESSION_DESCRIPTION = {
     static: 'Static value',
     processVariable: 'Name of the Process Variable',
@@ -31,7 +21,6 @@ var getProperty = function(property) {
 
         return {
             [property]: (entry && entry.get(property)) || undefined,
-            //varExpressionDynamicLabel: EXPRESSION_LABEL[entry && entry.get('varExpressionType')],
             varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
         }
     }
@@ -82,7 +71,7 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
             set: setProperty()
             })
         );
-
+        
         // name field
         procVarProps.push(
             entryFactory.textField(translate, {
@@ -147,7 +136,6 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 id: 'varExpression',
                 label: 'Expression',
                 modelProperty: 'varExpression',
-                //dataValueLabel: 'varExpressionDynamicLabel',
                 dataValueDescription: 'varExpressionDynamicDescription',
 
                 get: getProperty('varExpression'),

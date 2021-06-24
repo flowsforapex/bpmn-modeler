@@ -1,6 +1,6 @@
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
-var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements'),
+var extensionElementsEntry = require('./helper/ExtensionElements'),
     extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
     elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
@@ -10,7 +10,6 @@ var listElements;
 
 function getEntries(element, type) {
     var bo = getBusinessObject(element);
-    // return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars.sort((a,b) => (a.varSequence > b.varSequence) ? 1 : -1) || [];
     return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars || [];
 }
 
@@ -35,14 +34,30 @@ export function getSelectedEntry(element, node) {
     return entry;
 }
 
+function getSelectedIndex(element, node) {
+
+    var selection;
+
+    if (element && listElements) {
+        listElements.forEach(e => {
+            if (e.listObject && e.listObject.getSelected(element, node).idx > -1) {
+                selection = e.listObject.getSelected(element, node);
+            }
+        });
+    }
+
+    return (selection && selection.idx);
+}
+
 var setOptionLabelValue = function(type) {
     return function(element, node, option, property, value, idx) {
         var entries = getEntries(element, type);
         var entry = entries[idx];
 
-        var label = entry ? ('(' + entry.get('varSequence') + ') ' + entry.get('varName') + (entry.get('varExpression') && (' : ' + entry.get('varExpression')))) : '';
+        var label = entry ? (entry.get('varName') + (entry.get('varExpression') && (' : ' + entry.get('varExpression')))) : '';
 
         option.text = label;
+        option.value = entry && entry.get('varName');
     };
 };
 
@@ -58,12 +73,11 @@ var newElement = function(bpmnFactory, type, props) {
             commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ container ]));
         }
 
-        // retrieve counter
-        var nextSequence = getEntries(element, type).length + 1;
+        var counter = (container.procVars && String(container.procVars.length)) || '0',
 
         values = {
-            varSequence: String(nextSequence),
-            varName: props.varName + '_' + nextSequence,
+            varSequence: String(counter),
+            varName: props.varName + '_' + counter,
             varDataType: props.varDataType,
             varExpression: props.varExpression,
             varExpressionType: props.varExpressionType
@@ -105,7 +119,6 @@ export function procVarLists(element, bpmnFactory, translate, options) {
       label : label1,
 
       createExtensionElement: newElement(bpmnFactory, type1, {
-          varSequence: '0', // TODO count gesamtzahl
           varName: 'pre',
           varDataType: 'varchar2',
           varExpression: '',
@@ -121,7 +134,12 @@ export function procVarLists(element, bpmnFactory, translate, options) {
           postProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(type1)
+      setOptionLabelValue: setOptionLabelValue(type1),
+
+      onEntryMoved : function(element) {
+        var entries = getEntries(element, type1);
+        entries.forEach((e, i) => e.set('varSequence', String(i)));
+      }
     });
 
     procVarProps.push(preProcessVariables);
@@ -135,7 +153,6 @@ export function procVarLists(element, bpmnFactory, translate, options) {
       label : label2,
 
       createExtensionElement: newElement(bpmnFactory, type2, {
-        varSequence: '0', // TODO count gesamtzahl
         varName: 'post',
         varDataType: 'varchar2',
         varExpression: '',
@@ -152,7 +169,12 @@ export function procVarLists(element, bpmnFactory, translate, options) {
           preProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(type2)
+      setOptionLabelValue: setOptionLabelValue(type2),
+
+      onEntryMoved : function(element) {
+        var entries = getEntries(element, type2);
+        entries.forEach((e, i) => e.set('varSequence', String(i)));
+      }
     });
     
     procVarProps.push(postProcessVariables);
