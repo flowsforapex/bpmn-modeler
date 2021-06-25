@@ -6,7 +6,7 @@ var extensionElementsEntry = require('./helper/ExtensionElements'),
     elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
 const TYPE_PROCESS_VARIABLE = 'apex:processVariable';
-var listElements;
+var procVarProps = [];
 
 function getEntries(element, type) {
     var bo = getBusinessObject(element);
@@ -22,31 +22,16 @@ export function getSelectedEntry(element, node) {
     var selection,
         entry;
 
-    if (element && listElements) {
-        listElements.forEach(e => {
-            if (e.listObject && e.listObject.getSelected(element, node).idx > -1) {
-                selection = e.listObject.getSelected(element, node);
+    if (element && procVarProps) {
+        procVarProps.forEach(e => {
+            if (e.getSelected(element, node).idx > -1) {
+                selection = e.getSelected(element, node);
                 entry = getEntries(element, e.type)[selection.idx];
             }
         });
     }
 
     return entry;
-}
-
-function getSelectedIndex(element, node) {
-
-    var selection;
-
-    if (element && listElements) {
-        listElements.forEach(e => {
-            if (e.listObject && e.listObject.getSelected(element, node).idx > -1) {
-                selection = e.listObject.getSelected(element, node);
-            }
-        });
-    }
-
-    return (selection && selection.idx);
 }
 
 var setOptionLabelValue = function(type) {
@@ -73,11 +58,13 @@ var newElement = function(bpmnFactory, type, props) {
             commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ container ]));
         }
 
-        var counter = (container.procVars && String(container.procVars.length)) || '0',
+        var index = (container.procVars && String(container.procVars.length)) || '0';
+        var re = new RegExp(props.varName + "_\\d$");
+        var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => {return Math.max(a, b)}))+1 || 0;
 
         values = {
-            varSequence: String(counter),
-            varName: props.varName + '_' + counter,
+            varSequence: String(index),
+            varName: props.varName + '_' + newNumber,
             varDataType: props.varDataType,
             varExpression: props.varExpression,
             varExpressionType: props.varExpressionType
@@ -108,88 +95,87 @@ var removeElement = function(type) {
 
 export function procVarLists(element, bpmnFactory, translate, options) {
 
-    var procVarProps = [];
-
-    var type1 = options.type1,
-        label1 = options.label1;
-
-    // create first list element
-    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-      id : 'pre',
-      label : label1,
-
-      createExtensionElement: newElement(bpmnFactory, type1, {
-          varName: 'pre',
-          varDataType: 'varchar2',
-          varExpression: '',
-          varExpressionType: 'static'
-      }),
-      removeExtensionElement: removeElement(type1),
-
-      getExtensionElements: function(element) {
-          return getEntries(element, type1);
-      },
-
-      onSelectionChange: function(element, node) {
-          postProcessVariables.deselect(element, node);
-      },
-
-      setOptionLabelValue: setOptionLabelValue(type1),
-
-      onEntryMoved : function(element) {
-        var entries = getEntries(element, type1);
-        entries.forEach((e, i) => e.set('varSequence', String(i)));
-      }
-    });
-
-    procVarProps.push(preProcessVariables);
-
-    var type2 = options.type2,
-        label2 = options.label2;
-
-    // create second list element
-    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-      id : 'post',
-      label : label2,
-
-      createExtensionElement: newElement(bpmnFactory, type2, {
-        varName: 'post',
-        varDataType: 'varchar2',
-        varExpression: '',
-        varExpressionType: 'static'
-      }),
-
-      removeExtensionElement: removeElement(type2),
-
-      getExtensionElements: function(element) {
-          return getEntries(element, type2);
-      },
-
-      onSelectionChange: function(element, node) {
-          preProcessVariables.deselect(element, node);
-      },
-
-      setOptionLabelValue: setOptionLabelValue(type2),
-
-      onEntryMoved : function(element) {
-        var entries = getEntries(element, type2);
-        entries.forEach((e, i) => e.set('varSequence', String(i)));
-      }
-    });
+    procVarProps = [];
     
-    procVarProps.push(postProcessVariables);
+    if (options.type1) {
 
-    // set list items references
-    listElements = [
-      {
-        listObject: preProcessVariables,
-        type: type1
-      },
-      {
-        listObject: postProcessVariables,
-        type: type2
-      }
-    ];
+        var type1 = options.type1,
+            label1 = options.label1;
+
+        // create first list element
+        var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+        id : 'pre',
+        label : label1,
+        type: type1,
+
+        createExtensionElement: newElement(bpmnFactory, type1, {
+            varName: 'pre',
+            varDataType: 'varchar2',
+            varExpression: '',
+            varExpressionType: 'static'
+        }),
+        removeExtensionElement: removeElement(type1),
+
+        getExtensionElements: function(element) {
+            return getEntries(element, type1);
+        },
+
+        onSelectionChange: function(element, node) {
+            if (postProcessVariables)
+                postProcessVariables.deselect(element, node);
+        },
+
+        setOptionLabelValue: setOptionLabelValue(type1),
+
+        onEntryMoved : function(element) {
+            var entries = getEntries(element, type1);
+            entries.forEach((e, i) => e.set('varSequence', String(i)));
+        }
+        });
+
+        procVarProps.push(preProcessVariables);
+
+    }
+
+    if (options.type2) {
+
+        var type2 = options.type2,
+            label2 = options.label2;
+
+        // create second list element
+        var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+        id : 'post',
+        label : label2,
+        type: type2,
+
+        createExtensionElement: newElement(bpmnFactory, type2, {
+            varName: 'post',
+            varDataType: 'varchar2',
+            varExpression: '',
+            varExpressionType: 'static'
+        }),
+
+        removeExtensionElement: removeElement(type2),
+
+        getExtensionElements: function(element) {
+            return getEntries(element, type2);
+        },
+
+        onSelectionChange: function(element, node) {
+            if (preProcessVariables)
+                preProcessVariables.deselect(element, node);
+        },
+
+        setOptionLabelValue: setOptionLabelValue(type2),
+
+        onEntryMoved : function(element) {
+            var entries = getEntries(element, type2);
+            entries.forEach((e, i) => e.set('varSequence', String(i)));
+        }
+        });
+        
+        procVarProps.push(postProcessVariables);
+    }
     
   return procVarProps;
 }

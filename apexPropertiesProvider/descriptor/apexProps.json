@@ -120,7 +120,7 @@
       ]
     },
     {
-      "name": "preTask",
+      "name": "beforeTask",
       "extends": [
       ],
       "properties": [
@@ -132,7 +132,55 @@
       ]
     },
     {
-      "name": "postTask",
+      "name": "afterTask",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "afterMerge",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "beforeSplit",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "beforeEvent",
+      "extends": [
+      ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "processVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "onEvent",
       "extends": [
       ],
       "properties": [

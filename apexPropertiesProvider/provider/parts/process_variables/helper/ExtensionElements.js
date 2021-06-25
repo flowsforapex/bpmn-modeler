@@ -40,7 +40,8 @@ module.exports = function(element, bpmnFactory, options, translate) {
       prefix = options.prefix || 'elem',
       label = options.label || id,
       idGeneration = (options.idGeneration === false) ? options.idGeneration : true,
-      businessObject = options.businessObject || getBusinessObject(element);
+      businessObject = options.businessObject || getBusinessObject(element),
+      type = options.type;
 
   var modelProperty = options.modelProperty || 'id';
 
@@ -89,6 +90,7 @@ module.exports = function(element, bpmnFactory, options, translate) {
 
   return {
     id: id,
+    type: type,
     html: '<div class="bpp-row bpp-element-list" ' +
             (canBeHidden ? 'data-show="hideElements"' : '') + '>' +
             '<label for="cam-extensionElements-' + escapeHTML(id) + '">' + escapeHTML(label) + '</label>' +

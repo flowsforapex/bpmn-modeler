@@ -57,20 +57,6 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         is(element, 'bpmn:BoundaryEvent') ||
         is(element, 'bpmn:EndEvent')
       ) {
-
-        // sequence field
-        procVarProps.push(
-            entryFactory.textField(translate, {
-            id: 'varSequence',
-            description: 'Execution sequence',
-            label: 'Sequence',
-            modelProperty: 'varSequence',
-
-            get: getProperty('varSequence'),
-
-            set: setProperty()
-            })
-        );
         
         // name field
         procVarProps.push(

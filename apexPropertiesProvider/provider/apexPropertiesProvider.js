@@ -17,6 +17,8 @@ import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
+import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
 
 import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
 import  { isSelected } from './parts/process_variables/procVarLists.js';
@@ -86,6 +88,18 @@ function createVariablesTabGroup(element, bpmnFactory, translate) {
     entries: generateUserTaskProcessVariableLists(element, bpmnFactory, translate)
   };
 
+  var gatewayGroup = {
+    id: 'apex-gateway',
+    label: 'Process Variables',
+    entries: generateGatewayTaskProcessVariableLists(element, bpmnFactory, translate)
+  };
+
+  var eventGroup = {
+    id: 'apex-event',
+    label: 'Process Variables',
+    entries: generateEventTaskProcessVariables(element, bpmnFactory, translate)
+  }
+
   var detailGroup = {
     id: 'details',
     label: 'Variable Details',
@@ -95,6 +109,8 @@ function createVariablesTabGroup(element, bpmnFactory, translate) {
 
   return [
     taskGroup,
+    gatewayGroup,
+    eventGroup,
     detailGroup
   ];
 }
