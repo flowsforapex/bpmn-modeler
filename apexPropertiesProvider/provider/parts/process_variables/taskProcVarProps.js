@@ -13,8 +13,8 @@ export default function (element, bpmnFactory, translate) {
   ) {
 
     return procVarLists(element, bpmnFactory, translate, {
-      type1: 'apex:beforeTask', label1: 'Before Task',
-      type2: 'apex:afterTask', label2: 'After Task'
+      type1: 'beforeTask', label1: 'Before Task',
+      type2: 'afterTask', label2: 'After Task'
     });
   }
 }

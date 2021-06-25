@@ -10,7 +10,7 @@ var procVarProps = [];
 
 function getEntries(element, type) {
     var bo = getBusinessObject(element);
-    return bo && extensionElementsHelper.getExtensionElements(bo, type) && extensionElementsHelper.getExtensionElements(bo, type)[0].procVars || [];
+    return bo && extensionElementsHelper.getExtensionElements(bo, 'apex:' + type) && extensionElementsHelper.getExtensionElements(bo, 'apex:' + type)[0].procVars || [];
 }
 
 export function isSelected(element, node) {
@@ -26,7 +26,7 @@ export function getSelectedEntry(element, node) {
         procVarProps.forEach(e => {
             if (e.getSelected(element, node).idx > -1) {
                 selection = e.getSelected(element, node);
-                entry = getEntries(element, e.type)[selection.idx];
+                entry = getEntries(element, e.id)[selection.idx];
             }
         });
     }
@@ -51,10 +51,10 @@ var newElement = function(bpmnFactory, type, props) {
 
         var commands = [];
 
-        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), type)[0];
+        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), 'apex:' + type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), 'apex:' + type)[0];
 
         if (!container) {
-            container = elementHelper.createElement(type, {}, extensionElements, bpmnFactory);
+            container = elementHelper.createElement('apex:' + type, {}, extensionElements, bpmnFactory);
             commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [ container ]));
         }
 
@@ -80,7 +80,7 @@ var newElement = function(bpmnFactory, type, props) {
 var removeElement = function(type) {
     return function(element, extensionElements, value, idx) {
 
-        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), type)[0];
+        var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), 'apex:' + type) && extensionElementsHelper.getExtensionElements(getBusinessObject(element), 'apex:' + type)[0];
 
         var entries = getEntries(element, type);
         var entry = entries[idx];
@@ -93,6 +93,11 @@ var removeElement = function(type) {
     };
 };
 
+function resetSequences(element, type) {
+    var entries = getEntries(element, type);
+    entries.forEach((e, i) => e.set('varSequence', String(i)));
+}
+
 export function procVarLists(element, bpmnFactory, translate, options) {
 
     procVarProps = [];
@@ -104,12 +109,11 @@ export function procVarLists(element, bpmnFactory, translate, options) {
 
         // create first list element
         var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-        id : 'pre',
+        id : type1,
         label : label1,
-        type: type1,
 
         createExtensionElement: newElement(bpmnFactory, type1, {
-            varName: 'pre',
+            varName: type1,
             varDataType: 'varchar2',
             varExpression: '',
             varExpressionType: 'static'
@@ -127,11 +131,9 @@ export function procVarLists(element, bpmnFactory, translate, options) {
 
         setOptionLabelValue: setOptionLabelValue(type1),
 
-        onEntryMoved : function(element) {
-            var entries = getEntries(element, type1);
-            entries.forEach((e, i) => e.set('varSequence', String(i)));
-        }
-        });
+        onEntryMoved : resetSequences(element, type1)
+
+    });
 
         procVarProps.push(preProcessVariables);
 
@@ -144,12 +146,11 @@ export function procVarLists(element, bpmnFactory, translate, options) {
 
         // create second list element
         var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
-        id : 'post',
+        id : type2,
         label : label2,
-        type: type2,
 
         createExtensionElement: newElement(bpmnFactory, type2, {
-            varName: 'post',
+            varName: type2,
             varDataType: 'varchar2',
             varExpression: '',
             varExpressionType: 'static'
@@ -168,11 +169,8 @@ export function procVarLists(element, bpmnFactory, translate, options) {
 
         setOptionLabelValue: setOptionLabelValue(type2),
 
-        onEntryMoved : function(element) {
-            var entries = getEntries(element, type2);
-            entries.forEach((e, i) => e.set('varSequence', String(i)));
-        }
-        });
+        onEntryMoved : resetSequences(element, type2)
+    });
         
         procVarProps.push(postProcessVariables);
     }

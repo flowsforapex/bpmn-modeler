@@ -14,19 +14,19 @@ export default function (element, bpmnFactory, translate) {
     // opening gateway
     if (element.incoming.length <= 1 && element.outgoing.length > 1) {
         return procVarLists(element, bpmnFactory, translate, {
-            type1: 'apex:beforeSplit', label1: 'Before Split'
+            type1: 'beforeSplit', label1: 'Before Split'
           });    
     }
     // closing gateway
     else if (element.incoming.length > 1 && element.outgoing.length <= 1) {
         return procVarLists(element, bpmnFactory, translate, {
-            type1: 'apex:afterMerge', label1: 'After Merge'
+            type1: 'afterMerge', label1: 'After Merge'
           });
     }
     else {
         return procVarLists(element, bpmnFactory, translate, {
-            type1: 'apex:afterMerge', label1: 'After Merge',
-            type2: 'apex:beforeSplit', label2: 'Before Split'
+            type1: 'afterMerge', label1: 'After Merge',
+            type2: 'beforeSplit', label2: 'Before Split'
           });
     }
   }
