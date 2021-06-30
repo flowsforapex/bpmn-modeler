@@ -1,5 +1,5 @@
 var is = require('bpmn-js/lib/util/ModelUtil').is,
-    entryFactory = require('./helper/EntryFactory'),
+    entryFactory = require('./custom/EntryFactory'),
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 import { getSelectedEntry } from './procVarLists';

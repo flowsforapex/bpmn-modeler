@@ -1,6 +1,6 @@
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
-var extensionElementsEntry = require('./helper/ExtensionElements'),
+var extensionElementsEntry = require('./custom/ExtensionElements'),
     extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper'),
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
     elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
@@ -98,7 +98,16 @@ function resetSequences(element, type) {
     entries.forEach((e, i) => e.set('varSequence', String(i)));
 }
 
-export function procVarLists(element, bpmnFactory, translate, options) {
+// function deleteInvalidProperties(element, bpmnFactory, elementRegistry, type) {
+//     var bo = getBusinessObject(element);
+//     var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => e.$type != 'apex:' + type);
+//     if (toRemove) {
+//         var command = extensionElementsHelper.removeEntry(bo, element, toRemove[0]);
+//         new UpdateBusinessObjectListHandler(elementRegistry, bpmnFactory).execute(command.context);
+//     }
+// }
+
+export function procVarLists(element, bpmnFactory, elementRegistry, translate, options) {
 
     procVarProps = [];
     
@@ -138,6 +147,9 @@ export function procVarLists(element, bpmnFactory, translate, options) {
         procVarProps.push(preProcessVariables);
 
     }
+    // else {
+    //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
+    // }
 
     if (options.type2) {
 
@@ -174,6 +186,9 @@ export function procVarLists(element, bpmnFactory, translate, options) {
         
         procVarProps.push(postProcessVariables);
     }
+    // else {
+    //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
+    // }
     
   return procVarProps;
 }

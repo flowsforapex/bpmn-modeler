@@ -3,7 +3,7 @@ var is = require('bpmn-js/lib/util/ModelUtil').is,
 
 import { procVarLists } from './procVarLists';
 
-export default function (element, bpmnFactory, translate) {
+export default function (element, bpmnFactory, elementRegistry, translate) {
 
   if (
         is(element, 'bpmn:StartEvent') ||
@@ -14,13 +14,13 @@ export default function (element, bpmnFactory, translate) {
   ) {
 
     if (getBusinessObject(element).eventDefinitions && getBusinessObject(element).eventDefinitions.some(e => e.$type == 'bpmn:TimerEventDefinition')) {
-        return procVarLists(element, bpmnFactory, translate, {
+        return procVarLists(element, bpmnFactory, elementRegistry, translate, {
             type1: 'beforeEvent', label1: 'Before Event',
             type2: 'onEvent', label2: 'On Event'
         });
     }
     else {
-        return procVarLists(element, bpmnFactory, translate, {
+        return procVarLists(element, bpmnFactory, elementRegistry, translate, {
             type1: 'onEvent', label1: 'On Event'
         });
     }

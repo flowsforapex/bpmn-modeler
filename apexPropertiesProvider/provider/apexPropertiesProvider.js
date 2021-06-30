@@ -23,6 +23,8 @@ import generateEventTaskProcessVariables from './parts/process_variables/eventPr
 import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
 import  { isSelected } from './parts/process_variables/procVarLists.js';
 
+import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
+
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
@@ -80,24 +82,24 @@ function createApexTabGroups(element, translate) {
   ];
 }
 
-function createVariablesTabGroup(element, bpmnFactory, translate) {
+function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate) {
 
   var taskGroup = {
     id: 'apex-task',
     label: 'Process Variables',
-    entries: generateUserTaskProcessVariableLists(element, bpmnFactory, translate)
+    entries: generateUserTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
     label: 'Process Variables',
-    entries: generateGatewayTaskProcessVariableLists(element, bpmnFactory, translate)
+    entries: generateGatewayTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
   };
 
   var eventGroup = {
     id: 'apex-event',
     label: 'Process Variables',
-    entries: generateEventTaskProcessVariables(element, bpmnFactory, translate)
+    entries: generateEventTaskProcessVariables(element, bpmnFactory, elementRegistry, translate)
   }
 
   var detailGroup = {
@@ -121,6 +123,10 @@ export default function apexPropertiesProvider(
 
   PropertiesActivator.call(this, eventBus);
 
+  eventBus.on('saveXML.start', function() {
+    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry)
+  });
+
   this.getTabs = function (element) {
 
     var generalTab = {
@@ -139,7 +145,7 @@ export default function apexPropertiesProvider(
     var VariablesTab = {
       id: 'variables',
       label: 'Variables',
-      groups: createVariablesTabGroup(element, bpmnFactory, translate)
+      groups: createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate)
     };
 
     // Show general + APEX tabs
