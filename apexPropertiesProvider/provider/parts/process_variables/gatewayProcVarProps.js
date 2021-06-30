@@ -23,7 +23,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
             type1: 'afterMerge', label1: 'After Merge'
           });
     }
-    else {if (element.incoming.length > 1 && element.outgoing.length > 1) {}
+    else if (element.incoming.length > 1 && element.outgoing.length > 1) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
             type1: 'afterMerge', label1: 'After Merge',
             type2: 'beforeSplit', label2: 'Before Split'

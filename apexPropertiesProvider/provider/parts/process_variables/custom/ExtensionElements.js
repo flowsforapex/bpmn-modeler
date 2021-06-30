@@ -292,7 +292,7 @@ module.exports = function(element, bpmnFactory, options, translate) {
         var selection = getSelected(node, id),
             selectBox = getSelectBox(node, id);
 
-        return !(selectBox && selection && selectBox.options[selection.idx+1]);
+        return !(selectBox && selection && selectBox.options[selection.idx+1] && selection.idx > -1);
     }
   };
 };
