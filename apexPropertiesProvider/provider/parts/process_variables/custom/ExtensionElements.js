@@ -112,8 +112,8 @@ module.exports = function(element, bpmnFactory, options, translate) {
                                    'data-disable="disableRemove">' +
                              '<span>-</span>' +
                            '</button>' : '') +
-              '<button class="action-button down" id="cam-extensionElements-create-' + escapeHTML(id) + '" data-action="moveDown" data-disable="disableMoveDown"><span>+</span></button>' +
-              '<button class="action-button up" id="cam-extensionElements-create-' + escapeHTML(id) + '" data-action="moveUp" data-disable="disableMoveUp"><span>+</span></button>' +
+              '<button class="action-button down" id="cam-extensionElements-down-' + escapeHTML(id) + '" data-action="moveDown" data-disable="disableMoveDown"><span>+</span></button>' +
+              '<button class="action-button up" id="cam-extensionElements-up-' + escapeHTML(id) + '" data-action="moveUp" data-disable="disableMoveUp"><span>+</span></button>' +
             '</div>' +
           '</div>',
 

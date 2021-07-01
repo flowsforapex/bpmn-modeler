@@ -34,9 +34,7 @@ export function removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegi
       }
   
       if (filter.length > 0) {
-          console.log(filter);
         var bo = getBusinessObject(element);
-        console.log(bo);
         var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => filter.includes(e.$type));
         
         if (toRemove && toRemove.length > 0) {

@@ -93,9 +93,8 @@
       ]
     },
     {
-      "name": "processVariable",
-      "extends": [
-      ],
+      "name": "ProcessVariable",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "varSequence",
@@ -120,73 +119,67 @@
       ]
     },
     {
-      "name": "beforeTask",
-      "extends": [
-      ],
+      "name": "BeforeTask",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]
     },
     {
-      "name": "afterTask",
-      "extends": [
-      ],
+      "name": "AfterTask",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]
     },
     {
-      "name": "afterMerge",
-      "extends": [
-      ],
+      "name": "AfterMerge",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]
     },
     {
-      "name": "beforeSplit",
-      "extends": [
-      ],
+      "name": "BeforeSplit",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]
     },
     {
-      "name": "beforeEvent",
-      "extends": [
-      ],
+      "name": "BeforeEvent",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]
     },
     {
-      "name": "onEvent",
-      "extends": [
-      ],
+      "name": "OnEvent",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "procVars",
-          "type": "processVariable",
+          "type": "ProcessVariable",
           "isMany": true
         }
       ]

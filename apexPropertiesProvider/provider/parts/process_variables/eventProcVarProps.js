@@ -15,13 +15,13 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
     if (getBusinessObject(element).eventDefinitions && getBusinessObject(element).eventDefinitions.some(e => e.$type == 'bpmn:TimerEventDefinition')) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'beforeEvent', label1: 'Before Event',
-            type2: 'onEvent', label2: 'On Event'
+            type1: 'BeforeEvent', label1: 'Before Event',
+            type2: 'OnEvent', label2: 'On Event'
         });
     }
     else {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'onEvent', label1: 'On Event'
+            type1: 'OnEvent', label1: 'On Event'
         });
     }
   }

@@ -5,7 +5,7 @@ var extensionElementsEntry = require('./custom/ExtensionElements'),
     cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper'),
     elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
-const TYPE_PROCESS_VARIABLE = 'apex:processVariable';
+const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
 var procVarProps = [];
 
 function getEntries(element, type) {

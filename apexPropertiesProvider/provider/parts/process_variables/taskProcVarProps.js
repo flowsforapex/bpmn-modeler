@@ -13,8 +13,8 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
   ) {
 
     return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-      type1: 'beforeTask', label1: 'Before Task',
-      type2: 'afterTask', label2: 'After Task'
+      type1: 'BeforeTask', label1: 'Before Task',
+      type2: 'AfterTask', label2: 'After Task'
     });
   }
 }
