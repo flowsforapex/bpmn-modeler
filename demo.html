@@ -46,6 +46,7 @@
   <script>
     var myModeler = new bpmnModeler.Modeler({
   container: "#canvas",
+  keyboard: { bindTo: document },
   propertiesPanel: {
     parent: '#properties'
   },
@@ -59,6 +60,16 @@
   ],
   moddleExtensions: {
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
+  }
+});
+
+var commandStack = myModeler.get("commandStack");
+
+document.addEventListener("click", function(event) {
+  if (event.target.id == 'undo') {
+    commandStack.undo();
+  } else if (event.target.id == 'redo') {
+    commandStack.redo();
   }
 });
 
@@ -94,4 +105,6 @@ async function init() {
 
 init();
   </script>
+  <button id="undo">Undo</button>
+  <button id="redo">Redo</button>
 </body>
