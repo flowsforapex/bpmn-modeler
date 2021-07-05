@@ -21,15 +21,27 @@ export function removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegi
       ) {
         // opening gateway
         if (element.incoming.length == 1 && element.outgoing.length > 1) {
-          filter.push('apex:afterMerge');
+          filter.push('apex:AfterMerge');
         }
         // closing gateway
         else if (element.incoming.length > 1 && element.outgoing.length == 1) {
-          filter.push('apex:beforeSplit');
+          filter.push('apex:BeforeSplit');
         }
         else if (element.incoming.length == 1 && element.outgoing.length == 1) {
-            filter.push('apex:afterMerge');
-            filter.push('apex:beforeSplit');
+            filter.push('apex:AfterMerge');
+            filter.push('apex:BeforeSplit');
+        }
+      }
+      else if (
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
+        // not timer event
+        if (getBusinessObject(element).eventDefinitions === undefined) {
+          filter.push('apex:BeforeEvent');
         }
       }
   
