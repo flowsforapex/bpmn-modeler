@@ -60,7 +60,7 @@ var newElement = function(bpmnFactory, type, props) {
 
         var index = (container.procVars && String(container.procVars.length)) || '0';
         var re = new RegExp(props.varName + "_\\d$");
-        var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => {return Math.max(a, b)}))+1 || 0;
+        var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => {return Math.max(a, b)}, -1)) + 1 || 0;
 
         values = {
             varSequence: String(index),
