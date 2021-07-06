@@ -10,8 +10,8 @@ var EXPRESSION_DESCRIPTION = {
     // pageItem: 'Name of the APEX Page Item',
     sqlQuerySingle: 'SQL query returning a single value',
     sqlQueryList: 'SQL query returning a colon delimited list',
-    plsqlExpression: 'PLSQL Expression',
-    plsqlFunctionBody: 'PLSQL Function Body'
+    plsqlExpression: 'Expression returning a value',
+    plsqlFunctionBody: 'Function Body returning a value'
 }
 
 var getProperty = function(property) {
@@ -110,8 +110,8 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                     // {name: 'Page Item', value: 'pageItem'},
                     {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
                     {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
-                    {name: 'PLSQL Expression', value: 'plsqlExpression'},
-                    {name: 'PLSQL Function Body', value: 'plsqlFunctionBody'},
+                    {name: 'Expression', value: 'plsqlExpression'},
+                    {name: 'Function Body', value: 'plsqlFunctionBody'},
                 ]
             })
         );
