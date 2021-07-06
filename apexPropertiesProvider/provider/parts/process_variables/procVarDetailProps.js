@@ -7,7 +7,7 @@ import { getSelectedEntry } from './procVarLists';
 var EXPRESSION_DESCRIPTION = {
     static: 'Static value',
     processVariable: 'Name of the Process Variable',
-    pageItem: 'Name of the APEX Page Item',
+    // pageItem: 'Name of the APEX Page Item',
     sqlQuerySingle: 'SQL query returning a single value',
     sqlQueryList: 'SQL query returning a colon delimited list',
     plsqlExpression: 'PLSQL Expression',
@@ -107,7 +107,7 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 selectOptions: [
                     {name: 'Static', value: 'static'},
                     {name: 'Process Variable', value: 'processVariable'},
-                    {name: 'Page Item', value: 'pageItem'},
+                    // {name: 'Page Item', value: 'pageItem'},
                     {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
                     {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
                     {name: 'PLSQL Expression', value: 'plsqlExpression'},
