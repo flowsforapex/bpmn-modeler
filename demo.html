@@ -34,6 +34,15 @@
     padding-bottom: 70px;
     min-height:100%;
   }
+  #properties:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    cursor: w-resize;
+  }
   </style>
 </head>
 
@@ -61,6 +70,32 @@
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
   }
 });
+
+const BORDER_SIZE = 4;
+const panel = document.getElementById("properties");
+const child = panel.firstChild;
+
+let m_pos, w;
+function resize(e){
+  const dx = m_pos - e.x;
+  m_pos = e.x;
+  w = (parseInt(getComputedStyle(panel, '').width) + dx);
+  if (w > 260) {
+    panel.style.width = w + "px";
+    child.style.width = w + "px";
+  }
+}
+
+panel.addEventListener("mousedown", function(e){
+  if (e.offsetX < BORDER_SIZE) {
+  m_pos = e.x;
+  document.addEventListener("mousemove", resize, false);
+  }
+}, false);
+
+document.addEventListener("mouseup", function(){
+  document.removeEventListener("mousemove", resize, false);
+}, false);
 
 async function init() {
 
