@@ -1,7 +1,6 @@
 var PropertiesPanel = require('bpmn-js-properties-panel/lib/PropertiesPanel');
 
 var domQuery = require('min-dom').query;
-
 PropertiesPanel.prototype.attachTo = function(parentNode) {
   if (!parentNode) {
     throw new Error('parentNode required');
@@ -25,30 +24,31 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   parentNode.appendChild(container);
 
   // custom part for resizable properties panel
-    
-  var mousePosition;
+
+  var mouseX;
   const BORDER_WIDTH = 5;
   const LEFT_SPACE = 100;
-  
-  parentNode.addEventListener('mousedown', function(event) {
+
+  document.addEventListener('mousedown', function(event) {
     if (event.offsetX < BORDER_WIDTH) {
-      mousePosition = event.x;
+      mouseX = event.x;
       document.addEventListener("mousemove", resize, false);
     }
   });
 
-  parentNode.addEventListener('mouseup', function() {
+  document.addEventListener('mouseup', function() {
     document.removeEventListener("mousemove", resize, false);
   });
 
+  const canvas = this._canvas._container;
+
   function resize(event) {
-    if (mousePosition < (LEFT_SPACE - BORDER_WIDTH) || mousePosition > window.innerWidth - parseInt(getComputedStyle(parentNode).minWidth) - BORDER_WIDTH) {
-      document.removeEventListener("mousemove", resize, false);
-    }
-    const dx = mousePosition - event.x;
-    mousePosition = event.x;
+    var canvasLeftPos = canvas ? canvas.getBoundingClientRect().left : 0;
+    var canvasRightPos = canvas ? canvas.getBoundingClientRect().right : window.innerWidth;
+    var dx = mouseX - event.x;
+    mouseX = event.x;
     var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && mousePosition >= LEFT_SPACE) {
+    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && mouseX >= (canvasLeftPos + LEFT_SPACE) && mouseX < (canvasRightPos - parseInt(getComputedStyle(parentNode).minWidth))) {
       parentNode.style.width = panelWidth + "px";
       parentNode.firstChild.style.width = panelWidth + "px";
     }
