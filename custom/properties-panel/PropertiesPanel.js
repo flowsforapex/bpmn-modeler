@@ -40,12 +40,16 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   });
 
   function resize(event) {
-    const dx = mousePosition - event.x;
-    mousePosition = event.x;
-    var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-    if (panelWidth > 260) {
-      parentNode.style.width = panelWidth + "px";
-      parentNode.firstChild.style.width = panelWidth + "px";
+    if (event.offsetX < 1900) {
+      const dx = mousePosition - event.x;
+      mousePosition = event.x;
+      var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
+      if (panelWidth > 260) {
+        parentNode.style.width = panelWidth + "px";
+        parentNode.firstChild.style.width = panelWidth + "px";
+      }
+    } else {
+      document.removeEventListener("mousemove", resize, false);
     }
   }
 
