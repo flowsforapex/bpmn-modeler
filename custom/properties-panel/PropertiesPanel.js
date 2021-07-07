@@ -27,9 +27,11 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   // custom part for resizable properties panel
     
   var mousePosition;
+  const BORDER_WIDTH = 5;
+  const LEFT_SPACE = 100;
   
   parentNode.addEventListener('mousedown', function(event) {
-    if (event.offsetX < 5) {
+    if (event.offsetX < BORDER_WIDTH) {
       mousePosition = event.x;
       document.addEventListener("mousemove", resize, false);
     }
@@ -40,16 +42,15 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   });
 
   function resize(event) {
-    if (event.offsetX < 1900) {
-      const dx = mousePosition - event.x;
-      mousePosition = event.x;
-      var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-      if (panelWidth > 260) {
-        parentNode.style.width = panelWidth + "px";
-        parentNode.firstChild.style.width = panelWidth + "px";
-      }
-    } else {
+    if (mousePosition < (LEFT_SPACE - BORDER_WIDTH) || mousePosition > window.innerWidth - parseInt(getComputedStyle(parentNode).minWidth) - BORDER_WIDTH) {
       document.removeEventListener("mousemove", resize, false);
+    }
+    const dx = mousePosition - event.x;
+    mousePosition = event.x;
+    var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
+    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && mousePosition >= LEFT_SPACE) {
+      parentNode.style.width = panelWidth + "px";
+      parentNode.firstChild.style.width = panelWidth + "px";
     }
   }
 
