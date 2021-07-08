@@ -1,6 +1,6 @@
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 
-import propertiesPanelModule from 'bpmn-js-properties-panel';
+import propertiesPanelModule from './custom/properties-panel';
 import propertiesProviderModule from './apexPropertiesProvider/provider';
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
 
