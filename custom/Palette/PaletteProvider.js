@@ -1,4 +1,5 @@
 import { assign } from 'min-dash';
+import ZoomScroll from 'diagram-js/lib/navigation/zoomscroll/ZoomScroll';
   
 /**
  * A palette provider for BPMN 2.0 elements.
@@ -6,7 +7,8 @@ import { assign } from 'min-dash';
 export default function PaletteProvider(
     palette, create, elementFactory,
     spaceTool, lassoTool, handTool,
-    globalConnect, translate, commandStack) {
+    globalConnect, translate, commandStack,
+    eventBus, canvas) {
 
   this._palette = palette;
   this._create = create;
@@ -17,6 +19,8 @@ export default function PaletteProvider(
   this._globalConnect = globalConnect;
   this._translate = translate;
   this._commandStack = commandStack;
+  this._eventBus = eventBus;
+  this._canvas = canvas;
 
   palette.registerProvider(this);
 }
@@ -30,7 +34,9 @@ PaletteProvider.$inject = [
   'handTool',
   'globalConnect',
   'translate',
-  'commandStack'
+  'commandStack',
+  'eventBus',
+  'canvas'
 ];
 
 
@@ -44,7 +50,11 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       handTool = this._handTool,
       globalConnect = this._globalConnect,
       translate = this._translate,
-      commandStack = this._commandStack;
+      commandStack = this._commandStack,
+      eventBus = this._eventBus,
+      canvas = this._canvas;
+
+  var zoomScroll = new ZoomScroll({}, eventBus, canvas);
 
   function createAction(type, group, className, title, options) {
 
@@ -97,33 +107,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     create.start(event, elementFactory.createParticipantShape());
   }
 
-  assign(actions, {
-
-    // custom part for undo/redo buttons
-
-    'undo-tool': {
-      group: 'tools',
-      className: 'bpmn-icon-undo',
-      title: translate('Undo'),
-      action: {
-        click: function(event) {
-          commandStack.undo();
-        }
-      }
-    },
-    'redo-tool': {
-      group: 'tools',
-      className: 'bpmn-icon-redo',
-      title: translate('Redo'),
-      action: {
-        click: function(event) {
-          commandStack.redo();
-        }
-      }
-    },
-
-    // end custom part
-    
+  assign(actions, {    
     'hand-tool': {
       group: 'tools',
       className: 'bpmn-icon-hand-tool',
@@ -166,6 +150,50 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     },
     'tool-separator': {
       group: 'tools',
+      separator: true
+    },
+    'undo': {
+      group: 'controls',
+      className: 'bpmn-icon-undo',
+      title: translate('Undo'),
+      action: {
+        click: function(event) {
+          commandStack.undo();
+        }
+      }
+    },
+    'redo': {
+      group: 'controls',
+      className: 'bpmn-icon-redo',
+      title: translate('Redo'),
+      action: {
+        click: function(event) {
+          commandStack.redo();
+        }
+      }
+    },
+    'zoom-in': {
+      group: 'controls',
+      className: 'bpmn-icon-zoom-in',
+      title: translate('Zoom In'),
+      action: {
+        click: function(event) {
+          zoomScroll.zoom(1, 0);
+        }
+      }
+    },
+    'zoom-out': {
+      group: 'controls',
+      className: 'bpmn-icon-zoom-out',
+      title: translate('Zoom In'),
+      action: {
+        click: function(event) {
+          zoomScroll.zoom(-1, 0);
+        }
+      }
+    },
+    'controls-separator': {
+      group: 'controls',
       separator: true
     },
     'create.start-event': createAction(

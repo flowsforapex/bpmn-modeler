@@ -161,3 +161,5 @@
 .bpmn-icon-transaction:before { content: '\e8c4'; } /* '' */
 .bpmn-icon-undo:before { content: '\2B8C'; }
 .bpmn-icon-redo:before { content: '\2B8C'; }
+.bpmn-icon-zoom-in:before { content: '\002B'; }
+.bpmn-icon-zoom-out:before { content: '\2212'; }
