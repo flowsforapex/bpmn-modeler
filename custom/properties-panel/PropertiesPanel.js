@@ -27,7 +27,7 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
 
   var mouseX;
   const BORDER_WIDTH = 5;
-  const LEFT_SPACE = 100;
+  const LEFT_SPACE = 140;
 
   document.addEventListener('mousedown', function(event) {
     if (event.offsetX < BORDER_WIDTH) {

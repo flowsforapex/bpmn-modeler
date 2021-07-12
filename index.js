@@ -7,7 +7,7 @@ import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps'
 import lintModule from 'bpmn-js-bpmnlint';
 import bpmnlintConfig from './.bpmnlintrc';
 
-import customPaletteProviderModule from './custom/Palette';
+import customPaletteProviderModule from './custom/palette';
 
 var bpmnModeler = {
   Modeler: BpmnModeler,
