@@ -27,7 +27,6 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
 
   var mouseX;
   const BORDER_WIDTH = 5;
-  const LEFT_SPACE = 140;
 
   document.addEventListener('mousedown', function(event) {
     if (event.offsetX < BORDER_WIDTH) {
@@ -43,12 +42,11 @@ PropertiesPanel.prototype.attachTo = function(parentNode) {
   const canvas = this._canvas._container;
 
   function resize(event) {
-    var canvasLeftPos = canvas ? canvas.getBoundingClientRect().left : 0;
-    var canvasRightPos = canvas ? canvas.getBoundingClientRect().right : window.innerWidth;
     var dx = mouseX - event.x;
     mouseX = event.x;
     var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && mouseX >= (canvasLeftPos + LEFT_SPACE) && mouseX < (canvasRightPos - parseInt(getComputedStyle(parentNode).minWidth))) {
+    var maxWidth = (parseInt(getComputedStyle(canvas, '').width))/100 * parseInt(getComputedStyle(parentNode).maxWidth);
+    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && panelWidth < maxWidth) {
       parentNode.style.width = panelWidth + "px";
       parentNode.firstChild.style.width = panelWidth + "px";
     }
