@@ -5,7 +5,7 @@ import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivato
 // Require all properties you need from existing providers.
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
-import eventProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps';
+import eventProps from './parts/eventProps/EventProps';
 import linkProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps';
 import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps';
 import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
