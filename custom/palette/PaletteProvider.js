@@ -1,5 +1,5 @@
-import { assign } from 'min-dash';
 import ZoomScroll from 'diagram-js/lib/navigation/zoomscroll/ZoomScroll';
+import { assign } from 'min-dash';
   
 /**
  * A palette provider for BPMN 2.0 elements.
@@ -40,19 +40,19 @@ PaletteProvider.$inject = [
 ];
 
 
-PaletteProvider.prototype.getPaletteEntries = function(element) {
+PaletteProvider.prototype.getPaletteEntries = function (element) {
 
-  var actions = {},
-      create = this._create,
-      elementFactory = this._elementFactory,
-      spaceTool = this._spaceTool,
-      lassoTool = this._lassoTool,
-      handTool = this._handTool,
-      globalConnect = this._globalConnect,
-      translate = this._translate,
-      commandStack = this._commandStack,
-      eventBus = this._eventBus,
-      canvas = this._canvas;
+  var actions = {};
+  var create = this._create;
+  var elementFactory = this._elementFactory;
+  var spaceTool = this._spaceTool;
+  var lassoTool = this._lassoTool;
+  var handTool = this._handTool;
+  var globalConnect = this._globalConnect;
+  var translate = this._translate;
+  var commandStack = this._commandStack;
+  var eventBus = this._eventBus;
+  var canvas = this._canvas;
 
   var zoomScroll = new ZoomScroll({}, eventBus, canvas);
 
@@ -96,9 +96,9 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       parent: subProcess
     });
 
-    create.start(event, [ subProcess, startEvent ], {
+    create.start(event, [subProcess, startEvent], {
       hints: {
-        autoSelect: [ startEvent ]
+        autoSelect: [startEvent]
       }
     });
   }
@@ -113,7 +113,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       className: 'bpmn-icon-hand-tool',
       title: translate('Activate the hand tool'),
       action: {
-        click: function(event) {
+        click: function (event) {
           handTool.activateHand(event);
         }
       }
@@ -123,7 +123,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       className: 'bpmn-icon-lasso-tool',
       title: translate('Activate the lasso tool'),
       action: {
-        click: function(event) {
+        click: function (event) {
           lassoTool.activateSelection(event);
         }
       }
@@ -133,7 +133,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       className: 'bpmn-icon-space-tool',
       title: translate('Activate the create/remove space tool'),
       action: {
-        click: function(event) {
+        click: function (event) {
           spaceTool.activateSelection(event);
         }
       }
@@ -143,7 +143,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
       className: 'bpmn-icon-connection-multi',
       title: translate('Activate the global connect tool'),
       action: {
-        click: function(event) {
+        click: function (event) {
           globalConnect.start(event);
         }
       }
@@ -154,40 +154,40 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     },
     'undo': {
       group: 'controls',
-      className: 'bpmn-icon-undo',
+      className: 'fa fa-undo-arrow',
       title: translate('Undo'),
       action: {
-        click: function(event) {
+        click: function (event) {
           commandStack.undo();
         }
       }
     },
     'redo': {
       group: 'controls',
-      className: 'bpmn-icon-redo',
+      className: 'fa fa-redo-arrow',
       title: translate('Redo'),
       action: {
-        click: function(event) {
+        click: function (event) {
           commandStack.redo();
         }
       }
     },
     'zoom-in': {
       group: 'controls',
-      className: 'bpmn-icon-zoom-in',
+      className: 'fa fa-search-plus',
       title: translate('Zoom In'),
       action: {
-        click: function(event) {
+        click: function (event) {
           zoomScroll.zoom(1, 0);
         }
       }
     },
     'zoom-out': {
       group: 'controls',
-      className: 'bpmn-icon-zoom-out',
+      className: 'fa fa-search-minus',
       title: translate('Zoom In'),
       action: {
-        click: function(event) {
+        click: function (event) {
           zoomScroll.zoom(-1, 0);
         }
       }
