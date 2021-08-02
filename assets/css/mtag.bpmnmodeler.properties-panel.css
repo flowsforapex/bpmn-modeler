@@ -139,17 +139,11 @@
   -moz-osx-font-smoothing: grayscale;
   position: relative;
 }
-.bpp-properties-panel button.add:before {
-  content: '\E803';
-}
-.bpp-properties-panel button.clear:before {
-  content: '\E802';
-}
-.bpp-properties-panel button.up:before {
-  content: '\25B2';
-}
-.bpp-properties-panel button.down:before {
-  content: '\25BC';
+.bpp-properties-panel .action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute !important;
 }
 .bpp-properties-panel button:hover {
   color: #52B415;
