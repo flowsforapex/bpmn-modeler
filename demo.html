@@ -98,4 +98,16 @@ async function init() {
 
 init();
   </script>
+  <script>
+    async function logXml() {
+      try {
+        const result = await myModeler.saveXML( { format: true } );
+        const { xml } = result;
+        console.log(xml);
+      } catch (err) {
+        console.log( "Log Diagram failed." );
+      }
+    }
+  </script>
+  <button onclick="logXml()">Log XML</button>
 </body>

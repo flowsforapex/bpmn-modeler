@@ -16,6 +16,15 @@ import generateUserTaskEntries from './parts/userTaskProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
 
+import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
+import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
+
+import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
+import  { isSelected } from './parts/process_variables/procVarLists.js';
+
+import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
+
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
@@ -51,7 +60,7 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 
 function createApexTabGroups(element, translate) {
   var apexPageGroup = {
-    id: 'apex-page-call',
+    id: 'apex-page-calls',
     label: 'Call APEX Page',
     entries: generateUserTaskEntries(element, translate)
   };
@@ -73,11 +82,50 @@ function createApexTabGroups(element, translate) {
   ];
 }
 
+function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate) {
+
+  var taskGroup = {
+    id: 'apex-task',
+    label: 'Process Variables',
+    entries: generateUserTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
+  };
+
+  var gatewayGroup = {
+    id: 'apex-gateway',
+    label: 'Process Variables',
+    entries: generateGatewayTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
+  };
+
+  var eventGroup = {
+    id: 'apex-event',
+    label: 'Process Variables',
+    entries: generateEventTaskProcessVariables(element, bpmnFactory, elementRegistry, translate)
+  }
+
+  var detailGroup = {
+    id: 'details',
+    label: 'Variable Details',
+    entries: procVarDetailProps(element, bpmnFactory, translate),
+    enabled: isSelected
+  }
+
+  return [
+    taskGroup,
+    gatewayGroup,
+    eventGroup,
+    detailGroup
+  ];
+}
+
 export default function apexPropertiesProvider(
     eventBus, bpmnFactory, canvas,
     elementRegistry, translate) {
 
   PropertiesActivator.call(this, eventBus);
+
+  eventBus.on('saveXML.start', function() {
+    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry)
+  });
 
   this.getTabs = function (element) {
 
@@ -94,10 +142,17 @@ export default function apexPropertiesProvider(
       groups: createApexTabGroups(element, translate)
     };
 
+    var VariablesTab = {
+      id: 'variables',
+      label: 'Variables',
+      groups: createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate)
+    };
+
     // Show general + APEX tabs
     return [
       generalTab,
-      ApexTab
+      ApexTab,
+      VariablesTab,
     ];
   };
 }
