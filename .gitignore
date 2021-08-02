@@ -2,4 +2,3 @@ node_modules
 dist
 demo
 .favorites.json
-.vscode/settings.json

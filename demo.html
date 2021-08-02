@@ -1,4 +1,10 @@
+<!DOCTYPE html>
+<html>
+
 <head>
+  <meta charset="UTF-8" />
+  <title>BPMN Modeler</title>
+
   <link rel="stylesheet" href="mtag.bpmnmodeler.css" type="text/css">
   <link rel="stylesheet" href="mtag.bpmnmodeler.font.css" type="text/css">
   <link rel="stylesheet" href="mtag.bpmnmodeler.properties-panel.css" type="text/css">
@@ -98,16 +104,5 @@ async function init() {
 
 init();
   </script>
-  <script>
-    async function logXml() {
-      try {
-        const result = await myModeler.saveXML( { format: true } );
-        const { xml } = result;
-        console.log(xml);
-      } catch (err) {
-        console.log( "Log Diagram failed." );
-      }
-    }
-  </script>
-  <button onclick="logXml()">Log XML</button>
 </body>
+</html>
