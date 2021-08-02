@@ -27,14 +27,14 @@
   },
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
-    "bpmn-js": "^8.2.2",
-    "bpmn-js-bpmnlint": "^0.16.0",
-    "bpmn-js-properties-panel": "^0.41.0",
+    "bpmn-js": "^8.7.1",
+    "bpmn-js-bpmnlint": "^0.18.0",
+    "bpmn-js-properties-panel": "^0.44.0",
     "bpmnlint": "^7.2.1",
     "bpmnlint-loader": "^0.1.5",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
-    "camunda-bpmn-moddle": "^5.0.0",
-    "diagram-js": "^7.2.3",
+    "camunda-bpmn-moddle": "^5.1.2",
+    "diagram-js": "^7.3.0",
     "remove-node-modules": "^1.7.6"
   },
   "devDependencies": {

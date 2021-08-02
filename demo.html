@@ -20,6 +20,8 @@
     bottom: 0;
     right: 0;
     width: 260px;
+    min-width: 260px;
+    max-width: 50%;
     z-index: 10;
     border-left: 1px solid #ccc;
     overflow: auto;
@@ -46,6 +48,7 @@
   <script>
     var myModeler = new bpmnModeler.Modeler({
   container: "#canvas",
+  keyboard: { bindTo: document },
   propertiesPanel: {
     parent: '#properties'
   },
@@ -56,6 +59,7 @@
     bpmnModeler.customModules.propertiesPanelModule,
     bpmnModeler.customModules.propertiesProviderModule,
     bpmnModeler.customModules.lintModule,
+    bpmnModeler.customModules.customPaletteProviderModule
   ],
   moddleExtensions: {
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
