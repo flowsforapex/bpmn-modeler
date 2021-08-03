@@ -91,6 +91,18 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "apexTerminationEvent",
+      "extends": [
+        "bpmn:TerminateEventDefinition"
+      ],
+      "properties": [
+        {
+          "name": "processStatus",
+          "type": "Boolean"
+        }
+      ]
     }
   ]
 }

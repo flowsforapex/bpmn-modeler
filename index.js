@@ -8,7 +8,6 @@ import lintModule from 'bpmn-js-bpmnlint';
 import bpmnlintConfig from './.bpmnlintrc';
 
 import customPaletteProviderModule from './custom/palette';
-import customTimerProvider from './custom/timer/CustomTimerProvider';
 
 var bpmnModeler = {
   Modeler: BpmnModeler,
@@ -17,8 +16,7 @@ var bpmnModeler = {
     propertiesPanelModule,
     propertiesProviderModule,
     lintModule,
-    customPaletteProviderModule,
-    customTimerProvider
+    customPaletteProviderModule
   },
   moddleExtensions: {
     apexModdleDescriptor

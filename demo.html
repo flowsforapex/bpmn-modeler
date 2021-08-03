@@ -59,8 +59,7 @@
     bpmnModeler.customModules.propertiesPanelModule,
     bpmnModeler.customModules.propertiesProviderModule,
     bpmnModeler.customModules.lintModule,
-    bpmnModeler.customModules.customPaletteProviderModule,
-    bpmnModeler.customModules.customTimerProvider
+    bpmnModeler.customModules.customPaletteProviderModule
   ],
   moddleExtensions: {
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
@@ -99,4 +98,16 @@ async function init() {
 
 init();
   </script>
+   <script>
+    async function logXml() {
+      try {
+        const result = await myModeler.saveXML( { format: true } );
+        const { xml } = result;
+        console.log(xml);
+      } catch (err) {
+        console.log( "Log Diagram failed." );
+      }
+    }
+  </script>
+  <button onclick="logXml()">Test</button>
 </body>
