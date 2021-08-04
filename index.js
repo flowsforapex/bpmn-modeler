@@ -5,9 +5,7 @@ import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps'
 import propertiesProviderModule from './apexPropertiesProvider/provider';
 import customPaletteProviderModule from './custom/palette';
 import propertiesPanelModule from './custom/properties-panel';
-import frenchTranslation from './translation/frenchTranslationModule';
-import germanTranslation from './translation/germanTranslationModule';
-
+import translationModule from './translation/TranslationModule';
 
 var bpmnModeler = {
   Modeler: BpmnModeler,
@@ -17,8 +15,7 @@ var bpmnModeler = {
     propertiesProviderModule,
     lintModule,
     customPaletteProviderModule,
-    frenchTranslation,
-    germanTranslation
+    translationModule
   },
   moddleExtensions: {
     apexModdleDescriptor,
