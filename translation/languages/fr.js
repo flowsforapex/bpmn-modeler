@@ -114,6 +114,7 @@ export default {
   'Timer Start Event (non-interrupting)': 'Evénement de début de minuterie (sans interruption)',
   'Transaction': 'transaction',
   'User Task': 'Activité de l\'utilisateur',
+
   // 'correcting missing bpmnElement on {plane} to {rootElement}': '{plane} {rootElement}',
   'element {element} referenced by {referenced}#{property} not yet drawn': 'element {element} indiqué par {referenced}#{property} pas encore dessiné',
   'failed to import {element}': 'impossible d\'importer {element}',
@@ -129,5 +130,119 @@ export default {
   'element required': 'élément requis',
   'more than {count} child lanes': 'plus que {count} voies secondaires',
   'no parent for {element} in {parent}': 'pas de parent pour {element} dans {parent}',
-  'no shape type specified': 'aucun type de formulaire spécifié'
+  'no shape type specified': 'aucun type de formulaire spécifié',
+
+  /* palette */
+  'Undo': '',
+  'Redo': '',
+  'Zoom in': '',
+  'Zoom out': '',
+
+  /* properties panel */
+  /* general */
+  'General': '',
+  'Id': '',
+  'Name': '',
+  'Details': '',
+  'Documentation': '',
+  'Element Documentation': '',
+  /* Pool/Participant */
+  'Process Id': '',
+  'Process Name': '',
+  'Process Documentation': '',
+  /* Group */
+  'Category Value': '',
+  /* user task */
+  'APEX': '',
+  'Call APEX Page': '',
+  'Application': '',
+  'Application ID or Alias': '',
+  'Page': '',
+  'Page ID or Alias': '',
+  'Request': '',
+  'Request Value for Page Call': '',
+  'Clear Cache': '',
+  'Clear Cache Value for Page Call': '',
+  'Page Items': '',
+  'Page Items to set': '',
+  'Item Values': '',
+  'Page Item Values': '',
+  /* script + service task */
+  'Engine': '',
+  'No': '',
+  'Yes': '',
+  'Use APEX_EXEC': '',
+  'PL/SQL Code': '',
+  'Enter the PL/SQL code to be executed.': '',
+  'Bind Page Item Values': '',
+  'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.': '',
+  /* variables */
+  'Variables': '',
+  'Process Variables': '',
+  'Before Task': '',
+  'BeforeTask': '',
+  'After Task': '',
+  'AfterTask': '',
+  'Before Event': '',
+  'BeforeEvent': '',
+  'On Event': '',
+  'OnEvent': '',
+  'Before Split': '',
+  'BeforeSplit': '',
+  'After Merge': '',
+  'AfterMerge': '',
+  /* details */
+  'Variable Details': '',
+  /* data types */
+  'Data Type': '',
+  'Varchar2': '',
+  'Number': '',
+  'Date': '',
+  'Clob': '',
+  /* expression types */
+  'Expression Type': '',
+  'Static': '',
+  'Process Variable': '',
+  'Page Item': '',
+  'SQL query (single value)': '',
+  'SQL query (colon delimited list)': '',
+  'Expression': '',
+  'Function Body': '',
+  /* descriptions */
+  'Static value': '',
+  'Name of the Process Variable': '',
+  'Name of the APEX Page Item': '',
+  'SQL query returning a single value': '',
+  'SQL query returning a colon delimited list': '',
+  'Expression returning a value': '',
+  'Function Body returning a value': '',
+  /* events */
+  /* message */
+  'Global Message referenced': '',
+  'Global Message Name': '',
+  /* timer */
+  'Timer Definition Type': '',
+  'Duration': '',
+  'Cycle': '',
+  'Timer Definition': '',
+  'Must provide a value': '',
+  /* conditional */
+  'Variable Name': '',
+  'Variable Events': '',
+  'Specify more than one variable change event as a comma separated list.': '',
+  /* signal */
+  'Global Signal referenced': '',
+  'Global Signal Name': '',
+  /* escalation */
+  'Global Escalation referenced': '',
+  'Global Escalation Name': '',
+  'Global Escalation Code': '',
+  /* link */
+  'Link Name': '',
+  /* compensation */
+  'Wait for Completion': '',
+  'Activity Ref': '',
+  /* error */
+  'Global Error referenced': '',
+  'Code': '',
 };
