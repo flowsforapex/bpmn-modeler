@@ -12,48 +12,48 @@ export default function (element, translate) {
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'apex-application',
-        description: 'Application ID or Alias',
-        label: 'Application',
+        description: translate('Application ID or Alias'),
+        label: translate('Application'),
         modelProperty: 'apex-application'
       })
     );
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'apex-page',
-        description: 'Page ID or Alias',
-        label: 'Page',
+        description: translate('Page ID or Alias'),
+        label: translate('Page'),
         modelProperty: 'apex-page'
       })
     );
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'apex-request',
-        description: 'Request Value for Page Call',
-        label: 'Request',
+        description: translate('Request Value for Page Call'),
+        label: translate('Request'),
         modelProperty: 'apex-request'
       })
     );
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'apex-cache',
-        description: 'Clear Cache Value for Page Call',
-        label: 'Clear Cache',
+        description: translate('Clear Cache Value for Page Call'),
+        label: translate('Clear Cache'),
         modelProperty: 'apex-cache'
       })
     );
     userTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'apex-item',
-        description: 'Page Items to set',
-        label: 'Page Items',
+        description: translate('Page Items to set'),
+        label: translate('Page Items'),
         modelProperty: 'apex-item'
       })
     );
     userTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'apex-value',
-        description: 'Page Item Values',
-        label: 'Item Values',
+        description: translate('Page Item Values'),
+        label: translate('Item Values'),
         modelProperty: 'apex-value'
       })
     );
