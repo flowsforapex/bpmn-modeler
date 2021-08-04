@@ -1,32 +1,30 @@
 import german from './languages/de';
 import french from './languages/fr';
 
-export default function LanguageProvider() {
-}
-
-LanguageProvider.$inject = [
-];
-
-var _language;
-var _languages = {
+const _languages = {
   'german': german,
   'french': french
 };
 
-LanguageProvider.prototype.applyTranslation = function (template, replacements) {
-  replacements = replacements || {};
+export default function LanguageProvider() {
+}
 
-  // Translate
-  if (_language !== undefined) {
+LanguageProvider.prototype.applyTranslation = function (language) {
+
+  const _language = _languages[language];
+
+  return (template, replacements) => {
+    replacements = replacements || {};
+
+    // Translate
     template = _language[template] || template;
-  }
 
-  // Replace
-  return template.replace(/{([^}]+)}/g, function (_, key) {
-    return replacements[key] || `{${key}}`;
-  });
+    // Replace
+    return template.replace(/{([^}]+)}/g, function (_, key) {
+      return replacements[key] || `{${key}}`;
+    });
+  };
 };
 
-LanguageProvider.prototype.setLanguage = function (language) {
-  _language = _languages[language];
-};
+LanguageProvider.$inject = [
+];

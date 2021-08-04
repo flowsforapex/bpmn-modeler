@@ -67,18 +67,12 @@
     bpmnModeler.customModules.propertiesProviderModule,
     bpmnModeler.customModules.lintModule,
     bpmnModeler.customModules.customPaletteProviderModule,
-    bpmnModeler.customModules.customTranslationModule,
-    bpmnModeler.customModules.languageProvider
+    bpmnModeler.customModules.frenchTranslation
   ],
   moddleExtensions: {
     apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
   }
 });
-
-console.log(myModeler.get('translate'));
-console.log(myModeler.get('languageProvider'));
-myModeler.get('languageProvider').setLanguage('french');
-// console.log(myModeler.get('translate'));
 
 async function init() {
 
