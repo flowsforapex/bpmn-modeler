@@ -1,5 +1,6 @@
-import customTranslation from './customTranslation';
+import LanguageProvider from './LanguageProvider';
 
 export default {
-  translate: ['value', customTranslation]
+  __init__: ['languageProvider'],
+  languageProvider: ['type', LanguageProvider]
 };
