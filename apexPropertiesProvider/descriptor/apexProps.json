@@ -103,6 +103,98 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "ProcessVariable",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "varSequence",
+          "type": "String"
+        },
+        {
+          "name": "varName",
+          "type": "String"
+        },
+        {
+          "name": "varDataType",
+          "type": "String"
+        },
+        {
+          "name": "varExpressionType",
+          "type": "String"
+        },
+        {
+          "name": "varExpression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "BeforeTask",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "AfterTask",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "AfterMerge",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "BeforeSplit",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "BeforeEvent",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "OnEvent",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
     }
   ]
 }
