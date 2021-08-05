@@ -52,7 +52,8 @@
     <div id="properties" class="properties-panel-parent"></div>
   </div>
   <script>
-    window.f4a = { language: 'french' }
+    window.f4a = window.f4a || {};
+    window.f4a.language = 'french';
   </script>
   <script src="./bundle.js"></script>
   <script>
