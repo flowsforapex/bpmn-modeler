@@ -100,7 +100,7 @@
       "properties": [
         {
           "name": "processStatus",
-          "type": "Boolean"
+          "type": "String"
         }
       ]
     }
