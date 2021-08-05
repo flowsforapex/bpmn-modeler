@@ -93,6 +93,18 @@
       ]
     },
     {
+      "name": "apexTerminationEvent",
+      "extends": [
+        "bpmn:TerminateEventDefinition"
+      ],
+      "properties": [
+        {
+          "name": "processStatus",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "ProcessVariable",
       "superClass": [ "Element" ],
       "properties": [
