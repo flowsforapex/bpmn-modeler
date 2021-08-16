@@ -1,6 +1,6 @@
-var is = require('bpmn-js/lib/util/ModelUtil').is,
-    entryFactory = require('./custom/EntryFactory'),
-    cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+var {is} = require('bpmn-js/lib/util/ModelUtil');
+    var entryFactory = require('./custom/EntryFactory');
+    var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 import { getSelectedEntry } from './procVarLists';
 
@@ -12,27 +12,27 @@ var EXPRESSION_DESCRIPTION = {
     sqlQueryList: 'SQL query returning a colon delimited list',
     plsqlExpression: 'Expression returning a value',
     plsqlFunctionBody: 'Function Body returning a value'
-}
+};
 
-var getProperty = function(property) {
-    return function(element, node) {
+var getProperty = function (property) {
+    return function (element, node) {
 
         var entry = getSelectedEntry(element, node);
 
         return {
             [property]: (entry && entry.get(property)) || undefined,
             varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
-        }
-    }
-}
+        };
+    };
+};
 
-var setProperty = function() {
-    return function(element, values, node) {
+var setProperty = function () {
+    return function (element, values, node) {
     var entry = getSelectedEntry(element, node);
 
     return cmdHelper.updateBusinessObject(element, entry, values);
-    }
-}
+    };
+};
 
 export function procVarDetailProps(element, bpmnFactory, translate) {
 
@@ -85,10 +85,10 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Varchar2', value: 'varchar2'},
-                    {name: 'Number', value: 'number'},
-                    {name: 'Date', value: 'date'},
-                    {name: 'Clob', value: 'clob'},
+                    {name: 'Varchar2', value: 'VARCHAR2'},
+                    {name: 'Number', value: 'NUMBER'},
+                    {name: 'Date', value: 'DATE'},
+                    {name: 'Clob', value: 'CLOB'},
                 ]
             })
         );
