@@ -1,9 +1,7 @@
-import german from './languages/de';
 import french from './languages/fr';
 
 const languages = {
-  'german': german,
-  'french': french
+  'fr': french
 };
 
 var language;
