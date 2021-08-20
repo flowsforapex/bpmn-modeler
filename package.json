@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
-    "bpmn-js": "^8.7.1",
+    "bpmn-js": "^8.7.2",
     "bpmn-js-bpmnlint": "^0.18.0",
     "bpmn-js-properties-panel": "^0.44.0",
     "bpmnlint": "^7.2.1",
