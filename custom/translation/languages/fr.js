@@ -203,7 +203,7 @@ export default {
   /* descriptions */
   'Date in format YYYY-MM-DD HH24:MI:SS': 'Format de date YYYY-MM-DD HH24:MI:SS',
   /* expressions */
-  'Variable expression': 'Expression de variable',
+  'Variable Expression': 'Expression de variable',
   /* expression types */
   'Expression Type': 'Type d\'expression',
   'Static': 'Statique',
