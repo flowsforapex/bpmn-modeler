@@ -200,6 +200,10 @@ export default {
   'Number': 'Number',
   'Date': 'Date',
   'Clob': 'Clob',
+  /* descriptions */
+  'Date in format YYYY-MM-DD HH24:MI:SS': 'Format de date YYYY-MM-DD HH24:MI:SS',
+  /* expressions */
+  'Variable expression': 'Expression de variable',
   /* expression types */
   'Expression Type': 'Type d\'expression',
   'Static': 'Statique',
@@ -215,8 +219,8 @@ export default {
   'Name of the APEX Page Item': 'Nom de l\'item de page APEX',
   'SQL query returning a single value': 'Requête SQL retournant une valeur unique',
   'SQL query returning a colon delimited list': 'Requête SQL retournant une liste séparée par des deux-points',
-  'Expression returning a value': 'Expression retournant une valeur',
-  'Function Body returning a value': 'Corps de fonction retournant une valeur',
+  'PL/SQL Expression returning a value': 'Expression PL/SQL retournant une valeur',
+  'PL/SQL Function Body returning a value': 'Corps de fonction PL/SQL retournant une valeur',
   /* events */
   /* message */
   'Global Message referenced': 'Message global de référence',
