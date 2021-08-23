@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    "mtag.bpmnmodeler": [path.resolve(__dirname, "index.js")],
+    "flows4apex.modeler": [path.resolve(__dirname, "index.js")],
   },
   output: {
     path: path.resolve(__dirname, "dist"),

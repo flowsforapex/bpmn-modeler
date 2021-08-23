@@ -1,19 +1,19 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
 import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps';
-import eventProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/EventProps';
 import linkProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps';
 import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
 // Require all properties you need from existing providers.
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
 import inherits from 'inherits';
+import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
-import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
-import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
+import { removeInvalidExtensionsElements } from './
+import { procVarDetailProps, procVarExpressionProps } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
@@ -105,11 +105,19 @@ function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translat
     enabled: isSelected
   };
 
+  var expressionGroup = {
+    id: 'expression',
+    label: 'Variable Expression',
+    entries: procVarExpressionProps(element, bpmnFactory, translate),
+    enabled: isSelected
+  };
+
   return [
     taskGroup,
     gatewayGroup,
     eventGroup,
-    detailGroup
+    detailGroup,
+    expressionGroup
   ];
 }
 

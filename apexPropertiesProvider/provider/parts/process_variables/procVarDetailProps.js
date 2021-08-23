@@ -4,37 +4,42 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 import { getSelectedEntry } from './procVarLists';
 
-export function procVarDetailProps(element, bpmnFactory, translate) {
+const EXPRESSION_DESCRIPTION = {
+    static: translate('Static value'),
+    processVariable: translate('Name of the Process Variable'),
+    // pageItem: translate('Name of the APEX Page Item'),
+    sqlQuerySingle: translate('SQL query returning a single value'),
+    sqlQueryList: translate('SQL query returning a colon delimited list'),
+    plsqlExpression: translate('PL/SQL Expression returning a value'),
+    plsqlFunctionBody: translate('PL/SQL Function Body returning a value')
+};
 
-    var EXPRESSION_DESCRIPTION = {
-        static: translate('Static value'),
-        processVariable: translate('Name of the Process Variable'),
-        // pageItem: translate('Name of the APEX Page Item'),
-        sqlQuerySingle: translate('SQL query returning a single value'),
-        sqlQueryList: translate('SQL query returning a colon delimited list'),
-        plsqlExpression: translate('Expression returning a value'),
-        plsqlFunctionBody: translate('Function Body returning a value')
-    };
-    
-    var getProperty = function (property) {
-        return function (element, node) {
-    
-            var entry = getSelectedEntry(element, node);
-    
-            return {
-                [property]: (entry && entry.get(property)) || undefined,
-                varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
-            };
-        };
-    };
-    
-    var setProperty = function () {
-        return function (element, values, node) {
+const DATA_TYPE_DESCRIPTION = {
+    DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
+};
+
+var getProperty = function (property) {
+    return function (element, node) {
+
         var entry = getSelectedEntry(element, node);
-    
-        return cmdHelper.updateBusinessObject(element, entry, values);
+
+        return {
+            [property]: (entry && entry.get(property)) || undefined,
+            varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
+            varDataTypeDynamicDescription: DATA_TYPE_DESCRIPTION[entry && entry.get('varDataType')]
         };
     };
+};
+
+var setProperty = function () {
+    return function (element, values, node) {
+    var entry = getSelectedEntry(element, node);
+
+    return cmdHelper.updateBusinessObject(element, entry, values);
+    };
+};
+
+export function procVarDetailProps(element, bpmnFactory, translate) {
 
     var procVarProps = [];
 
@@ -62,7 +67,6 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.textField(translate, {
                 id: 'varName',
-                // description: 'Variable name',
                 label: translate('Name'),
                 modelProperty: 'varName',
 
@@ -74,11 +78,11 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
 
         // datatype field
         procVarProps.push(
-            entryFactory.selectBox(translate, {
+            entryFactory.dynamicSelectBox(translate, {
                 id: 'varDataType',
-                // description: 'Data Type',
                 label: translate('Data Type'),
                 modelProperty: 'varDataType',
+                dataValueDescription: 'varDataTypeDynamicDescription',
 
                 get: getProperty('varDataType'),
 
@@ -92,6 +96,34 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 ]
             })
         );
+    }
+
+    return procVarProps;
+}
+
+export function procVarExpressionProps(element, bpmnFactory, translate) {
+
+    var procVarProps = [];
+
+    if (
+        // task elements
+        is(element, 'bpmn:Task') ||
+        is(element, 'bpmn:UserTask') ||
+        is(element, 'bpmn:ScriptTask') ||
+        is(element, 'bpmn:ServiceTask') ||
+        is(element, 'bpmn:ManualTask') ||
+        // gateway elements
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway') ||
+        // event elements
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
 
         // expression type
         procVarProps.push(

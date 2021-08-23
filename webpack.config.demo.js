@@ -20,15 +20,13 @@ module.exports = {
           to: "./index.html",
         },
         {
-          from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.css"),
+          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
         },
         {
-          from: path.resolve(__dirname, "assets/css/mtag.bpmnmodeler.font.css"),
+          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.font.css"),
         },
         {
-          from: path.resolve(
-            __dirname,
-            "assets/css/mtag.bpmnmodeler.properties-panel.css"
+          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.properties-panel.css"
           ),
         },
         {

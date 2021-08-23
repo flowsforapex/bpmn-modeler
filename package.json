@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
-    "bpmn-js": "^8.7.1",
+    "bpmn-js": "^8.7.2",
     "bpmn-js-bpmnlint": "^0.18.0",
     "bpmn-js-properties-panel": "^0.44.0",
     "bpmnlint": "^7.2.1",
@@ -40,12 +40,12 @@
   "devDependencies": {
     "copy-webpack-plugin": "^6.3.1",
     "eslint": "^7.23.0",
-    "eslint-config-webpack": "^1.2.5",
     "eslint-config-prettier": "^8.1.0",
+    "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "^2.2.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^2.2.1",
     "webpack": "^4",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"

@@ -3,21 +3,21 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>BPMN Modeler</title>
+  <title>Flows for APEX - Modeler</title>
 
-  <link rel="stylesheet" href="mtag.bpmnmodeler.css" type="text/css">
-  <link rel="stylesheet" href="mtag.bpmnmodeler.font.css" type="text/css">
-  <link rel="stylesheet" href="mtag.bpmnmodeler.properties-panel.css" type="text/css">
+  <link rel="stylesheet" href="flows4apex.modeler.css" type="text/css">
+  <link rel="stylesheet" href="flows4apex.modeler.font.css" type="text/css">
+  <link rel="stylesheet" href="flows4apex.modeler.properties-panel.css" type="text/css">
   <link rel="stylesheet" href="bpmn-js-bpmnlint.css" type="text/css">
   <link type="text/css" rel="stylesheet" href=" https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css">
 
-  <style type="text/css">
+  <style >
   #canvas {
       height: 80vh;
       background-color: #f0f0f0;
   }
 
-  .mtag-bpmn-modeler {
+  .flows4apex-modeler {
     position: relative;
   }  
   
@@ -47,7 +47,7 @@
 </head>
 
 <body>
-  <div class="mtag-bpmn-modeler">
+  <div class="flows4apex-modeler">
     <div id="canvas"></div>
     <div id="properties" class="properties-panel-parent"></div>
   </div>
@@ -110,5 +110,17 @@
 
     init();
   </script>
+   <script>
+    async function logXml() {
+      try {
+        const result = await myModeler.saveXML( { format: true } );
+        const { xml } = result;
+        console.log(xml);
+      } catch (err) {
+        console.log( "Log Diagram failed." );
+      }
+    }
+  </script>
+  <button onclick="logXml()">Test</button>
 </body>
 </html>
