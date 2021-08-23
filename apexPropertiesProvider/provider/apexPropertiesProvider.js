@@ -107,7 +107,7 @@ function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translat
 
   var expressionGroup = {
     id: 'expression',
-    label: 'Variable Expression',
+    label: translate('Variable Expression'),
     entries: procVarExpressionProps(element, bpmnFactory, translate),
     enabled: isSelected
   };

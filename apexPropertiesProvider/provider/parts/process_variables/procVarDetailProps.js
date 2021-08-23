@@ -4,42 +4,31 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 import { getSelectedEntry } from './procVarLists';
 
-const EXPRESSION_DESCRIPTION = {
-    static: translate('Static value'),
-    processVariable: translate('Name of the Process Variable'),
-    // pageItem: translate('Name of the APEX Page Item'),
-    sqlQuerySingle: translate('SQL query returning a single value'),
-    sqlQueryList: translate('SQL query returning a colon delimited list'),
-    plsqlExpression: translate('PL/SQL Expression returning a value'),
-    plsqlFunctionBody: translate('PL/SQL Function Body returning a value')
-};
+export function procVarDetailProps(element, bpmnFactory, translate) {
+   
+    const DATA_TYPE_DESCRIPTION = {
+        DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
+    };
 
-const DATA_TYPE_DESCRIPTION = {
-    DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
-};
-
-var getProperty = function (property) {
-    return function (element, node) {
-
-        var entry = getSelectedEntry(element, node);
-
-        return {
-            [property]: (entry && entry.get(property)) || undefined,
-            varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
-            varDataTypeDynamicDescription: DATA_TYPE_DESCRIPTION[entry && entry.get('varDataType')]
+    var getProperty = function (property) {
+        return function (element, node) {
+    
+            var entry = getSelectedEntry(element, node);
+    
+            return {
+                [property]: (entry && entry.get(property)) || undefined,
+                varDataTypeDynamicDescription: DATA_TYPE_DESCRIPTION[entry && entry.get('varDataType')]
+            };
         };
     };
-};
-
-var setProperty = function () {
-    return function (element, values, node) {
-    var entry = getSelectedEntry(element, node);
-
-    return cmdHelper.updateBusinessObject(element, entry, values);
+    
+    var setProperty = function () {
+        return function (element, values, node) {
+        var entry = getSelectedEntry(element, node);
+    
+        return cmdHelper.updateBusinessObject(element, entry, values);
+        };
     };
-};
-
-export function procVarDetailProps(element, bpmnFactory, translate) {
 
     var procVarProps = [];
 
@@ -89,10 +78,10 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: translate('Varchar2'), value: 'varchar2'},
-                    {name: translate('Number'), value: 'number'},
-                    {name: translate('Date'), value: 'date'},
-                    {name: translate('Clob'), value: 'clob'},
+                    {name: translate('Varchar2'), value: 'VARCHAR2'},
+                    {name: translate('Number'), value: 'NUMBER'},
+                    {name: translate('Date'), value: 'DATE'},
+                    {name: translate('Clob'), value: 'CLOB'},
                 ]
             })
         );
@@ -102,6 +91,36 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
 }
 
 export function procVarExpressionProps(element, bpmnFactory, translate) {
+
+    const EXPRESSION_DESCRIPTION = {
+        static: translate('Static value'),
+        processVariable: translate('Name of the Process Variable'),
+        // pageItem: translate('Name of the APEX Page Item'),
+        sqlQuerySingle: translate('SQL query returning a single value'),
+        sqlQueryList: translate('SQL query returning a colon delimited list'),
+        plsqlExpression: translate('PL/SQL Expression returning a value'),
+        plsqlFunctionBody: translate('PL/SQL Function Body returning a value')
+    };
+
+    var getProperty = function (property) {
+        return function (element, node) {
+    
+            var entry = getSelectedEntry(element, node);
+    
+            return {
+                [property]: (entry && entry.get(property)) || undefined,
+                varExpressionDynamicDescription: EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')]
+            };
+        };
+    };
+    
+    var setProperty = function () {
+        return function (element, values, node) {
+        var entry = getSelectedEntry(element, node);
+    
+        return cmdHelper.updateBusinessObject(element, entry, values);
+        };
+    };
 
     var procVarProps = [];
 

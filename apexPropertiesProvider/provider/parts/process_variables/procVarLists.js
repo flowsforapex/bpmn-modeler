@@ -55,39 +55,17 @@ var newElement = function (bpmnFactory, type, props) {
   return function (element, extensionElements, values) {
     var commands = [];
 
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        `apex:${type}`
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        `apex:${type}`
-      )[0];
+    var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`) &&
+      extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`)[0];
 
     if (!container) {
-      container = elementHelper.createElement(
-        `apex:${type}`,
-        {},
-        extensionElements,
-        bpmnFactory
-      );
-      commands.push(
-        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
-          container,
-        ])
-      );
+      container = elementHelper.createElement(`apex:${type}`, {}, extensionElements, bpmnFactory);
+      commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [container, ]));
     }
 
-    var index =
-      (container.procVars && String(container.procVars.length)) || '0';
+    var index = (container.procVars && String(container.procVars.length)) || '0';
     var re = new RegExp(`${props.varName}_\\d$`);
-    var newNumber =
-      (container.procVars &&
-        container.procVars
-          .filter(e => e.varName.match(re))
-          .map(e => parseInt(e.varName.split('_')[1]))
-          .reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
+    var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
 
     values = {
       varSequence: String(index),
@@ -103,9 +81,7 @@ var newElement = function (bpmnFactory, type, props) {
       container,
       bpmnFactory
     );
-    commands.push(
-      cmdHelper.addElementsTolist(element, container, 'procVars', [newElem])
-    );
+    commands.push(cmdHelper.addElementsTolist(element, container, 'procVars', [newElem]));
 
     return commands;
   };
@@ -113,33 +89,13 @@ var newElement = function (bpmnFactory, type, props) {
 
 var removeElement = function (type) {
   return function (element, extensionElements, value, idx) {
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        `apex:${type}`
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        `apex:${type}`
-      )[0];
+    var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`) &&
+      extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`)[0];
 
     var entries = getEntries(element, type);
     var entry = entries[idx];
     if (entry) {
-      var command =
-        container.procVars.length > 1 ? cmdHelper.removeElementsFromList(
-              element,
-              container,
-              'procVars',
-              'extensionElements',
-              [entry]
-            ) : cmdHelper.removeElementsFromList(
-              element,
-              extensionElements,
-              'values',
-              'extensionElements',
-              [container]
-            );
+      var command = container.procVars.length > 1 ? cmdHelper.removeElementsFromList(element, container, 'procVars', 'extensionElements', [entry]) : cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [container]);
       return command;
     }
   };
@@ -150,22 +106,7 @@ function resetSequences(element, type) {
   entries.forEach((e, i) => e.set('varSequence', String(i)));
 }
 
-// function deleteInvalidProperties(element, bpmnFactory, elementRegistry, type) {
-//     var bo = getBusinessObject(element);
-//     var toRemove = bo.extensionElements && bo.extensionElements.values.filter(e => e.$type != 'apex:' + type);
-//     if (toRemove) {
-//         var command = extensionElementsHelper.removeEntry(bo, element, toRemove[0]);
-//         new UpdateBusinessObjectListHandler(elementRegistry, bpmnFactory).execute(command.context);
-//     }
-// }
-
-export function procVarLists(
-  element,
-  bpmnFactory,
-  elementRegistry,
-  translate,
-  options
-) {
+export function procVarLists(element, bpmnFactory, elementRegistry, translate, options) {
   procVarProps = [];
 
   if (options.type1) {
@@ -200,9 +141,6 @@ export function procVarLists(
 
     procVarProps.push(preProcessVariables);
   }
-  // else {
-  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
-  // }
   
   if (options.type2) {
     var { type2 } = options;
@@ -237,9 +175,6 @@ export function procVarLists(
 
     procVarProps.push(postProcessVariables);
   }
-  // else {
-  //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type1);
-  // }
 
   return procVarProps;
 }
