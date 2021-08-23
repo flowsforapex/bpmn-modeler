@@ -26,17 +26,17 @@ import generateUserTaskEntries from './parts/userTaskProps.js';
 function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate) {
   var generalGroup = {
     id: 'general',
-    label: 'General',
+    label: translate('General'),
     entries: []
   };
   var detailsGroup = {
     id: 'details',
-    label: 'Details',
+    label: translate('Details'),
     entries: []
   };
   var documentationGroup = {
     id: 'documentation',
-    label: 'Documentation',
+    label: translate('Documentation'),
     entries: []
   };
 
@@ -57,17 +57,17 @@ function createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, t
 function createApexTabGroups(element, translate) {
   var apexPageGroup = {
     id: 'apex-page-calls',
-    label: 'Call APEX Page',
+    label: translate('Call APEX Page'),
     entries: generateUserTaskEntries(element, translate)
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
-    label: 'Script Task',
+    label: translate('Script Task'),
     entries: generateScriptTaskEntries(element, translate)
   };
   var apexServiceGroup = {
     id: 'apex-service-group',
-    label: 'Service Task',
+    label: translate('Service Task'),
     entries: generateServiceTaskEntries(element, translate)
   };
 
@@ -82,25 +82,25 @@ function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translat
 
   var taskGroup = {
     id: 'apex-task',
-    label: 'Process Variables',
+    label: translate('Process Variables'),
     entries: generateUserTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
-    label: 'Process Variables',
+    label: translate('Process Variables'),
     entries: generateGatewayTaskProcessVariableLists(element, bpmnFactory, elementRegistry, translate)
   };
 
   var eventGroup = {
     id: 'apex-event',
-    label: 'Process Variables',
+    label: translate('Process Variables'),
     entries: generateEventTaskProcessVariables(element, bpmnFactory, elementRegistry, translate)
   };
 
   var detailGroup = {
     id: 'details',
-    label: 'Variable Details',
+    label: translate('Variable Details'),
     entries: procVarDetailProps(element, bpmnFactory, translate),
     enabled: isSelected
   };
@@ -135,20 +135,20 @@ export default function apexPropertiesProvider(
 
     var generalTab = {
       id: 'general',
-      label: 'General',
+      label: translate('General'),
       groups: createGeneralTabGroups(element, bpmnFactory, canvas, elementRegistry, translate)
     };
 
     // The 'APEX' tab
     var ApexTab = {
       id: 'apex',
-      label: 'APEX',
+      label: translate('APEX'),
       groups: createApexTabGroups(element, translate)
     };
 
     var VariablesTab = {
       id: 'variables',
-      label: 'Variables',
+      label: translate('Variables'),
       groups: createVariablesTabGroup(element, bpmnFactory, elementRegistry, translate)
     };
 

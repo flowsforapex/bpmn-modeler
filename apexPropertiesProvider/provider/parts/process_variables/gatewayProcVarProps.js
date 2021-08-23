@@ -1,4 +1,4 @@
-var is = require('bpmn-js/lib/util/ModelUtil').is;
+var {is} = require('bpmn-js/lib/util/ModelUtil');
 
 import { procVarLists } from './procVarLists';
 
@@ -12,21 +12,24 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
   ) {
 
     // opening gateway
-    if (element.incoming.length == 1 && element.outgoing.length > 1) {
+    if (element.incoming.length === 1 && element.outgoing.length > 1) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'BeforeSplit', label1: 'Before Split'
+            type1: 'BeforeSplit',
+            label1: translate('Before Split')
           });    
     }
     // closing gateway
-    else if (element.incoming.length > 1 && element.outgoing.length == 1) {
+    else if (element.incoming.length > 1 && element.outgoing.length === 1) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'AfterMerge', label1: 'After Merge'
+            type1: 'AfterMerge',
+            label1: translate('After Merge')
           });
-    }
-    else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+    } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'AfterMerge', label1: 'After Merge',
-            type2: 'BeforeSplit', label2: 'Before Split'
+            type1: 'AfterMerge',
+            label1: translate('After Merge'),
+            type2: 'BeforeSplit',
+            label2: translate('Before Split')
           });
     }
   }

@@ -5,17 +5,17 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 import { getSelectedEntry } from './procVarLists';
 
 const EXPRESSION_DESCRIPTION = {
-    static: 'Static value',
-    processVariable: 'Name of the Process Variable',
-    // pageItem: 'Name of the APEX Page Item',
-    sqlQuerySingle: 'SQL query returning a single value',
-    sqlQueryList: 'SQL query returning a colon delimited list',
-    plsqlExpression: 'PL/SQL Expression returning a value',
-    plsqlFunctionBody: 'PL/SQL Function Body returning a value'
+    static: translate('Static value'),
+    processVariable: translate('Name of the Process Variable'),
+    // pageItem: translate('Name of the APEX Page Item'),
+    sqlQuerySingle: translate('SQL query returning a single value'),
+    sqlQueryList: translate('SQL query returning a colon delimited list'),
+    plsqlExpression: translate('PL/SQL Expression returning a value'),
+    plsqlFunctionBody: translate('PL/SQL Function Body returning a value')
 };
 
 const DATA_TYPE_DESCRIPTION = {
-    DATE: 'Date in format YYYY-MM-DD HH24:MI:SS',
+    DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
 };
 
 var getProperty = function (property) {
@@ -67,7 +67,7 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.textField(translate, {
                 id: 'varName',
-                label: 'Name',
+                label: translate('Name'),
                 modelProperty: 'varName',
 
                 get: getProperty('varName'),
@@ -80,7 +80,7 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.dynamicSelectBox(translate, {
                 id: 'varDataType',
-                label: 'Data Type',
+                label: translate('Data Type'),
                 modelProperty: 'varDataType',
                 dataValueDescription: 'varDataTypeDynamicDescription',
 
@@ -89,10 +89,10 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Varchar2', value: 'VARCHAR2'},
-                    {name: 'Number', value: 'NUMBER'},
-                    {name: 'Date', value: 'DATE'},
-                    {name: 'Clob', value: 'CLOB'},
+                    {name: translate('Varchar2'), value: 'varchar2'},
+                    {name: translate('Number'), value: 'number'},
+                    {name: translate('Date'), value: 'date'},
+                    {name: translate('Clob'), value: 'clob'},
                 ]
             })
         );
@@ -129,7 +129,7 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.selectBox(translate, {
                 id: 'varExpressionType',
-                label: 'Expression Type',
+                label: translate('Expression Type'),
                 modelProperty: 'varExpressionType',
 
                 get: getProperty('varExpressionType'),
@@ -137,13 +137,13 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
                 set: setProperty(),
 
                 selectOptions: [
-                    {name: 'Static', value: 'static'},
-                    {name: 'Process Variable', value: 'processVariable'},
-                    // {name: 'Page Item', value: 'pageItem'},
-                    {name: 'SQL query (single value)', value: 'sqlQuerySingle'},
-                    {name: 'SQL query (colon delimited list)', value: 'sqlQueryList'},
-                    {name: 'Expression', value: 'plsqlExpression'},
-                    {name: 'Function Body', value: 'plsqlFunctionBody'},
+                    {name: translate('Static'), value: 'static'},
+                    {name: translate('Process Variable'), value: 'processVariable'},
+                    // {name: translate('Page Item'), value: 'pageItem'},
+                    {name: translate('SQL query (single value)'), value: 'sqlQuerySingle'},
+                    {name: translate('SQL query (colon delimited list)'), value: 'sqlQueryList'},
+                    {name: translate('Expression'), value: 'plsqlExpression'},
+                    {name: translate('Function Body'), value: 'plsqlFunctionBody'},
                 ]
             })
         );
@@ -152,7 +152,7 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
         procVarProps.push(
             entryFactory.dynamicTextBox(translate, {
                 id: 'varExpression',
-                label: 'Expression',
+                label: translate('Expression'),
                 modelProperty: 'varExpression',
                 dataValueDescription: 'varExpressionDynamicDescription',
 

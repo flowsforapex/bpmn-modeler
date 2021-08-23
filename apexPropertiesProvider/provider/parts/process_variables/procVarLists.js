@@ -7,6 +7,8 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
 const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
 var procVarProps = [];
+var preProcessVariables;
+var postProcessVariables;
 
 function getEntries(element, type) {
   var bo = getBusinessObject(element);
@@ -32,7 +34,7 @@ export function getSelectedEntry(element, node) {
       }
     });
   }
-
+  
   return entry;
 }
 
@@ -176,7 +178,7 @@ export function procVarLists(
       label: label1,
 
       createExtensionElement: newElement(bpmnFactory, type1, {
-        varName: type1,
+        varName: translate(type1),
         varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',
@@ -201,7 +203,7 @@ export function procVarLists(
   // else {
   //     deleteInvalidProperties(element, bpmnFactory, elementRegistry, options.type2);
   // }
-
+  
   if (options.type2) {
     var { type2 } = options;
     var { label2 } = options;
@@ -212,7 +214,7 @@ export function procVarLists(
       label: label2,
 
       createExtensionElement: newElement(bpmnFactory, type2, {
-        varName: type2,
+        varName: translate(type2),
         varDataType: 'VARCHAR2',
         varExpression: '',
         varExpressionType: 'static',

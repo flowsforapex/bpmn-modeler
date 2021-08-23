@@ -1,5 +1,5 @@
-var is = require('bpmn-js/lib/util/ModelUtil').is,
-    getBusinessObject = require('bpmn-js/lib/util/ModelUtil').getBusinessObject;
+var {is} = require('bpmn-js/lib/util/ModelUtil');
+var {getBusinessObject} = require('bpmn-js/lib/util/ModelUtil');
 
 import { procVarLists } from './procVarLists';
 
@@ -15,14 +15,17 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
     if (getBusinessObject(element).eventDefinitions && getBusinessObject(element).eventDefinitions.some(e => e.$type == 'bpmn:TimerEventDefinition')) {
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'BeforeEvent', label1: 'Before Event',
-            type2: 'OnEvent', label2: 'On Event'
+            type1: 'BeforeEvent',
+            label1: translate('Before Event'),
+            type2: 'OnEvent',
+            label2: translate('On Event')
         });
     }
-    else {
+    
         return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-            type1: 'OnEvent', label1: 'On Event'
+            type1: 'OnEvent',
+            label1: translate('On Event')
         });
-    }
+    
   }
 }
