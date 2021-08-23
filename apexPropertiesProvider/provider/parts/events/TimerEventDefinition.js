@@ -70,7 +70,7 @@ function TimerEventDefinition(group, element, bpmnFactory, timerEventDefinition,
 
   var selectOptions;
 
-    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent' && element.businessObject.cancelActivity)) {
+    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent')) {
         selectOptions = [
             { value: 'timeDate', name: translate('Date') },
             { value: 'timeDuration', name: translate('Duration') }
