@@ -1,29 +1,25 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import inherits from 'inherits';
 import PropertiesActivator from 'bpmn-js-properties-panel/lib/PropertiesActivator';
-
+import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps';
+import linkProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps';
+import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
 // Require all properties you need from existing providers.
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
+import inherits from 'inherits';
 import eventProps from './parts/events/EventProps';
-import linkProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/LinkProps';
-import documentationProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/DocumentationProps';
-import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProps';
-
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
-import generateUserTaskEntries from './parts/userTaskProps.js';
+import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
+import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
+import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
+import { procVarDetailProps, procVarExpressionProps } from './parts/process_variables/procVarDetailProps.js';
+import { isSelected } from './parts/process_variables/procVarLists.js';
+import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
+import generateUserTaskEntries from './parts/userTaskProps.js';
 
-import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
-import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
-import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
-
-import { procVarDetailProps } from './parts/process_variables/procVarDetailProps.js';
-import  { isSelected } from './parts/process_variables/procVarLists.js';
-
-import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -100,20 +96,28 @@ function createVariablesTabGroup(element, bpmnFactory, elementRegistry, translat
     id: 'apex-event',
     label: 'Process Variables',
     entries: generateEventTaskProcessVariables(element, bpmnFactory, elementRegistry, translate)
-  }
+  };
 
   var detailGroup = {
     id: 'details',
     label: 'Variable Details',
     entries: procVarDetailProps(element, bpmnFactory, translate),
     enabled: isSelected
-  }
+  };
+
+  var expressionGroup = {
+    id: 'expression',
+    label: 'Variable Expression',
+    entries: procVarExpressionProps(element, bpmnFactory, translate),
+    enabled: isSelected
+  };
 
   return [
     taskGroup,
     gatewayGroup,
     eventGroup,
-    detailGroup
+    detailGroup,
+    expressionGroup
   ];
 }
 
@@ -123,8 +127,8 @@ export default function apexPropertiesProvider(
 
   PropertiesActivator.call(this, eventBus);
 
-  eventBus.on('saveXML.start', function() {
-    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry)
+  eventBus.on('saveXML.start', function () {
+    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry);
   });
 
   this.getTabs = function (element) {
