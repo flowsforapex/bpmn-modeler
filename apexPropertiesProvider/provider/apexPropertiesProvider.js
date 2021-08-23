@@ -12,7 +12,7 @@ import eventProps from './parts/events/EventProps';
 import globalProps from './parts/globalProps.js';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
-import { removeInvalidExtensionsElements } from './
+import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
 import { procVarDetailProps, procVarExpressionProps } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
