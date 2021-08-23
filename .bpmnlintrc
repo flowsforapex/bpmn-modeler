@@ -8,6 +8,7 @@
     "no-inclusive-gateway": "off",
     "no-gateway-join-fork": "off",
     "label-required": "warn",
-    "apex/max-id-length": "error"
+    "apex/max-id-length": "error",
+    "apex/merge-split-gateways": "warn"
   }
 }
