@@ -13,8 +13,8 @@
 
   <style >
   #canvas {
-      height: 80vh;
-      background-color: #f0f0f0;
+    height: 80vh;
+    background-color: #f0f0f0;
   }
 
   .flows4apex-modeler {
@@ -42,6 +42,12 @@
   .properties-panel-parent > .djs-properties-panel {
     padding-bottom: 70px;
     min-height:100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    #canvas, .properties-panel-parent {
+      background-color: #2b3035;
+    }
   }
   </style>
 </head>
@@ -75,6 +81,11 @@
       ],
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
+      },
+      bpmnRenderer: {
+        defaultFillColor: "var(--default-fill-color)",
+        defaultStrokeColor: "var(--default-stroke-color)",
+        defaultLabelColor: "var(--default-stroke-color)",
       }
     });
 
