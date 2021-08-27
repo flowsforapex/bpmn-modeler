@@ -44,16 +44,17 @@
     min-height:100%;
   }
 
-  @media (prefers-color-scheme: dark) {
-    #canvas, .properties-panel-parent {
-      background-color: #2b3035;
-    }
+  /**
+   * custom dark mode colors
+   */
+  .FLOWS-DARK #canvas, .FLOWS-DARK .properties-panel-parent {
+    background-color: #2b3035;
   }
   </style>
 </head>
 
 <body>
-  <div class="flows4apex-modeler">
+  <div class="flows4apex-modeler FLOWS-DARK">
     <div id="canvas"></div>
     <div id="properties" class="properties-panel-parent"></div>
   </div>
