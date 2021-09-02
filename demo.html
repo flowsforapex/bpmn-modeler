@@ -12,7 +12,7 @@
   <link type="text/css" rel="stylesheet" href=" https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css">
 
   <style >
-  #canvas {
+  .canvas {
     height: 80vh;
     background-color: #f0f0f0;
   }
@@ -47,7 +47,7 @@
   /**
    * custom dark mode colors
    */
-  .FLOWS-DARK #canvas, .FLOWS-DARK .properties-panel-parent {
+  .FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
     background-color: #2b3035;
   }
   @media (prefers-color-scheme: dark) {
@@ -60,7 +60,7 @@
 
 <body>
   <div class="flows4apex-modeler FLOWS-DARK">
-    <div id="canvas"></div>
+    <div id="canvas" class="canvas"></div>
     <div id="properties" class="properties-panel-parent"></div>
   </div>
   <script>
