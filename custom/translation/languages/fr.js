@@ -250,4 +250,27 @@ export default {
   /* error */
   'Global Error referenced': 'Erreur globale référencée',
   'Code': 'Code',
+
+  /* linter messages */
+  'Process is missing end event': '',
+  'Sub process is missing end event': '',
+  'Start event is missing event definition': '',
+  'Incoming flows do not join': '',
+  'Gateway is superfluous. It only has one source and target.': '',
+  'Element is missing label/name': '',
+  'Element has disallowed type <bpmn:ComplexGateway>': '',
+  'Element is not connected': '',
+  'SequenceFlow is a duplicate': '',
+  'Duplicate outgoing sequence flows': '',
+  'Duplicate incoming sequence flows': '',
+  'Flow splits implicitly': '',
+  'Process has multiple blank start events': '',
+  'Sub process has multiple blank start events': '',
+  'Event has multiple event definitions': '',
+  'Process is missing start event': '',
+  'Sub process is missing start event': '',
+  'Start event must be blank': '',
+  'Element ID is longer than 50 characters': '',
+  'Element ID was not changed yet': '',
+  'A gateway should not merge and split at the same time': '',
 };

@@ -6,7 +6,7 @@
 
     if (businessObject.$type === 'bpmn:ExclusiveGateway' || businessObject.$type === 'bpmn:ParallelGateway' || businessObject.$type === 'bpmn:InclusiveGateway') {
       if (businessObject.incoming.length > 1 && businessObject.outgoing.length > 1) {
-        reporter.report(businessObject.id, 'A gateway should not merge and split at the same time.');
+        reporter.report(businessObject.id, 'A gateway should not merge and split at the same time');
       }
     }
   }
