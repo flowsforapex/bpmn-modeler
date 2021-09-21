@@ -10,7 +10,8 @@ module.exports = {
       rules: {
         'apex/id-was-changed': 'warn',
         'apex/max-id-length': 'error',
-        'apex/merge-split-gateways': 'warn'
+        'apex/merge-split-gateways': 'warn',
+        'apex/start-events': 'warn'
       }
     }
   }
