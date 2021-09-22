@@ -10,37 +10,6 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
     };
 
-    var getDataTypes = function () {
-        return function (element, node) {
-            var entry = getSelectedEntry(element, node);
-            var expressionType = entry && entry.get('varExpressionType');
-
-            switch (expressionType) {
-                case 'sqlQueryList':
-                    return [
-                        {name: translate('Varchar2'), value: 'VARCHAR2'},
-                    ];
-                case 'sqlQuerySingle':
-                case 'plsqlExpression':
-                case 'plsqlFunctionBody':
-                    return [
-                        {name: translate('Varchar2'), value: 'VARCHAR2'},
-                        {name: translate('Number'), value: 'NUMBER'},
-                        {name: translate('Date'), value: 'DATE'},
-                    ];
-                case 'static':
-                case 'processVariable':
-                default:
-                    return [
-                        {name: translate('Varchar2'), value: 'VARCHAR2'},
-                        {name: translate('Number'), value: 'NUMBER'},
-                        {name: translate('Date'), value: 'DATE'},
-                        {name: translate('Clob'), value: 'CLOB'},
-                    ];
-            }
-        };
-    };
-
     var getProperty = function (property) {
         return function (element, node) {
     
@@ -56,6 +25,10 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
     var setProperty = function () {
         return function (element, values, node) {
         var entry = getSelectedEntry(element, node);
+
+        if (values.varDataType !== undefined && (values.varDataType === 'NUMBER' || values.varDataType === 'DATE')) {
+            if (entry.varExpressionType === 'sqlQueryList') { entry.varExpressionType = 'static'; }
+        }
     
         return cmdHelper.updateBusinessObject(element, entry, values);
         };
@@ -108,7 +81,11 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
 
                 set: setProperty(),
 
-                selectOptions: getDataTypes()
+                selectOptions: [
+                    {name: translate('Varchar2'), value: 'VARCHAR2'},
+                    {name: translate('Number'), value: 'NUMBER'},
+                    {name: translate('Date'), value: 'DATE'},
+                ]
             })
         );
     }
@@ -143,23 +120,36 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
     var setProperty = function () {
         return function (element, values, node) {
         var entry = getSelectedEntry(element, node);
-
-        if (values.varExpressionType !== undefined) {
-            switch (values.varExpressionType) {
-                case 'sqlQuerySingle':
-                case 'plsqlExpression':
-                case 'plsqlFunctionBody':
-                    if (entry.varDataType === 'CLOB') { entry.varDataType = 'VARCHAR2'; }
-                    break;
-                case 'sqlQueryList':
-                    entry.varDataType = 'VARCHAR2';
-                    break;
-                default:
-                    break;
-            }
-        }
     
         return cmdHelper.updateBusinessObject(element, entry, values);
+        };
+    };
+
+    var getExpressionTypes = function () {
+        return function (element, node) {
+            var entry = getSelectedEntry(element, node);
+            var expressionType = entry && entry.get('varDataType');
+
+            switch (expressionType) {
+                case 'NUMBER':
+                case 'DATE':
+                    return [
+                        {name: translate('Static'), value: 'static'},
+                        {name: translate('Process Variable'), value: 'processVariable'},
+                        {name: translate('SQL query (single value)'), value: 'sqlQuerySingle'},
+                        {name: translate('Expression'), value: 'plsqlExpression'},
+                        {name: translate('Function Body'), value: 'plsqlFunctionBody'},
+                    ];
+                default:
+                    return [
+                        {name: translate('Static'), value: 'static'},
+                        {name: translate('Process Variable'), value: 'processVariable'},
+                        {name: translate('SQL query (single value)'), value: 'sqlQuerySingle'},
+                        {name: translate('SQL query (colon delimited list)'), value: 'sqlQueryList'},
+                        {name: translate('Expression'), value: 'plsqlExpression'},
+                        {name: translate('Function Body'), value: 'plsqlFunctionBody'},
+                    ];
+            }
         };
     };
 
@@ -196,15 +186,7 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
 
                 set: setProperty(),
 
-                selectOptions: [
-                    {name: translate('Static'), value: 'static'},
-                    {name: translate('Process Variable'), value: 'processVariable'},
-                    // {name: translate('Page Item'), value: 'pageItem'},
-                    {name: translate('SQL query (single value)'), value: 'sqlQuerySingle'},
-                    {name: translate('SQL query (colon delimited list)'), value: 'sqlQueryList'},
-                    {name: translate('Expression'), value: 'plsqlExpression'},
-                    {name: translate('Function Body'), value: 'plsqlFunctionBody'},
-                ]
+                selectOptions: getExpressionTypes()
             })
         );
 
