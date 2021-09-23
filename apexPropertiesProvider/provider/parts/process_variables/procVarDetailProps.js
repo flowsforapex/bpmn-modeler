@@ -26,8 +26,10 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
         return function (element, values, node) {
         var entry = getSelectedEntry(element, node);
 
-        if (values.varDataType !== undefined && (values.varDataType === 'NUMBER' || values.varDataType === 'DATE')) {
-            if (entry.varExpressionType === 'sqlQueryList') { entry.varExpressionType = 'static'; }
+        if (values.varDataType !== undefined) {
+            if (values.varDataType === 'NUMBER' || values.varDataType === 'DATE') {
+                if (entry.varExpressionType === 'sqlQueryList') { entry.varExpressionType = 'static'; }
+            } else if (values.varDataType === 'CLOB') { entry.varExpressionType = 'processVariable'; }
         }
     
         return cmdHelper.updateBusinessObject(element, entry, values);
@@ -85,6 +87,7 @@ export function procVarDetailProps(element, bpmnFactory, translate) {
                     {name: translate('Varchar2'), value: 'VARCHAR2'},
                     {name: translate('Number'), value: 'NUMBER'},
                     {name: translate('Date'), value: 'DATE'},
+                    {name: translate('Clob'), value: 'CLOB'},
                 ]
             })
         );
@@ -131,6 +134,10 @@ export function procVarExpressionProps(element, bpmnFactory, translate) {
             var expressionType = entry && entry.get('varDataType');
 
             switch (expressionType) {
+                case 'CLOB':
+                    return [
+                        {name: translate('Process Variable'), value: 'processVariable'},
+                    ];
                 case 'NUMBER':
                 case 'DATE':
                     return [
