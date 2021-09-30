@@ -9,9 +9,7 @@
   "types": [
     {
       "name": "apexPage",
-      "extends": [
-        "bpmn:UserTask"
-      ],
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "apex-application",
@@ -45,10 +43,7 @@
     },
     {
       "name": "apexScript",
-      "extends": [
-        "bpmn:ScriptTask",
-        "bpmn:ServiceTask"
-      ],
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "serviceTaskType",

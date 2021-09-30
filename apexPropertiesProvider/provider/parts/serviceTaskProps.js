@@ -1,14 +1,78 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
-export default function (element, translate) {
+var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
+
+var factory;
+
+var setProperty = function () {
+  return function (element, values) {
+    var commands = [];
+
+    var bo = getBusinessObject(element);
+
+    var extensions = bo.extensionElements;
+
+    if (!extensions) {
+      extensions = elementHelper.createElement(
+        'bpmn:ExtensionElements',
+        {},
+        bo,
+        factory
+      );
+      commands.push(
+        cmdHelper.updateProperties(element, { extensionElements: extensions })
+      );
+    }
+
+    let apexPage =
+      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript')[0];
+
+    if (!apexPage) {
+      apexPage = elementHelper.createElement(
+        'apex:apexScript',
+        {},
+        extensionElementsHelper,
+        factory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, extensions, 'values', [apexPage])
+      );
+    }
+
+    commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
+
+    return commands;
+  };
+};
+
+var getProperty = function (property) {
+  return function (element) {
+    var bo = getBusinessObject(element);
+
+    const apexPage =
+      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript')[0];
+
+    return {
+      [property]: apexPage && apexPage.get(property),
+    };
+  };
+};
+
+export default function (element, bpmnFactory, translate) {
   const serviceTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const serviceTaskProps = [];
 
   if (is(element, 'bpmn:ServiceTask')) {
-    // if 'yes' then add 'autoBinds' 
+    factory = bpmnFactory;
+
+    // if 'yes' then add 'autoBinds'
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
@@ -17,8 +81,10 @@ export default function (element, translate) {
         label: translate('Engine'),
         selectOptions: [
           { name: translate('No'), value: 'false' },
-          { name: translate('Yes'), value: 'true' }
-        ]
+          { name: translate('Yes'), value: 'true' },
+        ],
+        set: setProperty(),
+        get: getProperty('engine'),
       })
     );
 
@@ -28,7 +94,9 @@ export default function (element, translate) {
         id: 'plsqlCode',
         description: translate('Enter the PL/SQL code to be executed.'),
         label: translate('PL/SQL Code'),
-        modelProperty: 'plsqlCode'
+        modelProperty: 'plsqlCode',
+        set: setProperty(),
+        get: getProperty('plsqlCode'),
       })
     );
 
@@ -36,18 +104,21 @@ export default function (element, translate) {
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
-        description: translate('Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.'),
+        description: translate(
+          'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.'
+        ),
         label: translate('Bind Page Item Values'),
         modelProperty: 'autoBinds',
         selectOptions: [
           { name: translate('No'), value: 'false' },
-          { name: translate('Yes'), value: 'true' }
+          { name: translate('Yes'), value: 'true' },
         ],
         hidden: function () {
           return isOptionSelected(serviceTaskEngine, engineNo);
-        }
-      }
-      )
+        },
+        set: setProperty(),
+        get: getProperty('autoBinds'),
+      })
     );
   }
 
