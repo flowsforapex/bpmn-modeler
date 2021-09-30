@@ -29,12 +29,12 @@ var setProperty = function () {
     }
 
     let apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript')[0];
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
 
     if (!apexPage) {
       apexPage = elementHelper.createElement(
-        'apex:apexScript',
+        'apex:ApexScript',
         {},
         extensionElementsHelper,
         factory
@@ -55,8 +55,8 @@ var getProperty = function (property) {
     var bo = getBusinessObject(element);
 
     const apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexScript')[0];
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
 
     return {
       [property]: apexPage && apexPage.get(property),

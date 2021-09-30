@@ -26,12 +26,12 @@ var setProperty = function () {
     }
 
     let apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexPage') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexPage')[0];
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
 
     if (!apexPage) {
       apexPage = elementHelper.createElement(
-        'apex:apexPage',
+        'apex:ApexPage',
         {},
         extensionElementsHelper,
         factory
@@ -52,8 +52,8 @@ var getProperty = function (property) {
     var bo = getBusinessObject(element);
 
     const apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexPage') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:apexPage')[0];
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
 
     return {
       [property]: apexPage && apexPage.get(property),

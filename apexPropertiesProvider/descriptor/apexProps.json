@@ -8,7 +8,7 @@
   "associations": [],
   "types": [
     {
-      "name": "apexPage",
+      "name": "ApexPage",
       "superClass": [ "Element" ],
       "properties": [
         {
@@ -42,7 +42,7 @@
       ]
     },
     {
-      "name": "apexScript",
+      "name": "ApexScript",
       "superClass": [ "Element" ],
       "properties": [
         {
