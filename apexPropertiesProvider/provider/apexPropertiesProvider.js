@@ -7,6 +7,7 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
 import inherits from 'inherits';
+import { highlightInit } from '../../lib/syntaxHighlighting';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
@@ -145,6 +146,15 @@ export default function apexPropertiesProvider(
 
   eventBus.on('saveXML.start', function () {
     removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry);
+  });
+
+  eventBus.on('element.click', function (event) {
+    if (
+      event.element.type === 'bpmn:ScriptTask' ||
+      event.element.type === 'bpmn:ServiceTask'
+    ) {
+      highlightInit();
+    }
   });
 
   this.getTabs = function (element) {

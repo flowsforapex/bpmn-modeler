@@ -90,7 +90,7 @@ export default function (element, bpmnFactory, translate) {
 
     // Run PL/SQL Code
     scriptTaskProps.push(
-      entryFactory.textBox(translate, {
+      entryFactory.highlightingTextBox(translate, {
         id: 'plsqlCode',
         description: translate('Enter the PL/SQL code to be executed.'),
         label: translate('PL/SQL Code'),

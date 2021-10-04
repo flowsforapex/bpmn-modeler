@@ -50,6 +50,41 @@
   .FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
     background-color: #2b3035;
   }
+
+  /* syntax highlighting */
+  #camunda-plsqlCode, #highlighting {
+    margin: 10px;
+    padding: 10px;
+    border: 0;
+    width: calc(100% - 32px);
+    overflow: auto;
+    white-space: nowrap;
+    grid-row: 1;
+    grid-column: 1; 
+  }
+
+  #camunda-plsqlCode, #highlighting, #highlighting * {
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .bpp-properties-entry.bpp-textbox[data-entry="plsqlCode"] .bpp-field-wrapper {
+    display: grid;
+  }
+
+  #camunda-plsqlCode {
+    z-index: 1;
+    color: transparent;
+    background: transparent;
+    caret-color: black;
+    resize: none;
+  }
+
+  #highlighting {
+    z-index: 0;
+    background: white;
+  }
   </style>
 </head>
 
@@ -221,5 +256,6 @@
     }
   </script>
   <button onclick="logXml()">Test</button>
+  <pre><code class="language-plsql">select * from table</code></pre>
 </body>
 </html>
