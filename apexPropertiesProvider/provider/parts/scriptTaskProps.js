@@ -1,5 +1,6 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { editor } from 'monaco-editor';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
 var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
@@ -64,6 +65,35 @@ var getProperty = function (property) {
   };
 };
 
+var monacoEditor;
+
+var handleOpenEditor = function () {
+  return function (element, node, event) {
+    var bo = getBusinessObject(element);
+    monacoEditor = editor.create(
+      document.getElementById('plsqlCode-container'),
+      {
+        value: [bo.get('plsqlCode')].join('\n'),
+        language: 'pgsql',
+        lineNumbers: 'off',
+        minimap: { enabled: 'false' },
+      }
+    );
+  };
+};
+
+var handleSaveEditor = function () {
+  return function (element, node, event) {
+    var bo = getBusinessObject(element);
+    bo.plsqlCode = monacoEditor.getValue();
+  };
+};
+
+var getPlsqlCode = function (element) {
+  var bo = getBusinessObject(element);
+  return `<div id="plsqlCode-container">${bo.get('plsqlCode') || ''}</div>`;
+};
+
 export default function (element, bpmnFactory, translate) {
   const scriptTaskEngine = '[name="engine"]';
   const engineNo = 0;
@@ -89,6 +119,7 @@ export default function (element, bpmnFactory, translate) {
     );
 
     // Run PL/SQL Code
+
     scriptTaskProps.push(
       entryFactory.highlightingTextBox(translate, {
         id: 'plsqlCode',
@@ -97,6 +128,28 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'plsqlCode',
         set: setProperty(),
         get: getProperty('plsqlCode'),
+      })
+    );
+
+    scriptTaskProps.push({
+      id: 'plsqlCode-container',
+      // html: getPlsqlCode(element),
+      html: '<div id="plsqlCode-container"></div>',
+    });
+
+    scriptTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'openEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: handleOpenEditor(),
+      })
+    );
+
+    scriptTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'saveEditor',
+        buttonLabel: 'Save Editor',
+        handleClick: handleSaveEditor(),
       })
     );
 
