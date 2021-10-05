@@ -1,3 +1,4 @@
+import AddExporter from '@bpmn-io/add-exporter';
 import lintModule from 'bpmn-js-bpmnlint';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import bpmnlintConfig from './.bpmnlintrc';
@@ -20,6 +21,7 @@ var bpmnModeler = {
     translationModule,
     styleModule,
     xmlModule,
+    AddExporter,
   },
   moddleExtensions: {
     apexModdleDescriptor,

@@ -79,7 +79,8 @@
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
-        bpmnModeler.customModules.xmlModule
+        bpmnModeler.customModules.xmlModule,
+        bpmnModeler.customModules.AddExporter
       ],
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
@@ -88,6 +89,10 @@
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
+      },
+      exporter: {
+        name: 'Flows for APEX',
+        version: '22.1.0',
       }
     });
 
@@ -183,9 +188,12 @@
         // import diagram
         try {
 
-          const refactoredXml = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
-          
-          await myModeler.importXML(refactoredXml);
+          await myModeler.importXML(defaultDiagram);
+
+          if (myModeler._definitions && myModeler._definitions.exporter === 'Flows for APEX' && myModeler._definitions.exporterVersion != '22.1.0') {
+            const refactoredXml = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
+            await myModeler.importXML(refactoredXml);
+          }
 
           // access viewer components
           var canvas = myModeler.get("canvas");
@@ -206,8 +214,7 @@
       try {
         const result = await myModeler.saveXML( { format: true } );
         const { xml } = result;
-        const refactoredXml = myModeler.get('xmlModule').refactorDiagram(xml);
-        console.log(refactoredXml);
+        console.log(xml);
       } catch (err) {
         console.log( "Log Diagram failed." );
       }
