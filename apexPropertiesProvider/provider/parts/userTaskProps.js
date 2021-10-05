@@ -62,86 +62,203 @@ var getProperty = function (property) {
   };
 };
 
-export default function (element, bpmnFactory, translate) {
+var applications = [];
+var pages = [];
+var items = [];
+
+export default function (element, translate) {
   const userTaskProps = [];
 
-  factory = bpmnFactory;
-
   var applicationSelectBox;
+  // var applications = [];
 
   var pageSelectBox;
-  var pages = [];
+  // var pages = [];
 
   var itemSelectBox;
-  var items = [];
+  // var items = [];
 
+  var metadataLoading = false;
   var applicationLoading = false;
   var pagesLoading = false;
 
+  var getMetaData = function () {
+    return function (element, node, event) {
+      // get dom nodes
+      var applicationSelectBoxNode = domQuery(
+        'div[data-entry="apex-application"] select'
+      );
+      var pageSelectBoxNode = domQuery('div[data-entry="apex-page"] select');
+      var itemSelectBoxNode = domQuery('div[data-entry="apex-item"] select');
+      // loading flag
+      metadataLoading = true;
+      // ajax process
+      apex.server.process(
+        'GET_APPLICATIONS',
+        {},
+        {
+          dataType: 'text',
+          success: function (data) {
+            applications = JSON.parse(data);
+            metadataLoading = false;
+            // manually enable select box
+            applicationSelectBoxNode.removeAttribute('disabled');
+            // refresh select box options
+            applicationSelectBox.setControlValue(
+              element,
+              null,
+              applicationSelectBoxNode,
+              null,
+              applicationSelectBox.oldValues['apex-application']
+            );
+            // manually enable select box
+            pageSelectBoxNode.removeAttribute('disabled');
+            // refresh select box options
+            pageSelectBox.setControlValue(
+              element,
+              null,
+              pageSelectBoxNode,
+              null,
+              pageSelectBox.oldValues['apex-page']
+            );
+            // manually enable select box
+            itemSelectBoxNode.removeAttribute('disabled');
+            // refresh select box options
+            itemSelectBox.setControlValue(
+              element,
+              null,
+              itemSelectBoxNode,
+              null,
+              itemSelectBox.oldValues['apex-item']
+            );
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('error');
+          },
+        }
+      );
+    };
+  };
+
+  factory = bpmnFactory;
+
+  function refreshPages(element, values, node) {
+    // get dom nodes
+    var pageSelectBoxNode = domQuery('div[data-entry="apex-page"] select');
+    var itemSelectBoxNode = domQuery('div[data-entry="apex-item"] select');
+    // loading flag
+    applicationLoading = true;
+    // ajax process
+    apex.server.process(
+      'GET_PAGES',
+      { x01: values['apex-application'] },
+      {
+        dataType: 'text',
+        success: function (data) {
+          pages = JSON.parse(data);
+          applicationLoading = false;
+          // manually enable select box
+          pageSelectBoxNode.removeAttribute('disabled');
+          // refresh select box options
+          pageSelectBox.setControlValue(
+            element,
+            null,
+            pageSelectBoxNode,
+            null,
+            null
+          );
+          // manually enable select box
+          itemSelectBoxNode.removeAttribute('disabled');
+          // refresh select box options
+          itemSelectBox.setControlValue(
+            element,
+            null,
+            itemSelectBoxNode,
+            null,
+            null
+          );
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log('error');
+        },
+      }
+    );
+  }
+
+  function refreshItems(element, values, node) {
+    // get dom nodes
+    var itemSelectBoxNode = domQuery('div[data-entry="apex-item"] select');
+    // loading flag
+    pagesLoading = true;
+    // ajax process
+    apex.server.process(
+      'GET_ITEMS',
+      {
+        x01: applicationSelectBox.oldValues['apex-application'],
+        x02: values['apex-page'],
+      },
+      {
+        dataType: 'text',
+        success: function (data) {
+          items = JSON.parse(data);
+          pagesLoading = false;
+          // manually enable select box
+          itemSelectBoxNode.removeAttribute('disabled');
+          // refresh select box options
+          itemSelectBox.setControlValue(
+            element,
+            null,
+            itemSelectBoxNode,
+            null,
+            null
+          );
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log('error');
+        },
+      }
+    );
+  }
+
   // Only return an entry, if the currently selected element is a UserTask.
   if (is(element, 'bpmn:UserTask')) {
+    // refresh link
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'use-metadata',
+        buttonLabel: 'Refresh Meta Data',
+        handleClick: getMetaData(),
+      })
+    );
+
+    // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'apex-application',
       description: translate('Application ID or Alias'),
       label: translate('Application'),
       modelProperty: 'apex-application',
 
-      selectOptions: window.f4a.applications,
+      selectOptions: function () {
+        return applications;
+      },
+
+      disabled: function () {
+        return metadataLoading;
+      },
 
       get: getProperty('apex-application'),
 
       set: function (element, values, node) {
-        // disable pages
-        applicationLoading = true;
-
-        apex.server.process(
-          'GET_PAGES',
-          { x01: values['apex-application'] },
-          {
-            dataType: 'text',
-            success: function (data) {
-              console.log('pages done');
-              pages = JSON.parse(data);
-              applicationLoading = false;
-              var pageSelectBoxNode = domQuery(
-                'div[data-entry="apex-page"] select'
-              );
-              // manually enable select box
-              pageSelectBoxNode.removeAttribute('disabled');
-              // refresh select box options
-              pageSelectBox.setControlValue(
-                element,
-                null,
-                pageSelectBoxNode,
-                null,
-                null
-              );
-              var itemSelectBoxNode = domQuery(
-                'div[data-entry="apex-item"] select'
-              );
-              // manually enable select box
-              itemSelectBoxNode.removeAttribute('disabled');
-              // refresh select box options
-              itemSelectBox.setControlValue(
-                element,
-                null,
-                itemSelectBoxNode,
-                null,
-                null
-              );
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log('error');
-            },
-          }
-        );
-
+        // refresh pages
+        refreshPages(element, values, node);
+        // set value
         return setProperty(element, values);
       },
     });
 
     userTaskProps.push(applicationSelectBox);
 
+    // page select list
     pageSelectBox = entryFactory.selectBox(translate, {
       id: 'apex-page',
       description: translate('Page ID or Alias'),
@@ -153,53 +270,22 @@ export default function (element, bpmnFactory, translate) {
       },
 
       disabled: function () {
-        return applicationLoading;
+        return applicationLoading || metadataLoading;
       },
 
       get: getProperty('apex-page'),
 
       set: function (element, values, node) {
-        // disable pages
-        pagesLoading = true;
-
-        apex.server.process(
-          'GET_ITEMS',
-          {
-            x01: applicationSelectBox.oldValues['apex-application'],
-            x02: values['apex-page'],
-          },
-          {
-            dataType: 'text',
-            success: function (data) {
-              console.log('items done');
-              items = JSON.parse(data);
-              pagesLoading = false;
-              var itemSelectBoxNode = domQuery(
-                'div[data-entry="apex-item"] select'
-              );
-              // manually enable select box
-              itemSelectBoxNode.removeAttribute('disabled');
-              // refresh select box options
-              itemSelectBox.setControlValue(
-                element,
-                null,
-                itemSelectBoxNode,
-                null,
-                null
-              );
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-              console.log('error');
-            },
-          }
-        );
-
+        // refresh items
+        refreshItems(element, values, node);
+        // set value
         return setProperty(element, values);
       },
     });
 
     userTaskProps.push(pageSelectBox);
 
+    // item select list
     itemSelectBox = entryFactory.selectBox(translate, {
       id: 'apex-item',
       description: translate('Page Items to set'),
@@ -211,11 +297,20 @@ export default function (element, bpmnFactory, translate) {
       },
 
       disabled: function () {
-        return pagesLoading || applicationLoading;
+        return pagesLoading || applicationLoading || metadataLoading;
       },
     });
 
     userTaskProps.push(itemSelectBox);
+
+    userTaskProps.push(
+      entryFactory.textBox(translate, {
+        id: 'apex-value',
+        description: translate('Page Item Values'),
+        label: translate('Item Values'),
+        modelProperty: 'apex-value',
+      })
+    );
 
     userTaskProps.push(
       entryFactory.textField(translate, {
