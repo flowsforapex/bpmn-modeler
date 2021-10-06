@@ -1,5 +1,6 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { GenericSQL } from 'dt-sql-parser';
 import { editor } from 'monaco-editor';
 import { isOptionSelected } from '../../../lib/formsHelper';
 
@@ -89,6 +90,18 @@ var handleSaveEditor = function () {
   };
 };
 
+var handleValidation = function () {
+  return function (element, node, event) {
+    const parser = new GenericSQL();
+
+    var bo = getBusinessObject(element);
+
+    const correctSql = bo.get('plsqlCode');
+    const errors = parser.validate(correctSql);
+    console.log(errors);
+  };
+};
+
 var getPlsqlCode = function (element) {
   var bo = getBusinessObject(element);
   return `<div id="plsqlCode-container">${bo.get('plsqlCode') || ''}</div>`;
@@ -150,6 +163,14 @@ export default function (element, bpmnFactory, translate) {
         id: 'saveEditor',
         buttonLabel: 'Save Editor',
         handleClick: handleSaveEditor(),
+      })
+    );
+
+    scriptTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'validate',
+        buttonLabel: 'Validate',
+        handleClick: handleValidation(),
       })
     );
 
