@@ -62,12 +62,11 @@ var getProperty = function (property) {
 };
 
 export default function (element, bpmnFactory, translate) {
-  // Only return an entry, if the currently selected
-  // element is a UserTask.
   const userTaskProps = [];
 
   factory = bpmnFactory;
 
+  // Only return an entry, if the currently selected element is a UserTask.
   if (is(element, 'bpmn:UserTask')) {
     userTaskProps.push(
       entryFactory.textField(translate, {

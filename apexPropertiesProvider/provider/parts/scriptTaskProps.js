@@ -28,23 +28,23 @@ var setProperty = function () {
       );
     }
 
-    let apexPage =
+    let apexScript =
       extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
       extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
 
-    if (!apexPage) {
-      apexPage = elementHelper.createElement(
+    if (!apexScript) {
+      apexScript = elementHelper.createElement(
         'apex:ApexScript',
         {},
         extensionElementsHelper,
         factory
       );
       commands.push(
-        cmdHelper.addElementsTolist(element, extensions, 'values', [apexPage])
+        cmdHelper.addElementsTolist(element, extensions, 'values', [apexScript])
       );
     }
 
-    commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
+    commands.push(cmdHelper.updateBusinessObject(element, apexScript, values));
 
     return commands;
   };
@@ -54,12 +54,12 @@ var getProperty = function (property) {
   return function (element) {
     var bo = getBusinessObject(element);
 
-    const apexPage =
+    const apexScript =
       extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
       extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
 
     return {
-      [property]: apexPage && apexPage.get(property),
+      [property]: apexScript && apexScript.get(property),
     };
   };
 };
