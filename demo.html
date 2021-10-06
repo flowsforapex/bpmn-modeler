@@ -78,7 +78,9 @@
         bpmnModeler.customModules.propertiesProviderModule,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
-        bpmnModeler.customModules.translationModule
+        bpmnModeler.customModules.translationModule,
+        bpmnModeler.customModules.xmlModule,
+        bpmnModeler.customModules.AddExporter
       ],
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
@@ -87,6 +89,10 @@
         defaultFillColor: "var(--default-fill-color)",
         defaultStrokeColor: "var(--default-stroke-color)",
         defaultLabelColor: "var(--default-stroke-color)",
+      },
+      exporter: {
+        name: 'Flows for APEX',
+        version: '22.1.0',
       }
     });
 
@@ -96,6 +102,7 @@
 
       async function openDiagram() {
         const defaultDiagram =
+          /*
           "<?xml version='1.0' encoding='UTF-8'?>" +
           "<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/bpmn' exporter='bpmn-js (https://demo.bpmn.io)' exporterVersion='7.2.0'>" +
           "<bpmn:process id='Process_0rxermh' isExecutable='false' />" +
@@ -103,10 +110,90 @@
           "<bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh' />" +
           "</bpmndi:BPMNDiagram>" +
           "</bpmn:definitions>";
-
+          */
+          "<?xml version='1.0' encoding='UTF-8'?>" +
+          "<bpmn:definitions xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:bpmn='http://www.omg.org/spec/BPMN/20100524/MODEL' xmlns:bpmndi='http://www.omg.org/spec/BPMN/20100524/DI' xmlns:apex='http://www.apex.mt-ag.com' xmlns:di='http://www.omg.org/spec/DD/20100524/DI' xmlns:dc='http://www.omg.org/spec/DD/20100524/DC' id='Definitions_1wzb475' targetNamespace='http://bpmn.io/schema/b' exporter='Flows for APEX' exporterVersion='21.1.0'>" +
+            "<bpmn:process id='Process_0rxermh' isExecutable='false'>" +
+              "<bpmn:startEvent id='Event_02345jm'>" +
+                "<bpmn:outgoing>Flow_03cwekx</bpmn:outgoing>" +
+              "</bpmn:startEvent>" +
+              "<bpmn:sequenceFlow id='Flow_03cwekx' sourceRef='Event_02345jm' targetRef='Activity_082t4gr' />" +
+              "<bpmn:sequenceFlow id='Flow_1kwibne' sourceRef='Activity_082t4gr' targetRef='Activity_1gk1kmq' />" +
+              "<bpmn:sequenceFlow id='Flow_1vrpmsa' sourceRef='Activity_1gk1kmq' targetRef='Activity_0lu6sjz' />" +
+              "<bpmn:endEvent id='Event_0hia8d3'>" +
+                "<bpmn:incoming>Flow_02z3p2y</bpmn:incoming>" +
+              "</bpmn:endEvent>" +
+              "<bpmn:sequenceFlow id='Flow_02z3p2y' sourceRef='Activity_0lu6sjz' targetRef='Event_0hia8d3' />" +
+              "<bpmn:userTask id='Activity_082t4gr'>" +
+                "<bpmn:incoming>Flow_03cwekx</bpmn:incoming>" +
+                "<bpmn:outgoing>Flow_1kwibne</bpmn:outgoing>" +
+                "<apex:apex-application>1</apex:apex-application>" +
+                "<apex:apex-page>2</apex:apex-page>" +
+                "<apex:apex-request>3</apex:apex-request>" +
+                "<apex:apex-cache>4</apex:apex-cache>" +
+                "<apex:apex-item>5</apex:apex-item>" +
+                "<apex:apex-value>6</apex:apex-value>" +
+              "</bpmn:userTask>" +
+              "<bpmn:scriptTask id='Activity_1gk1kmq'>" +
+                "<bpmn:incoming>Flow_1kwibne</bpmn:incoming>" +
+                "<bpmn:outgoing>Flow_1vrpmsa</bpmn:outgoing>" +
+                "<apex:plsqlCode>1</apex:plsqlCode>" +
+                "<apex:autoBinds>true</apex:autoBinds>" +
+                "<apex:engine>true</apex:engine>" +
+              "</bpmn:scriptTask>" +
+              "<bpmn:serviceTask id='Activity_0lu6sjz'>" +
+                "<bpmn:incoming>Flow_1vrpmsa</bpmn:incoming>" +
+                "<bpmn:outgoing>Flow_02z3p2y</bpmn:outgoing>" +
+                "<apex:plsqlCode>1</apex:plsqlCode>" +
+                "<apex:autoBinds>true</apex:autoBinds>" +
+                "<apex:engine>true</apex:engine>" +
+              "</bpmn:serviceTask>" +
+            "</bpmn:process>" +
+            "<bpmndi:BPMNDiagram id='BPMNDiagram_1'>" +
+              "<bpmndi:BPMNPlane id='BPMNPlane_1' bpmnElement='Process_0rxermh'>" +
+                "<bpmndi:BPMNEdge id='Flow_03cwekx_di' bpmnElement='Flow_03cwekx'>" +
+                  "<di:waypoint x='178' y='330' />" +
+                  "<di:waypoint x='230' y='330' />" +
+                "</bpmndi:BPMNEdge>" +
+                "<bpmndi:BPMNEdge id='Flow_1kwibne_di' bpmnElement='Flow_1kwibne'>" +
+                  "<di:waypoint x='330' y='330' />" +
+                  "<di:waypoint x='390' y='330' />" +
+                "</bpmndi:BPMNEdge>" +
+                "<bpmndi:BPMNEdge id='Flow_1vrpmsa_di' bpmnElement='Flow_1vrpmsa'>" +
+                  "<di:waypoint x='490' y='330' />" +
+                  "<di:waypoint x='550' y='330' />" +
+                "</bpmndi:BPMNEdge>" +
+                "<bpmndi:BPMNEdge id='Flow_02z3p2y_di' bpmnElement='Flow_02z3p2y'>" +
+                  "<di:waypoint x='650' y='330' />" +
+                  "<di:waypoint x='712' y='330' />" +
+                "</bpmndi:BPMNEdge>" +
+                "<bpmndi:BPMNShape id='Event_02345jm_di' bpmnElement='Event_02345jm'>" +
+                  "<dc:Bounds x='142' y='312' width='36' height='36' />" +
+                "</bpmndi:BPMNShape>" +
+                "<bpmndi:BPMNShape id='Event_0hia8d3_di' bpmnElement='Event_0hia8d3'>" +
+                  "<dc:Bounds x='712' y='312' width='36' height='36' />" +
+                "</bpmndi:BPMNShape>" +
+                "<bpmndi:BPMNShape id='Activity_1jyphb8_di' bpmnElement='Activity_082t4gr'>" +
+                  "<dc:Bounds x='230' y='290' width='100' height='80' />" +
+                "</bpmndi:BPMNShape>" +
+                "<bpmndi:BPMNShape id='Activity_1kw3l13_di' bpmnElement='Activity_1gk1kmq'>" +
+                  "<dc:Bounds x='390' y='290' width='100' height='80' />" +
+                "</bpmndi:BPMNShape>" +
+                "<bpmndi:BPMNShape id='Activity_1dx4cvq_di' bpmnElement='Activity_0lu6sjz'>" +
+                  "<dc:Bounds x='550' y='290' width='100' height='80' />" +
+                "</bpmndi:BPMNShape>" +
+              "</bpmndi:BPMNPlane>" +
+            "</bpmndi:BPMNDiagram>" +
+          "</bpmn:definitions>"
         // import diagram
         try {
+
           await myModeler.importXML(defaultDiagram);
+
+          if (myModeler._definitions && myModeler._definitions.exporter === 'Flows for APEX' && myModeler._definitions.exporterVersion != '22.1.0') {
+            const refactoredXml = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
+            await myModeler.importXML(refactoredXml);
+          }
 
           // access viewer components
           var canvas = myModeler.get("canvas");
