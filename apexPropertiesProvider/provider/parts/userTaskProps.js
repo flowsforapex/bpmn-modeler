@@ -10,7 +10,28 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
 var factory;
 
-var setProperty = function (element, values) {
+// property getter
+var getProperty = function (property) {
+  return function (element) {
+    var bo = getBusinessObject(element);
+
+    const apexPage =
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
+      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
+
+    return {
+      [property]: apexPage && apexPage.get(property),
+    };
+  };
+};
+
+// select list options container
+var applications = [];
+var pages = [];
+var items = [];
+
+// property setter
+function setProperty(element, values) {
   var commands = [];
   var bo = getBusinessObject(element);
   var extensions = bo.extensionElements;
@@ -46,43 +67,22 @@ var setProperty = function (element, values) {
   commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
 
   return commands;
-};
+}
 
-var getProperty = function (property) {
-  return function (element) {
-    var bo = getBusinessObject(element);
-
-    const apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
-
-    return {
-      [property]: apexPage && apexPage.get(property),
-    };
-  };
-};
-
-var applications = [];
-var pages = [];
-var items = [];
-
-export default function (element, translate) {
+export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];
 
+  // select box container
   var applicationSelectBox;
-  // var applications = [];
-
   var pageSelectBox;
-  // var pages = [];
-
   var itemSelectBox;
-  // var items = [];
 
+  // loading flags
   var metadataLoading = false;
   var applicationLoading = false;
   var pagesLoading = false;
 
-  var getMetaData = function () {
+  var getApplications = function () {
     return function (element, node, event) {
       // get dom nodes
       var applicationSelectBoxNode = domQuery(
@@ -139,8 +139,6 @@ export default function (element, translate) {
       );
     };
   };
-
-  factory = bpmnFactory;
 
   function refreshPages(element, values, node) {
     // get dom nodes
@@ -220,6 +218,8 @@ export default function (element, translate) {
     );
   }
 
+  factory = bpmnFactory;
+
   // Only return an entry, if the currently selected element is a UserTask.
   if (is(element, 'bpmn:UserTask')) {
     // refresh link
@@ -227,7 +227,7 @@ export default function (element, translate) {
       entryFactory.link(translate, {
         id: 'use-metadata',
         buttonLabel: 'Refresh Meta Data',
-        handleClick: getMetaData(),
+        handleClick: getApplications(),
       })
     );
 
@@ -299,6 +299,13 @@ export default function (element, translate) {
       disabled: function () {
         return pagesLoading || applicationLoading || metadataLoading;
       },
+
+      get: getProperty('apex-item'),
+
+      set: function (element, values) {
+        // set value
+        return setProperty(element, values);
+      },
     });
 
     userTaskProps.push(itemSelectBox);
@@ -309,6 +316,13 @@ export default function (element, translate) {
         description: translate('Page Item Values'),
         label: translate('Item Values'),
         modelProperty: 'apex-value',
+
+        get: getProperty('apex-value'),
+
+        set: function (element, values) {
+          // set value
+          return setProperty(element, values);
+        },
       })
     );
 
@@ -318,8 +332,13 @@ export default function (element, translate) {
         description: translate('Request Value for Page Call'),
         label: translate('Request'),
         modelProperty: 'apex-request',
-        set: setProperty(),
+
         get: getProperty('apex-request'),
+
+        set: function (element, values) {
+          // set value
+          return setProperty(element, values);
+        },
       })
     );
     userTaskProps.push(
@@ -328,8 +347,13 @@ export default function (element, translate) {
         description: translate('Clear Cache Value for Page Call'),
         label: translate('Clear Cache'),
         modelProperty: 'apex-cache',
-        set: setProperty(),
+
         get: getProperty('apex-cache'),
+
+        set: function (element, values) {
+          // set value
+          return setProperty(element, values);
+        },
       })
     );
     // userTaskProps.push(
@@ -340,17 +364,6 @@ export default function (element, translate) {
     //     modelProperty: 'apex-item'
     //   })
     // );
-
-    userTaskProps.push(
-      entryFactory.textBox(translate, {
-        id: 'apex-value',
-        description: translate('Page Item Values'),
-        label: translate('Item Values'),
-        modelProperty: 'apex-value',
-        set: setProperty(),
-        get: getProperty('apex-value'),
-      })
-    );
   }
 
   return userTaskProps;
