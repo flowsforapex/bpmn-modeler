@@ -29,14 +29,21 @@
         },
         {
           "name": "apex-item",
+          "type": "PageItem",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "PageItem",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "item-name",
           "type": "String"
         },
         {
-          "name": "apex-value",
-          "type": "String"
-        },
-        {
-          "name": "apex-insertUrl",
+          "name": "item-value",
           "type": "String"
         }
       ]
