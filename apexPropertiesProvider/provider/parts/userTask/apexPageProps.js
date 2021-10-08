@@ -299,7 +299,11 @@ export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];
 
   // Only return an entry, if the currently selected element is a UserTask.
-  if (is(element, 'bpmn:UserTask')) {
+  if (
+    is(element, 'bpmn:UserTask') &&
+    (typeof getBusinessObject(element).type === 'undefined' ||
+      getBusinessObject(element).type === 'apexPage')
+  ) {
     // refresh link
     userTaskProps.push(
       entryFactory.link(translate, {

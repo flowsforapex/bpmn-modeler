@@ -8,6 +8,17 @@
   "associations": [],
   "types": [
     {
+      "name": "TaskType",
+      "extends": [ "bpmn:UserTask" ],
+      "properties": [
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "ApexPage",
       "superClass": [ "Element" ],
       "properties": [
