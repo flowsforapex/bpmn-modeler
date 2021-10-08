@@ -12,23 +12,23 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "apex-application",
+          "name": "applicationId",
           "type": "String"
         },
         {
-          "name": "apex-page",
+          "name": "pageId",
           "type": "String"
         },
         {
-          "name": "apex-request",
+          "name": "request",
           "type": "String"
         },
         {
-          "name": "apex-cache",
+          "name": "cache",
           "type": "String"
         },
         {
-          "name": "apex-item",
+          "name": "pageItems",
           "type": "PageItem",
           "isMany": true
         }
@@ -39,11 +39,11 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "item-name",
+          "name": "itemName",
           "type": "String"
         },
         {
-          "name": "item-value",
+          "name": "itemValue",
           "type": "String"
         }
       ]
@@ -53,7 +53,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "serviceTaskType",
+          "name": "engine",
           "type": "String"
         },
         {
@@ -62,34 +62,6 @@
         },
         {
           "name": "autoBinds",
-          "type": "String"
-        },
-        {
-          "name": "applicationId",
-          "type": "String"
-        },
-        {
-          "name": "pageId",
-          "type": "String"
-        },
-        {
-          "name": "username",
-          "type": "String"
-        },
-        {
-          "name": "templateIdentifier",
-          "type": "String"
-        },
-        {
-          "name": "emailFrom",
-          "type": "String"
-        },
-        {
-          "name": "emailTo",
-          "type": "String"
-        },
-        {
-          "name": "engine",
           "type": "String"
         }
       ]
