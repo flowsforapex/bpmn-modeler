@@ -1,7 +1,6 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 
-var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var domQuery = require('min-dom').query;
 
 var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
@@ -9,9 +8,13 @@ var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camu
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
-var factory;
+// select list options container
+var applications = [];
+var pages = [];
+var items = [];
 
-/** ********** */
+// extension element
+var pageItemsElement;
 
 var setOptionLabelValue = function () {
   return function (element, node, option, property, value, idx) {
@@ -28,16 +31,12 @@ var setOptionLabelValue = function () {
 var newElement = function (bpmnFactory, props) {
   return function (element, extensionElements, values) {
     var commands = [];
+    var newElem;
 
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        'apex:ApexPage'
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        'apex:ApexPage'
-      )[0];
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      'apex:ApexPage'
+    );
 
     if (!container) {
       container = elementHelper.createElement(
@@ -58,8 +57,7 @@ var newElement = function (bpmnFactory, props) {
       itemValue: props.itemValue,
     };
 
-    // eslint-disable-next-line vars-on-top
-    var newElem = elementHelper.createElement(
+    newElem = elementHelper.createElement(
       'apex:PageItem',
       values,
       container,
@@ -75,51 +73,46 @@ var newElement = function (bpmnFactory, props) {
 
 var removeElement = function () {
   return function (element, extensionElements, value, idx) {
-    var container =
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        'apex:ApexPage'
-      ) &&
-      extensionElementsHelper.getExtensionElements(
-        getBusinessObject(element),
-        'apex:ApexPage'
-      )[0];
+    var command;
+
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      'apex:ApexPage'
+    );
 
     var entries = getEntries(element);
     var entry = entries[idx];
-    if (entry) {
-      // eslint-disable-next-line vars-on-top
-      var command =
-        container.pageItems.length > 1 ? cmdHelper.removeElementsFromList(
-              element,
-              container,
-              'pageItems',
-              'extensionElements',
-              [entry]
-            ) : cmdHelper.removeElementsFromList(
-              element,
-              extensionElements,
-              'values',
-              'extensionElements',
-              [container]
-            );
-      return command;
-    }
+
+    command =
+      container.pageItems.length > 1 ? (command = cmdHelper.removeElementsFromList(
+            element,
+            container,
+            'pageItems',
+            'extensionElements',
+            [entry]
+          )) : cmdHelper.updateBusinessObject(element, container, {
+            pageItems: '',
+          });
+
+    return command;
   };
 };
 
-// property getter
-var getProperty = function (property) {
-  return function (element) {
-    var bo = getBusinessObject(element);
-
-    const apexPage =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
+var getExtProperty = function (property) {
+  return function (element, node) {
+    var entry = getSelectedEntry(element, node);
 
     return {
-      [property]: apexPage && apexPage.get(property),
+      [property]: (entry && entry.get(property)) || undefined,
     };
+  };
+};
+
+var setExtProperty = function () {
+  return function (element, values, node) {
+    var entry = getSelectedEntry(element, node);
+
+    return cmdHelper.updateBusinessObject(element, entry, values);
   };
 };
 
@@ -129,19 +122,165 @@ var isNotSelected = function () {
   };
 };
 
-// select list options container
-var applications = [];
-var pages = [];
-var items = [];
+// property getter
+var getProperty = function (property) {
+  return function (element) {
+    var bo = getBusinessObject(element);
 
-var pageItemsElement;
+    const [apexPage] = extensionElementsHelper.getExtensionElements(
+      bo,
+      'apex:ApexPage'
+    );
+
+    return {
+      [property]: apexPage && apexPage.get(property),
+    };
+  };
+};
+
+// property setter
+var setProperty = function (element, bpmnFactory, values) {
+  var commands = [];
+  var bo = getBusinessObject(element);
+  var extensions = bo.extensionElements;
+
+  if (!extensions) {
+    extensions = elementHelper.createElement(
+      'bpmn:ExtensionElements',
+      {},
+      bo,
+      bpmnFactory
+    );
+    commands.push(
+      cmdHelper.updateProperties(element, { extensionElements: extensions })
+    );
+  }
+
+  let [apexPage] = extensionElementsHelper.getExtensionElements(
+    bo,
+    'apex:ApexPage'
+  );
+
+  if (!apexPage) {
+    apexPage = elementHelper.createElement(
+      'apex:ApexPage',
+      {},
+      extensionElementsHelper,
+      bpmnFactory
+    );
+    commands.push(
+      cmdHelper.addElementsTolist(element, extensions, 'values', [apexPage])
+    );
+  }
+
+  commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
+
+  return commands;
+};
+
+// select box container
+var applicationSelectBox;
+var pageSelectBox;
+var itemSelectBox;
+
+// loading flags
+var metadataLoading = false;
+var applicationLoading = false;
+var pagesLoading = false;
+
+function enableAndRefresh(element, ...fields) {
+  fields.forEach((f) => {
+    // get dom node
+    var fieldNode = domQuery(`select[name="${f.id}"]`);
+    if (fieldNode) {
+      // enable select box
+      fieldNode.removeAttribute('disabled');
+      // refresh select box options
+      f.setControlValue(element, null, fieldNode, null, fieldNode.value);
+    }
+  });
+}
+
+function getApplications(element) {
+  // loading flag
+  metadataLoading = true;
+  // ajax process
+  apex.server.process(
+    'GET_APPLICATIONS',
+    {},
+    {
+      dataType: 'text',
+      success: function (data) {
+        applications = JSON.parse(data);
+        metadataLoading = false;
+        enableAndRefresh(
+          element,
+          applicationSelectBox,
+          pageSelectBox,
+          itemSelectBox
+        );
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log('error');
+      },
+    }
+  );
+}
+
+function getPages(element, values) {
+  // loading flag
+  applicationLoading = true;
+  // ajax process
+  apex.server.process(
+    'GET_PAGES',
+    { x01: values.applicationId },
+    {
+      dataType: 'text',
+      success: function (data) {
+        pages = JSON.parse(data);
+        applicationLoading = false;
+        enableAndRefresh(element, pageSelectBox, itemSelectBox);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log('error');
+      },
+    }
+  );
+}
+
+function getItems(element, values) {
+  // get selected application
+  var applicationId = domQuery('select[name="applicationId"]').value;
+  // loading flag
+  pagesLoading = true;
+  // ajax process
+  apex.server.process(
+    'GET_ITEMS',
+    {
+      x01: applicationId,
+      x02: values.pageId,
+    },
+    {
+      dataType: 'text',
+      success: function (data) {
+        items = JSON.parse(data);
+        pagesLoading = false;
+        enableAndRefresh(element, itemSelectBox);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log('error');
+      },
+    }
+  );
+}
 
 function getEntries(element) {
   var bo = getBusinessObject(element);
-  return bo &&
-    extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
-    extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0] ? extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0]
-        .pageItems : [];
+  const [apexPage] = extensionElementsHelper.getExtensionElements(
+    bo,
+    'apex:ApexPage'
+  );
+  return apexPage && apexPage.pageItems;
 }
 
 function getSelectedEntry(element, node) {
@@ -156,219 +295,8 @@ function getSelectedEntry(element, node) {
   return entry;
 }
 
-// property setter
-function setProperty(element, values) {
-  var commands = [];
-  var bo = getBusinessObject(element);
-  var extensions = bo.extensionElements;
-
-  if (!extensions) {
-    extensions = elementHelper.createElement(
-      'bpmn:ExtensionElements',
-      {},
-      bo,
-      factory
-    );
-    commands.push(
-      cmdHelper.updateProperties(element, { extensionElements: extensions })
-    );
-  }
-
-  let apexPage =
-    extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
-    extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage')[0];
-
-  if (!apexPage) {
-    apexPage = elementHelper.createElement(
-      'apex:ApexPage',
-      {},
-      extensionElementsHelper,
-      factory
-    );
-    commands.push(
-      cmdHelper.addElementsTolist(element, extensions, 'values', [apexPage])
-    );
-  }
-
-  commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
-
-  return commands;
-}
-
 export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];
-
-  // select box container
-  var applicationSelectBox;
-  var pageSelectBox;
-  var itemSelectBox;
-
-  // loading flags
-  var metadataLoading = false;
-  var applicationLoading = false;
-  var pagesLoading = false;
-
-  var getExtProperty = function (property) {
-    return function (element, node) {
-      var entry = getSelectedEntry(element, node);
-
-      return {
-        [property]: (entry && entry.get(property)) || undefined,
-      };
-    };
-  };
-
-  var setExtProperty = function () {
-    return function (element, values, node) {
-      var entry = getSelectedEntry(element, node);
-
-      return cmdHelper.updateBusinessObject(element, entry, values);
-    };
-  };
-
-  var getApplications = function () {
-    return function (element, node, event) {
-      // get dom nodes
-      var applicationSelectBoxNode = domQuery(
-        'div[data-entry="applicationId"] select'
-      );
-      var pageSelectBoxNode = domQuery('div[data-entry="pageId"] select');
-      var itemSelectBoxNode = domQuery('div[data-entry="itemName"] select');
-      // loading flag
-      metadataLoading = true;
-      // ajax process
-      apex.server.process(
-        'GET_APPLICATIONS',
-        {},
-        {
-          dataType: 'text',
-          success: function (data) {
-            applications = JSON.parse(data);
-            metadataLoading = false;
-            // manually enable select box
-            applicationSelectBoxNode.removeAttribute('disabled');
-            // refresh select box options
-            applicationSelectBox.setControlValue(
-              element,
-              null,
-              applicationSelectBoxNode,
-              null,
-              applicationSelectBox.oldValues.applicationId
-            );
-            // manually enable select box
-            pageSelectBoxNode.removeAttribute('disabled');
-            // refresh select box options
-            pageSelectBox.setControlValue(
-              element,
-              null,
-              pageSelectBoxNode,
-              null,
-              pageSelectBox.oldValues.pageId
-            );
-            if (itemSelectBoxNode) {
-              // manually enable select box
-              itemSelectBoxNode.removeAttribute('disabled');
-              // refresh select box options
-              itemSelectBox.setControlValue(
-                element,
-                null,
-                itemSelectBoxNode,
-                null,
-                itemSelectBox.oldValues.itemName
-              );
-            }
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('error');
-          },
-        }
-      );
-    };
-  };
-
-  function refreshPages(element, values, node) {
-    // get dom nodes
-    var pageSelectBoxNode = domQuery('div[data-entry="pageId"] select');
-    var itemSelectBoxNode = domQuery('div[data-entry="itemName"] select');
-    // loading flag
-    applicationLoading = true;
-    // ajax process
-    apex.server.process(
-      'GET_PAGES',
-      { x01: values.applicationId },
-      {
-        dataType: 'text',
-        success: function (data) {
-          pages = JSON.parse(data);
-          applicationLoading = false;
-          // manually enable select box
-          pageSelectBoxNode.removeAttribute('disabled');
-          // refresh select box options
-          pageSelectBox.setControlValue(
-            element,
-            null,
-            pageSelectBoxNode,
-            null,
-            null
-          );
-          if (itemSelectBoxNode) {
-            // manually enable select box
-            itemSelectBoxNode.removeAttribute('disabled');
-            // refresh select box options
-            itemSelectBox.setControlValue(
-              element,
-              null,
-              itemSelectBoxNode,
-              null,
-              null
-            );
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.log('error');
-        },
-      }
-    );
-  }
-
-  function refreshItems(element, values, node) {
-    // get dom nodes
-    var itemSelectBoxNode = domQuery('div[data-entry="itemName"] select');
-    // loading flag
-    pagesLoading = true;
-    // ajax process
-    apex.server.process(
-      'GET_ITEMS',
-      {
-        x01: applicationSelectBox.oldValues.applicationId,
-        x02: values.pageId,
-      },
-      {
-        dataType: 'text',
-        success: function (data) {
-          items = JSON.parse(data);
-          pagesLoading = false;
-          if (itemSelectBoxNode) {
-            // manually enable select box
-            itemSelectBoxNode.removeAttribute('disabled');
-            // refresh select box options
-            itemSelectBox.setControlValue(
-              element,
-              null,
-              itemSelectBoxNode,
-              null,
-              null
-            );
-          }
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.log('error');
-        },
-      }
-    );
-  }
-
-  factory = bpmnFactory;
 
   // Only return an entry, if the currently selected element is a UserTask.
   if (is(element, 'bpmn:UserTask')) {
@@ -377,7 +305,9 @@ export default function (element, bpmnFactory, translate) {
       entryFactory.link(translate, {
         id: 'refreshMetadata',
         buttonLabel: 'Refresh Meta Data',
-        handleClick: getApplications(),
+        handleClick: function (element, node, event) {
+          return getApplications(element);
+        },
       })
     );
 
@@ -400,9 +330,9 @@ export default function (element, bpmnFactory, translate) {
 
       set: function (element, values, node) {
         // refresh pages
-        refreshPages(element, values, node);
+        getPages(element, values);
         // set value
-        return setProperty(element, values);
+        return setProperty(element, bpmnFactory, values);
       },
     });
 
@@ -427,15 +357,13 @@ export default function (element, bpmnFactory, translate) {
 
       set: function (element, values, node) {
         // refresh items
-        refreshItems(element, values, node);
+        getItems(element, values);
         // set value
-        return setProperty(element, values);
+        return setProperty(element, bpmnFactory, values);
       },
     });
 
     userTaskProps.push(pageSelectBox);
-
-    /* */
 
     pageItemsElement = extensionElementsEntry(element, bpmnFactory, {
       id: 'pageItems',
@@ -507,7 +435,7 @@ export default function (element, bpmnFactory, translate) {
 
         set: function (element, values) {
           // set value
-          return setProperty(element, values);
+          return setProperty(element, bpmnFactory, values);
         },
       })
     );
@@ -522,7 +450,7 @@ export default function (element, bpmnFactory, translate) {
 
         set: function (element, values) {
           // set value
-          return setProperty(element, values);
+          return setProperty(element, bpmnFactory, values);
         },
       })
     );
