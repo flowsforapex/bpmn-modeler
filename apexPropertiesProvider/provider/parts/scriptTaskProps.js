@@ -7,14 +7,16 @@ var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/Exten
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
+var domQuery = require('min-dom').query;
+
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+
 var factory;
 
 var setProperty = function () {
   return function (element, values) {
     var commands = [];
-
     var bo = getBusinessObject(element);
-
     var extensions = bo.extensionElements;
 
     if (!extensions) {
@@ -29,9 +31,10 @@ var setProperty = function () {
       );
     }
 
-    let apexScript =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
+    let [apexScript] = extensionElementsHelper.getExtensionElements(
+      bo,
+      'apex:ApexScript'
+    );
 
     if (!apexScript) {
       apexScript = elementHelper.createElement(
@@ -55,9 +58,10 @@ var getProperty = function (property) {
   return function (element) {
     var bo = getBusinessObject(element);
 
-    const apexScript =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
+    const [apexScript] = extensionElementsHelper.getExtensionElements(
+      bo,
+      'apex:ApexScript'
+    );
 
     return {
       [property]: apexScript && apexScript.get(property),
@@ -69,16 +73,27 @@ var monacoEditor;
 
 var handleOpenEditor = function () {
   return function (element, node, event) {
-    var bo = getBusinessObject(element);
-    monacoEditor = editor.create(
-      document.getElementById('plsqlCode-container'),
-      {
-        value: [bo.get('plsqlCode')].join('\n'),
+    var modal = document.getElementById('myModal');
+    modal.style.display = 'block';
+
+    // TODO move to separate button (and add one for closing too)
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+        savePlsqlCode(element, monacoEditor.getValue());
+      }
+    };
+
+    if (!monacoEditor) {
+      monacoEditor = editor.create(document.getElementById('myModalContent'), {
+        value: [getPlsqlCode(element)].join('\n'),
         language: 'pgsql',
         lineNumbers: 'off',
         minimap: { enabled: 'false' },
-      }
-    );
+      });
+    } else {
+      monacoEditor.getModel().setValue(getPlsqlCode(element));
+    }
   };
 };
 
@@ -89,10 +104,23 @@ var handleSaveEditor = function () {
   };
 };
 
-var getPlsqlCode = function (element) {
+function getPlsqlCode(element) {
   var bo = getBusinessObject(element);
-  return `<div id="plsqlCode-container">${bo.get('plsqlCode') || ''}</div>`;
-};
+
+  const [apexScript] = extensionElementsHelper.getExtensionElements(
+    bo,
+    'apex:ApexScript'
+  );
+
+  return apexScript && apexScript.get('plsqlCode');
+}
+
+var plsqlCodeField;
+
+function savePlsqlCode(element, plsqlCode) {
+  // TODO save business object
+  domQuery('#camunda-plsqlCode').textContent = plsqlCode;
+}
 
 export default function (element, bpmnFactory, translate) {
   const scriptTaskEngine = '[name="engine"]';
@@ -120,22 +148,16 @@ export default function (element, bpmnFactory, translate) {
 
     // Run PL/SQL Code
 
-    scriptTaskProps.push(
-      entryFactory.highlightingTextBox(translate, {
-        id: 'plsqlCode',
-        description: translate('Enter the PL/SQL code to be executed.'),
-        label: translate('PL/SQL Code'),
-        modelProperty: 'plsqlCode',
-        set: setProperty(),
-        get: getProperty('plsqlCode'),
-      })
-    );
-
-    scriptTaskProps.push({
-      id: 'plsqlCode-container',
-      // html: getPlsqlCode(element),
-      html: '<div id="plsqlCode-container"></div>',
+    plsqlCodeField = entryFactory.textBox(translate, {
+      id: 'plsqlCode',
+      description: translate('Enter the PL/SQL code to be executed.'),
+      label: translate('PL/SQL Code'),
+      modelProperty: 'plsqlCode',
+      set: setProperty(),
+      get: getProperty('plsqlCode'),
     });
+
+    scriptTaskProps.push(plsqlCodeField);
 
     scriptTaskProps.push(
       entryFactory.link(translate, {
