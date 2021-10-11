@@ -9,8 +9,6 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 
 var domQuery = require('min-dom').query;
 
-var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
-
 var factory;
 
 var setProperty = function () {
@@ -70,37 +68,37 @@ var getProperty = function (property) {
 };
 
 var monacoEditor;
+var plsqlCodeField;
 
 var handleOpenEditor = function () {
   return function (element, node, event) {
-    var modal = document.getElementById('myModal');
+    var modal = document.getElementById('modalDialog');
+    // Get the <span> element that closes the modal
+    var save = document.getElementById('modalSave');
+    var close = document.getElementById('modalClose');
+
     modal.style.display = 'block';
 
-    // TODO move to separate button (and add one for closing too)
-    window.onclick = function (event) {
-      if (event.target == modal) {
-        modal.style.display = 'none';
-        savePlsqlCode(element, monacoEditor.getValue());
-      }
+    // When the user clicks on <span> (x), close the modal
+    save.onclick = function () {
+      modal.style.display = 'none';
+      savePlsqlCode(element, monacoEditor.getValue());
+    };
+
+    close.onclick = function () {
+      modal.style.display = 'none';
     };
 
     if (!monacoEditor) {
-      monacoEditor = editor.create(document.getElementById('myModalContent'), {
+      monacoEditor = editor.create(document.getElementById('editorContainer'), {
         value: [getPlsqlCode(element)].join('\n'),
         language: 'pgsql',
-        lineNumbers: 'off',
         minimap: { enabled: 'false' },
+        automaticLayout: true,
       });
     } else {
       monacoEditor.getModel().setValue(getPlsqlCode(element));
     }
-  };
-};
-
-var handleSaveEditor = function () {
-  return function (element, node, event) {
-    var bo = getBusinessObject(element);
-    bo.plsqlCode = monacoEditor.getValue();
   };
 };
 
@@ -115,10 +113,13 @@ function getPlsqlCode(element) {
   return apexScript && apexScript.get('plsqlCode');
 }
 
-var plsqlCodeField;
-
 function savePlsqlCode(element, plsqlCode) {
-  // TODO save business object
+  const [apexScript] = extensionElementsHelper.getExtensionElements(
+    getBusinessObject(element),
+    'apex:ApexScript'
+  );
+  // TODO handle case when no apexScript object created yet
+  apexScript.plsqlCode = plsqlCode;
   domQuery('#camunda-plsqlCode').textContent = plsqlCode;
 }
 
@@ -159,19 +160,25 @@ export default function (element, bpmnFactory, translate) {
 
     scriptTaskProps.push(plsqlCodeField);
 
+    scriptTaskProps.push({
+      id: 'plsqlCode-container',
+      html:
+        '<div id="modalDialog" class="modal">' +
+        '<div id="modalContent" " class="modal-content">' +
+        '<div id="buttonContainer">' +
+        '<button id="modalParse" class="dialog parse fa fa-check"></button>' +
+        '<button id="modalSave" class="dialog save fa fa-save"></button>' +
+        '<button id="modalClose" class="dialog close fa fa-times"></button>' +
+        '</div>' +
+        '<div id="editorContainer"></div>' +
+        '</div>',
+    });
+
     scriptTaskProps.push(
       entryFactory.link(translate, {
         id: 'openEditor',
         buttonLabel: 'Open Editor',
         handleClick: handleOpenEditor(),
-      })
-    );
-
-    scriptTaskProps.push(
-      entryFactory.link(translate, {
-        id: 'saveEditor',
-        buttonLabel: 'Save Editor',
-        handleClick: handleSaveEditor(),
       })
     );
 

@@ -49,7 +49,9 @@ module.exports = {
         },
       ],
     }),
-    new MonacoWebpackPlugin(),
+    new MonacoWebpackPlugin({
+      languages: ["pgsql"],
+    }),
   ],
   devtool: "source-map",
   devServer: {
@@ -68,17 +70,7 @@ module.exports = {
         ],
       },
       {
-        test: /.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [["@babel/preset-env", { targets: "defaults" }]],
-          },
-        },
-      },
-      {
-        test: /\.css$/i,
+        test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
       {
