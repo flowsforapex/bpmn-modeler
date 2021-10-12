@@ -83,4 +83,5 @@ module.exports = {
     minimize: true,
     usedExports: true,
   },
+  target: ["web"],
 };

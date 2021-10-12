@@ -56,5 +56,9 @@
     "webpack": "^5.58.1",
     "webpack-cli": "^4.9.0",
     "webpack-dev-server": "^4.3.1"
-  }
+  },
+  "sideEffects": false,
+  "browserslist": [
+    "last 2 versions and > 1% and not dead and not ie > 0 and not OperaMini all and not UCAndroid > 0"
+  ]
 }
