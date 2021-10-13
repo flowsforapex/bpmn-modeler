@@ -7,10 +7,29 @@ import {
   setExtensionProperty
 } from '../extensionElements/propertiesHelper';
 
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
+
 export default function (element, bpmnFactory, commandStack, translate) {
   const scriptTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const scriptTaskProps = [];
+
+  var getPlsqlCode = function () {
+    return getExtensionProperty(element, 'apex:ApexScript', 'plsqlCode')
+      .plsqlCode;
+  };
+
+  var savePlsqlCode = function (text) {
+    var commands = setExtensionProperty(
+      element,
+      bpmnFactory,
+      'apex:ApexScript',
+      {
+        plsqlCode: text,
+      }
+    );
+    new MultiCommandHandler(commandStack).preExecute(commands);
+  };
 
   if (is(element, 'bpmn:ScriptTask')) {
     // if 'yes' then add 'autoBinds'
@@ -80,13 +99,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
         id: 'openEditor',
         buttonLabel: 'Open Editor',
         handleClick: function (element, node, event) {
-          openEditor(
-            element,
-            bpmnFactory,
-            commandStack,
-            'apex:ApexScript',
-            'plsqlCode'
-          );
+          openEditor(getPlsqlCode, savePlsqlCode);
         },
       })
     );
