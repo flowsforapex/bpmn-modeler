@@ -83,13 +83,18 @@ export default function (element, bpmnFactory, commandStack, translate) {
       id: 'plsqlCode-container',
       html:
         '<div id="modalDialog" class="modal">' +
-        '<div id="modalContent" " class="modal-content">' +
-        '<div id="buttonContainer">' +
-        '<button id="modalParse" class="dialog parse fa fa-check"></button>' +
-        '<button id="modalSave" class="dialog save fa fa-save"></button>' +
-        '<button id="modalClose" class="dialog close fa fa-times"></button>' +
+        '<div id="modalContent" class="modalContent">' +
+        '<div class="buttonContainer start">' +
+        '<button id="undoBtn" class="dialog undo fa fa-undo"></button>' +
+        '<button id="redoBtn" class="dialog redo fa fa-repeat"></button>' +
+        // '<button id="searchBtn" class="dialog search fa fa-search"></button>' +
+        '<button id="parseBtn" class="dialog parse fa fa-check-circle-o"></button>' +
         '</div>' +
         '<div id="editorContainer"></div>' +
+        '<div class="buttonContainer end">' +
+        '<button id="closeBtn" class="dialog close">Cancel</button>' +
+        '<button id="saveBtn" class="dialog save">Ok</button>' +
+        '</div>' +
         '</div>',
     });
 
