@@ -2,6 +2,7 @@ const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const path = require("path");
 
 module.exports = {
+  mode: "development",
   entry: {
     "flows4apex.modeler": [path.resolve(__dirname, "index.js")],
   },
