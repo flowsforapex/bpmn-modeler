@@ -12,7 +12,7 @@ export function openEditor(getText, saveText) {
     automaticLayout: true,
   });
 
-  modal.style.display = 'block';
+  modal.style.display = 'flex';
 
   save.onclick = function () {
     modal.style.display = 'none';
