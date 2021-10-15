@@ -1,7 +1,7 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
-import { openEditor } from '../customElements/monacoEditor';
+import { getContainer, openEditor } from '../customElements/monacoEditor';
 import {
   getExtensionProperty,
   setExtensionProperty
@@ -79,24 +79,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // container for script editor
-    scriptTaskProps.push({
-      id: 'plsqlCode-container',
-      html:
-        '<div id="modalDialog" class="modal">' +
-        '<div id="modalContent" class="modalContent">' +
-        '<div class="buttonContainer start">' +
-        '<button id="undoBtn" class="dialog undo fa fa-undo"></button>' +
-        '<button id="redoBtn" class="dialog redo fa fa-repeat"></button>' +
-        // '<button id="searchBtn" class="dialog search fa fa-search"></button>' +
-        '<button id="parseBtn" class="dialog parse fa fa-check-circle-o"></button>' +
-        '</div>' +
-        '<div id="editorContainer"></div>' +
-        '<div class="buttonContainer end">' +
-        '<button id="closeBtn" class="dialog close">Cancel</button>' +
-        '<button id="saveBtn" class="dialog save">Ok</button>' +
-        '</div>' +
-        '</div>',
-    });
+    scriptTaskProps.push(getContainer());
 
     // link to script editor
     scriptTaskProps.push(

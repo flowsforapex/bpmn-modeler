@@ -558,6 +558,9 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   color: white;
   background-color: #282c30;
 }
+.FLOWS-DARK .bpp-properties-panel button:hover {
+  color: #52B415;
+}
 .FLOWS-DARK .bpp-properties-panel label {
   color: white;
 }
@@ -586,8 +589,8 @@ ul.bpp-properties-tabs-links > li.bpp-active a {
   margin: auto;
   padding: 0 10px;
   border: 1px solid #888;
-  width: 50%;
-  height: 50%;
+  width: 1000px;
+  height: 500px;
   display: grid;
   grid-template-columns: 100%;
   grid-template-rows: 10% 80% 10%;
@@ -621,9 +624,15 @@ button.dialog.fa {
   width: 40px;
 }
 
-button.dialog:hover,
-button.dialog:focus {
-  /* background-color: black; */
+#saveBtn {
+  background-color: #52B415;
+  color: white;
+}
+
+#errorText {
+  width: 100%;
+  max-height: 40px;
+  overflow: auto;
 }
 
 #editorContainer {
