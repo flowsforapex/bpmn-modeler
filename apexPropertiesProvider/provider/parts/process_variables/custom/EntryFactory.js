@@ -3,7 +3,6 @@ var EntryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
 var { getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
 var dynamicTextBox = require('./dynamicTextBox');
 var dynamicSelectBox = require('./dynamicSelectBox');
-var highlightingTextBox = require('./highlightingTextBox');
 
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
@@ -73,12 +72,6 @@ EntryFactory.dynamicTextBox = function (translate, options) {
 
 EntryFactory.dynamicSelectBox = function (translate, options) {
   return dynamicSelectBox(translate, options, setDefaultParameters(options));
-};
-
-// custom TextBox
-
-EntryFactory.highlightingTextBox = function (translate, options) {
-  return highlightingTextBox(translate, options, setDefaultParameters(options));
 };
 
 module.exports = EntryFactory;
