@@ -11,6 +11,7 @@ export function getApplications() {
     {
       dataType: 'text',
       success: function (data) {
+        console.log('applications');
         return data;
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -33,6 +34,7 @@ export function getPages(applicationId) {
     {
       dataType: 'text',
       success: function (data) {
+        console.log('pages');
         return data;
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -61,6 +63,7 @@ export function getItems(applicationId, pageId) {
     {
       dataType: 'text',
       success: function (data) {
+        console.log('items');
         return data;
       },
       error: function (jqXHR, textStatus, errorThrown) {

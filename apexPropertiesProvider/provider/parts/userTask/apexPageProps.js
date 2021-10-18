@@ -1,14 +1,23 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import { getExtensionProperty } from '../../extensionElements/propertiesHelper';
+import {
+  getExtensionProperty,
+  setExtensionProperty
+} from '../../extensionElements/propertiesHelper';
+import {
+  getEntries,
+  getExtensionSubProperty,
+  isNotSelected,
+  newElement,
+  removeElement,
+  setExtensionSubProperty,
+  setOptionLabelValue
+} from '../../extensionElements/subPropertiesHelper';
 import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;
 
-var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
-var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 // select list options container
 var applications = [];
@@ -17,150 +26,6 @@ var items = [];
 
 // extension element
 var pageItemsElement;
-
-var setOptionLabelValue = function () {
-  return function (element, node, option, property, value, idx) {
-    var entries = getEntries(element);
-    var entry = entries[idx];
-
-    var label = entry ? `${entry.get('itemName')}:${entry.get('itemValue')}` : '';
-
-    option.text = label;
-    option.value = entry && entry.get('itemName');
-  };
-};
-
-var newElement = function (bpmnFactory, props) {
-  return function (element, extensionElements, values) {
-    var commands = [];
-    var newElem;
-
-    var [container] = extensionElementsHelper.getExtensionElements(
-      getBusinessObject(element),
-      'apex:ApexPage'
-    );
-
-    if (!container) {
-      container = elementHelper.createElement(
-        'apex:ApexPage',
-        {},
-        extensionElements,
-        bpmnFactory
-      );
-      commands.push(
-        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
-          container,
-        ])
-      );
-    }
-
-    values = {
-      itemName: props.itemName,
-      itemValue: props.itemValue,
-    };
-
-    newElem = elementHelper.createElement(
-      'apex:PageItem',
-      values,
-      container,
-      bpmnFactory
-    );
-    commands.push(
-      cmdHelper.addElementsTolist(element, container, 'pageItems', [newElem])
-    );
-
-    return commands;
-  };
-};
-
-var removeElement = function () {
-  return function (element, extensionElements, value, idx) {
-    var command;
-
-    var [container] = extensionElementsHelper.getExtensionElements(
-      getBusinessObject(element),
-      'apex:ApexPage'
-    );
-
-    var entries = getEntries(element);
-    var entry = entries[idx];
-
-    command =
-      container.pageItems.length > 1 ? (command = cmdHelper.removeElementsFromList(
-            element,
-            container,
-            'pageItems',
-            'extensionElements',
-            [entry]
-          )) : cmdHelper.updateBusinessObject(element, container, {
-            pageItems: '',
-          });
-
-    return command;
-  };
-};
-
-function getExtProperty(element, node, property) {
-  var entry = getSelectedEntry(element, node);
-
-  return {
-    [property]: (entry && entry.get(property)) || undefined,
-  };
-}
-
-var setExtProperty = function () {
-  return function (element, values, node) {
-    var entry = getSelectedEntry(element, node);
-
-    return cmdHelper.updateBusinessObject(element, entry, values);
-  };
-};
-
-var isNotSelected = function () {
-  return function (element, node) {
-    return typeof getSelectedEntry(element, node) === 'undefined';
-  };
-};
-
-// property setter
-function setProperty(element, bpmnFactory, values) {
-  var commands = [];
-  var bo = getBusinessObject(element);
-  var extensions = bo.extensionElements;
-
-  if (!extensions) {
-    extensions = elementHelper.createElement(
-      'bpmn:ExtensionElements',
-      {},
-      bo,
-      bpmnFactory
-    );
-    commands.push(
-      cmdHelper.updateProperties(element, { extensionElements: extensions })
-    );
-  }
-
-  let [apexPage] = extensionElementsHelper.getExtensionElements(
-    bo,
-    'apex:ApexPage'
-  );
-
-  if (!apexPage) {
-    apexPage = elementHelper.createElement(
-      'apex:ApexPage',
-      {},
-      extensionElementsHelper,
-      bpmnFactory
-    );
-    commands.push(
-      cmdHelper.addElementsTolist(element, extensions, 'values', [apexPage])
-    );
-  }
-
-  commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
-
-  return commands;
-}
 
 // select box container
 var applicationSelectBox;
@@ -178,7 +43,12 @@ function enableAndRefresh(element, ...fields) {
     // get value
     var property =
       getExtensionProperty(element, 'apex:ApexPage', f.id)[f.id] ||
-      getExtProperty(element, domQuery(`[data-entry="${f.id}"]`), f.id)[f.id] ||
+      getExtensionSubProperty(
+        pageItemsElement,
+        element,
+        domQuery(`[data-entry="${f.id}"]`),
+        f.id
+      )[f.id] ||
       null;
     if (fieldNode) {
       // enable select box
@@ -239,27 +109,6 @@ function refreshItems(element, values) {
   });
 }
 
-function getEntries(element) {
-  var bo = getBusinessObject(element);
-  const [apexPage] = extensionElementsHelper.getExtensionElements(
-    bo,
-    'apex:ApexPage'
-  );
-  return apexPage && apexPage.pageItems;
-}
-
-function getSelectedEntry(element, node) {
-  var selection;
-  var entry;
-
-  if (pageItemsElement.getSelected(element, node).idx > -1) {
-    selection = pageItemsElement.getSelected(element, node);
-    entry = getEntries(element)[selection.idx];
-  }
-
-  return entry;
-}
-
 export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];
 
@@ -298,7 +147,12 @@ export default function (element, bpmnFactory, translate) {
         // refresh pages
         refreshPages(element, values);
         // set value
-        return setProperty(element, bpmnFactory, values);
+        return setExtensionProperty(
+          element,
+          bpmnFactory,
+          'apex:ApexPage',
+          values
+        );
       },
     });
 
@@ -329,7 +183,12 @@ export default function (element, bpmnFactory, translate) {
         // refresh items
         refreshItems(element, values);
         // set value
-        return setProperty(element, bpmnFactory, values);
+        return setExtensionProperty(
+          element,
+          bpmnFactory,
+          'apex:ApexPage',
+          values
+        );
       },
     });
 
@@ -339,17 +198,56 @@ export default function (element, bpmnFactory, translate) {
       id: 'pageItems',
       label: translate('Page Items'),
 
-      createExtensionElement: newElement(bpmnFactory, {
-        itemName: '',
-        itemValue: '',
-      }),
-      removeExtensionElement: removeElement(),
+      createExtensionElement: function (element, extensionElements, values) {
+        return newElement(
+          element,
+          extensionElements,
+          bpmnFactory,
+          'apex:ApexPage',
+          'apex:PageItem',
+          'pageItems',
+          {
+            itemName: '',
+            itemValue: '',
+          }
+        );
+      },
+      removeExtensionElement: function (
+        element,
+        extensionElements,
+        value,
+        idx
+      ) {
+        return removeElement(
+          element,
+          extensionElements,
+          'apex:ApexPage',
+          'pageItems',
+          idx
+        );
+      },
 
       getExtensionElements: function (element) {
         return getEntries(element);
       },
 
-      setOptionLabelValue: setOptionLabelValue(),
+      setOptionLabelValue: function (
+        element,
+        node,
+        option,
+        property,
+        value,
+        idx
+      ) {
+        setOptionLabelValue(
+          element,
+          option,
+          'itemName',
+          'itemValue',
+          'itemValue',
+          idx
+        );
+      },
     });
 
     userTaskProps.push(pageItemsElement);
@@ -370,14 +268,23 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element, node) {
-        var property = getExtProperty(element, node, 'itemName');
-        if (items.length === 0) items = refreshItems(element, node, property);
+        var property = getExtensionSubProperty(
+          pageItemsElement,
+          element,
+          node,
+          'itemName'
+        );
+        if (items.length === 0) items = refreshItems(element, property);
         return property;
       },
 
-      set: setExtProperty(),
+      set: function (element, values, node) {
+        return setExtensionSubProperty(pageItemsElement, element, node, values);
+      },
 
-      hidden: isNotSelected(),
+      hidden: function (element, node) {
+        return isNotSelected(pageItemsElement, element, node);
+      },
     });
 
     userTaskProps.push(itemSelectBox);
@@ -391,12 +298,26 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'itemValue',
 
         get: function (element, node) {
-          return getExtProperty(element, node, 'itemValue');
+          return getExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            'itemValue'
+          );
         },
 
-        set: setExtProperty(),
+        set: function (element, values, node) {
+          return setExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            values
+          );
+        },
 
-        hidden: isNotSelected(),
+        hidden: function (element, node) {
+          return isNotSelected(pageItemsElement, element, node);
+        },
       })
     );
 
@@ -413,7 +334,12 @@ export default function (element, bpmnFactory, translate) {
 
         set: function (element, values) {
           // set value
-          return setProperty(element, bpmnFactory, values);
+          return setExtensionProperty(
+            element,
+            bpmnFactory,
+            'apex:ApexPage',
+            values
+          );
         },
       })
     );
@@ -430,7 +356,12 @@ export default function (element, bpmnFactory, translate) {
 
         set: function (element, values) {
           // set value
-          return setProperty(element, bpmnFactory, values);
+          return setExtensionProperty(
+            element,
+            bpmnFactory,
+            'apex:ApexPage',
+            values
+          );
         },
       })
     );

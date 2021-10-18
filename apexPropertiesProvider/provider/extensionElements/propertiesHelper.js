@@ -48,7 +48,3 @@ export function getExtensionProperty(element, type, property) {
     [property]: extElement && extElement.get(property),
   };
 }
-
-export function setExtensionSubProperty() {}
-
-export function getExtensionSubProperty() {}
