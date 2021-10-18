@@ -1,5 +1,7 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { getExtensionProperty } from '../../extensionElements/propertiesHelper';
+import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;
 
@@ -98,15 +100,13 @@ var removeElement = function () {
   };
 };
 
-var getExtProperty = function (property) {
-  return function (element, node) {
-    var entry = getSelectedEntry(element, node);
+function getExtProperty(element, node, property) {
+  var entry = getSelectedEntry(element, node);
 
-    return {
-      [property]: (entry && entry.get(property)) || undefined,
-    };
+  return {
+    [property]: (entry && entry.get(property)) || undefined,
   };
-};
+}
 
 var setExtProperty = function () {
   return function (element, values, node) {
@@ -122,24 +122,8 @@ var isNotSelected = function () {
   };
 };
 
-// property getter
-var getProperty = function (property) {
-  return function (element) {
-    var bo = getBusinessObject(element);
-
-    const [apexPage] = extensionElementsHelper.getExtensionElements(
-      bo,
-      'apex:ApexPage'
-    );
-
-    return {
-      [property]: apexPage && apexPage.get(property),
-    };
-  };
-};
-
 // property setter
-var setProperty = function (element, bpmnFactory, values) {
+function setProperty(element, bpmnFactory, values) {
   var commands = [];
   var bo = getBusinessObject(element);
   var extensions = bo.extensionElements;
@@ -176,7 +160,7 @@ var setProperty = function (element, bpmnFactory, values) {
   commands.push(cmdHelper.updateBusinessObject(element, apexPage, values));
 
   return commands;
-};
+}
 
 // select box container
 var applicationSelectBox;
@@ -184,7 +168,6 @@ var pageSelectBox;
 var itemSelectBox;
 
 // loading flags
-var metadataLoading = false;
 var applicationLoading = false;
 var pagesLoading = false;
 
@@ -192,86 +175,68 @@ function enableAndRefresh(element, ...fields) {
   fields.forEach((f) => {
     // get dom node
     var fieldNode = domQuery(`select[name="${f.id}"]`);
+    // get value
+    var property =
+      getExtensionProperty(element, 'apex:ApexPage', f.id)[f.id] ||
+      getExtProperty(element, domQuery(`[data-entry="${f.id}"]`), f.id)[f.id] ||
+      null;
     if (fieldNode) {
       // enable select box
       fieldNode.removeAttribute('disabled');
       // refresh select box options
-      f.setControlValue(element, null, fieldNode, null, fieldNode.value);
+      f.setControlValue(element, null, fieldNode, null, property);
     }
   });
 }
 
-function getApplications(element) {
-  // loading flag
-  metadataLoading = true;
-  // ajax process
-  apex.server.process(
-    'GET_APPLICATIONS',
-    {},
-    {
-      dataType: 'text',
-      success: function (data) {
-        applications = JSON.parse(data);
-        metadataLoading = false;
-        enableAndRefresh(
-          element,
-          applicationSelectBox,
-          pageSelectBox,
-          itemSelectBox
-        );
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log('error');
-      },
-    }
-  );
-}
-
-function getPages(element, values) {
+function refreshApplications(element) {
   // loading flag
   applicationLoading = true;
   // ajax process
-  apex.server.process(
-    'GET_PAGES',
-    { x01: values.applicationId },
-    {
-      dataType: 'text',
-      success: function (data) {
-        pages = JSON.parse(data);
-        applicationLoading = false;
-        enableAndRefresh(element, pageSelectBox, itemSelectBox);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log('error');
-      },
-    }
-  );
+  getApplications().then((values) => {
+    applications = JSON.parse(values);
+    // loading flag
+    applicationLoading = false;
+    // refresh
+    enableAndRefresh(
+      element,
+      applicationSelectBox,
+      pageSelectBox,
+      itemSelectBox
+    );
+  });
 }
 
-function getItems(element, values) {
-  // get selected application
-  var applicationId = domQuery('select[name="applicationId"]').value;
+function refreshPages(element, values) {
+  // applicationId
+  var { applicationId } = values;
   // loading flag
   pagesLoading = true;
   // ajax process
-  apex.server.process(
-    'GET_ITEMS',
-    {
-      x01: applicationId,
-      x02: values.pageId,
-    },
-    {
-      dataType: 'text',
-      success: function (data) {
-        items = JSON.parse(data);
-        pagesLoading = false;
-        enableAndRefresh(element, itemSelectBox);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log('error');
-      },
-    }
+  getPages(applicationId).then((values) => {
+    pages = JSON.parse(values);
+    // loading flag
+    pagesLoading = false;
+    // refresh
+    enableAndRefresh(element, pageSelectBox, itemSelectBox);
+  });
+}
+
+function refreshItems(element, values) {
+  // applicationId
+  var { applicationId } = getExtensionProperty(
+    element,
+    'apex:ApexPage',
+    'applicationId'
   );
+  // pageId
+  var { pageId } = values;
+  // ajax process
+  getItems(applicationId, pageId).then((values) => {
+    items = JSON.parse(values);
+    // refresh
+    enableAndRefresh(element, itemSelectBox);
+  });
 }
 
 function getEntries(element) {
@@ -304,17 +269,6 @@ export default function (element, bpmnFactory, translate) {
     (typeof getBusinessObject(element).type === 'undefined' ||
       getBusinessObject(element).type === 'apexPage')
   ) {
-    // refresh link
-    userTaskProps.push(
-      entryFactory.link(translate, {
-        id: 'refreshMetadata',
-        buttonLabel: 'Refresh Meta Data',
-        handleClick: function (element, node, event) {
-          return getApplications(element);
-        },
-      })
-    );
-
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
@@ -327,14 +281,22 @@ export default function (element, bpmnFactory, translate) {
       },
 
       disabled: function () {
-        return metadataLoading;
+        return applicationLoading;
       },
 
-      get: getProperty('applicationId'),
+      get: function (element) {
+        var property = getExtensionProperty(
+          element,
+          'apex:ApexPage',
+          'applicationId'
+        );
+        if (applications.length === 0) refreshApplications(element);
+        return property;
+      },
 
       set: function (element, values, node) {
         // refresh pages
-        getPages(element, values);
+        refreshPages(element, values);
         // set value
         return setProperty(element, bpmnFactory, values);
       },
@@ -354,14 +316,18 @@ export default function (element, bpmnFactory, translate) {
       },
 
       disabled: function () {
-        return applicationLoading || metadataLoading;
+        return applicationLoading || pagesLoading;
       },
 
-      get: getProperty('pageId'),
+      get: function (element) {
+        var property = getExtensionProperty(element, 'apex:ApexPage', 'pageId');
+        if (pages.length === 0) refreshPages(element, property);
+        return property;
+      },
 
       set: function (element, values, node) {
         // refresh items
-        getItems(element, values);
+        refreshItems(element, values);
         // set value
         return setProperty(element, bpmnFactory, values);
       },
@@ -400,10 +366,14 @@ export default function (element, bpmnFactory, translate) {
       },
 
       disabled: function () {
-        return pagesLoading || applicationLoading || metadataLoading;
+        return applicationLoading || pagesLoading;
       },
 
-      get: getExtProperty('itemName'),
+      get: function (element, node) {
+        var property = getExtProperty(element, node, 'itemName');
+        if (items.length === 0) items = refreshItems(element, node, property);
+        return property;
+      },
 
       set: setExtProperty(),
 
@@ -420,7 +390,9 @@ export default function (element, bpmnFactory, translate) {
         label: translate('Item Value'),
         modelProperty: 'itemValue',
 
-        get: getExtProperty('itemValue'),
+        get: function (element, node) {
+          return getExtProperty(element, node, 'itemValue');
+        },
 
         set: setExtProperty(),
 
@@ -435,7 +407,9 @@ export default function (element, bpmnFactory, translate) {
         label: translate('Request'),
         modelProperty: 'request',
 
-        get: getProperty('request'),
+        get: function (element) {
+          return getExtensionProperty(element, 'apex:ApexPage', 'request');
+        },
 
         set: function (element, values) {
           // set value
@@ -450,7 +424,9 @@ export default function (element, bpmnFactory, translate) {
         label: translate('Clear Cache'),
         modelProperty: 'cache',
 
-        get: getProperty('cache'),
+        get: function (element) {
+          return getExtensionProperty(element, 'apex:ApexPage', 'cache');
+        },
 
         set: function (element, values) {
           // set value
