@@ -207,11 +207,22 @@
       }
     }
 
+    function lintErrors() {
+      myModeler.get('linting').lint().then((val) => {
+        var error = false;
+        for (var key in val) {
+          if (val[key].filter(e => e.category === 'error').length > 0) error = true;
+        }
+        if (error) myModeler.get('linting').toggle(true);
+      });
+    }
+
     init();
   </script>
    <script>
     async function logXml() {
       try {
+        lintErrors();
         const result = await myModeler.saveXML( { format: true } );
         const { xml } = result;
         console.log(xml);
