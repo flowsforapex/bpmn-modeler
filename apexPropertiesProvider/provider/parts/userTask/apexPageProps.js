@@ -20,6 +20,9 @@ var domQuery = require('min-dom').query;
 
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 
+// element identifier for current element
+var elementIdentifier;
+
 // select list options container
 var applications = [];
 var pages = [];
@@ -129,6 +132,12 @@ export default function (element, bpmnFactory, translate) {
     (typeof getBusinessObject(element).type === 'undefined' ||
       getBusinessObject(element).type === 'apexPage')
   ) {
+    if (elementIdentifier !== element) {
+      elementIdentifier = element;
+      // initiate ajax call for meta data
+      refreshApplications(element);
+    }
+
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
@@ -150,8 +159,6 @@ export default function (element, bpmnFactory, translate) {
           'apex:ApexPage',
           'applicationId'
         );
-        // initiate ajax call for meta data
-        if (applications.length === 0) refreshApplications(element);
         return property;
       },
 

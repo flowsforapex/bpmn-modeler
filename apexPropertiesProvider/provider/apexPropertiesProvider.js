@@ -25,7 +25,6 @@ import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
 import externalUrlProps from './parts/userTask/externalUrlProps';
 
-
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
 function createGeneralTabGroups(
