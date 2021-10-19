@@ -48,3 +48,10 @@ export function getExtensionProperty(element, type, property) {
     [property]: extElement && extElement.get(property),
   };
 }
+
+export function clearExtensionProperty(element, type, property) {
+  var bo = getBusinessObject(element);
+
+  const [extElement] = extensionElementsHelper.getExtensionElements(bo, type);
+  if (extElement) extElement[property] = '';
+}
