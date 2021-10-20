@@ -58,7 +58,7 @@ function createGeneralTabGroups(
   return [generalGroup, detailsGroup, documentationGroup];
 }
 
-function createApexTabGroups(element, bpmnFactory, translate) {
+function createApexTabGroups(element, bpmnFactory, commandStack, translate) {
   var apexPageGroup = {
     id: 'apex-page-calls',
     label: translate('Call APEX Page'),
@@ -67,7 +67,12 @@ function createApexTabGroups(element, bpmnFactory, translate) {
   var apexScriptGroup = {
     id: 'apex-script-group',
     label: translate('Script Task'),
-    entries: generateScriptTaskEntries(element, bpmnFactory, translate),
+    entries: generateScriptTaskEntries(
+      element,
+      bpmnFactory,
+      commandStack,
+      translate
+    ),
   };
   var apexServiceGroup = {
     id: 'apex-service-group',
@@ -139,7 +144,8 @@ export default function apexPropertiesProvider(
   bpmnFactory,
   canvas,
   elementRegistry,
-  translate
+  translate,
+  commandStack
 ) {
   PropertiesActivator.call(this, eventBus);
 
@@ -164,7 +170,12 @@ export default function apexPropertiesProvider(
     var ApexTab = {
       id: 'apex',
       label: translate('APEX'),
-      groups: createApexTabGroups(element, bpmnFactory, translate),
+      groups: createApexTabGroups(
+        element,
+        bpmnFactory,
+        commandStack,
+        translate
+      ),
     };
 
     var VariablesTab = {
@@ -191,4 +202,5 @@ apexPropertiesProvider.$inject = [
   'canvas',
   'elementRegistry',
   'translate',
+  'commandStack',
 ];

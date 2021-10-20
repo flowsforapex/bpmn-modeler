@@ -1,6 +1,8 @@
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const path = require("path");
 
 module.exports = {
+  mode: "production",
   entry: {
     "flows4apex.modeler": [path.resolve(__dirname, "index.js")],
   },
@@ -11,6 +13,11 @@ module.exports = {
     libraryTarget: "var",
     libraryExport: "default",
   },
+  plugins: [
+    new MonacoWebpackPlugin({
+      languages: ["pgsql"],
+    }),
+  ],
   module: {
     rules: [
       {
@@ -21,9 +28,17 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.ttf$/,
+        use: ["file-loader"],
+      },
     ],
   },
   optimization: {
-    minimize: true
+    minimize: true,
   },
 };
