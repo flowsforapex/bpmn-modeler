@@ -86,7 +86,12 @@ function createApexTabGroups(element, bpmnFactory, commandStack, translate) {
   var apexServiceGroup = {
     id: 'apex-service-group',
     label: translate('Service Task'),
-    entries: generateServiceTaskEntries(element, bpmnFactory, translate),
+    entries: generateServiceTaskEntries(
+      element,
+      bpmnFactory,
+      commandStack,
+      translate
+    ),
   };
 
   return [apexPageGroup, apexScriptGroup, apexServiceGroup];
