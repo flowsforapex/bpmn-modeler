@@ -106,6 +106,12 @@ export default class subPropertiesHelper {
     );
   }
 
+  isSelected(container, element, node) {
+    return (
+      typeof this.getSelectedEntry(container, element, node) !== 'undefined'
+    );
+  }
+
   getEntries(element) {
     var bo = getBusinessObject(element);
     const [apexPage] = extensionElementsHelper.getExtensionElements(

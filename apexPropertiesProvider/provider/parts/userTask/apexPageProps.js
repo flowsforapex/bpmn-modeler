@@ -5,8 +5,8 @@ import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
 import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;
-
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 
 var helper = new propertiesHelper('apex:ApexPage');
 
@@ -119,8 +119,20 @@ function refreshItems(element, applicationId, pageId) {
   });
 }
 
-export default function (element, bpmnFactory, translate) {
+export default function (element, bpmnFactory, elementRegistry, translate) {
   const userTaskProps = [];
+
+  var enterQuickPick = function (node, values) {
+    var command = subHelper.setExtensionSubProperty(
+      pageItemsElement,
+      element,
+      node,
+      values
+    );
+    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+      command.context
+    );
+  };
 
   // Only return an entry, if the currently selected element is a UserTask.
   if (
@@ -137,7 +149,7 @@ export default function (element, bpmnFactory, translate) {
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
-      description: translate('Application ID or Alias'),
+      // description: translate('Application ID or Alias'),
       label: translate('Application'),
       modelProperty: 'applicationId',
 
@@ -167,7 +179,7 @@ export default function (element, bpmnFactory, translate) {
     // page select list
     pageSelectBox = entryFactory.selectBox(translate, {
       id: 'pageId',
-      description: translate('Page ID or Alias'),
+      // description: translate('Page ID or Alias'),
       label: translate('Page'),
       modelProperty: 'pageId',
 
@@ -288,11 +300,11 @@ export default function (element, bpmnFactory, translate) {
 
     userTaskProps.push(itemSelectBox);
 
-    // name field
+    // item value
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'itemValue',
-        description: translate('Value of the page item'),
+        // description: translate('Value of the page item'),
         label: translate('Item Value'),
         modelProperty: 'itemValue',
 
@@ -316,6 +328,54 @@ export default function (element, bpmnFactory, translate) {
 
         hidden: function (element, node) {
           return subHelper.isNotSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-process-id',
+        buttonLabel: 'process_id',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$PROCESS_ID.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-subflow-id',
+        buttonLabel: 'subflow_id',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$SUBFLOW_ID.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-business-ref',
+        buttonLabel: 'business_ref',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$BUSINESS_REF.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
         },
       })
     );

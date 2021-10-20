@@ -67,11 +67,17 @@ function createGeneralTabGroups(
   return [generalGroup, typeGroup, detailsGroup, documentationGroup];
 }
 
-function createApexTabGroups(element, bpmnFactory, commandStack, translate) {
+function createApexTabGroups(
+  element,
+  bpmnFactory,
+  commandStack,
+  elementRegistry,
+  translate
+) {
   var apexPageGroup = {
     id: 'apex-page-calls',
     label: translate('Call APEX Page'),
-    entries: apexPageProps(element, bpmnFactory, translate),
+    entries: apexPageProps(element, bpmnFactory, elementRegistry, translate),
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
@@ -198,6 +204,7 @@ export default function apexPropertiesProvider(
         element,
         bpmnFactory,
         commandStack,
+        elementRegistry,
         translate
       ),
     };
