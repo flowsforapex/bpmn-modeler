@@ -76,6 +76,27 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'apex-application',
         set: setProperty(),
         get: getProperty('apex-application'),
+
+        validate: function (element, node) {
+          var bo = getBusinessObject(element);
+
+          const apexPage =
+            extensionElementsHelper.getExtensionElements(bo, 'apex:ApexPage') &&
+            extensionElementsHelper.getExtensionElements(
+              bo,
+              'apex:ApexPage'
+            )[0];
+
+          if (
+            typeof apexPage === 'undefined' ||
+            typeof apexPage['apex-application'] === 'undefined' ||
+            apexPage['apex-application'] === ''
+          ) {
+            return {
+              'apex-application': translate('Must provide a value'),
+            };
+          }
+        },
       })
     );
     userTaskProps.push(
