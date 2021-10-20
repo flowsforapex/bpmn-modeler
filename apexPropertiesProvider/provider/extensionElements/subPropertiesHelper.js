@@ -4,124 +4,126 @@ var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/Exten
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
-export function setExtensionSubProperty(container, element, node, values) {
-  var entry = getSelectedEntry(container, element, node);
+export default class subPropertiesHelper {
+  constructor(type, subtype, attribute) {
+    this.type = type;
+    this.subtype = subtype;
+    this.attribute = attribute;
+  }
 
-  return cmdHelper.updateBusinessObject(element, entry, values);
-}
+  /* setter / getter */
 
-export function getExtensionSubProperty(container, element, node, property) {
-  var entry = getSelectedEntry(container, element, node);
+  setExtensionSubProperty(container, element, node, values) {
+    var entry = this.getSelectedEntry(container, element, node);
 
-  return {
-    [property]: (entry && entry.get(property)) || undefined,
-  };
-}
+    return cmdHelper.updateBusinessObject(element, entry, values);
+  }
 
-/* helper */
+  getExtensionSubProperty(container, element, node, property) {
+    var entry = this.getSelectedEntry(container, element, node);
 
-export function setOptionLabelValue(
-  element,
-  option,
-  labelKey,
-  labelValue,
-  value,
-  idx
-) {
-  var entries = getEntries(element);
-  var entry = entries[idx];
+    return {
+      [property]: (entry && entry.get(property)) || undefined,
+    };
+  }
 
-  var label = entry ? `${entry.get(labelKey)}:${entry.get(labelValue)}` : '';
+  /* helper */
 
-  option.text = label;
-  option.value = entry && entry.get(value);
-}
+  setOptionLabelValue(element, option, labelKey, labelValue, value, idx) {
+    var entries = this.getEntries(element);
+    var entry = entries[idx];
 
-export function newElement(
-  element,
-  extensionElements,
-  factory,
-  type,
-  subtype,
-  property,
-  values
-) {
-  var commands = [];
-  var newElem;
+    var label = entry ? `${entry.get(labelKey)}:${entry.get(labelValue)}` : '';
 
-  var [container] = extensionElementsHelper.getExtensionElements(
-    getBusinessObject(element),
-    type
-  );
+    option.text = label;
+    option.value = entry && entry.get(value);
+  }
 
-  if (!container) {
-    container = elementHelper.createElement(
-      type,
-      {},
-      extensionElements,
+  newElement(element, extensionElements, factory, values) {
+    var commands = [];
+    var newElem;
+
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      this.type
+    );
+
+    if (!container) {
+      container = elementHelper.createElement(
+        this.type,
+        {},
+        extensionElements,
+        factory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, extensionElements, 'values', [
+          container,
+        ])
+      );
+    }
+
+    newElem = elementHelper.createElement(
+      this.subtype,
+      values,
+      container,
       factory
     );
     commands.push(
-      cmdHelper.addElementsTolist(element, extensionElements, 'values', [
-        container,
-      ])
+      cmdHelper.addElementsTolist(element, container, this.attribute, [newElem])
+    );
+
+    return commands;
+  }
+
+  removeElement(element, extensionElements, idx) {
+    var command;
+
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      this.type
+    );
+
+    var entries = this.getEntries(element, this.type, this.attribute);
+    var entry = entries[idx];
+
+    command =
+      container[this.attribute].length > 1 ? (command = cmdHelper.removeElementsFromList(
+            element,
+            container,
+            this.attribute,
+            extensionElements,
+            [entry]
+          )) : cmdHelper.updateBusinessObject(element, container, {
+            [this.attribute]: '',
+          });
+
+    return command;
+  }
+
+  isNotSelected(container, element, node) {
+    return (
+      typeof this.getSelectedEntry(container, element, node) === 'undefined'
     );
   }
 
-  newElem = elementHelper.createElement(subtype, values, container, factory);
-  commands.push(
-    cmdHelper.addElementsTolist(element, container, property, [newElem])
-  );
-
-  return commands;
-}
-
-export function removeElement(element, extensionElements, type, property, idx) {
-  var command;
-
-  var [container] = extensionElementsHelper.getExtensionElements(
-    getBusinessObject(element),
-    type
-  );
-
-  var entries = getEntries(element);
-  var entry = entries[idx];
-
-  command =
-    container[property].length > 1 ? (command = cmdHelper.removeElementsFromList(
-          element,
-          container,
-          property,
-          'extensionElements',
-          [entry]
-        )) : cmdHelper.updateBusinessObject(element, container, {
-          [property]: '',
-        });
-
-  return command;
-}
-
-export function isNotSelected(container, element, node) {
-  return typeof getSelectedEntry(container, element, node) === 'undefined';
-}
-
-export function getEntries(element) {
-  var bo = getBusinessObject(element);
-  const [apexPage] = extensionElementsHelper.getExtensionElements(
-    bo,
-    'apex:ApexPage'
-  );
-  return apexPage && apexPage.pageItems;
-}
-
-function getSelectedEntry(container, element, node) {
-  var selection;
-  var entry;
-
-  if (container.getSelected(element, node).idx > -1) {
-    selection = container.getSelected(element, node);
-    entry = getEntries(element)[selection.idx];
+  getEntries(element) {
+    var bo = getBusinessObject(element);
+    const [apexPage] = extensionElementsHelper.getExtensionElements(
+      bo,
+      this.type
+    );
+    return (apexPage && apexPage[this.attribute]) || [];
   }
 
-  return entry;
+  getSelectedEntry(container, element, node) {
+    var selection;
+    var entry;
+
+    if (container.getSelected(element, node).idx > -1) {
+      selection = container.getSelected(element, node);
+      entry = this.getEntries(element)[selection.idx];
+    }
+
+    return entry;
+  }
 }

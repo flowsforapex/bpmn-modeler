@@ -1,24 +1,20 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import {
-  clearExtensionProperty,
-  getExtensionProperty,
-  setExtensionProperty
-} from '../../extensionElements/propertiesHelper';
-import {
-  getEntries,
-  getExtensionSubProperty,
-  isNotSelected,
-  newElement,
-  removeElement,
-  setExtensionSubProperty,
-  setOptionLabelValue
-} from '../../extensionElements/subPropertiesHelper';
+import propertiesHelper from '../../extensionElements/propertiesHelper';
+import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
 import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;
 
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
+
+var helper = new propertiesHelper('apex:ApexPage');
+
+var subHelper = new subPropertiesHelper(
+  'apex:ApexPage',
+  'apex:PageItem',
+  'pageItems'
+);
 
 // element identifier for current element
 var elementIdentifier;
@@ -46,8 +42,8 @@ function enableAndResetValue(element, field) {
   var fieldNode = domQuery(`select[name="${field.id}"]`);
   // get property value
   var property =
-    getExtensionProperty(element, 'apex:ApexPage', field.id)[field.id] ||
-    getExtensionSubProperty(
+    helper.getExtensionProperty(element, field.id)[field.id] ||
+    subHelper.getExtensionSubProperty(
       pageItemsElement,
       element,
       domQuery(`[data-entry="${field.id}"]`),
@@ -95,7 +91,7 @@ function refreshPages(element, applicationId) {
     // refresh select box
     newPageId = enableAndResetValue(element, pageSelectBox, false);
     // get pageId from business object
-    storedPageId = getExtensionProperty(
+    storedPageId = helper.getExtensionProperty(
       element,
       'apex:ApexPage',
       'pageId'
@@ -154,11 +150,7 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element) {
-        var property = getExtensionProperty(
-          element,
-          'apex:ApexPage',
-          'applicationId'
-        );
+        var property = helper.getExtensionProperty(element, 'applicationId');
         return property;
       },
 
@@ -166,12 +158,7 @@ export default function (element, bpmnFactory, translate) {
         // refresh pages
         refreshPages(element, values.applicationId);
         // set value
-        return setExtensionProperty(
-          element,
-          bpmnFactory,
-          'apex:ApexPage',
-          values
-        );
+        return helper.setExtensionProperty(element, bpmnFactory, values);
       },
     });
 
@@ -193,26 +180,20 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element) {
-        var property = getExtensionProperty(element, 'apex:ApexPage', 'pageId');
+        var property = helper.getExtensionProperty(element, 'pageId');
         return property;
       },
 
       set: function (element, values, node) {
         // applicationId
-        var { applicationId } = getExtensionProperty(
+        var { applicationId } = helper.getExtensionProperty(
           element,
-          'apex:ApexPage',
           'applicationId'
         );
         // refresh items
         refreshItems(element, applicationId, values.pageId);
         // set value
-        return setExtensionProperty(
-          element,
-          bpmnFactory,
-          'apex:ApexPage',
-          values
-        );
+        return helper.setExtensionProperty(element, bpmnFactory, values);
       },
     });
 
@@ -224,18 +205,10 @@ export default function (element, bpmnFactory, translate) {
 
       // function (element, extensionsElements, values)
       createExtensionElement: function (element, extensionElements, values) {
-        return newElement(
-          element,
-          extensionElements,
-          bpmnFactory,
-          'apex:ApexPage',
-          'apex:PageItem',
-          'pageItems',
-          {
-            itemName: '',
-            itemValue: '',
-          }
-        );
+        return subHelper.newElement(element, extensionElements, bpmnFactory, {
+          itemName: '',
+          itemValue: '',
+        });
       },
 
       // function (element, extensionsElements, value, idx)
@@ -245,17 +218,11 @@ export default function (element, bpmnFactory, translate) {
         value,
         idx
       ) {
-        return removeElement(
-          element,
-          extensionElements,
-          'apex:ApexPage',
-          'pageItems',
-          idx
-        );
+        return subHelper.removeElement(element, extensionElements, idx);
       },
 
       getExtensionElements: function (element) {
-        return getEntries(element);
+        return subHelper.getEntries(element);
       },
 
       // function (element, node, option, property, value, idx)
@@ -267,7 +234,7 @@ export default function (element, bpmnFactory, translate) {
         value,
         idx
       ) {
-        setOptionLabelValue(
+        subHelper.setOptionLabelValue(
           element,
           option,
           'itemName',
@@ -296,7 +263,7 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element, node) {
-        var property = getExtensionSubProperty(
+        var property = subHelper.getExtensionSubProperty(
           pageItemsElement,
           element,
           node,
@@ -306,11 +273,16 @@ export default function (element, bpmnFactory, translate) {
       },
 
       set: function (element, values, node) {
-        return setExtensionSubProperty(pageItemsElement, element, node, values);
+        return subHelper.setExtensionSubProperty(
+          pageItemsElement,
+          element,
+          node,
+          values
+        );
       },
 
       hidden: function (element, node) {
-        return isNotSelected(pageItemsElement, element, node);
+        return subHelper.isNotSelected(pageItemsElement, element, node);
       },
     });
 
@@ -325,7 +297,7 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'itemValue',
 
         get: function (element, node) {
-          return getExtensionSubProperty(
+          return subHelper.getExtensionSubProperty(
             pageItemsElement,
             element,
             node,
@@ -334,7 +306,7 @@ export default function (element, bpmnFactory, translate) {
         },
 
         set: function (element, values, node) {
-          return setExtensionSubProperty(
+          return subHelper.setExtensionSubProperty(
             pageItemsElement,
             element,
             node,
@@ -343,7 +315,7 @@ export default function (element, bpmnFactory, translate) {
         },
 
         hidden: function (element, node) {
-          return isNotSelected(pageItemsElement, element, node);
+          return subHelper.isNotSelected(pageItemsElement, element, node);
         },
       })
     );
@@ -356,17 +328,12 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'request',
 
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexPage', 'request');
+          return helper.getExtensionProperty(element, 'request');
         },
 
         set: function (element, values) {
           // set value
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexPage',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
       })
     );
@@ -378,17 +345,12 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'cache',
 
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexPage', 'cache');
+          return helper.getExtensionProperty(element, 'cache');
         },
 
         set: function (element, values) {
           // set value
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexPage',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
       })
     );
