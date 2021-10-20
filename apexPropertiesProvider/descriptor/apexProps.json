@@ -8,55 +8,20 @@
   "associations": [],
   "types": [
     {
-      "name": "ApexPage",
-      "superClass": [ "Element" ],
+      "name": "TaskType",
+      "extends": [ "bpmn:UserTask" ],
       "properties": [
         {
-          "name": "apex-application",
-          "type": "String"
-        },
-        {
-          "name": "apex-page",
-          "type": "String"
-        },
-        {
-          "name": "apex-request",
-          "type": "String"
-        },
-        {
-          "name": "apex-cache",
-          "type": "String"
-        },
-        {
-          "name": "apex-item",
-          "type": "String"
-        },
-        {
-          "name": "apex-value",
-          "type": "String"
-        },
-        {
-          "name": "apex-insertUrl",
+          "name": "type",
+          "isAttr": true,
           "type": "String"
         }
       ]
     },
     {
-      "name": "ApexScript",
+      "name": "ApexPage",
       "superClass": [ "Element" ],
       "properties": [
-        {
-          "name": "serviceTaskType",
-          "type": "String"
-        },
-        {
-          "name": "plsqlCode",
-          "type": "String"
-        },
-        {
-          "name": "autoBinds",
-          "type": "String"
-        },
         {
           "name": "applicationId",
           "type": "String"
@@ -66,23 +31,48 @@
           "type": "String"
         },
         {
-          "name": "username",
+          "name": "request",
           "type": "String"
         },
         {
-          "name": "templateIdentifier",
+          "name": "cache",
           "type": "String"
         },
         {
-          "name": "emailFrom",
+          "name": "pageItems",
+          "type": "PageItem",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "PageItem",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "itemName",
           "type": "String"
         },
         {
-          "name": "emailTo",
+          "name": "itemValue",
           "type": "String"
-        },
+        }
+      ]
+    },
+    {
+      "name": "ApexScript",
+      "superClass": [ "Element" ],
+      "properties": [
         {
           "name": "engine",
+          "type": "String"
+        },
+        {
+          "name": "plsqlCode",
+          "type": "String"
+        },
+        {
+          "name": "autoBinds",
           "type": "String"
         }
       ]

@@ -21,7 +21,9 @@ import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
 import generateServiceTaskEntries from './parts/serviceTaskProps.js';
-import generateUserTaskEntries from './parts/userTaskProps.js';
+import typeProps from './parts/typeProps';
+import apexPageProps from './parts/userTask/apexPageProps';
+import externalUrlProps from './parts/userTask/externalUrlProps';
 
 // The general tab contains all bpmn relevant properties.
 // The properties are organized in groups.
@@ -35,6 +37,11 @@ function createGeneralTabGroups(
   var generalGroup = {
     id: 'general',
     label: translate('General'),
+    entries: [],
+  };
+  var typeGroup = {
+    id: 'type',
+    label: translate('Type'),
     entries: [],
   };
   var detailsGroup = {
@@ -55,14 +62,16 @@ function createGeneralTabGroups(
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
-  return [generalGroup, detailsGroup, documentationGroup];
+  typeProps(typeGroup, element, translate);
+
+  return [generalGroup, typeGroup, detailsGroup, documentationGroup];
 }
 
 function createApexTabGroups(element, bpmnFactory, commandStack, translate) {
   var apexPageGroup = {
     id: 'apex-page-calls',
     label: translate('Call APEX Page'),
-    entries: generateUserTaskEntries(element, bpmnFactory, translate),
+    entries: apexPageProps(element, bpmnFactory, translate),
   };
   var apexScriptGroup = {
     id: 'apex-script-group',
@@ -81,6 +90,16 @@ function createApexTabGroups(element, bpmnFactory, commandStack, translate) {
   };
 
   return [apexPageGroup, apexScriptGroup, apexServiceGroup];
+}
+
+function createExternalURLTab(element, bpmnFactory, translate) {
+  return [
+    {
+      id: 'apex-external-url',
+      label: translate('Call External URL'),
+      entries: externalUrlProps(element, bpmnFactory, translate),
+    },
+  ];
 }
 
 function createVariablesTabGroup(
@@ -178,6 +197,12 @@ export default function apexPropertiesProvider(
       ),
     };
 
+    var ExternalUrlTab = {
+      id: 'url',
+      label: translate('URL'),
+      groups: createExternalURLTab(element, bpmnFactory, translate),
+    };
+
     var VariablesTab = {
       id: 'variables',
       label: translate('Variables'),
@@ -190,7 +215,7 @@ export default function apexPropertiesProvider(
     };
 
     // Show general + APEX tabs
-    return [generalTab, ApexTab, VariablesTab];
+    return [generalTab, ApexTab, ExternalUrlTab, VariablesTab];
   };
 }
 
