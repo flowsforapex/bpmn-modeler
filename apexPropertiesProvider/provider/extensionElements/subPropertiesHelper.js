@@ -5,6 +5,14 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 export default class subPropertiesHelper {
+  /**
+   *
+   * @param {string} type - major type (direct child of extensionElements)
+   * @param {string} subtype - sub type for the single entries
+   * @param {string} attribute - name of the isMany attribute
+   * @param {string} parentAttribute - attribute inside major type (container for entries)
+   * @param {string} parentType - type containing the isMany attribute
+   */
   constructor(type, subtype, attribute, parentAttribute, parentType) {
     this.type = type;
     this.subtype = subtype;
@@ -186,5 +194,38 @@ export default class subPropertiesHelper {
     }
 
     return entry;
+  }
+
+  getNextSequence(element) {
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      this.type
+    );
+
+    var index =
+      (container &&
+        container[this.attribute] &&
+        String(container[this.attribute].length)) ||
+      '0';
+
+    return index;
+  }
+
+  getIndexedName(element, value, identifier) {
+    var [container] = extensionElementsHelper.getExtensionElements(
+      getBusinessObject(element),
+      this.type
+    );
+
+    var re = new RegExp(`${value}_\\d$`);
+    var newNumber =
+      (container &&
+        container[this.attribute] &&
+        container[this.attribute]
+          .filter(e => e[identifier].match(re))
+          .map(e => parseInt(e[identifier].split('_')[1], 10))
+          .reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
+
+    return `${value}_${newNumber}`;
   }
 }
