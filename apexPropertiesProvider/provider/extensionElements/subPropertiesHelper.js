@@ -5,10 +5,12 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 export default class subPropertiesHelper {
-  constructor(type, subtype, attribute) {
+  constructor(type, subtype, attribute, parentAttribute, parentType) {
     this.type = type;
     this.subtype = subtype;
     this.attribute = attribute;
+    this.parentAttribute = parentAttribute;
+    this.parentType = parentType;
   }
 
   /* setter / getter */
@@ -62,19 +64,49 @@ export default class subPropertiesHelper {
       );
     }
 
-    newElem = elementHelper.createElement(
-      this.subtype,
-      values,
-      container,
-      factory
-    );
-    commands.push(
-      cmdHelper.addElementsTolist(element, container, this.attribute, [newElem])
-    );
+    if (this.parentAttribute) {
+      var subContainer = container[this.parentAttribute];
+
+      if (!subContainer) {
+        subContainer = elementHelper.createElement(
+          this.parentType,
+          {},
+          container,
+          factory
+        );
+        commands.push(
+          cmdHelper.updateBusinessObject(element, container, {
+            pageItems: subContainer,
+          })
+        );
+      }
+      newElem = elementHelper.createElement(
+        this.subtype,
+        values,
+        subContainer,
+        factory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, subContainer, this.attribute, [
+          newElem,
+        ])
+      );
+    } else {
+      newElem = elementHelper.createElement(
+        this.subtype,
+        values,
+        container,
+        factory
+      );
+      commands.push(
+        cmdHelper.addElementsTolist(element, container, this.attribute, [
+          newElem,
+        ])
+      );
+    }
 
     return commands;
   }
-
   removeElement(element, extensionElements, idx) {
     var command;
 
@@ -83,19 +115,34 @@ export default class subPropertiesHelper {
       this.type
     );
 
-    var entries = this.getEntries(element, this.type, this.attribute);
+    var entries = this.getEntries(element);
     var entry = entries[idx];
 
-    command =
-      container[this.attribute].length > 1 ? (command = cmdHelper.removeElementsFromList(
-            element,
-            container,
-            this.attribute,
-            extensionElements,
-            [entry]
-          )) : cmdHelper.updateBusinessObject(element, container, {
-            [this.attribute]: '',
-          });
+    if (this.parentAttribute) {
+      var subContainer = container[this.parentAttribute];
+
+      command =
+        subContainer[this.attribute].length > 1 ? (command = cmdHelper.removeElementsFromList(
+              element,
+              subContainer,
+              this.attribute,
+              extensionElements,
+              [entry]
+            )) : cmdHelper.updateBusinessObject(element, container, {
+              [this.parentAttribute]: null,
+            });
+    } else {
+      command =
+        container[this.attribute].length > 1 ? (command = cmdHelper.removeElementsFromList(
+              element,
+              container,
+              this.attribute,
+              extensionElements,
+              [entry]
+            )) : cmdHelper.updateBusinessObject(element, container, {
+              [this.attribute]: null,
+            });
+    }
 
     return command;
   }
@@ -118,6 +165,14 @@ export default class subPropertiesHelper {
       bo,
       this.type
     );
+    if (this.parentAttribute) {
+      return (
+        (apexPage &&
+          apexPage[this.parentAttribute] &&
+          apexPage[this.parentAttribute][this.attribute]) ||
+        []
+      );
+    }
     return (apexPage && apexPage[this.attribute]) || [];
   }
 

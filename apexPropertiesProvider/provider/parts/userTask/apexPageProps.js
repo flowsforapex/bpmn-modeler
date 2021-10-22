@@ -13,7 +13,9 @@ var helper = new propertiesHelper('apex:ApexPage');
 var subHelper = new subPropertiesHelper(
   'apex:ApexPage',
   'apex:PageItem',
-  'pageItems'
+  'pageItem',
+  'pageItems',
+  'apex:PageItems'
 );
 
 // element identifier for current element
@@ -80,7 +82,6 @@ function refreshApplications(element) {
 
 function refreshPages(element, applicationId) {
   var newPageId;
-  var storedPageId;
   // loading flag
   pagesLoading = true;
   // ajax process
@@ -90,16 +91,6 @@ function refreshPages(element, applicationId) {
     pagesLoading = false;
     // refresh select box
     newPageId = enableAndResetValue(element, pageSelectBox, false);
-    // get pageId from business object
-    storedPageId = helper.getExtensionProperty(
-      element,
-      'apex:ApexPage',
-      'pageId'
-    ).pageId;
-    // clear business object if pageId empty
-    if (typeof storedPageId !== 'undefined' && newPageId !== storedPageId) {
-      clearExtensionProperty(element, 'apex:ApexPage', 'pageId');
-    }
     // refresh child item
     refreshItems(element, applicationId, newPageId);
   });
