@@ -28,13 +28,7 @@ export function getSelectedEntry(element, node) {
   );
 }
 
-export function procVarLists(
-  element,
-  bpmnFactory,
-  elementRegistry,
-  translate,
-  options
-) {
+export function procVarLists(element, bpmnFactory, translate, options) {
   procVarProps = [];
 
   if (options.type1) {

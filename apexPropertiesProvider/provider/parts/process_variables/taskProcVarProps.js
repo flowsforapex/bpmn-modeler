@@ -1,9 +1,8 @@
-var {is} = require('bpmn-js/lib/util/ModelUtil');
+var { is } = require('bpmn-js/lib/util/ModelUtil');
 
 import { procVarLists } from './procVarLists';
 
-export default function (element, bpmnFactory, elementRegistry, translate) {
-
+export default function (element, bpmnFactory, translate) {
   if (
     is(element, 'bpmn:Task') ||
     is(element, 'bpmn:UserTask') ||
@@ -11,12 +10,11 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     is(element, 'bpmn:ServiceTask') ||
     is(element, 'bpmn:ManualTask')
   ) {
-
-    return procVarLists(element, bpmnFactory, elementRegistry, translate, {
-      type1: 'BeforeTask', 
+    return procVarLists(element, bpmnFactory, translate, {
+      type1: 'BeforeTask',
       label1: translate('Before Task'),
       type2: 'AfterTask',
-      label2: translate('After Task')
+      label2: translate('After Task'),
     });
   }
 }

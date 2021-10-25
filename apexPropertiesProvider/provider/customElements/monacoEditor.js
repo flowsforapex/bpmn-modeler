@@ -1,10 +1,12 @@
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 
-export function getContainer() {
+var domQuery = require('min-dom').query;
+
+export function getContainer(id) {
   return {
     id: 'plsqlCode-container',
     html:
-      '<div id="modalDialog" class="modal">' +
+      `<div id="modalDialog_${id}" class="modal">` +
       '<div id="modalContent" class="modalContent">' +
       '<div class="buttonContainer start">' +
       '<button id="undoBtn" class="dialog undo fa fa-undo"></button>' +
@@ -22,28 +24,31 @@ export function getContainer() {
   };
 }
 
-export function openEditor(getText, saveText) {
-  var modal = document.getElementById('modalDialog');
+export function openEditor(id, getText, saveText) {
+  var modal = domQuery(`#modalDialog_${id}`);
 
-  var undoBtn = document.getElementById('undoBtn');
-  var redoBtn = document.getElementById('redoBtn');
-  var searchBtn = document.getElementById('searchBtn');
-  var parseBtn = document.getElementById('parseBtn');
-  var closeBtn = document.getElementById('closeBtn');
-  var saveBtn = document.getElementById('saveBtn');
+  var undoBtn = domQuery(`#modalDialog_${id} #undoBtn`);
+  var redoBtn = domQuery(`#modalDialog_${id} #redoBtn`);
+  var searchBtn = domQuery(`#modalDialog_${id} #searchBtn`);
+  var parseBtn = domQuery(`#modalDialog_${id} #parseBtn`);
+  var closeBtn = domQuery(`#modalDialog_${id} #closeBtn`);
+  var saveBtn = domQuery(`#modalDialog_${id} #saveBtn`);
 
   var searchFlag = false;
 
   var theme =
     document.getElementsByClassName('flows4apex-modeler FLOWS-DARK').length > 0 ? 'vs-dark' : 'vs';
 
-  var monacoEditor = editor.create(document.getElementById('editorContainer'), {
-    value: [getText()].join('\n'),
-    language: 'pgsql',
-    minimap: { enabled: 'false' },
-    automaticLayout: true,
-    theme: theme,
-  });
+  var monacoEditor = editor.create(
+    domQuery(`#modalDialog_${id} #editorContainer`),
+    {
+      value: [getText()].join('\n'),
+      language: 'pgsql',
+      minimap: { enabled: 'false' },
+      automaticLayout: true,
+      theme: theme,
+    }
+  );
 
   modal.style.display = 'flex';
 

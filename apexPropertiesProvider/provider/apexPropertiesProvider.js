@@ -116,7 +116,7 @@ function createExternalURLTab(element, bpmnFactory, translate) {
 function createVariablesTabGroup(
   element,
   bpmnFactory,
-  elementRegistry,
+  commandStack,
   translate
 ) {
   var taskGroup = {
@@ -125,7 +125,6 @@ function createVariablesTabGroup(
     entries: generateUserTaskProcessVariableLists(
       element,
       bpmnFactory,
-      elementRegistry,
       translate
     ),
   };
@@ -136,7 +135,6 @@ function createVariablesTabGroup(
     entries: generateGatewayTaskProcessVariableLists(
       element,
       bpmnFactory,
-      elementRegistry,
       translate
     ),
   };
@@ -144,25 +142,20 @@ function createVariablesTabGroup(
   var eventGroup = {
     id: 'apex-event',
     label: translate('Process Variables'),
-    entries: generateEventTaskProcessVariables(
-      element,
-      bpmnFactory,
-      elementRegistry,
-      translate
-    ),
+    entries: generateEventTaskProcessVariables(element, bpmnFactory, translate),
   };
 
   var detailGroup = {
     id: 'details',
     label: translate('Variable Details'),
-    entries: procVarDetailProps(element, bpmnFactory, translate),
+    entries: procVarDetailProps(element, translate),
     enabled: isSelected,
   };
 
   var expressionGroup = {
     id: 'expression',
     label: translate('Variable Expression'),
-    entries: procVarExpressionProps(element, bpmnFactory, translate),
+    entries: procVarExpressionProps(element, commandStack, translate),
     enabled: isSelected,
   };
 
@@ -221,7 +214,7 @@ export default function apexPropertiesProvider(
       groups: createVariablesTabGroup(
         element,
         bpmnFactory,
-        elementRegistry,
+        commandStack,
         translate
       ),
     };

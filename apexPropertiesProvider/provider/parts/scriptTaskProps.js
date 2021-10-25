@@ -13,17 +13,6 @@ export default function (element, bpmnFactory, commandStack, translate) {
   const engineNo = 0;
   const scriptTaskProps = [];
 
-  var getPlsqlCode = function () {
-    return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
-  };
-
-  var savePlsqlCode = function (text) {
-    var commands = helper.setExtensionProperty(element, bpmnFactory, {
-      plsqlCode: text,
-    });
-    new MultiCommandHandler(commandStack).preExecute(commands);
-  };
-
   if (is(element, 'bpmn:ScriptTask')) {
     // if 'yes' then add 'autoBinds'
     scriptTaskProps.push(
@@ -62,15 +51,24 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // container for script editor
-    scriptTaskProps.push(getContainer());
+    scriptTaskProps.push(getContainer('plsqlCode'));
 
     // link to script editor
     scriptTaskProps.push(
       entryFactory.link(translate, {
-        id: 'openEditor',
+        id: 'plsqlCodeEditor',
         buttonLabel: 'Open Editor',
         handleClick: function (element, node, event) {
-          openEditor(getPlsqlCode, savePlsqlCode);
+          var getPlsqlCode = function () {
+            return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
+          };
+          var savePlsqlCode = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              plsqlCode: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode);
         },
       })
     );
