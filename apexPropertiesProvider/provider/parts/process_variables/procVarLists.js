@@ -1,176 +1,193 @@
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
 
 var extensionElementsEntry = require('./custom/ExtensionElements');
-var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
-var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
-const TYPE_PROCESS_VARIABLE = 'apex:ProcessVariable';
 var procVarProps = [];
 var preProcessVariables;
 var postProcessVariables;
 
-function getEntries(element, type) {
-  var bo = getBusinessObject(element);
-  return bo &&
-    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`) &&
-    extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0] ? extensionElementsHelper.getExtensionElements(bo, `apex:${type}`)[0]
-        .procVars : [];
-}
+var preSubPropertiesHelper;
+var postSubPropertiesHelper;
 
 export function isSelected(element, node) {
   return typeof getSelectedEntry(element, node) !== 'undefined';
 }
 
 export function getSelectedEntry(element, node) {
-  var selection;
-  var entry;
-
-  if (element && procVarProps) {
-    procVarProps.forEach((e) => {
-      if (e.getSelected(element, node).idx > -1) {
-        selection = e.getSelected(element, node);
-        entry = getEntries(element, e.id)[selection.idx];
-      }
-    });
-  }
-  
-  return entry;
+  return (
+    preSubPropertiesHelper.getSelectedEntry(
+      preProcessVariables,
+      element,
+      node
+    ) ||
+    postSubPropertiesHelper.getSelectedEntry(
+      postProcessVariables,
+      element,
+      node
+    )
+  );
 }
 
-var setOptionLabelValue = function (type) {
-  return function (element, node, option, property, value, idx) {
-    var entries = getEntries(element, type);
-    var entry = entries[idx];
-
-    var label = entry ? entry.get('varName') +
-        (entry.get('varExpression') && ` : ${entry.get('varExpression')}`) : '';
-
-    option.text = label;
-    option.value = entry && entry.get('varName');
-  };
-};
-
-var newElement = function (bpmnFactory, type, props) {
-  return function (element, extensionElements, values) {
-    var commands = [];
-
-    var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`) &&
-      extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`)[0];
-
-    if (!container) {
-      container = elementHelper.createElement(`apex:${type}`, {}, extensionElements, bpmnFactory);
-      commands.push(cmdHelper.addElementsTolist(element, extensionElements, 'values', [container, ]));
-    }
-
-    var index = (container.procVars && String(container.procVars.length)) || '0';
-    var re = new RegExp(`${props.varName}_\\d$`);
-    var newNumber = (container.procVars && container.procVars.filter(e => e.varName.match(re)).map(e => parseInt(e.varName.split('_')[1])).reduce((a, b) => Math.max(a, b), -1)) + 1 || 0;
-
-    values = {
-      varSequence: String(index),
-      varName: `${props.varName}_${newNumber}`,
-      varDataType: props.varDataType,
-      varExpression: props.varExpression,
-      varExpressionType: props.varExpressionType,
-    };
-
-    var newElem = elementHelper.createElement(
-      TYPE_PROCESS_VARIABLE,
-      values,
-      container,
-      bpmnFactory
-    );
-    commands.push(cmdHelper.addElementsTolist(element, container, 'procVars', [newElem]));
-
-    return commands;
-  };
-};
-
-var removeElement = function (type) {
-  return function (element, extensionElements, value, idx) {
-    var container = extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`) &&
-      extensionElementsHelper.getExtensionElements(getBusinessObject(element), `apex:${type}`)[0];
-
-    var entries = getEntries(element, type);
-    var entry = entries[idx];
-    if (entry) {
-      var command = container.procVars.length > 1 ? cmdHelper.removeElementsFromList(element, container, 'procVars', 'extensionElements', [entry]) : cmdHelper.removeElementsFromList(element, extensionElements, 'values', 'extensionElements', [container]);
-      return command;
-    }
-  };
-};
-
-function resetSequences(element, type) {
-  var entries = getEntries(element, type);
-  entries.forEach((e, i) => e.set('varSequence', String(i)));
-}
-
-export function procVarLists(element, bpmnFactory, elementRegistry, translate, options) {
+export function procVarLists(element, bpmnFactory, translate, options) {
   procVarProps = [];
 
   if (options.type1) {
     var { type1 } = options;
     var { label1 } = options;
 
+    preSubPropertiesHelper = new subPropertiesHelper(
+      `apex:${type1}`,
+      'apex:ProcessVariable',
+      'procVars'
+    );
+
     // create first list element
-    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type1,
       label: label1,
 
-      createExtensionElement: newElement(bpmnFactory, type1, {
-        varName: translate(type1),
-        varDataType: 'VARCHAR2',
-        varExpression: '',
-        varExpressionType: 'static',
-      }),
-      removeExtensionElement: removeElement(type1),
+      createExtensionElement: function (element, extensionElements, values) {
+        return preSubPropertiesHelper.newElement(
+          element,
+          extensionElements,
+          bpmnFactory,
+          {
+            varSequence: preSubPropertiesHelper.getNextSequence(element),
+            varName: preSubPropertiesHelper.getIndexedName(
+              element,
+              translate(type1),
+              'varName'
+            ),
+            varDataType: 'VARCHAR2',
+            varExpression: '',
+            varExpressionType: 'static',
+          }
+        );
+      },
+      removeExtensionElement: function (
+        element,
+        extensionElements,
+        value,
+        idx
+      ) {
+        return preSubPropertiesHelper.removeElement(
+          element,
+          extensionElements,
+          idx
+        );
+      },
 
       getExtensionElements: function (element) {
-        return getEntries(element, type1);
+        return preSubPropertiesHelper.getEntries(element);
       },
 
       onSelectionChange: function (element, node) {
         if (postProcessVariables) postProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(type1),
+      setOptionLabelValue: function (
+        element,
+        node,
+        option,
+        property,
+        value,
+        idx
+      ) {
+        preSubPropertiesHelper.setOptionLabelValue(
+          element,
+          option,
+          'varName',
+          'varExpression',
+          'varName',
+          idx
+        );
+      },
 
-      onEntryMoved: resetSequences(element, type1),
+      onEntryMoved: function (element) {
+        var entries = preSubPropertiesHelper.getEntries(element);
+        entries.forEach((e, i) => e.set('varSequence', String(i)));
+      },
     });
 
     procVarProps.push(preProcessVariables);
   }
-  
+
   if (options.type2) {
     var { type2 } = options;
     var { label2 } = options;
 
+    postSubPropertiesHelper = new subPropertiesHelper(
+      `apex:${type2}`,
+      'apex:ProcessVariable',
+      'procVars'
+    );
+
     // create second list element
-    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type2,
       label: label2,
 
-      createExtensionElement: newElement(bpmnFactory, type2, {
-        varName: translate(type2),
-        varDataType: 'VARCHAR2',
-        varExpression: '',
-        varExpressionType: 'static',
-      }),
-
-      removeExtensionElement: removeElement(type2),
+      createExtensionElement: function (element, extensionElements, values) {
+        return postSubPropertiesHelper.newElement(
+          element,
+          extensionElements,
+          bpmnFactory,
+          {
+            varSequence: postSubPropertiesHelper.getNextSequence(element),
+            varName: postSubPropertiesHelper.getIndexedName(
+              element,
+              translate(type2),
+              'varName'
+            ),
+            varDataType: 'VARCHAR2',
+            varExpression: '',
+            varExpressionType: 'static',
+          }
+        );
+      },
+      removeExtensionElement: function (
+        element,
+        extensionElements,
+        value,
+        idx
+      ) {
+        return postSubPropertiesHelper.removeElement(
+          element,
+          extensionElements,
+          idx
+        );
+      },
 
       getExtensionElements: function (element) {
-        return getEntries(element, type2);
+        return postSubPropertiesHelper.getEntries(element);
       },
 
       onSelectionChange: function (element, node) {
         if (preProcessVariables) preProcessVariables.deselect(element, node);
       },
 
-      setOptionLabelValue: setOptionLabelValue(type2),
+      setOptionLabelValue: function (
+        element,
+        node,
+        option,
+        property,
+        value,
+        idx
+      ) {
+        postSubPropertiesHelper.setOptionLabelValue(
+          element,
+          option,
+          'varName',
+          'varExpression',
+          'varName',
+          idx
+        );
+      },
 
-      onEntryMoved: resetSequences(element, type2),
+      onEntryMoved: function (element) {
+        var entries = postSubPropertiesHelper.getEntries(element);
+        entries.forEach((e, i) => e.set('varSequence', String(i)));
+      },
     });
 
     procVarProps.push(postProcessVariables);

@@ -2,34 +2,16 @@ import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
 import { getContainer, openEditor } from '../customElements/monacoEditor';
-import {
-  getExtensionProperty,
-  setExtensionProperty
-} from '../extensionElements/propertiesHelper';
+import propertiesHelper from '../extensionElements/propertiesHelper';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
+
+var helper = new propertiesHelper('apex:ApexScript');
 
 export default function (element, bpmnFactory, commandStack, translate) {
   const scriptTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const scriptTaskProps = [];
-
-  var getPlsqlCode = function () {
-    return getExtensionProperty(element, 'apex:ApexScript', 'plsqlCode')
-      .plsqlCode;
-  };
-
-  var savePlsqlCode = function (text) {
-    var commands = setExtensionProperty(
-      element,
-      bpmnFactory,
-      'apex:ApexScript',
-      {
-        plsqlCode: text,
-      }
-    );
-    new MultiCommandHandler(commandStack).preExecute(commands);
-  };
 
   if (is(element, 'bpmn:ScriptTask')) {
     // if 'yes' then add 'autoBinds'
@@ -44,15 +26,10 @@ export default function (element, bpmnFactory, commandStack, translate) {
           { name: translate('Yes'), value: 'true' },
         ],
         set: function (element, values) {
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexScript',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexScript', 'engine');
+          return helper.getExtensionProperty(element, 'engine');
         },
       })
     );
@@ -65,29 +42,33 @@ export default function (element, bpmnFactory, commandStack, translate) {
         label: translate('PL/SQL Code'),
         modelProperty: 'plsqlCode',
         set: function (element, values) {
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexScript',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexScript', 'plsqlCode');
+          return helper.getExtensionProperty(element, 'plsqlCode');
         },
       })
     );
 
     // container for script editor
-    scriptTaskProps.push(getContainer());
+    scriptTaskProps.push(getContainer('plsqlCode'));
 
     // link to script editor
     scriptTaskProps.push(
       entryFactory.link(translate, {
-        id: 'openEditor',
+        id: 'plsqlCodeEditor',
         buttonLabel: 'Open Editor',
         handleClick: function (element, node, event) {
-          openEditor(getPlsqlCode, savePlsqlCode);
+          var getPlsqlCode = function () {
+            return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
+          };
+          var savePlsqlCode = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              plsqlCode: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode);
         },
       })
     );
@@ -109,15 +90,10 @@ export default function (element, bpmnFactory, commandStack, translate) {
           return isOptionSelected(scriptTaskEngine, engineNo);
         },
         set: function (element, values) {
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexScript',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexScript', 'autoBinds');
+          return helper.getExtensionProperty(element, 'autoBinds');
         },
       })
     );

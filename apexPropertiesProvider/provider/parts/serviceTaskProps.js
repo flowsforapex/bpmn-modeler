@@ -1,77 +1,19 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../lib/formsHelper';
+import { getContainer, openEditor } from '../customElements/monacoEditor';
+import propertiesHelper from '../extensionElements/propertiesHelper';
 
-var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
-var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var factory;
+var helper = new propertiesHelper('apex:ApexScript');
 
-var setProperty = function () {
-  return function (element, values) {
-    var commands = [];
-
-    var bo = getBusinessObject(element);
-
-    var extensions = bo.extensionElements;
-
-    if (!extensions) {
-      extensions = elementHelper.createElement(
-        'bpmn:ExtensionElements',
-        {},
-        bo,
-        factory
-      );
-      commands.push(
-        cmdHelper.updateProperties(element, { extensionElements: extensions })
-      );
-    }
-
-    let apexScript =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
-
-    if (!apexScript) {
-      apexScript = elementHelper.createElement(
-        'apex:ApexScript',
-        {},
-        extensionElementsHelper,
-        factory
-      );
-      commands.push(
-        cmdHelper.addElementsTolist(element, extensions, 'values', [apexScript])
-      );
-    }
-
-    commands.push(cmdHelper.updateBusinessObject(element, apexScript, values));
-
-    return commands;
-  };
-};
-
-var getProperty = function (property) {
-  return function (element) {
-    var bo = getBusinessObject(element);
-
-    const apexScript =
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript') &&
-      extensionElementsHelper.getExtensionElements(bo, 'apex:ApexScript')[0];
-
-    return {
-      [property]: apexScript && apexScript.get(property),
-    };
-  };
-};
-
-export default function (element, bpmnFactory, translate) {
+export default function (element, bpmnFactory, commandStack, translate) {
   const serviceTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const serviceTaskProps = [];
 
   if (is(element, 'bpmn:ServiceTask')) {
-    factory = bpmnFactory;
-
     // if 'yes' then add 'autoBinds'
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
@@ -83,8 +25,12 @@ export default function (element, bpmnFactory, translate) {
           { name: translate('No'), value: 'false' },
           { name: translate('Yes'), value: 'true' },
         ],
-        set: setProperty(),
-        get: getProperty('engine'),
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'engine');
+        },
       })
     );
 
@@ -95,8 +41,35 @@ export default function (element, bpmnFactory, translate) {
         description: translate('Enter the PL/SQL code to be executed.'),
         label: translate('PL/SQL Code'),
         modelProperty: 'plsqlCode',
-        set: setProperty(),
-        get: getProperty('plsqlCode'),
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'plsqlCode');
+        },
+      })
+    );
+
+    // container for script editor
+    serviceTaskProps.push(getContainer('plsqlCode'));
+
+    // link to script editor
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'plsqlCodeEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: function (element, node, event) {
+          var getPlsqlCode = function () {
+            return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
+          };
+          var savePlsqlCode = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              plsqlCode: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode);
+        },
       })
     );
 
@@ -116,8 +89,12 @@ export default function (element, bpmnFactory, translate) {
         hidden: function () {
           return isOptionSelected(serviceTaskEngine, engineNo);
         },
-        set: setProperty(),
-        get: getProperty('autoBinds'),
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'autoBinds');
+        },
       })
     );
   }

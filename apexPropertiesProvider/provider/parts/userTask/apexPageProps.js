@@ -1,24 +1,22 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import {
-  clearExtensionProperty,
-  getExtensionProperty,
-  setExtensionProperty
-} from '../../extensionElements/propertiesHelper';
-import {
-  getEntries,
-  getExtensionSubProperty,
-  isNotSelected,
-  newElement,
-  removeElement,
-  setExtensionSubProperty,
-  setOptionLabelValue
-} from '../../extensionElements/subPropertiesHelper';
+import propertiesHelper from '../../extensionElements/propertiesHelper';
+import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
 import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;
-
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+
+var helper = new propertiesHelper('apex:ApexPage');
+
+var subHelper = new subPropertiesHelper(
+  'apex:ApexPage',
+  'apex:PageItem',
+  'pageItem',
+  'pageItems',
+  'apex:PageItems'
+);
 
 // element identifier for current element
 var elementIdentifier;
@@ -46,8 +44,8 @@ function enableAndResetValue(element, field) {
   var fieldNode = domQuery(`select[name="${field.id}"]`);
   // get property value
   var property =
-    getExtensionProperty(element, 'apex:ApexPage', field.id)[field.id] ||
-    getExtensionSubProperty(
+    helper.getExtensionProperty(element, field.id)[field.id] ||
+    subHelper.getExtensionSubProperty(
       pageItemsElement,
       element,
       domQuery(`[data-entry="${field.id}"]`),
@@ -84,7 +82,6 @@ function refreshApplications(element) {
 
 function refreshPages(element, applicationId) {
   var newPageId;
-  var storedPageId;
   // loading flag
   pagesLoading = true;
   // ajax process
@@ -94,16 +91,6 @@ function refreshPages(element, applicationId) {
     pagesLoading = false;
     // refresh select box
     newPageId = enableAndResetValue(element, pageSelectBox, false);
-    // get pageId from business object
-    storedPageId = getExtensionProperty(
-      element,
-      'apex:ApexPage',
-      'pageId'
-    ).pageId;
-    // clear business object if pageId empty
-    if (typeof storedPageId !== 'undefined' && newPageId !== storedPageId) {
-      clearExtensionProperty(element, 'apex:ApexPage', 'pageId');
-    }
     // refresh child item
     refreshItems(element, applicationId, newPageId);
   });
@@ -123,8 +110,20 @@ function refreshItems(element, applicationId, pageId) {
   });
 }
 
-export default function (element, bpmnFactory, translate) {
+export default function (element, bpmnFactory, elementRegistry, translate) {
   const userTaskProps = [];
+
+  var enterQuickPick = function (node, values) {
+    var command = subHelper.setExtensionSubProperty(
+      pageItemsElement,
+      element,
+      node,
+      values
+    );
+    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+      command.context
+    );
+  };
 
   // Only return an entry, if the currently selected element is a UserTask.
   if (
@@ -141,7 +140,7 @@ export default function (element, bpmnFactory, translate) {
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
-      description: translate('Application ID or Alias'),
+      // description: translate('Application ID or Alias'),
       label: translate('Application'),
       modelProperty: 'applicationId',
 
@@ -154,11 +153,7 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element) {
-        var property = getExtensionProperty(
-          element,
-          'apex:ApexPage',
-          'applicationId'
-        );
+        var property = helper.getExtensionProperty(element, 'applicationId');
         return property;
       },
 
@@ -166,12 +161,7 @@ export default function (element, bpmnFactory, translate) {
         // refresh pages
         refreshPages(element, values.applicationId);
         // set value
-        return setExtensionProperty(
-          element,
-          bpmnFactory,
-          'apex:ApexPage',
-          values
-        );
+        return helper.setExtensionProperty(element, bpmnFactory, values);
       },
     });
 
@@ -180,7 +170,7 @@ export default function (element, bpmnFactory, translate) {
     // page select list
     pageSelectBox = entryFactory.selectBox(translate, {
       id: 'pageId',
-      description: translate('Page ID or Alias'),
+      // description: translate('Page ID or Alias'),
       label: translate('Page'),
       modelProperty: 'pageId',
 
@@ -193,26 +183,20 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element) {
-        var property = getExtensionProperty(element, 'apex:ApexPage', 'pageId');
+        var property = helper.getExtensionProperty(element, 'pageId');
         return property;
       },
 
       set: function (element, values, node) {
         // applicationId
-        var { applicationId } = getExtensionProperty(
+        var { applicationId } = helper.getExtensionProperty(
           element,
-          'apex:ApexPage',
           'applicationId'
         );
         // refresh items
         refreshItems(element, applicationId, values.pageId);
         // set value
-        return setExtensionProperty(
-          element,
-          bpmnFactory,
-          'apex:ApexPage',
-          values
-        );
+        return helper.setExtensionProperty(element, bpmnFactory, values);
       },
     });
 
@@ -224,18 +208,10 @@ export default function (element, bpmnFactory, translate) {
 
       // function (element, extensionsElements, values)
       createExtensionElement: function (element, extensionElements, values) {
-        return newElement(
-          element,
-          extensionElements,
-          bpmnFactory,
-          'apex:ApexPage',
-          'apex:PageItem',
-          'pageItems',
-          {
-            itemName: '',
-            itemValue: '',
-          }
-        );
+        return subHelper.newElement(element, extensionElements, bpmnFactory, {
+          itemName: '',
+          itemValue: '',
+        });
       },
 
       // function (element, extensionsElements, value, idx)
@@ -245,17 +221,11 @@ export default function (element, bpmnFactory, translate) {
         value,
         idx
       ) {
-        return removeElement(
-          element,
-          extensionElements,
-          'apex:ApexPage',
-          'pageItems',
-          idx
-        );
+        return subHelper.removeElement(element, extensionElements, idx);
       },
 
       getExtensionElements: function (element) {
-        return getEntries(element);
+        return subHelper.getEntries(element);
       },
 
       // function (element, node, option, property, value, idx)
@@ -267,7 +237,7 @@ export default function (element, bpmnFactory, translate) {
         value,
         idx
       ) {
-        setOptionLabelValue(
+        subHelper.setOptionLabelValue(
           element,
           option,
           'itemName',
@@ -296,7 +266,7 @@ export default function (element, bpmnFactory, translate) {
       },
 
       get: function (element, node) {
-        var property = getExtensionSubProperty(
+        var property = subHelper.getExtensionSubProperty(
           pageItemsElement,
           element,
           node,
@@ -306,26 +276,31 @@ export default function (element, bpmnFactory, translate) {
       },
 
       set: function (element, values, node) {
-        return setExtensionSubProperty(pageItemsElement, element, node, values);
+        return subHelper.setExtensionSubProperty(
+          pageItemsElement,
+          element,
+          node,
+          values
+        );
       },
 
       hidden: function (element, node) {
-        return isNotSelected(pageItemsElement, element, node);
+        return subHelper.isNotSelected(pageItemsElement, element, node);
       },
     });
 
     userTaskProps.push(itemSelectBox);
 
-    // name field
+    // item value
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'itemValue',
-        description: translate('Value of the page item'),
+        // description: translate('Value of the page item'),
         label: translate('Item Value'),
         modelProperty: 'itemValue',
 
         get: function (element, node) {
-          return getExtensionSubProperty(
+          return subHelper.getExtensionSubProperty(
             pageItemsElement,
             element,
             node,
@@ -334,7 +309,7 @@ export default function (element, bpmnFactory, translate) {
         },
 
         set: function (element, values, node) {
-          return setExtensionSubProperty(
+          return subHelper.setExtensionSubProperty(
             pageItemsElement,
             element,
             node,
@@ -343,7 +318,55 @@ export default function (element, bpmnFactory, translate) {
         },
 
         hidden: function (element, node) {
-          return isNotSelected(pageItemsElement, element, node);
+          return subHelper.isNotSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-process-id',
+        buttonLabel: 'process_id',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$PROCESS_ID.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-subflow-id',
+        buttonLabel: 'subflow_id',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$SUBFLOW_ID.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-business-ref',
+        buttonLabel: 'business_ref',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$BUSINESS_REF.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
         },
       })
     );
@@ -356,17 +379,12 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'request',
 
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexPage', 'request');
+          return helper.getExtensionProperty(element, 'request');
         },
 
         set: function (element, values) {
           // set value
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexPage',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
       })
     );
@@ -378,17 +396,12 @@ export default function (element, bpmnFactory, translate) {
         modelProperty: 'cache',
 
         get: function (element) {
-          return getExtensionProperty(element, 'apex:ApexPage', 'cache');
+          return helper.getExtensionProperty(element, 'cache');
         },
 
         set: function (element, values) {
           // set value
-          return setExtensionProperty(
-            element,
-            bpmnFactory,
-            'apex:ApexPage',
-            values
-          );
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
       })
     );

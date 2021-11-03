@@ -40,6 +40,16 @@
         },
         {
           "name": "pageItems",
+          "type": "PageItems"
+        }
+      ]
+    },
+    {
+      "name": "PageItems",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "pageItem",
           "type": "PageItem",
           "isMany": true
         }
