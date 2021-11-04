@@ -15,16 +15,18 @@ export function isSelected(element, node) {
 
 export function getSelectedEntry(element, node) {
   return (
-    preSubPropertiesHelper.getSelectedEntry(
-      preProcessVariables,
-      element,
-      node
-    ) ||
-    postSubPropertiesHelper.getSelectedEntry(
-      postProcessVariables,
-      element,
-      node
-    )
+    (preSubPropertiesHelper &&
+      preSubPropertiesHelper.getSelectedEntry(
+        preProcessVariables,
+        element,
+        node
+      )) ||
+    (postSubPropertiesHelper &&
+      postSubPropertiesHelper.getSelectedEntry(
+        postProcessVariables,
+        element,
+        node
+      ))
   );
 }
 
