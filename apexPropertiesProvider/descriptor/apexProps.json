@@ -200,6 +200,65 @@
           "isMany": true
         }
       ]
+    },
+    {
+      "name": "OracleEventDefinition",
+      "extends": [
+        "bpmn:TimerEventDefinition"
+      ],
+      "properties": [
+        {
+          "name": "oracleDate",
+          "type": "OracleDate"
+        },
+        {
+          "name": "oracleCycle",
+          "type": "OracleCycle"
+        },
+        {
+          "name": "oracleDuration",
+          "type": "OracleDuration"
+        }
+      ]
+    },
+    {
+      "name": "OracleDate",
+      "properties": [
+        {
+          "name": "dateString",
+          "type": "String"
+        },
+        {
+          "name": "formatMask",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OracleDuration",
+      "properties": [
+        {
+          "name": "intervalString",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OracleCycle",
+      "properties": [
+        {
+          "name": "startIntervalString",
+          "type": "String"
+        },
+        {
+          "name": "gapIntervalString",
+          "type": "String"
+        },
+        {
+          "name": "repitition",
+          "type": "String"
+        }
+      ]
     }
   ]
 }

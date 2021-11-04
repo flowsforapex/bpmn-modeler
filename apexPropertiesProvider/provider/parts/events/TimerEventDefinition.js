@@ -1,7 +1,5 @@
-'use strict';
-
-var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper'),
-    cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
 
@@ -13,7 +11,6 @@ var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
  * @return {string|undefined} the timer definition type
  */
 function getTimerDefinitionType(timer) {
-
   if (!timer) {
     return;
   }
@@ -31,6 +28,21 @@ function getTimerDefinitionType(timer) {
   var timeDuration = timer.get('timeDuration');
   if (typeof timeDuration !== 'undefined') {
     return 'timeDuration';
+  }
+
+  var oracleDate = timer.get('oracleDate');
+  if (typeof oracleDate !== 'undefined') {
+    return 'oracleDate';
+  }
+
+  var oracleDuration = timer.get('oracleDuration');
+  if (typeof oracleDuration !== 'undefined') {
+    return 'oracleDuration';
+  }
+
+  var oracleCycle = timer.get('oracleCycle');
+  if (typeof oracleCycle !== 'undefined') {
+    return 'oracleCycle';
   }
 }
 
@@ -63,133 +75,293 @@ function getTimerDefinition(timerOrFunction, element, node) {
  */
 function createFormalExpression(parent, body, bpmnFactory) {
   body = body || undefined;
-  return elementHelper.createElement('bpmn:FormalExpression', { body: body }, parent, bpmnFactory);
+  return elementHelper.createElement(
+    'bpmn:FormalExpression',
+    { body: body },
+    parent,
+    bpmnFactory
+  );
 }
 
-function TimerEventDefinition(group, element, bpmnFactory, timerEventDefinition, translate, options) {
-
+function TimerEventDefinition(
+  group,
+  element,
+  bpmnFactory,
+  timerEventDefinition,
+  translate,
+  options
+) {
   var selectOptions;
 
-    if (element.type === 'bpmn:StartEvent' || element.type === 'bpmn:IntermediateCatchEvent' || (element.type === 'bpmn:BoundaryEvent')) {
-        selectOptions = [
-            { value: 'timeDate', name: translate('Date') },
-            { value: 'timeDuration', name: translate('Duration') }
-          ];
-    } else {
-        selectOptions = [
-            { value: 'timeDate', name: translate('Date') },
-            { value: 'timeDuration', name: translate('Duration') },
-            { value: 'timeCycle', name: translate('Cycle') }
-          ];
-    }
+  if (
+    element.type === 'bpmn:StartEvent' ||
+    element.type === 'bpmn:IntermediateCatchEvent' ||
+    element.type === 'bpmn:BoundaryEvent'
+  ) {
+    selectOptions = [
+      { value: 'timeDate', name: translate('Date (ISO 8601)') },
+      { value: 'timeDuration', name: translate('Duration (ISO 8601)') },
+      { value: 'oracleDate', name: translate('Date (Oracle)') },
+      { value: 'oracleDuration', name: translate('Duration (Oracle)') },
+      { value: 'oracleCycle', name: translate('Cycle (Oracle)') },
+    ];
+    // currently: never occurs
+  } else {
+    selectOptions = [
+      { value: 'timeDate', name: translate('Date') },
+      { value: 'timeDuration', name: translate('Duration') },
+      { value: 'timeCycle', name: translate('Cycle') },
+    ];
+  }
 
-  var prefix = options && options.idPrefix,
-      createTimerEventDefinition = options && options.createTimerEventDefinition;
+  var prefix = options && options.idPrefix;
+  var createTimerEventDefinition =
+    options && options.createTimerEventDefinition;
 
+  group.entries.push(
+    entryFactory.selectBox(translate, {
+      id: `${prefix}timer-event-definition-type`,
+      label: translate('Timer Definition Type'),
+      selectOptions: selectOptions,
+      emptyParameter: true,
+      modelProperty: 'timerDefinitionType',
 
-  group.entries.push(entryFactory.selectBox(translate, {
-    id: prefix + 'timer-event-definition-type',
-    label: translate('Timer Definition Type'),
-    selectOptions: selectOptions,
-    emptyParameter: true,
-    modelProperty: 'timerDefinitionType',
+      get: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
 
-    get: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+        return {
+          timerDefinitionType: getTimerDefinitionType(timerDefinition) || '',
+        };
+      },
 
-      return {
-        timerDefinitionType: getTimerDefinitionType(timerDefinition) || ''
-      };
-    },
+      set: function (element, values, node) {
+        var props = {
+          timeDuration: undefined,
+          timeDate: undefined,
+          timeCycle: undefined,
+          oracleDate: undefined,
+          oracleDuration: undefined,
+          oracleCycle: undefined,
+        };
 
-    set: function(element, values, node) {
-      var props = {
-        timeDuration: undefined,
-        timeDate: undefined,
-        timeCycle: undefined
-      };
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var newType = values.timerDefinitionType;
 
-
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          newType = values.timerDefinitionType;
-
-      if (!timerDefinition && typeof createTimerEventDefinition === 'function') {
-        timerDefinition = createTimerEventDefinition(element, node);
-      }
-
-      if (values.timerDefinitionType) {
-        var oldType = getTimerDefinitionType(timerDefinition);
-
-        var value;
-        if (oldType) {
-          var definition = timerDefinition.get(oldType);
-          value = definition.get('body');
+        if (
+          !timerDefinition &&
+          typeof createTimerEventDefinition === 'function'
+        ) {
+          timerDefinition = createTimerEventDefinition(element, node);
         }
 
-        props[newType] = createFormalExpression(timerDefinition, value, bpmnFactory);
-      }
+        if (values.timerDefinitionType) {
+          var oldType = getTimerDefinitionType(timerDefinition);
 
-      return cmdHelper.updateBusinessObject(element, timerDefinition, props);
-    },
+          var value;
+          if (oldType) {
+            var definition = timerDefinition.get(oldType);
+            value = definition.get('body');
+          }
 
-    hidden: function(element, node) {
-      return getTimerDefinition(timerEventDefinition, element, node) === undefined;
-    }
-
-  }));
-
-
-  group.entries.push(entryFactory.textField(translate, {
-    id: prefix + 'timer-event-definition',
-    label: translate('Timer Definition'),
-    modelProperty: 'timerDefinition',
-
-    get: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type),
-          value = definition && definition.get('body');
-
-      return {
-        timerDefinition: value
-      };
-    },
-
-    set: function(element, values, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type);
-
-      if (definition) {
-        return cmdHelper.updateBusinessObject(element, definition, {
-          body: values.timerDefinition || undefined
-        });
-      }
-    },
-
-    validate: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node),
-          type = getTimerDefinitionType(timerDefinition),
-          definition = type && timerDefinition.get(type);
-
-      if (definition) {
-        var value = definition.get('body');
-        if (!value) {
-          return {
-            timerDefinition: translate('Must provide a value')
-          };
+          switch (newType) {
+            case 'oracleDate': {
+              props[newType] = elementHelper.createElement(
+                'apex:OracleDate',
+                { body: value, dateString: '', formatMask: '' },
+                timerDefinition,
+                bpmnFactory
+              );
+              break;
+            }
+            case 'oracleDuration': {
+              props[newType] = elementHelper.createElement(
+                'apex:OracleDuration',
+                { body: value, intervalString: '' },
+                timerDefinition,
+                bpmnFactory
+              );
+              break;
+            }
+            case 'oracleCycle': {
+              props[newType] = elementHelper.createElement(
+                'apex:OracleCycle',
+                {
+                  body: value,
+                  startIntervalString: '',
+                  gapIntervalString: '',
+                  repitition: '',
+                },
+                timerDefinition,
+                bpmnFactory
+              );
+              break;
+            }
+            default:
+              props[newType] = createFormalExpression(
+                timerDefinition,
+                value,
+                bpmnFactory
+              );
+          }
         }
-      }
-    },
 
-    hidden: function(element, node) {
-      var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+        return cmdHelper.updateBusinessObject(element, timerDefinition, props);
+      },
 
-      return !getTimerDefinitionType(timerDefinition);
-    }
+      hidden: function (element, node) {
+        return (
+          getTimerDefinition(timerEventDefinition, element, node) === undefined
+        );
+      },
+    })
+  );
 
-  }));
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: `${prefix}timer-event-definition`,
+      label: translate('Timer Definition'),
+      modelProperty: 'timerDefinition',
 
+      get: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var definition = type && timerDefinition.get(type);
+        var value = definition && definition.get('body');
+
+        return {
+          timerDefinition: value,
+        };
+      },
+
+      set: function (element, values, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var definition = type && timerDefinition.get(type);
+
+        if (definition) {
+          return cmdHelper.updateBusinessObject(element, definition, {
+            body: values.timerDefinition || undefined,
+          });
+        }
+      },
+
+      validate: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var definition = type && timerDefinition.get(type);
+
+        if (definition) {
+          var value = definition.get('body');
+          if (!value) {
+            return {
+              timerDefinition: translate('Must provide a value'),
+            };
+          }
+        }
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+
+        return !getTimerDefinitionType(timerDefinition);
+      },
+    })
+  );
+
+  /* custom oracle */
+
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'dateString',
+      label: translate('Date String'),
+      modelProperty: 'dateString',
+
+      get: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var definition = type && timerDefinition.get(type);
+        var value = definition && definition.get('dateString');
+
+        return {
+          dateString: value,
+        };
+      },
+
+      set: function (element, values, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var definition = type && timerDefinition.get(type);
+
+        if (definition) {
+          return cmdHelper.updateBusinessObject(element, definition, {
+            dateString: values.dateString || undefined,
+          });
+        }
+      },
+
+      // validate: function (element, node) {
+      //   var timerDefinition = getTimerDefinition(
+      //     timerEventDefinition,
+      //     element,
+      //     node
+      //   );
+      //   var type = getTimerDefinitionType(timerDefinition);
+      //   var definition = type && timerDefinition.get(type);
+
+      //   if (definition) {
+      //     var value = definition.get('body');
+      //     if (!value) {
+      //       return {
+      //         timerDefinition: translate('Must provide a value'),
+      //       };
+      //     }
+      //   }
+      // },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleDate';
+      },
+    })
+  );
 }
 
 module.exports = TimerEventDefinition;
