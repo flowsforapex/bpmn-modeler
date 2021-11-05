@@ -141,7 +141,7 @@
         },
         {
           "name": "useTemplate",
-          "type": "String"
+          "type": "Boolean"
         },
         {
           "name": "applicationId",
@@ -169,7 +169,7 @@
         },
         {
           "name": "immediately",
-          "type": "String"
+          "type": "Boolean"
         }
       ]
     },
