@@ -98,6 +98,82 @@
       ]
     },
     {
+      "name": "ExecutePlsql",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "engine",
+          "type": "String"
+        },
+        {
+          "name": "plsqlCode",
+          "type": "String"
+        },
+        {
+          "name": "autoBinds",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "SendMail",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "emailFrom",
+          "type": "String"
+        },
+        {
+          "name": "emailTo",
+          "type": "String"
+        },
+        {
+          "name": "emailCC",
+          "type": "String"
+        },
+        {
+          "name": "emailBCC",
+          "type": "String"
+        },
+        {
+          "name": "emailReplyTo",
+          "type": "String"
+        },
+        {
+          "name": "useTemplate",
+          "type": "String"
+        },
+        {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "templateId",
+          "type": "String"
+        },
+        {
+          "name": "placeholder",
+          "type": "String"
+        },
+        {
+          "name": "bodyText",
+          "type": "String"
+        },
+        {
+          "name": "bodyHTML",
+          "type": "String"
+        },
+        {
+          "name": "attachement",
+          "type": "String"
+        },
+        {
+          "name": "immediately",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "apexTerminationEvent",
       "extends": [
         "bpmn:TerminateEventDefinition"

@@ -20,8 +20,8 @@ import {
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
 import generateScriptTaskEntries from './parts/scriptTaskProps.js';
-import apexMail from './parts/serviceTask/apexMail';
 import serviceTaskExecutePlsql from './parts/serviceTask/executePlsql';
+import sendMail from './parts/serviceTask/sendMail';
 import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
 import externalUrlProps from './parts/userTask/externalUrlProps';
@@ -83,7 +83,7 @@ function createApexTabGroups(
   var apexServiceGroup = {
     id: 'apex-service-group',
     label: translate('Send Mail'),
-    entries: apexMail(element, bpmnFactory, commandStack, translate),
+    entries: sendMail(element, bpmnFactory, commandStack, translate),
   };
 
   return [apexPageGroup, apexServiceGroup];

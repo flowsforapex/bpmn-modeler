@@ -44,7 +44,6 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:OnEvent');
       }
     } else if (is(element, 'bpmn:UserTask')) {
-      // TODO filter out ext Element depending on selected subtype (see typeProps)
       if (
         typeof getBusinessObject(element).type === 'undefined' ||
         getBusinessObject(element).type === 'apexPage'
@@ -52,6 +51,17 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:ApexPage');
       } else if (getBusinessObject(element).type === 'externalUrl') {
         filter.push('apex:ExternalUrl');
+      }
+    } else if (is(element, 'bpmn:ScriptTask')) {
+      filter.push('apex:ApexScript');
+    } else if (is(element, 'bpmn:ServiceTask')) {
+      if (
+        typeof getBusinessObject(element).type === 'undefined' ||
+        getBusinessObject(element).type === 'executePlsql'
+      ) {
+        filter.push('apex:ExecutePlsql');
+      } else if (getBusinessObject(element).type === 'sendMail') {
+        filter.push('apex:SendMail');
       }
     }
 

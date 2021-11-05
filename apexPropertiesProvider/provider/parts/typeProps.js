@@ -64,7 +64,7 @@ export default function (
         modelProperty: 'type',
         selectOptions: [
           { name: translate('Execute PL/SQL'), value: 'executePlsql' },
-          { name: translate('Send Mail'), value: 'apexMail' },
+          { name: translate('Send Mail'), value: 'sendMail' },
         ],
         get: getType('executePlsql'),
         set: setProperty(),
