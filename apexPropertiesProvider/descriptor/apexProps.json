@@ -70,6 +70,16 @@
       ]
     },
     {
+      "name": "ExternalUrl",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "url",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "ApexScript",
       "superClass": [ "Element" ],
       "properties": [

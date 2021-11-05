@@ -7,12 +7,12 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
 import inherits from 'inherits';
+import { removeInvalidExtensionsElements } from './helper/validateXML';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
-import { removeInvalidExtensionsElements } from './parts/process_variables/helper/validateXML';
 import {
   procVarDetailProps,
   procVarExpressionProps

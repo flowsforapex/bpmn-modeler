@@ -1,5 +1,8 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import propertiesHelper from '../../extensionElements/propertiesHelper';
+
+var helper = new propertiesHelper('apex:ExternalUrl');
 
 export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];
@@ -11,10 +14,17 @@ export default function (element, bpmnFactory, translate) {
   ) {
     userTaskProps.push(
       entryFactory.textField(translate, {
-        id: 'externalUrl',
-        description: translate('External URL'),
-        label: translate('External URL'),
-        modelProperty: 'externalUrl',
+        id: 'url',
+        label: translate('URL'),
+        modelProperty: 'url',
+
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'url');
+        },
+
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
       })
     );
   }
