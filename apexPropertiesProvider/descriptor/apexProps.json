@@ -9,7 +9,7 @@
   "types": [
     {
       "name": "TaskType",
-      "extends": [ "bpmn:UserTask" ],
+      "extends": [ "bpmn:Task" ],
       "properties": [
         {
           "name": "type",

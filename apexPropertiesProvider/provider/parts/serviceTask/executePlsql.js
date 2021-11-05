@@ -1,8 +1,8 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
-import { isOptionSelected } from '../../../lib/formsHelper';
-import { getContainer, openEditor } from '../customElements/monacoEditor';
-import propertiesHelper from '../extensionElements/propertiesHelper';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { isOptionSelected } from '../../../../lib/formsHelper';
+import { getContainer, openEditor } from '../../customElements/monacoEditor';
+import propertiesHelper from '../../extensionElements/propertiesHelper';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
@@ -13,7 +13,11 @@ export default function (element, bpmnFactory, commandStack, translate) {
   const engineNo = 0;
   const serviceTaskProps = [];
 
-  if (is(element, 'bpmn:ServiceTask')) {
+  if (
+    is(element, 'bpmn:ServiceTask') &&
+    (typeof getBusinessObject(element).type === 'undefined' ||
+      getBusinessObject(element).type === 'executePlsql')
+  ) {
     // if 'yes' then add 'autoBinds'
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
