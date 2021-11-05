@@ -3,8 +3,6 @@ import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
 var extensionElementsEntry = require('./custom/ExtensionElements');
 
 var procVarProps = [];
-var preProcessVariables;
-var postProcessVariables;
 
 var preSubPropertiesHelper;
 var postSubPropertiesHelper;
@@ -14,20 +12,20 @@ export function isSelected(element, node) {
 }
 
 export function getSelectedEntry(element, node) {
-  return (
-    (preSubPropertiesHelper &&
-      preSubPropertiesHelper.getSelectedEntry(
-        preProcessVariables,
-        element,
-        node
-      )) ||
-    (postSubPropertiesHelper &&
-      postSubPropertiesHelper.getSelectedEntry(
-        postProcessVariables,
-        element,
-        node
-      ))
-  );
+  var selection;
+  var entry;
+
+  if (element && procVarProps) {
+    procVarProps.forEach((e) => {
+      if (e.getSelected(element, node).idx > -1) {
+        selection = e.getSelected(element, node);
+        entry =
+          e.type === 'pre' ? preSubPropertiesHelper.getEntries(element)[selection.idx] : postSubPropertiesHelper.getEntries(element)[selection.idx];
+      }
+    });
+  }
+
+  return entry;
 }
 
 export function procVarLists(element, bpmnFactory, translate, options) {
@@ -44,9 +42,10 @@ export function procVarLists(element, bpmnFactory, translate, options) {
     );
 
     // create first list element
-    preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type1,
       label: label1,
+      type: 'pre',
 
       createExtensionElement: function (element, extensionElements, values) {
         return preSubPropertiesHelper.newElement(
@@ -125,9 +124,10 @@ export function procVarLists(element, bpmnFactory, translate, options) {
     );
 
     // create second list element
-    postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type2,
       label: label2,
+      type: 'post',
 
       createExtensionElement: function (element, extensionElements, values) {
         return postSubPropertiesHelper.newElement(
