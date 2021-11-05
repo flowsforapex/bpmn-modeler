@@ -11,39 +11,23 @@ var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
  * @return {string|undefined} the timer definition type
  */
 function getTimerDefinitionType(timer) {
-  if (!timer) {
-    return;
+  var type;
+  if (timer) {
+    if (typeof timer.get('timeDate') !== 'undefined') {
+      type = 'timeDate';
+    } else if (typeof timer.get('timeCycle') !== 'undefined') {
+      type = 'timeCycle';
+    } else if (typeof timer.get('timeDuration') !== 'undefined') {
+      type = 'timeDuration';
+    } else if (typeof timer.get('oracleDate') !== 'undefined') {
+      type = 'oracleDate';
+    } else if (typeof timer.get('oracleDuration') !== 'undefined') {
+      type = 'oracleDuration';
+    } else if (typeof timer.get('oracleCycle') !== 'undefined') {
+      type = 'oracleCycle';
+    }
   }
-
-  var timeDate = timer.get('timeDate');
-  if (typeof timeDate !== 'undefined') {
-    return 'timeDate';
-  }
-
-  var timeCycle = timer.get('timeCycle');
-  if (typeof timeCycle !== 'undefined') {
-    return 'timeCycle';
-  }
-
-  var timeDuration = timer.get('timeDuration');
-  if (typeof timeDuration !== 'undefined') {
-    return 'timeDuration';
-  }
-
-  var oracleDate = timer.get('oracleDate');
-  if (typeof oracleDate !== 'undefined') {
-    return 'oracleDate';
-  }
-
-  var oracleDuration = timer.get('oracleDuration');
-  if (typeof oracleDuration !== 'undefined') {
-    return 'oracleDuration';
-  }
-
-  var oracleCycle = timer.get('oracleCycle');
-  if (typeof oracleCycle !== 'undefined') {
-    return 'oracleCycle';
-  }
+  return type;
 }
 
 /**
@@ -83,6 +67,38 @@ function createFormalExpression(parent, body, bpmnFactory) {
   );
 }
 
+function getTimerDefinitionProperty(
+  timerEventDefinition,
+  element,
+  node,
+  property
+) {
+  var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+  var type = getTimerDefinitionType(timerDefinition);
+  var definition = type && timerDefinition.get(type);
+  var value = definition && definition.get(property);
+
+  return {
+    [property]: value,
+  };
+}
+
+function setTimerDefinitionProperty(
+  timerEventDefinition,
+  element,
+  node,
+  values
+) {
+  var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
+  var type = getTimerDefinitionType(timerDefinition);
+  var definition = type && timerDefinition.get(type);
+
+  if (definition) {
+    return cmdHelper.updateBusinessObject(element, definition, values);
+  }
+  return null;
+}
+
 function TimerEventDefinition(
   group,
   element,
@@ -92,38 +108,39 @@ function TimerEventDefinition(
   options
 ) {
   var selectOptions;
+  var prefix = options && options.idPrefix;
+  var createTimerEventDefinition =
+    options && options.createTimerEventDefinition;
 
   if (
     element.type === 'bpmn:StartEvent' ||
     element.type === 'bpmn:IntermediateCatchEvent' ||
-    element.type === 'bpmn:BoundaryEvent'
+    (element.type === 'bpmn:BoundaryEvent' &&
+      element.businessObject.cancelActivity)
   ) {
     selectOptions = [
       { value: 'timeDate', name: translate('Date (ISO 8601)') },
       { value: 'timeDuration', name: translate('Duration (ISO 8601)') },
       { value: 'oracleDate', name: translate('Date (Oracle)') },
       { value: 'oracleDuration', name: translate('Duration (Oracle)') },
-      { value: 'oracleCycle', name: translate('Cycle (Oracle)') },
     ];
     // currently: never occurs
   } else {
     selectOptions = [
-      { value: 'timeDate', name: translate('Date') },
-      { value: 'timeDuration', name: translate('Duration') },
-      { value: 'timeCycle', name: translate('Cycle') },
+      { value: 'timeDate', name: translate('Date (ISO 8601)') },
+      { value: 'timeDuration', name: translate('Duration (ISO 8601)') },
+      { value: 'timeCycle', name: translate('Cycle (ISO 8601)') },
+      { value: 'oracleDate', name: translate('Date (Oracle)') },
+      { value: 'oracleDuration', name: translate('Duration (Oracle)') },
+      { value: 'oracleCycle', name: translate('Cycle (Oracle)') },
     ];
   }
-
-  var prefix = options && options.idPrefix;
-  var createTimerEventDefinition =
-    options && options.createTimerEventDefinition;
 
   group.entries.push(
     entryFactory.selectBox(translate, {
       id: `${prefix}timer-event-definition-type`,
       label: translate('Timer Definition Type'),
       selectOptions: selectOptions,
-      emptyParameter: true,
       modelProperty: 'timerDefinitionType',
 
       get: function (element, node) {
@@ -175,7 +192,7 @@ function TimerEventDefinition(
             case 'oracleDate': {
               props[newType] = elementHelper.createElement(
                 'apex:OracleDate',
-                { body: value, dateString: '', formatMask: '' },
+                { dateString: '', formatMask: '' },
                 timerDefinition,
                 bpmnFactory
               );
@@ -184,7 +201,7 @@ function TimerEventDefinition(
             case 'oracleDuration': {
               props[newType] = elementHelper.createElement(
                 'apex:OracleDuration',
-                { body: value, intervalString: '' },
+                { intervalString: '' },
                 timerDefinition,
                 bpmnFactory
               );
@@ -194,7 +211,6 @@ function TimerEventDefinition(
               props[newType] = elementHelper.createElement(
                 'apex:OracleCycle',
                 {
-                  body: value,
                   startIntervalString: '',
                   gapIntervalString: '',
                   repitition: '',
@@ -286,14 +302,18 @@ function TimerEventDefinition(
           element,
           node
         );
+        var type = getTimerDefinitionType(timerDefinition);
 
-        return !getTimerDefinitionType(timerDefinition);
+        return (
+          type !== 'timeDate' && type !== 'timeDuration' && type !== 'timeCycle'
+        );
       },
     })
   );
 
-  /* custom oracle */
+  /* oracle date properties */
 
+  // date string
   group.entries.push(
     entryFactory.textField(translate, {
       id: 'dateString',
@@ -301,54 +321,22 @@ function TimerEventDefinition(
       modelProperty: 'dateString',
 
       get: function (element, node) {
-        var timerDefinition = getTimerDefinition(
+        return getTimerDefinitionProperty(
           timerEventDefinition,
           element,
-          node
+          node,
+          'dateString'
         );
-        var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
-        var value = definition && definition.get('dateString');
-
-        return {
-          dateString: value,
-        };
       },
 
       set: function (element, values, node) {
-        var timerDefinition = getTimerDefinition(
+        return setTimerDefinitionProperty(
           timerEventDefinition,
           element,
-          node
+          node,
+          values
         );
-        var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
-
-        if (definition) {
-          return cmdHelper.updateBusinessObject(element, definition, {
-            dateString: values.dateString || undefined,
-          });
-        }
       },
-
-      // validate: function (element, node) {
-      //   var timerDefinition = getTimerDefinition(
-      //     timerEventDefinition,
-      //     element,
-      //     node
-      //   );
-      //   var type = getTimerDefinitionType(timerDefinition);
-      //   var definition = type && timerDefinition.get(type);
-
-      //   if (definition) {
-      //     var value = definition.get('body');
-      //     if (!value) {
-      //       return {
-      //         timerDefinition: translate('Must provide a value'),
-      //       };
-      //     }
-      //   }
-      // },
 
       hidden: function (element, node) {
         var timerDefinition = getTimerDefinition(
@@ -359,6 +347,204 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
 
         return type !== 'oracleDate';
+      },
+    })
+  );
+
+  // format mask
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'formatMask',
+      label: translate('Format Mask'),
+      modelProperty: 'formatMask',
+
+      get: function (element, node) {
+        return getTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          'formatMask'
+        );
+      },
+
+      set: function (element, values, node) {
+        return setTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          values
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleDate';
+      },
+    })
+  );
+
+  /* oracle duration properties */
+
+  // interval
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'intervalString',
+      label: translate('Time until the timer fires'),
+      modelProperty: 'intervalString',
+      description: 'Interval in format DAY TO MINUTE (D HH:MM)',
+
+      get: function (element, node) {
+        return getTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          'intervalString'
+        );
+      },
+
+      set: function (element, values, node) {
+        return setTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          values
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleDuration';
+      },
+    })
+  );
+
+  /* oracle cycle properties */
+
+  // start interval
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'startIntervalString',
+      label: translate('Time until the timer fires first'),
+      modelProperty: 'startIntervalString',
+      description: 'Interval in format DAY TO MINUTE (D HH:MM)',
+
+      get: function (element, node) {
+        return getTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          'startIntervalString'
+        );
+      },
+
+      set: function (element, values, node) {
+        return setTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          values
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleCycle';
+      },
+    })
+  );
+
+  // gap interval
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'gapIntervalString',
+      label: translate('Time until timer fires again'),
+      modelProperty: 'gapIntervalString',
+      description: 'Interval in format DAY TO MINUTE (D HH:MM)',
+
+      get: function (element, node) {
+        return getTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          'gapIntervalString'
+        );
+      },
+
+      set: function (element, values, node) {
+        return setTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          values
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleCycle';
+      },
+    })
+  );
+
+  // repitition
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'repitition',
+      label: translate('Repition'),
+      modelProperty: 'repitition',
+      description: 'Number of executions',
+
+      get: function (element, node) {
+        return getTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          'repitition'
+        );
+      },
+
+      set: function (element, values, node) {
+        return setTimerDefinitionProperty(
+          timerEventDefinition,
+          element,
+          node,
+          values
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleCycle';
       },
     })
   );
