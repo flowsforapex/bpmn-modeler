@@ -24,7 +24,7 @@ export function getContainer(id) {
   };
 }
 
-export function openEditor(id, getText, saveText) {
+export function openEditor(id, getText, saveText, language) {
   var modal = domQuery(`#modalDialog_${id}`);
 
   var undoBtn = domQuery(`#modalDialog_${id} #undoBtn`);
@@ -43,7 +43,7 @@ export function openEditor(id, getText, saveText) {
     domQuery(`#modalDialog_${id} #editorContainer`),
     {
       value: [getText()].join('\n'),
-      language: 'pgsql',
+      language: language || 'pgsql',
       minimap: { enabled: 'false' },
       automaticLayout: true,
       theme: theme,

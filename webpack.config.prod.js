@@ -15,7 +15,7 @@ module.exports = {
   },
   plugins: [
     new MonacoWebpackPlugin({
-      languages: ["pgsql"],
+      languages: ["pgsql", "json"],
     }),
   ],
   module: {

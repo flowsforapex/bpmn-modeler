@@ -1,10 +1,13 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { getContainer, openEditor } from '../../customElements/monacoEditor';
 import propertiesHelper from '../../extensionElements/propertiesHelper';
 import {
   getApplicationsMail,
   getTemplates
 } from '../userTask/metaDataCollector';
+
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var domQuery = require('min-dom').query;
 
@@ -295,6 +298,38 @@ export function contentAttributes(
       })
     );
 
+    // container for placeholder editor
+    serviceTaskProps.push(getContainer('placeholder'));
+
+    // link to placeholder editor
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'placeholderEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: function (element, node, event) {
+          var getPlaceholder = function () {
+            return helper.getExtensionProperty(element, 'placeholder')
+              .placeholder;
+          };
+          var savePlaceholder = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              placeholder: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('placeholder', getPlaceholder, savePlaceholder, 'json');
+        },
+        showLink: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate !== 'undefined' &&
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'true'
+          );
+        },
+      })
+    );
+
     // subject
     serviceTaskProps.push(
       entryFactory.textField(translate, {
@@ -388,6 +423,30 @@ export function miscAttributes(element, bpmnFactory, commandStack, translate) {
         },
         get: function (element) {
           return helper.getExtensionProperty(element, 'attachement');
+        },
+      })
+    );
+
+    // container for attachement editor
+    serviceTaskProps.push(getContainer('attachement'));
+
+    // link to attachement editor
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'attachementEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: function (element, node, event) {
+          var getAttachement = function () {
+            return helper.getExtensionProperty(element, 'attachement')
+              .attachement;
+          };
+          var saveAttachement = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              attachement: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('attachement', getAttachement, saveAttachement);
         },
       })
     );

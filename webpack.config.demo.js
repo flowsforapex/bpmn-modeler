@@ -51,7 +51,7 @@ module.exports = {
       ],
     }),
     new MonacoWebpackPlugin({
-      languages: ["pgsql"],
+      languages: ["pgsql", "json"],
     }),
   ],
   devtool: "source-map",
