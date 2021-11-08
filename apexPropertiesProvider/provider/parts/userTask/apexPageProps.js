@@ -42,22 +42,25 @@ var itemsLoading;
 function enableAndResetValue(element, field) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
-  // get property value
-  var property =
-    helper.getExtensionProperty(element, field.id)[field.id] ||
-    subHelper.getExtensionSubProperty(
-      pageItemsElement,
-      element,
-      domQuery(`[data-entry="${field.id}"]`),
-      field.id
-    )[field.id] ||
-    null;
-  // enable select box
-  fieldNode.removeAttribute('disabled');
-  // refresh select box options
-  field.setControlValue(element, null, fieldNode, null, property);
-  // return new selected value
-  return fieldNode.value;
+  if (fieldNode) {
+    // get property value
+    var property =
+      helper.getExtensionProperty(element, field.id)[field.id] ||
+      subHelper.getExtensionSubProperty(
+        pageItemsElement,
+        element,
+        domQuery(`[data-entry="${field.id}"]`),
+        field.id
+      )[field.id] ||
+      null;
+    // enable select box
+    fieldNode.removeAttribute('disabled');
+    // refresh select box options
+    field.setControlValue(element, null, fieldNode, null, property);
+    // return new selected value
+    return fieldNode.value;
+  }
+  return null;
 }
 
 function refreshApplications(element) {

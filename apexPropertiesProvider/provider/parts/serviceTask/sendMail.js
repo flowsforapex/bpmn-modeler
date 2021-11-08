@@ -1,8 +1,80 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import propertiesHelper from '../../extensionElements/propertiesHelper';
+import {
+  getApplicationsMail,
+  getTemplates
+} from '../userTask/metaDataCollector';
+
+var domQuery = require('min-dom').query;
 
 var helper = new propertiesHelper('apex:SendMail');
+
+// element identifier for current element
+var elementIdentifier;
+
+// select list options container
+var applications = [];
+var templates = [];
+
+// select box container
+var applicationSelectBox;
+var templateSelectBox;
+
+// loading flags
+var applicationsLoading;
+var templatesLoading;
+
+function enableAndResetValue(element, field) {
+  // get dom node
+  var fieldNode = domQuery(`select[name="${field.id}"]`);
+  if (fieldNode) {
+    // get property value
+    var property =
+      helper.getExtensionProperty(element, field.id)[field.id] || null;
+    // enable select box
+    fieldNode.removeAttribute('disabled');
+    // refresh select box options
+    field.setControlValue(element, null, fieldNode, null, property);
+    // return new selected value
+    return fieldNode.value;
+  }
+  return null;
+}
+
+function refreshApplications(element) {
+  var newApplicationId;
+  // loading flag
+  applicationsLoading = true;
+  // ajax process
+  getApplicationsMail().then((values) => {
+    applications = JSON.parse(values);
+    // loading flag
+    applicationsLoading = false;
+    // refresh select box
+    newApplicationId = enableAndResetValue(
+      element,
+      applicationSelectBox,
+      false
+    );
+    // refresh child item
+    refreshTemplates(element, newApplicationId);
+  });
+}
+
+function refreshTemplates(element, applicationId) {
+  var newTemplateId;
+  // loading flag
+  templatesLoading = true;
+  // ajax process
+  getTemplates(applicationId).then((values) => {
+    templates = JSON.parse(values);
+    // loading flag
+    templatesLoading = false;
+    // refresh select box
+    newTemplateId = enableAndResetValue(element, templateSelectBox, false);
+  });
+}
 
 export function baseAttributes(element, bpmnFactory, commandStack, translate) {
   const serviceTaskProps = [];
@@ -107,15 +179,24 @@ export function contentAttributes(
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
+    if (elementIdentifier !== element) {
+      elementIdentifier = element;
+      // initiate ajax call for meta data
+      refreshApplications(element);
+    }
+
     // Use Template: Yes/No
     serviceTaskProps.push(
-      entryFactory.checkbox(translate, {
+      entryFactory.selectBox(translate, {
         id: 'useTemplate',
         label: translate('Use Template'),
         modelProperty: 'useTemplate',
+        selectOptions: [
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' },
+        ],
         set: function (element, values) {
-          var props = { useTemplate: values.useTemplate || false };
-          return helper.setExtensionProperty(element, bpmnFactory, props);
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
           return helper.getExtensionProperty(element, 'useTemplate');
@@ -124,48 +205,71 @@ export function contentAttributes(
     );
 
     // applicationId
-    serviceTaskProps.push(
-      entryFactory.selectBox(translate, {
-        id: 'applicationId',
-        label: translate('Application'),
-        modelProperty: 'applicationId',
-        set: function (element, values) {
-          return helper.setExtensionProperty(element, bpmnFactory, values);
-        },
-        get: function (element) {
-          return helper.getExtensionProperty(element, 'applicationId');
-        },
-        hidden: function () {
-          return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
-            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
-          );
-        },
-      })
-    );
+    applicationSelectBox = entryFactory.selectBox(translate, {
+      id: 'applicationId',
+      label: translate('Application'),
+      modelProperty: 'applicationId',
+
+      selectOptions: function () {
+        return applications;
+      },
+
+      disabled: function () {
+        return applicationsLoading;
+      },
+
+      set: function (element, values) {
+        // refresh templates
+        refreshTemplates(element, values.applicationId);
+        // set value
+        return helper.setExtensionProperty(element, bpmnFactory, values);
+      },
+      get: function (element) {
+        return helper.getExtensionProperty(element, 'applicationId');
+      },
+      hidden: function () {
+        return (
+          typeof helper.getExtensionProperty(element, 'useTemplate')
+            .useTemplate === 'undefined' ||
+          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+            'false'
+        );
+      },
+    });
+
+    serviceTaskProps.push(applicationSelectBox);
 
     // templateId
-    serviceTaskProps.push(
-      entryFactory.selectBox(translate, {
-        id: 'templateId',
-        label: translate('Template'),
-        modelProperty: 'templateId',
-        set: function (element, values) {
-          return helper.setExtensionProperty(element, bpmnFactory, values);
-        },
-        get: function (element) {
-          return helper.getExtensionProperty(element, 'templateId');
-        },
-        hidden: function () {
-          return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
-            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
-          );
-        },
-      })
-    );
+    templateSelectBox = entryFactory.selectBox(translate, {
+      id: 'templateId',
+      label: translate('Template'),
+      modelProperty: 'templateId',
+
+      selectOptions: function () {
+        return templates;
+      },
+
+      disabled: function () {
+        return applicationsLoading || templatesLoading;
+      },
+
+      set: function (element, values) {
+        return helper.setExtensionProperty(element, bpmnFactory, values);
+      },
+      get: function (element) {
+        return helper.getExtensionProperty(element, 'templateId');
+      },
+      hidden: function () {
+        return (
+          typeof helper.getExtensionProperty(element, 'useTemplate')
+            .useTemplate === 'undefined' ||
+          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+            'false'
+        );
+      },
+    });
+
+    serviceTaskProps.push(templateSelectBox);
 
     // placeholder
     serviceTaskProps.push(
@@ -184,7 +288,8 @@ export function contentAttributes(
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
               .useTemplate !== 'undefined' &&
-            helper.getExtensionProperty(element, 'useTemplate').useTemplate
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'true'
           );
         },
       })
@@ -207,7 +312,8 @@ export function contentAttributes(
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
               .useTemplate === 'undefined' ||
-            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
           );
         },
       })
@@ -230,7 +336,8 @@ export function contentAttributes(
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
               .useTemplate === 'undefined' ||
-            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
           );
         },
       })
@@ -264,14 +371,16 @@ export function miscAttributes(element, bpmnFactory, commandStack, translate) {
 
     // Immediately: Yes/No
     serviceTaskProps.push(
-      entryFactory.checkbox(translate, {
+      entryFactory.selectBox(translate, {
         id: 'immediately',
-        description: translate('Send email immediately'),
-        label: translate('Immediately'),
+        label: translate('Send Email Immediately'),
         modelProperty: 'immediately',
+        selectOptions: [
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes'), value: 'true' },
+        ],
         set: function (element, values) {
-          var props = { immediately: values.immediately || false };
-          return helper.setExtensionProperty(element, bpmnFactory, props);
+          return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
           return helper.getExtensionProperty(element, 'immediately');
