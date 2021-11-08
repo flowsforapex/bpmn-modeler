@@ -138,6 +138,10 @@
           "type": "String"
         },
         {
+          "name": "subject",
+          "type": "String"
+        },
+        {
           "name": "bodyText",
           "type": "String"
         },

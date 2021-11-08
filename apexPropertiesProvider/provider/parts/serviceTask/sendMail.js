@@ -295,6 +295,29 @@ export function contentAttributes(
       })
     );
 
+    // subject
+    serviceTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'subject',
+        label: translate('Subject'),
+        modelProperty: 'subject',
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'subject');
+        },
+        hidden: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate !== 'undefined' &&
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'true'
+          );
+        },
+      })
+    );
+
     // bodyText
     serviceTaskProps.push(
       entryFactory.textBox(translate, {
