@@ -6,7 +6,7 @@ import propertiesHelper from '../extensionElements/propertiesHelper';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var helper = new propertiesHelper('apex:ApexScript');
+var helper = new propertiesHelper('apex:ExecutePlsql');
 
 export default function (element, bpmnFactory, commandStack, translate) {
   const scriptTaskEngine = '[name="engine"]';

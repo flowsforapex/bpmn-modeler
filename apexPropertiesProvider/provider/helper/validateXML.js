@@ -14,6 +14,7 @@ export function removeInvalidExtensionsElements(
   elements.forEach((element) => {
     var filter = [];
 
+    // filter gateways
     if (
       is(element, 'bpmn:ExclusiveGateway') ||
       is(element, 'bpmn:ParallelGateway') ||
@@ -32,6 +33,7 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:AfterMerge');
         filter.push('apex:BeforeSplit');
       }
+      // filter events
     } else if (
       is(element, 'bpmn:StartEvent') ||
       is(element, 'bpmn:IntermediateThrowEvent') ||
@@ -43,6 +45,7 @@ export function removeInvalidExtensionsElements(
       if (getBusinessObject(element).eventDefinitions === undefined) {
         filter.push('apex:OnEvent');
       }
+      // filter user tasks
     } else if (is(element, 'bpmn:UserTask')) {
       if (
         typeof getBusinessObject(element).type === 'undefined' ||
@@ -52,8 +55,10 @@ export function removeInvalidExtensionsElements(
       } else if (getBusinessObject(element).type === 'externalUrl') {
         filter.push('apex:ExternalUrl');
       }
+      // filter script tasks
     } else if (is(element, 'bpmn:ScriptTask')) {
-      filter.push('apex:ApexScript');
+      filter.push('apex:ExecutePlsql');
+      // filter service tasks
     } else if (is(element, 'bpmn:ServiceTask')) {
       if (
         typeof getBusinessObject(element).type === 'undefined' ||

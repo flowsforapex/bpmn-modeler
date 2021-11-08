@@ -80,24 +80,6 @@
       ]
     },
     {
-      "name": "ApexScript",
-      "superClass": [ "Element" ],
-      "properties": [
-        {
-          "name": "engine",
-          "type": "String"
-        },
-        {
-          "name": "plsqlCode",
-          "type": "String"
-        },
-        {
-          "name": "autoBinds",
-          "type": "String"
-        }
-      ]
-    },
-    {
       "name": "ExecutePlsql",
       "superClass": [ "Element" ],
       "properties": [
