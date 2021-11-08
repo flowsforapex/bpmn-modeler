@@ -4,7 +4,7 @@ import propertiesHelper from '../../extensionElements/propertiesHelper';
 
 var helper = new propertiesHelper('apex:SendMail');
 
-export default function (element, bpmnFactory, commandStack, translate) {
+export function baseAttributes(element, bpmnFactory, commandStack, translate) {
   const serviceTaskProps = [];
 
   if (
@@ -90,7 +90,23 @@ export default function (element, bpmnFactory, commandStack, translate) {
         },
       })
     );
+  }
 
+  return serviceTaskProps;
+}
+
+export function contentAttributes(
+  element,
+  bpmnFactory,
+  commandStack,
+  translate
+) {
+  const serviceTaskProps = [];
+
+  if (
+    is(element, 'bpmn:ServiceTask') &&
+    getBusinessObject(element).type === 'sendMail'
+  ) {
     // Use Template: Yes/No
     serviceTaskProps.push(
       entryFactory.checkbox(translate, {
@@ -98,7 +114,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
         label: translate('Use Template'),
         modelProperty: 'useTemplate',
         set: function (element, values) {
-          var props = { useTemplate: values.useTemplate };
+          var props = { useTemplate: values.useTemplate || false };
           return helper.setExtensionProperty(element, bpmnFactory, props);
         },
         get: function (element) {
@@ -122,7 +138,8 @@ export default function (element, bpmnFactory, commandStack, translate) {
         hidden: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined'
+              .useTemplate === 'undefined' ||
+            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
           );
         },
       })
@@ -143,7 +160,8 @@ export default function (element, bpmnFactory, commandStack, translate) {
         hidden: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined'
+              .useTemplate === 'undefined' ||
+            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
           );
         },
       })
@@ -165,7 +183,8 @@ export default function (element, bpmnFactory, commandStack, translate) {
         show: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate !== 'undefined'
+              .useTemplate !== 'undefined' &&
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate
           );
         },
       })
@@ -187,7 +206,8 @@ export default function (element, bpmnFactory, commandStack, translate) {
         show: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined'
+              .useTemplate === 'undefined' ||
+            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
           );
         },
       })
@@ -209,12 +229,23 @@ export default function (element, bpmnFactory, commandStack, translate) {
         show: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined'
+              .useTemplate === 'undefined' ||
+            !helper.getExtensionProperty(element, 'useTemplate').useTemplate
           );
         },
       })
     );
+  }
+  return serviceTaskProps;
+}
 
+export function miscAttributes(element, bpmnFactory, commandStack, translate) {
+  const serviceTaskProps = [];
+
+  if (
+    is(element, 'bpmn:ServiceTask') &&
+    getBusinessObject(element).type === 'sendMail'
+  ) {
     // attachement
     serviceTaskProps.push(
       entryFactory.textBox(translate, {
@@ -239,7 +270,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
         label: translate('Immediately'),
         modelProperty: 'immediately',
         set: function (element, values) {
-          var props = { immediately: values.immediately };
+          var props = { immediately: values.immediately || false };
           return helper.setExtensionProperty(element, bpmnFactory, props);
         },
         get: function (element) {

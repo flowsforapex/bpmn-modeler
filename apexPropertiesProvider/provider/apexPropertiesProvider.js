@@ -19,9 +19,13 @@ import {
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
-import generateScriptTaskEntries from './parts/scriptTaskProps.js';
+import scriptTaskExecutePlsql from './parts/scriptTask/executePlsql.js';
 import serviceTaskExecutePlsql from './parts/serviceTask/executePlsql';
-import sendMail from './parts/serviceTask/sendMail';
+import {
+  baseAttributes,
+  contentAttributes,
+  miscAttributes
+} from './parts/serviceTask/sendMail';
 import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
 import externalUrlProps from './parts/userTask/externalUrlProps';
@@ -76,30 +80,39 @@ function createApexTabGroups(
   translate
 ) {
   var apexPageGroup = {
-    id: 'apex-page-calls',
+    id: 'apex-call-page',
     label: translate('Call APEX Page'),
     entries: apexPageProps(element, bpmnFactory, elementRegistry, translate),
   };
-  var apexServiceGroup = {
-    id: 'apex-service-group',
-    label: translate('Send Mail'),
-    entries: sendMail(element, bpmnFactory, commandStack, translate),
+  var apexServiceGroup1 = {
+    id: 'apex-mail-base',
+    label: translate('Address settings'),
+    entries: baseAttributes(element, bpmnFactory, commandStack, translate),
+  };
+  var apexServiceGroup2 = {
+    id: 'apex-mail-content',
+    label: translate('Email content'),
+    entries: contentAttributes(element, bpmnFactory, commandStack, translate),
+  };
+  var apexServiceGroup3 = {
+    id: 'apex-mail-misc',
+    label: translate('Misc'),
+    entries: miscAttributes(element, bpmnFactory, commandStack, translate),
   };
 
-  return [apexPageGroup, apexServiceGroup];
+  return [
+    apexPageGroup,
+    apexServiceGroup1,
+    apexServiceGroup2,
+    apexServiceGroup3,
+  ];
 }
 
-function createPLSQLTabGroup(
-  element,
-  bpmnFactory,
-  commandStack,
-  elementRegistry,
-  translate
-) {
+function createPLSQLTabGroup(element, bpmnFactory, commandStack, translate) {
   var apexScriptGroup = {
-    id: 'apex-script-group',
-    label: translate('Script Task'),
-    entries: generateScriptTaskEntries(
+    id: 'apex-script-plsql',
+    label: translate('Execute PL/SQL'),
+    entries: scriptTaskExecutePlsql(
       element,
       bpmnFactory,
       commandStack,
@@ -107,7 +120,7 @@ function createPLSQLTabGroup(
     ),
   };
   var apexServiceGroup = {
-    id: 'apex-service-group',
+    id: 'apex-service-plsql',
     label: translate('Execute PL/SQL'),
     entries: serviceTaskExecutePlsql(
       element,
@@ -226,7 +239,6 @@ export default function apexPropertiesProvider(
         element,
         bpmnFactory,
         commandStack,
-        elementRegistry,
         translate
       ),
     };
