@@ -203,7 +203,7 @@ export default function apexPropertiesProvider(
   PropertiesActivator.call(this, eventBus);
 
   eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry);
+    removeInvalidExtensionsElements(bpmnFactory, elementRegistry);
   });
 
   this.getTabs = function (element) {

@@ -18,6 +18,8 @@ var subHelper = new subPropertiesHelper(
   'apex:PageItems'
 );
 
+var forbiddenTypes = ['externalUrl', 'unifiedTaskList'];
+
 // element identifier for current element
 var elementIdentifier;
 
@@ -128,11 +130,13 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     );
   };
 
-  // Only return an entry, if the currently selected element is a UserTask.
+  var { type } = getBusinessObject(element);
+
   if (
     is(element, 'bpmn:UserTask') &&
-    (typeof getBusinessObject(element).type === 'undefined' ||
-      getBusinessObject(element).type === 'apexPage')
+    (typeof type === 'undefined' ||
+      type === 'apexPage' ||
+      !forbiddenTypes.includes(type))
   ) {
     if (elementIdentifier !== element) {
       elementIdentifier = element;

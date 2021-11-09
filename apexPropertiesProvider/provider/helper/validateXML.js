@@ -4,12 +4,8 @@ var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/Exten
 import UpdateBusinessObjectListHandler from 'bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectListHandler';
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
-export function removeInvalidExtensionsElements(
-  bpmnFactory,
-  canvas,
-  elementRegistry
-) {
-  var elements = canvas.getRootElement().children;
+export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
+  var elements = Object.values(elementRegistry._elements).map(e => e.element);
 
   elements.forEach((element) => {
     var filter = [];

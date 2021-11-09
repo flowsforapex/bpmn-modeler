@@ -8,15 +8,20 @@ var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommand
 
 var helper = new propertiesHelper('apex:ExecutePlsql');
 
+var forbiddenTypes = ['sendMail'];
+
 export default function (element, bpmnFactory, commandStack, translate) {
   const serviceTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const serviceTaskProps = [];
 
+  var { type } = getBusinessObject(element);
+
   if (
     is(element, 'bpmn:ServiceTask') &&
-    (typeof getBusinessObject(element).type === 'undefined' ||
-      getBusinessObject(element).type === 'executePlsql')
+    (typeof type === 'undefined' ||
+      type === 'executePlsql' ||
+      !forbiddenTypes.includes(type))
   ) {
     // if 'yes' then add 'autoBinds'
     serviceTaskProps.push(
