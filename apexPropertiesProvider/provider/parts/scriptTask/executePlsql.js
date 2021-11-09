@@ -1,5 +1,5 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { isOptionSelected } from '../../../../lib/formsHelper';
 import { getContainer, openEditor } from '../../customElements/monacoEditor';
 import propertiesHelper from '../../extensionElements/propertiesHelper';
@@ -13,7 +13,11 @@ export default function (element, bpmnFactory, commandStack, translate) {
   const engineNo = 0;
   const scriptTaskProps = [];
 
-  if (is(element, 'bpmn:ScriptTask')) {
+  if (
+    is(element, 'bpmn:ScriptTask') &&
+    (typeof getBusinessObject(element).type === 'undefined' ||
+      getBusinessObject(element).type === 'executePlsql')
+  ) {
     // if 'yes' then add 'autoBinds'
     scriptTaskProps.push(
       entryFactory.selectBox(translate, {

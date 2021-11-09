@@ -22,6 +22,7 @@ export default function (
       { name: translate('Execute PL/SQL'), value: 'executePlsql' },
       { name: translate('Send Mail'), value: 'sendMail' },
     ],
+    scriptTask: 'executePlsql',
   };
 
   var setProperty = function () {
@@ -54,7 +55,9 @@ export default function (
     };
   };
 
-  // Only return an entry, if the currently selected element is a UserTask.
+  var command;
+
+  // type selection for User Tasks
   if (is(element, 'bpmn:UserTask')) {
     group.entries.push(
       entryFactory.selectBox(translate, {
@@ -66,7 +69,7 @@ export default function (
         set: setProperty(),
       })
     );
-    // Only return an entry, if the currently selected element is a UserTask.
+    // type selection for Service Tasks
   } else if (is(element, 'bpmn:ServiceTask')) {
     group.entries.push(
       entryFactory.selectBox(translate, {
@@ -78,10 +81,21 @@ export default function (
         set: setProperty(),
       })
     );
-  }
-  // remove type attribute
-  else {
-    var command = cmdHelper.updateBusinessObject(
+    // static type for Script Tasks
+  } else if (is(element, 'bpmn:ScriptTask')) {
+    command = cmdHelper.updateBusinessObject(
+      element,
+      getBusinessObject(element),
+      {
+        type: selectOptions.scriptTask,
+      }
+    );
+    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+      command.context
+    );
+    // remove type attribute
+  } else {
+    command = cmdHelper.updateBusinessObject(
       element,
       getBusinessObject(element),
       {
