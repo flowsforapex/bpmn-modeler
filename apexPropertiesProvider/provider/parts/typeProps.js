@@ -12,6 +12,18 @@ export default function (
   element,
   translate
 ) {
+  var selectOptions = {
+    userTask: [
+      { name: translate('APEX Page'), value: 'apexPage' },
+      { name: translate('External URL'), value: 'externalUrl' },
+      { name: translate('Unified Task List'), value: 'unifiedTaskList' },
+    ],
+    serviceTask: [
+      { name: translate('Execute PL/SQL'), value: 'executePlsql' },
+      { name: translate('Send Mail'), value: 'sendMail' },
+    ],
+  };
+
   var setProperty = function () {
     return function (element, values) {
       var bo = getBusinessObject(element);
@@ -19,12 +31,15 @@ export default function (
     };
   };
 
-  var getType = function (defaultValue) {
+  var getProperty = function (elementType, defaultValue) {
     return function (element) {
       var bo = getBusinessObject(element);
       var type = bo.get('type');
 
-      if (typeof type === 'undefined') {
+      if (
+        typeof type === 'undefined' ||
+        !selectOptions[elementType].some(v => v.value === type)
+      ) {
         var command = cmdHelper.updateBusinessObject(element, bo, {
           type: defaultValue,
         });
@@ -46,12 +61,8 @@ export default function (
         id: 'userTaskType',
         label: translate('User Task Type'),
         modelProperty: 'type',
-        selectOptions: [
-          { name: translate('APEX Page'), value: 'apexPage' },
-          { name: translate('External URL'), value: 'externalUrl' },
-          { name: translate('Unified Task List'), value: 'unifiedTaskList' },
-        ],
-        get: getType('apexPage'),
+        selectOptions: selectOptions.userTask,
+        get: getProperty('userTask', 'apexPage'),
         set: setProperty(),
       })
     );
@@ -62,13 +73,23 @@ export default function (
         id: 'serviceTaskType',
         label: translate('Service Task Type'),
         modelProperty: 'type',
-        selectOptions: [
-          { name: translate('Execute PL/SQL'), value: 'executePlsql' },
-          { name: translate('Send Mail'), value: 'sendMail' },
-        ],
-        get: getType('executePlsql'),
+        selectOptions: selectOptions.serviceTask,
+        get: getProperty('serviceTask', 'executePlsql'),
         set: setProperty(),
       })
+    );
+  }
+  // remove type attribute
+  else {
+    var command = cmdHelper.updateBusinessObject(
+      element,
+      getBusinessObject(element),
+      {
+        type: undefined,
+      }
+    );
+    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+      command.context
     );
   }
 }
