@@ -446,7 +446,7 @@ export function miscAttributes(element, bpmnFactory, commandStack, translate) {
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('attachement', getAttachement, saveAttachement);
+          openEditor('attachement', getAttachement, saveAttachement, 'sql');
         },
       })
     );

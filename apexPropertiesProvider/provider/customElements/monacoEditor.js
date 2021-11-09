@@ -43,7 +43,7 @@ export function openEditor(id, getText, saveText, language) {
     domQuery(`#modalDialog_${id} #editorContainer`),
     {
       value: [getText()].join('\n'),
-      language: language || 'pgsql',
+      language: (language === 'plsql' ? 'sql' : language) || 'sql',
       minimap: { enabled: 'false' },
       automaticLayout: true,
       theme: theme,
@@ -66,16 +66,16 @@ export function openEditor(id, getText, saveText, language) {
     else monacoEditor.trigger('keyboard', 'closeFindWidget');
   };
 
-  document.getElementById('errorText').innerText = '';
+  domQuery(`#modalDialog_${id} #errorText`).innerText = '';
 
   parseBtn.onclick = function () {
     apex.server.process(
       'PARSE_SQL',
-      { x01: monacoEditor.getValue() },
+      { x01: monacoEditor.getValue(), x02: language },
       {
         dataType: 'text',
         success: function (data) {
-          document.getElementById('errorText').innerText = data.replace(
+          domQuery(`#modalDialog_${id} #errorText`).innerText = data.replace(
             /\n/g,
             ' '
           );
