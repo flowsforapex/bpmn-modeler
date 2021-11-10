@@ -87,7 +87,7 @@ function createApexTabGroups(
   var apexServiceGroup1 = {
     id: 'apex-mail-base',
     label: translate('Address settings'),
-    entries: baseAttributes(element, bpmnFactory, commandStack, translate),
+    entries: baseAttributes(element, bpmnFactory, translate),
   };
   var apexServiceGroup2 = {
     id: 'apex-mail-content',

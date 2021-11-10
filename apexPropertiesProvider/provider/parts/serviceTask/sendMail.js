@@ -31,10 +31,10 @@ var templatesLoading;
 function enableAndResetValue(element, field) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
+  var property;
   if (fieldNode) {
     // get property value
-    var property =
-      helper.getExtensionProperty(element, field.id)[field.id] || null;
+    property = helper.getExtensionProperty(element, field.id)[field.id];
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -79,7 +79,7 @@ function refreshTemplates(element, applicationId) {
   });
 }
 
-export function baseAttributes(element, bpmnFactory, commandStack, translate) {
+export function baseAttributes(element, bpmnFactory, translate) {
   const serviceTaskProps = [];
 
   if (
@@ -312,7 +312,7 @@ export function contentAttributes(
         ).templateId;
         var visible =
           typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate !== 'undefined' ||
+            .useTemplate !== 'undefined' &&
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
             'true';
         if (visible && !value) {
