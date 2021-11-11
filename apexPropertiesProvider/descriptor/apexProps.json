@@ -225,7 +225,7 @@
       "name": "OracleDate",
       "properties": [
         {
-          "name": "dateString",
+          "name": "date",
           "type": "String"
         },
         {
@@ -238,7 +238,7 @@
       "name": "OracleDuration",
       "properties": [
         {
-          "name": "intervalString",
+          "name": "interval",
           "type": "String"
         }
       ]
@@ -247,11 +247,11 @@
       "name": "OracleCycle",
       "properties": [
         {
-          "name": "startIntervalString",
+          "name": "startInterval",
           "type": "String"
         },
         {
-          "name": "gapIntervalString",
+          "name": "loopInterval",
           "type": "String"
         },
         {
