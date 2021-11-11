@@ -16,13 +16,13 @@ export default function (
     userTask: [
       { name: translate('APEX Page'), value: 'apexPage' },
       { name: translate('External URL'), value: 'externalUrl' },
-      { name: translate('Unified Task List'), value: 'unifiedTaskList' },
+      // { name: translate('Unified Task List'), value: 'unifiedTaskList' },
     ],
     serviceTask: [
       { name: translate('Execute PL/SQL'), value: 'executePlsql' },
       { name: translate('Send Mail'), value: 'sendMail' },
     ],
-    scriptTask: 'executePlsql',
+    scriptTask: [{ name: translate('Execute PL/SQL'), value: 'executePlsql' }],
   };
 
   var setProperty = function () {
@@ -81,17 +81,17 @@ export default function (
         set: setProperty(),
       })
     );
-    // static type for Script Tasks
+    // type selection for Script Tasks
   } else if (is(element, 'bpmn:ScriptTask')) {
-    command = cmdHelper.updateBusinessObject(
-      element,
-      getBusinessObject(element),
-      {
-        type: selectOptions.scriptTask,
-      }
-    );
-    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
-      command.context
+    group.entries.push(
+      entryFactory.selectBox(translate, {
+        id: 'scriptTaskType',
+        label: translate('Script Task Type'),
+        modelProperty: 'type',
+        selectOptions: selectOptions.scriptTask,
+        get: getProperty('scriptTask', 'executePlsql'),
+        set: setProperty(),
+      })
     );
     // remove type attribute
   } else {
