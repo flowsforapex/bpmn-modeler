@@ -99,17 +99,6 @@ export function baseAttributes(element, bpmnFactory, translate) {
         get: function (element) {
           return helper.getExtensionProperty(element, 'emailFrom');
         },
-        validate: function (element, node) {
-          var value = helper.getExtensionProperty(
-            element,
-            'emailFrom'
-          ).emailFrom;
-          if (!value) {
-            return {
-              emailFrom: translate('Must provide a value'),
-            };
-          }
-        },
       })
     );
 
@@ -125,14 +114,6 @@ export function baseAttributes(element, bpmnFactory, translate) {
         },
         get: function (element) {
           return helper.getExtensionProperty(element, 'emailTo');
-        },
-        validate: function (element, node) {
-          var value = helper.getExtensionProperty(element, 'emailTo').emailTo;
-          if (!value) {
-            return {
-              emailTo: translate('Must provide a value'),
-            };
-          }
         },
       })
     );
@@ -257,22 +238,6 @@ export function contentAttributes(
             'false'
         );
       },
-      validate: function (element, node) {
-        var value = helper.getExtensionProperty(
-          element,
-          'applicationId'
-        ).applicationId;
-        var visible =
-          typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate !== 'undefined' &&
-          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-            'true';
-        if (visible && !value) {
-          return {
-            applicationId: translate('Must provide a value'),
-          };
-        }
-      },
     });
 
     serviceTaskProps.push(applicationSelectBox);
@@ -304,22 +269,6 @@ export function contentAttributes(
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
             'false'
         );
-      },
-      validate: function (element, node) {
-        var value = helper.getExtensionProperty(
-          element,
-          'templateId'
-        ).templateId;
-        var visible =
-          typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate !== 'undefined' &&
-          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-            'true';
-        if (visible && !value) {
-          return {
-            templateId: translate('Must provide a value'),
-          };
-        }
       },
     });
 
@@ -424,19 +373,6 @@ export function contentAttributes(
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
               'false'
           );
-        },
-        validate: function (element, node) {
-          var value = helper.getExtensionProperty(element, 'bodyText').bodyText;
-          var visible =
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
-            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false';
-          if (visible && !value) {
-            return {
-              bodyText: translate('Must provide a value'),
-            };
-          }
         },
       })
     );
