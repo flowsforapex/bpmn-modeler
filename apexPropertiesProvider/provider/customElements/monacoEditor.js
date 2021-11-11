@@ -68,24 +68,28 @@ export function openEditor(id, getText, saveText, language) {
 
   domQuery(`#modalDialog_${id} #errorText`).innerText = '';
 
-  parseBtn.onclick = function () {
-    apex.server.process(
-      'PARSE_SQL',
-      { x01: monacoEditor.getValue(), x02: language },
-      {
-        dataType: 'text',
-        success: function (data) {
-          domQuery(`#modalDialog_${id} #errorText`).innerText = data.replace(
-            /\n/g,
-            ' '
-          );
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.log('error');
-        },
-      }
-    );
-  };
+  if (language === 'plsql' || language === 'sql') {
+    parseBtn.onclick = function () {
+      apex.server.process(
+        'PARSE_SQL',
+        { x01: monacoEditor.getValue(), x02: language },
+        {
+          dataType: 'text',
+          success: function (data) {
+            domQuery(`#modalDialog_${id} #errorText`).innerText = data.replace(
+              /\n/g,
+              ' '
+            );
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('error');
+          },
+        }
+      );
+    };
+  } else {
+    parseBtn.style.display = 'none';
+  }
 
   closeBtn.onclick = function () {
     modal.style.display = 'none';
