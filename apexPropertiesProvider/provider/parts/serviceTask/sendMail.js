@@ -475,42 +475,42 @@ export function miscAttributes(element, bpmnFactory, commandStack, translate) {
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
-    // attachement
+    // attachment
     serviceTaskProps.push(
       entryFactory.textBox(translate, {
-        id: 'attachement',
-        description: translate('SQL query to get attachement'),
-        label: translate('Attachement'),
-        modelProperty: 'attachement',
+        id: 'attachment',
+        description: translate('SQL query to get attachment'),
+        label: translate('Attachment'),
+        modelProperty: 'attachment',
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
-          return helper.getExtensionProperty(element, 'attachement');
+          return helper.getExtensionProperty(element, 'attachment');
         },
       })
     );
 
-    // container for attachement editor
-    serviceTaskProps.push(getContainer('attachement'));
+    // container for attachment editor
+    serviceTaskProps.push(getContainer('attachment'));
 
-    // link to attachement editor
+    // link to attachment editor
     serviceTaskProps.push(
       entryFactory.link(translate, {
-        id: 'attachementEditor',
+        id: 'attachmentEditor',
         buttonLabel: 'Open Editor',
         handleClick: function (element, node, event) {
-          var getAttachement = function () {
-            return helper.getExtensionProperty(element, 'attachement')
-              .attachement;
+          var getAttachment = function () {
+            return helper.getExtensionProperty(element, 'attachment')
+              .attachment;
           };
-          var saveAttachement = function (text) {
+          var saveAttachment = function (text) {
             var commands = helper.setExtensionProperty(element, bpmnFactory, {
-              attachement: text,
+              attachment: text,
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('attachement', getAttachement, saveAttachement, 'sql');
+          openEditor('attachment', getAttachment, saveAttachment, 'sql');
         },
       })
     );

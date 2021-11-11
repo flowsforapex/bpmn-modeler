@@ -150,7 +150,7 @@
           "type": "String"
         },
         {
-          "name": "attachement",
+          "name": "attachment",
           "type": "String"
         },
         {
