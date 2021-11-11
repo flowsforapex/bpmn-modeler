@@ -208,21 +208,15 @@
       ],
       "properties": [
         {
-          "name": "oracleDate",
-          "type": "OracleDate"
-        },
-        {
-          "name": "oracleCycle",
-          "type": "OracleCycle"
-        },
-        {
-          "name": "oracleDuration",
-          "type": "OracleDuration"
+          "name": "timerType",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
     {
       "name": "OracleDate",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "date",
@@ -236,6 +230,7 @@
     },
     {
       "name": "OracleDuration",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "interval",
@@ -245,6 +240,7 @@
     },
     {
       "name": "OracleCycle",
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "startInterval",

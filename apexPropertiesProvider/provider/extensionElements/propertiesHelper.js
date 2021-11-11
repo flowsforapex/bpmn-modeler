@@ -11,9 +11,9 @@ export default class propertiesHelper {
 
   /* setter / getter */
 
-  setExtensionProperty(element, factory, values) {
+  setExtensionProperty(element, factory, values, parent) {
     var commands = [];
-    var bo = getBusinessObject(element);
+    var bo = parent || getBusinessObject(element);
     var extensions = bo.extensionElements;
 
     if (!extensions) {
@@ -24,7 +24,9 @@ export default class propertiesHelper {
         factory
       );
       commands.push(
-        cmdHelper.updateProperties(element, { extensionElements: extensions })
+        cmdHelper.updateBusinessObject(element, bo, {
+          extensionElements: extensions,
+        })
       );
     }
 
@@ -49,8 +51,8 @@ export default class propertiesHelper {
     return commands;
   }
 
-  getExtensionProperty(element, property) {
-    var bo = getBusinessObject(element);
+  getExtensionProperty(element, property, parent) {
+    var bo = parent || getBusinessObject(element);
 
     const [extElement] = extensionElementsHelper.getExtensionElements(
       bo,

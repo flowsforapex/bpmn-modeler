@@ -12,7 +12,9 @@ export function removeInvalidExtensionsElements(
   var elements = canvas.getRootElement().children;
 
   elements.forEach((element) => {
+    var businessObject = getBusinessObject(element);
     var filter = [];
+    var parent;
 
     if (
       is(element, 'bpmn:ExclusiveGateway') ||
@@ -23,9 +25,8 @@ export function removeInvalidExtensionsElements(
       // opening gateway
       if (element.incoming.length === 1 && element.outgoing.length > 1) {
         filter.push('apex:BeforeSplit');
-      }
-      // closing gateway
-      else if (element.incoming.length > 1 && element.outgoing.length === 1) {
+        // closing gateway
+      } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
         filter.push('apex:AfterMerge');
         // opening & closing gateway
       } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
@@ -40,22 +41,36 @@ export function removeInvalidExtensionsElements(
       is(element, 'bpmn:EndEvent')
     ) {
       // not timer event
-      if (getBusinessObject(element).eventDefinitions === undefined) {
+      if (typeof businessObject.eventDefinitions === 'undefined') {
         filter.push('apex:OnEvent');
+      } else if (
+        businessObject.eventDefinitions[0].timerType === 'oracleDate'
+      ) {
+        filter.push('apex:OracleDate');
+        parent = businessObject.eventDefinitions[0];
+      } else if (
+        businessObject.eventDefinitions[0].timerType === 'oracleDuration'
+      ) {
+        filter.push('apex:OracleDuration');
+        parent = businessObject.eventDefinitions[0];
+      } else if (
+        businessObject.eventDefinitions[0].timerType === 'oracleCycle'
+      ) {
+        filter.push('apex:OracleCycle');
+        parent = businessObject.eventDefinitions[0];
       }
     } else if (is(element, 'bpmn:UserTask')) {
-      // TODO filter out ext Element depending on selected subtype (see typeProps)
       if (
-        typeof getBusinessObject(element).type === 'undefined' ||
-        getBusinessObject(element).type === 'apexPage'
+        typeof businessObject.type === 'undefined' ||
+        businessObject.type === 'apexPage'
       ) {
         filter.push('apex:ApexPage');
-      } else if (getBusinessObject(element).type === 'externalUrl') {
+      } else if (businessObject.type === 'externalUrl') {
         filter.push('apex:ExternalUrl');
       }
     }
 
-    var bo = getBusinessObject(element);
+    var bo = parent || businessObject;
     var toRemove =
       bo.extensionElements &&
       bo.extensionElements.values.filter(e => !filter.includes(e.$type));

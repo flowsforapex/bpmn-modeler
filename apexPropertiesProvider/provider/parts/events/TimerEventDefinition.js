@@ -2,6 +2,13 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
+const {
+  default: propertiesHelper,
+} = require('../../extensionElements/propertiesHelper');
+
+var dateHelper = new propertiesHelper('apex:OracleDate');
+var durationHelper = new propertiesHelper('apex:OracleDuration');
+var cycleHelper = new propertiesHelper('apex:OracleCycle');
 
 /**
  * Get the timer definition type for a given timer event definition.
@@ -19,12 +26,8 @@ function getTimerDefinitionType(timer) {
       type = 'timeCycle';
     } else if (typeof timer.get('timeDuration') !== 'undefined') {
       type = 'timeDuration';
-    } else if (typeof timer.get('oracleDate') !== 'undefined') {
-      type = 'oracleDate';
-    } else if (typeof timer.get('oracleDuration') !== 'undefined') {
-      type = 'oracleDuration';
-    } else if (typeof timer.get('oracleCycle') !== 'undefined') {
-      type = 'oracleCycle';
+    } else if (typeof timer.get('timerType') !== 'undefined') {
+      type = timer.get('timerType');
     }
   }
   return type;
@@ -65,38 +68,6 @@ function createFormalExpression(parent, body, bpmnFactory) {
     parent,
     bpmnFactory
   );
-}
-
-function getTimerDefinitionProperty(
-  timerEventDefinition,
-  element,
-  node,
-  property
-) {
-  var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
-  var type = getTimerDefinitionType(timerDefinition);
-  var definition = type && timerDefinition.get(type);
-  var value = definition && definition.get(property);
-
-  return {
-    [property]: value,
-  };
-}
-
-function setTimerDefinitionProperty(
-  timerEventDefinition,
-  element,
-  node,
-  values
-) {
-  var timerDefinition = getTimerDefinition(timerEventDefinition, element, node);
-  var type = getTimerDefinitionType(timerDefinition);
-  var definition = type && timerDefinition.get(type);
-
-  if (definition) {
-    return cmdHelper.updateBusinessObject(element, definition, values);
-  }
-  return null;
 }
 
 function TimerEventDefinition(
@@ -158,9 +129,7 @@ function TimerEventDefinition(
           timeDuration: undefined,
           timeDate: undefined,
           timeCycle: undefined,
-          oracleDate: undefined,
-          oracleDuration: undefined,
-          oracleCycle: undefined,
+          timerType: undefined,
         };
 
         var timerDefinition = getTimerDefinition(
@@ -181,53 +150,28 @@ function TimerEventDefinition(
           var oldType = getTimerDefinitionType(timerDefinition);
 
           var value;
-          if (oldType) {
+          if (['timeDate', 'timeDuration', 'timeCycle'].includes(oldType)) {
             var definition = timerDefinition.get(oldType);
             value = definition.get('body');
           }
 
-          switch (newType) {
-            case 'oracleDate': {
-              props[newType] = elementHelper.createElement(
-                'apex:OracleDate',
-                { date: '', formatMask: '' },
-                timerDefinition,
-                bpmnFactory
-              );
-              break;
-            }
-            case 'oracleDuration': {
-              props[newType] = elementHelper.createElement(
-                'apex:OracleDuration',
-                { interval: '' },
-                timerDefinition,
-                bpmnFactory
-              );
-              break;
-            }
-            case 'oracleCycle': {
-              props[newType] = elementHelper.createElement(
-                'apex:OracleCycle',
-                {
-                  startInterval: '',
-                  loopInterval: '',
-                  repitition: '',
-                },
-                timerDefinition,
-                bpmnFactory
-              );
-              break;
-            }
-            default:
-              props[newType] = createFormalExpression(
-                timerDefinition,
-                value,
-                bpmnFactory
-              );
+          if (
+            ['oracleDate', 'oracleDuration', 'oracleCycle'].includes(newType)
+          ) {
+            props.timerType = newType;
+          } else {
+            props[newType] = createFormalExpression(
+              timerDefinition,
+              value,
+              bpmnFactory
+            );
           }
+          return cmdHelper.updateBusinessObject(
+            element,
+            timerDefinition,
+            props
+          );
         }
-
-        return cmdHelper.updateBusinessObject(element, timerDefinition, props);
       },
 
       hidden: function (element, node) {
@@ -282,14 +226,16 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
 
-        if (definition) {
-          var value = definition.get('body');
-          if (!value) {
-            return {
-              timerDefinition: translate('Must provide a value'),
-            };
+        if (['timeDate', 'timeDuration', 'timeCycle'].includes(type)) {
+          var definition = type && timerDefinition.get(type);
+          if (definition) {
+            var value = definition.get('body');
+            if (!value) {
+              return {
+                timerDefinition: translate('Must provide a value'),
+              };
+            }
           }
         }
       },
@@ -302,9 +248,7 @@ function TimerEventDefinition(
         );
         var type = getTimerDefinitionType(timerDefinition);
 
-        return (
-          type !== 'timeDate' && type !== 'timeDuration' && type !== 'timeCycle'
-        );
+        return !['timeDate', 'timeDuration', 'timeCycle'].includes(type);
       },
     })
   );
@@ -318,21 +262,20 @@ function TimerEventDefinition(
       label: translate('Date String'),
       modelProperty: 'date',
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return dateHelper.getExtensionProperty(
           element,
-          node,
-          'date'
+          'date',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return dateHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -354,9 +297,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = dateHelper.getExtensionProperty(
+          element,
+          'date',
+          timerEventDefinition
+        ).date;
 
-        if (type === 'oracleDate' && !definition.get('date')) {
+        if (type === 'oracleDate' && !value) {
           return {
             date: translate('Must provide a value'),
           };
@@ -373,21 +320,20 @@ function TimerEventDefinition(
       modelProperty: 'formatMask',
       description: translate('e.g. MM-DD-YYYY'),
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return dateHelper.getExtensionProperty(
           element,
-          node,
-          'formatMask'
+          'formatMask',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return dateHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -409,9 +355,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = dateHelper.getExtensionProperty(
+          element,
+          'formatMask',
+          timerEventDefinition
+        ).formatMask;
 
-        if (type === 'oracleDate' && !definition.get('formatMask')) {
+        if (type === 'oracleDate' && !value) {
           return {
             formatMask: translate('Must provide a value'),
           };
@@ -428,23 +378,24 @@ function TimerEventDefinition(
       id: 'interval',
       label: translate('Time until the timer fires'),
       modelProperty: 'interval',
-      description: 'Interval in format DAY TO SECOND (D HH:MM:SS)',
+      description: translate(
+        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+      ),
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return durationHelper.getExtensionProperty(
           element,
-          node,
-          'interval'
+          'interval',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return durationHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -466,9 +417,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = durationHelper.getExtensionProperty(
+          element,
+          'interval',
+          timerEventDefinition
+        ).interval;
 
-        if (type === 'oracleDuration' && !definition.get('interval')) {
+        if (type === 'oracleDuration' && !value) {
           return {
             interval: translate('Must provide a value'),
           };
@@ -485,23 +440,24 @@ function TimerEventDefinition(
       id: 'startInterval',
       label: translate('Time until the timer fires first'),
       modelProperty: 'startInterval',
-      description: 'Interval in format DAY TO SECOND (D HH:MM:SS)',
+      description: translate(
+        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+      ),
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return cycleHelper.getExtensionProperty(
           element,
-          node,
-          'startInterval'
+          'startInterval',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return cycleHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -523,9 +479,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = cycleHelper.getExtensionProperty(
+          element,
+          'startInterval',
+          timerEventDefinition
+        ).startInterval;
 
-        if (type === 'oracleCycle' && !definition.get('startInterval')) {
+        if (type === 'oracleCycle' && !value) {
           return {
             startInterval: translate('Must provide a value'),
           };
@@ -540,23 +500,24 @@ function TimerEventDefinition(
       id: 'loopInterval',
       label: translate('Time until timer fires again'),
       modelProperty: 'loopInterval',
-      description: 'Interval in format DAY TO SECOND (D HH:MM:SS)',
+      description: translate(
+        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+      ),
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return cycleHelper.getExtensionProperty(
           element,
-          node,
-          'loopInterval'
+          'loopInterval',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return cycleHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -578,9 +539,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = cycleHelper.getExtensionProperty(
+          element,
+          'loopInterval',
+          timerEventDefinition
+        ).loopInterval;
 
-        if (type === 'oracleCycle' && !definition.get('loopInterval')) {
+        if (type === 'oracleCycle' && !value) {
           return {
             loopInterval: translate('Must provide a value'),
           };
@@ -597,21 +562,20 @@ function TimerEventDefinition(
       modelProperty: 'repitition',
       description: 'Number of executions',
 
-      get: function (element, node) {
-        return getTimerDefinitionProperty(
-          timerEventDefinition,
+      get: function (element) {
+        return cycleHelper.getExtensionProperty(
           element,
-          node,
-          'repitition'
+          'repitition',
+          timerEventDefinition
         );
       },
 
-      set: function (element, values, node) {
-        return setTimerDefinitionProperty(
-          timerEventDefinition,
+      set: function (element, values) {
+        return cycleHelper.setExtensionProperty(
           element,
-          node,
-          values
+          bpmnFactory,
+          values,
+          timerEventDefinition
         );
       },
 
@@ -633,9 +597,13 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var definition = type && timerDefinition.get(type);
+        var value = cycleHelper.getExtensionProperty(
+          element,
+          'repitition',
+          timerEventDefinition
+        ).repitition;
 
-        if (type === 'oracleCycle' && !definition.get('repitition')) {
+        if (type === 'oracleCycle' && !value) {
           return {
             repitition: translate('Must provide a value'),
           };
