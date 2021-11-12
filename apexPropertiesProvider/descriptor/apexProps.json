@@ -247,11 +247,11 @@
           "type": "String"
         },
         {
-          "name": "loopInterval",
+          "name": "repeatInterval",
           "type": "String"
         },
         {
-          "name": "repitition",
+          "name": "maxRepeats",
           "type": "String"
         }
       ]

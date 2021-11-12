@@ -497,9 +497,9 @@ function TimerEventDefinition(
   // gap interval
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'loopInterval',
+      id: 'repeatInterval',
       label: translate('Time until timer fires again'),
-      modelProperty: 'loopInterval',
+      modelProperty: 'repeatInterval',
       description: translate(
         'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
       ),
@@ -507,7 +507,7 @@ function TimerEventDefinition(
       get: function (element) {
         return cycleHelper.getExtensionProperty(
           element,
-          'loopInterval',
+          'repeatInterval',
           timerEventDefinition
         );
       },
@@ -541,13 +541,13 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
         var value = cycleHelper.getExtensionProperty(
           element,
-          'loopInterval',
+          'repeatInterval',
           timerEventDefinition
-        ).loopInterval;
+        ).repeatInterval;
 
         if (type === 'oracleCycle' && !value) {
           return {
-            loopInterval: translate('Must provide a value'),
+            repeatInterval: translate('Must provide a value'),
           };
         }
       },
@@ -557,15 +557,15 @@ function TimerEventDefinition(
   // repitition
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'repitition',
-      label: translate('Repitition'),
-      modelProperty: 'repitition',
-      description: 'Number of executions',
+      id: 'maxRepeats',
+      label: translate('Max Repeats'),
+      modelProperty: 'maxRepeats',
+      description: 'Maximum number of repeats after the first event',
 
       get: function (element) {
         return cycleHelper.getExtensionProperty(
           element,
-          'repitition',
+          'maxRepeats',
           timerEventDefinition
         );
       },
@@ -599,13 +599,13 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
         var value = cycleHelper.getExtensionProperty(
           element,
-          'repitition',
+          'maxRepeats',
           timerEventDefinition
-        ).repitition;
+        ).maxRepeats;
 
         if (type === 'oracleCycle' && !value) {
           return {
-            repitition: translate('Must provide a value'),
+            maxRepeats: translate('Must provide a value'),
           };
         }
       },
