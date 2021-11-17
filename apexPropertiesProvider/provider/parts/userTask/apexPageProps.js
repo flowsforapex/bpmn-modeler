@@ -330,7 +330,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       })
     );
 
-    // quick pick
+    // quick pick process_id
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-process-id',
@@ -346,7 +346,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       })
     );
 
-    // quick pick
+    // quick pick subflow_id
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-subflow-id',
@@ -362,7 +362,23 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       })
     );
 
-    // quick pick
+    // quick pick step_key
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-step-key',
+        buttonLabel: 'step_key',
+        handleClick: function (element, node, event) {
+          enterQuickPick(node, {
+            itemValue: '&F4A$STEP_KEY.',
+          });
+        },
+        showLink: function (element, node) {
+          return subHelper.isSelected(pageItemsElement, element, node);
+        },
+      })
+    );
+
+    // quick pick business_ref
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-business-ref',

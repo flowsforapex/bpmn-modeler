@@ -636,9 +636,10 @@ button.dialog.fa {
 /* quick picks */
 .bpp-properties-entry[data-entry="quickpick-process-id"],
 .bpp-properties-entry[data-entry="quickpick-subflow-id"],
+.bpp-properties-entry[data-entry="quickpick-step-key"],
 .bpp-properties-entry[data-entry="quickpick-business-ref"] {
   display: inline-block;
-  margin: 0 4px 0 0;
+  margin: 0 12px 0 0;
 }
 .bpp-properties-entry[data-entry="quickpick-business-ref"] {
   margin-bottom: 9px;
