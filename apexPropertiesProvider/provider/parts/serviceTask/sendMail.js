@@ -28,13 +28,10 @@ var templateSelectBox;
 var applicationsLoading;
 var templatesLoading;
 
-function enableAndResetValue(element, field) {
+function enableAndResetValue(element, field, property) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
-  var property;
   if (fieldNode) {
-    // get property value
-    property = helper.getExtensionProperty(element, field.id)[field.id] || null;
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -46,6 +43,7 @@ function enableAndResetValue(element, field) {
 }
 
 function refreshApplications(element) {
+  var property;
   var newApplicationId;
   // loading flag
   applicationsLoading = true;
@@ -54,11 +52,22 @@ function refreshApplications(element) {
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'applicationId').applicationId ||
+      null;
+    // add entry if not contained
+    if (
+      property != null &&
+      !applications.map(e => e.value).includes(property)
+    ) {
+      applications.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
     newApplicationId = enableAndResetValue(
       element,
       applicationSelectBox,
-      false
+      property
     );
     // refresh child item
     refreshTemplates(element, newApplicationId);
@@ -66,6 +75,7 @@ function refreshApplications(element) {
 }
 
 function refreshTemplates(element, applicationId) {
+  var property;
   var newTemplateId;
   // loading flag
   templatesLoading = true;
@@ -74,8 +84,15 @@ function refreshTemplates(element, applicationId) {
     templates = JSON.parse(values);
     // loading flag
     templatesLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'templateId').templateId || null;
+    // add entry if not contained
+    if (property != null && !pages.map(e => e.value).includes(property)) {
+      templates.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newTemplateId = enableAndResetValue(element, templateSelectBox, false);
+    newTemplateId = enableAndResetValue(element, templateSelectBox, property);
   });
 }
 

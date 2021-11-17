@@ -41,21 +41,10 @@ var applicationsLoading;
 var pagesLoading;
 var itemsLoading;
 
-function enableAndResetValue(element, field) {
+function enableAndResetValue(element, field, property) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
-  var property;
   if (fieldNode) {
-    // get property value
-    property =
-      helper.getExtensionProperty(element, field.id)[field.id] ||
-      subHelper.getExtensionSubProperty(
-        pageItemsElement,
-        element,
-        domQuery(`[data-entry="${field.id}"]`),
-        field.id
-      )[field.id] ||
-      null;
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -67,6 +56,7 @@ function enableAndResetValue(element, field) {
 }
 
 function refreshApplications(element) {
+  var property;
   var newApplicationId;
   // loading flag
   applicationsLoading = true;
@@ -75,11 +65,22 @@ function refreshApplications(element) {
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'applicationId').applicationId ||
+      null;
+    // add entry if not contained
+    if (
+      property != null &&
+      !applications.map(e => e.value).includes(property)
+    ) {
+      applications.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
     newApplicationId = enableAndResetValue(
       element,
       applicationSelectBox,
-      false
+      property
     );
     // refresh child item
     refreshPages(element, newApplicationId);
@@ -87,6 +88,7 @@ function refreshApplications(element) {
 }
 
 function refreshPages(element, applicationId) {
+  var property;
   var newPageId;
   // loading flag
   pagesLoading = true;
@@ -95,14 +97,21 @@ function refreshPages(element, applicationId) {
     pages = JSON.parse(values);
     // loading flag
     pagesLoading = false;
+    // get property value
+    property = helper.getExtensionProperty(element, 'pageId').pageId || null;
+    // add entry if not contained
+    if (property != null && !pages.map(e => e.value).includes(property)) {
+      pages.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newPageId = enableAndResetValue(element, pageSelectBox, false);
+    newPageId = enableAndResetValue(element, pageSelectBox, property);
     // refresh child item
     refreshItems(element, applicationId, newPageId);
   });
 }
 
 function refreshItems(element, applicationId, pageId) {
+  var property;
   var newItemName;
   // loading flag
   itemsLoading = true;
@@ -111,8 +120,20 @@ function refreshItems(element, applicationId, pageId) {
     items = JSON.parse(values);
     // loading flag
     itemsLoading = false;
+    // get property value
+    property =
+      subHelper.getExtensionSubProperty(
+        pageItemsElement,
+        element,
+        pageSelectBox,
+        'itemName'
+      ).itemName || null;
+    // add entry if not contained
+    if (property != null && !items.map(e => e.value).includes(property)) {
+      items.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newItemName = enableAndResetValue(element, itemSelectBox, true);
+    newItemName = enableAndResetValue(element, itemSelectBox, property);
   });
 }
 
@@ -252,6 +273,18 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
           'itemValue',
           idx
         );
+      },
+
+      onSelectionChange: function (element, node) {
+        // applicationId
+        var { applicationId } = helper.getExtensionProperty(
+          element,
+          'applicationId'
+        );
+        // pageId
+        var { pageId } = helper.getExtensionProperty(element, 'pageId');
+        // refresh items
+        refreshItems(element, applicationId, pageId);
       },
     });
 
