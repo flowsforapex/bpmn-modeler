@@ -247,7 +247,20 @@ export function procVarExpressionProps(element, commandStack, translate) {
             commands.push(setProperty(element, { varExpression: text }, node));
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('varExpression', getVarExpression, saveVarExpression);
+          var expressionType = getProperty(
+            element,
+            node,
+            'varExpressionType'
+          ).varExpressionType;
+          var language =
+            expressionType === 'sqlQuerySingle' ||
+            expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+          openEditor(
+            'varExpression',
+            getVarExpression,
+            saveVarExpression,
+            language
+          );
         },
         showLink: function (element, node) {
           var expressionType = getProperty(

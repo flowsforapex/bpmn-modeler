@@ -19,8 +19,13 @@ import {
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
-import generateScriptTaskEntries from './parts/scriptTaskProps.js';
-import generateServiceTaskEntries from './parts/serviceTaskProps.js';
+import scriptTaskExecutePlsql from './parts/scriptTask/executePlsql.js';
+import serviceTaskExecutePlsql from './parts/serviceTask/executePlsql';
+import {
+  baseAttributes,
+  contentAttributes,
+  miscAttributes
+} from './parts/serviceTask/sendMail';
 import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
 import externalUrlProps from './parts/userTask/externalUrlProps';
@@ -62,27 +67,26 @@ function createGeneralTabGroups(
   eventProps(detailsGroup, element, bpmnFactory, elementRegistry, translate);
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
-  typeProps(typeGroup, element, translate);
+  typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
 
   return [generalGroup, typeGroup, detailsGroup, documentationGroup];
 }
 
-function createApexTabGroups(
-  element,
-  bpmnFactory,
-  commandStack,
-  elementRegistry,
-  translate
-) {
-  var apexPageGroup = {
-    id: 'apex-page-calls',
-    label: translate('Call APEX Page'),
-    entries: apexPageProps(element, bpmnFactory, elementRegistry, translate),
-  };
+function createApexTabGroups(element, bpmnFactory, elementRegistry, translate) {
+  return [
+    {
+      id: 'apex-call-page',
+      label: translate('Call APEX Page'),
+      entries: apexPageProps(element, bpmnFactory, elementRegistry, translate),
+    },
+  ];
+}
+
+function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
   var apexScriptGroup = {
-    id: 'apex-script-group',
-    label: translate('Script Task'),
-    entries: generateScriptTaskEntries(
+    id: 'apex-script-plsql',
+    label: translate('Execute PL/SQL'),
+    entries: scriptTaskExecutePlsql(
       element,
       bpmnFactory,
       commandStack,
@@ -90,9 +94,9 @@ function createApexTabGroups(
     ),
   };
   var apexServiceGroup = {
-    id: 'apex-service-group',
-    label: translate('Service Task'),
-    entries: generateServiceTaskEntries(
+    id: 'apex-service-plsql',
+    label: translate('Execute PL/SQL'),
+    entries: serviceTaskExecutePlsql(
       element,
       bpmnFactory,
       commandStack,
@@ -100,10 +104,10 @@ function createApexTabGroups(
     ),
   };
 
-  return [apexPageGroup, apexScriptGroup, apexServiceGroup];
+  return [apexScriptGroup, apexServiceGroup];
 }
 
-function createExternalURLTab(element, bpmnFactory, translate) {
+function createExternalURLTabGroups(element, bpmnFactory, translate) {
   return [
     {
       id: 'apex-external-url',
@@ -113,7 +117,27 @@ function createExternalURLTab(element, bpmnFactory, translate) {
   ];
 }
 
-function createVariablesTabGroup(
+function createMailTabGroups(element, bpmnFactory, commandStack, translate) {
+  var apexServiceGroup1 = {
+    id: 'apex-mail-base',
+    label: translate('Address settings'),
+    entries: baseAttributes(element, bpmnFactory, translate),
+  };
+  var apexServiceGroup2 = {
+    id: 'apex-mail-content',
+    label: translate('Email content'),
+    entries: contentAttributes(element, bpmnFactory, commandStack, translate),
+  };
+  var apexServiceGroup3 = {
+    id: 'apex-mail-misc',
+    label: translate('Misc'),
+    entries: miscAttributes(element, bpmnFactory, commandStack, translate),
+  };
+
+  return [apexServiceGroup1, apexServiceGroup2, apexServiceGroup3];
+}
+
+function createVariablesTabGroups(
   element,
   bpmnFactory,
   commandStack,
@@ -173,7 +197,7 @@ export default function apexPropertiesProvider(
   PropertiesActivator.call(this, eventBus);
 
   eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(bpmnFactory, canvas, elementRegistry);
+    removeInvalidExtensionsElements(bpmnFactory, elementRegistry);
   });
 
   this.getTabs = function (element) {
@@ -189,15 +213,24 @@ export default function apexPropertiesProvider(
       ),
     };
 
-    // The 'APEX' tab
     var ApexTab = {
       id: 'apex',
       label: translate('APEX'),
       groups: createApexTabGroups(
         element,
         bpmnFactory,
-        commandStack,
         elementRegistry,
+        translate
+      ),
+    };
+
+    var PlsqlTab = {
+      id: 'plsql',
+      label: translate('PL/SQL'),
+      groups: createPLSQLTabGroups(
+        element,
+        bpmnFactory,
+        commandStack,
         translate
       ),
     };
@@ -205,13 +238,13 @@ export default function apexPropertiesProvider(
     var ExternalUrlTab = {
       id: 'url',
       label: translate('URL'),
-      groups: createExternalURLTab(element, bpmnFactory, translate),
+      groups: createExternalURLTabGroups(element, bpmnFactory, translate),
     };
 
-    var VariablesTab = {
-      id: 'variables',
-      label: translate('Variables'),
-      groups: createVariablesTabGroup(
+    var MailTabGroups = {
+      id: 'mail',
+      label: translate('Mail'),
+      groups: createMailTabGroups(
         element,
         bpmnFactory,
         commandStack,
@@ -219,8 +252,25 @@ export default function apexPropertiesProvider(
       ),
     };
 
-    // Show general + APEX tabs
-    return [generalTab, ApexTab, ExternalUrlTab, VariablesTab];
+    var VariablesTab = {
+      id: 'variables',
+      label: translate('Variables'),
+      groups: createVariablesTabGroups(
+        element,
+        bpmnFactory,
+        commandStack,
+        translate
+      ),
+    };
+
+    return [
+      generalTab,
+      ApexTab,
+      PlsqlTab,
+      ExternalUrlTab,
+      MailTabGroups,
+      VariablesTab,
+    ];
   };
 }
 

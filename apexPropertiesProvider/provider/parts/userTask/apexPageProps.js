@@ -18,6 +18,8 @@ var subHelper = new subPropertiesHelper(
   'apex:PageItems'
 );
 
+var forbiddenTypes = ['externalUrl', 'unifiedTaskList'];
+
 // element identifier for current element
 var elementIdentifier;
 
@@ -42,22 +44,25 @@ var itemsLoading;
 function enableAndResetValue(element, field) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
-  // get property value
-  var property =
-    helper.getExtensionProperty(element, field.id)[field.id] ||
-    subHelper.getExtensionSubProperty(
-      pageItemsElement,
-      element,
-      domQuery(`[data-entry="${field.id}"]`),
-      field.id
-    )[field.id] ||
-    null;
-  // enable select box
-  fieldNode.removeAttribute('disabled');
-  // refresh select box options
-  field.setControlValue(element, null, fieldNode, null, property);
-  // return new selected value
-  return fieldNode.value;
+  if (fieldNode) {
+    // get property value
+    var property =
+      helper.getExtensionProperty(element, field.id)[field.id] ||
+      subHelper.getExtensionSubProperty(
+        pageItemsElement,
+        element,
+        domQuery(`[data-entry="${field.id}"]`),
+        field.id
+      )[field.id] ||
+      null;
+    // enable select box
+    fieldNode.removeAttribute('disabled');
+    // refresh select box options
+    field.setControlValue(element, null, fieldNode, null, property);
+    // return new selected value
+    return fieldNode.value;
+  }
+  return null;
 }
 
 function refreshApplications(element) {
@@ -125,11 +130,13 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     );
   };
 
-  // Only return an entry, if the currently selected element is a UserTask.
+  var { type } = getBusinessObject(element);
+
   if (
     is(element, 'bpmn:UserTask') &&
-    (typeof getBusinessObject(element).type === 'undefined' ||
-      getBusinessObject(element).type === 'apexPage')
+    (typeof type === 'undefined' ||
+      type === 'apexPage' ||
+      !forbiddenTypes.includes(type))
   ) {
     if (elementIdentifier !== element) {
       elementIdentifier = element;

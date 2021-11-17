@@ -24,7 +24,7 @@ export function getContainer(id) {
   };
 }
 
-export function openEditor(id, getText, saveText) {
+export function openEditor(id, getText, saveText, language) {
   var modal = domQuery(`#modalDialog_${id}`);
 
   var undoBtn = domQuery(`#modalDialog_${id} #undoBtn`);
@@ -43,7 +43,7 @@ export function openEditor(id, getText, saveText) {
     domQuery(`#modalDialog_${id} #editorContainer`),
     {
       value: [getText()].join('\n'),
-      language: 'pgsql',
+      language: (language === 'plsql' ? 'sql' : language) || 'sql',
       minimap: { enabled: 'false' },
       automaticLayout: true,
       theme: theme,
@@ -66,26 +66,30 @@ export function openEditor(id, getText, saveText) {
     else monacoEditor.trigger('keyboard', 'closeFindWidget');
   };
 
-  document.getElementById('errorText').innerText = '';
+  domQuery(`#modalDialog_${id} #errorText`).innerText = '';
 
-  parseBtn.onclick = function () {
-    apex.server.process(
-      'PARSE_SQL',
-      { x01: monacoEditor.getValue() },
-      {
-        dataType: 'text',
-        success: function (data) {
-          document.getElementById('errorText').innerText = data.replace(
-            /\n/g,
-            ' '
-          );
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-          console.log('error');
-        },
-      }
-    );
-  };
+  if (language === 'plsql' || language === 'sql') {
+    parseBtn.onclick = function () {
+      apex.server.process(
+        'PARSE_SQL',
+        { x01: monacoEditor.getValue(), x02: language },
+        {
+          dataType: 'text',
+          success: function (data) {
+            domQuery(`#modalDialog_${id} #errorText`).innerText = data.replace(
+              /\n/g,
+              ' '
+            );
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('error');
+          },
+        }
+      );
+    };
+  } else {
+    parseBtn.style.display = 'none';
+  }
 
   closeBtn.onclick = function () {
     modal.style.display = 'none';

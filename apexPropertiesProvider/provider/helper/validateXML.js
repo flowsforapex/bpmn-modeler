@@ -4,18 +4,15 @@ var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/Exten
 import UpdateBusinessObjectListHandler from 'bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectListHandler';
 import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 
-export function removeInvalidExtensionsElements(
-  bpmnFactory,
-  canvas,
-  elementRegistry
-) {
-  var elements = canvas.getRootElement().children;
+export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
+  var elements = Object.values(elementRegistry._elements).map(e => e.element);
 
   elements.forEach((element) => {
     var businessObject = getBusinessObject(element);
     var filter = [];
     var parent;
 
+    // filter gateways
     if (
       is(element, 'bpmn:ExclusiveGateway') ||
       is(element, 'bpmn:ParallelGateway') ||
@@ -33,6 +30,7 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:AfterMerge');
         filter.push('apex:BeforeSplit');
       }
+      // filter events
     } else if (
       is(element, 'bpmn:StartEvent') ||
       is(element, 'bpmn:IntermediateThrowEvent') ||
@@ -59,6 +57,7 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:OracleCycle');
         parent = businessObject.eventDefinitions[0];
       }
+      // filter user tasks
     } else if (is(element, 'bpmn:UserTask')) {
       if (
         typeof businessObject.type === 'undefined' ||
@@ -67,6 +66,19 @@ export function removeInvalidExtensionsElements(
         filter.push('apex:ApexPage');
       } else if (businessObject.type === 'externalUrl') {
         filter.push('apex:ExternalUrl');
+      }
+      // filter script tasks
+    } else if (is(element, 'bpmn:ScriptTask')) {
+      filter.push('apex:ExecutePlsql');
+      // filter service tasks
+    } else if (is(element, 'bpmn:ServiceTask')) {
+      if (
+        typeof getBusinessObject(element).type === 'undefined' ||
+        getBusinessObject(element).type === 'executePlsql'
+      ) {
+        filter.push('apex:ExecutePlsql');
+      } else if (getBusinessObject(element).type === 'sendMail') {
+        filter.push('apex:SendMail');
       }
     }
 

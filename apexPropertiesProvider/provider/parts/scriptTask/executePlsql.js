@@ -1,21 +1,25 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
-import { isOptionSelected } from '../../../lib/formsHelper';
-import { getContainer, openEditor } from '../customElements/monacoEditor';
-import propertiesHelper from '../extensionElements/propertiesHelper';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { isOptionSelected } from '../../../../lib/formsHelper';
+import { getContainer, openEditor } from '../../customElements/monacoEditor';
+import propertiesHelper from '../../extensionElements/propertiesHelper';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var helper = new propertiesHelper('apex:ApexScript');
+var helper = new propertiesHelper('apex:ExecutePlsql');
 
 export default function (element, bpmnFactory, commandStack, translate) {
-  const serviceTaskEngine = '[name="engine"]';
+  const scriptTaskEngine = '[name="engine"]';
   const engineNo = 0;
-  const serviceTaskProps = [];
+  const scriptTaskProps = [];
 
-  if (is(element, 'bpmn:ServiceTask')) {
+  if (
+    is(element, 'bpmn:ScriptTask') &&
+    (typeof getBusinessObject(element).type === 'undefined' ||
+      getBusinessObject(element).type === 'executePlsql')
+  ) {
     // if 'yes' then add 'autoBinds'
-    serviceTaskProps.push(
+    scriptTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
         description: translate('Use APEX_EXEC'),
@@ -35,7 +39,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // Run PL/SQL Code
-    serviceTaskProps.push(
+    scriptTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: translate('Enter the PL/SQL code to be executed.'),
@@ -51,10 +55,10 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // container for script editor
-    serviceTaskProps.push(getContainer('plsqlCode'));
+    scriptTaskProps.push(getContainer('plsqlCode'));
 
     // link to script editor
-    serviceTaskProps.push(
+    scriptTaskProps.push(
       entryFactory.link(translate, {
         id: 'plsqlCodeEditor',
         buttonLabel: 'Open Editor',
@@ -68,13 +72,13 @@ export default function (element, bpmnFactory, commandStack, translate) {
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode);
+          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode, 'plsql');
         },
       })
     );
 
     // only shown, when APEX_EXEC is used
-    serviceTaskProps.push(
+    scriptTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
         description: translate(
@@ -87,7 +91,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
           { name: translate('Yes'), value: 'true' },
         ],
         hidden: function () {
-          return isOptionSelected(serviceTaskEngine, engineNo);
+          return isOptionSelected(scriptTaskEngine, engineNo);
         },
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
@@ -99,5 +103,5 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
   }
 
-  return serviceTaskProps;
+  return scriptTaskProps;
 }

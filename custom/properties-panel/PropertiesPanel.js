@@ -73,9 +73,14 @@ PropertiesPanel.prototype.attachTo = function (parentNode) {
   function resize(event) {
     var dx = mouseX - event.x;
     mouseX = event.x;
-    var panelWidth = (parseInt(getComputedStyle(parentNode, '').width) + dx);
-    var maxWidth = (parseInt(getComputedStyle(canvas, '').width)) / 100 * parseInt(getComputedStyle(parentNode).maxWidth);
-    if (panelWidth > parseInt(getComputedStyle(parentNode).minWidth) && panelWidth < maxWidth) {
+    var panelWidth = parentNode.scrollWidth + dx;
+    var maxWidth =
+      (parseInt(getComputedStyle(canvas, '').width) / 100) *
+      parseInt(getComputedStyle(parentNode).maxWidth);
+    if (
+      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth) &&
+      panelWidth < maxWidth
+    ) {
       parentNode.style.width = `${panelWidth}px`;
       parentNode.firstChild.style.width = `${panelWidth}px`;
     }
@@ -86,22 +91,26 @@ PropertiesPanel.prototype.attachTo = function (parentNode) {
   this._emit('attach');
 };
 
-PropertiesPanel.prototype._bindTemplate = function (element, entry, values, entryNode, idx) {
-
+PropertiesPanel.prototype._bindTemplate = function (
+  element,
+  entry,
+  values,
+  entryNode,
+  idx
+) {
   var eventBus = this._eventBus;
 
   function isPropertyEditable(entry, propertyName) {
     return eventBus.fire('propertiesPanel.isPropertyEditable', {
       entry: entry,
       propertyName: propertyName,
-      element: element
+      element: element,
     });
   }
 
   var inputNodes = getPropertyPlaceholders(entryNode);
 
   forEach(inputNodes, function (node) {
-
     var name;
     var newValue;
     var editable;
@@ -113,7 +122,14 @@ PropertiesPanel.prototype._bindTemplate = function (element, entry, values, entr
 
       editable = isPropertyEditable(entry, name);
       if (editable && entry.editable) {
-        editable = entry.editable(element, entryNode, node, name, newValue, idx);
+        editable = entry.editable(
+          element,
+          entryNode,
+          node,
+          name,
+          newValue,
+          idx
+        );
       }
 
       domAttr(node, 'readonly', editable ? null : '');
@@ -153,7 +169,6 @@ PropertiesPanel.prototype._bindTemplate = function (element, entry, values, entr
 };
 
 function setInputValue(node, value) {
-
   var contentEditable = isContentEditable(node);
 
   var oldValue = contentEditable ? node.innerText : node.value;
@@ -194,7 +209,7 @@ function setSelectValue(node, value) {
 function setToggleValue(node, value) {
   var nodeValue = node.value;
 
-  node.checked = (value === nodeValue) || (!domAttr(node, 'value') && value);
+  node.checked = value === nodeValue || (!domAttr(node, 'value') && value);
 }
 
 function setTextValue(node, value) {
@@ -202,20 +217,18 @@ function setTextValue(node, value) {
 }
 
 function getSelection(node) {
-
   return isContentEditable(node) ? getContentEditableSelection(node) : {
-    start: node.selectionStart,
-    end: node.selectionEnd
-  };
+        start: node.selectionStart,
+        end: node.selectionEnd,
+      };
 }
 
 function getContentEditableSelection(node) {
-
   var selection = window.getSelection();
 
-  var {focusNode} = selection;
-      var {focusOffset} = selection;
-      var {anchorOffset} = selection;
+  var { focusNode } = selection;
+  var { focusOffset } = selection;
+  var { anchorOffset } = selection;
 
   if (!focusNode) {
     throw new Error('not selected');
@@ -228,12 +241,11 @@ function getContentEditableSelection(node) {
 
   return {
     start: Math.min(focusOffset, anchorOffset),
-    end: Math.max(focusOffset, anchorOffset)
+    end: Math.max(focusOffset, anchorOffset),
   };
 }
 
 function setSelection(node, selection) {
-
   if (isContentEditable(node)) {
     setContentEditableSelection(node, selection);
   } else {
@@ -243,13 +255,11 @@ function setSelection(node, selection) {
 }
 
 function setContentEditableSelection(node, selection) {
-
   var focusNode;
-      var domRange;
-      var domSelection;
+  var domRange;
+  var domSelection;
 
-  focusNode = node.firstChild || node,
-  domRange = document.createRange();
+  (focusNode = node.firstChild || node), (domRange = document.createRange());
   domRange.setStart(focusNode, selection.start);
   domRange.setEnd(focusNode, selection.end);
 
