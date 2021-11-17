@@ -1,7 +1,7 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../extensionElements/propertiesHelper';
-import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
+import propertiesHelper from '../../helper/propertiesHelper';
+import subPropertiesHelper from '../../helper/subPropertiesHelper';
 import { getApplications, getItems, getPages } from './metaDataCollector';
 
 var domQuery = require('min-dom').query;

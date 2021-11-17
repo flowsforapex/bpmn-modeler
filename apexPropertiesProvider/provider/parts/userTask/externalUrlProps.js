@@ -1,6 +1,6 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../extensionElements/propertiesHelper';
+import propertiesHelper from '../../helper/propertiesHelper';
 
 var helper = new propertiesHelper('apex:ExternalUrl');
 

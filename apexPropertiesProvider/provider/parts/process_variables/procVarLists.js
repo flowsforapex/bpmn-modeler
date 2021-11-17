@@ -1,4 +1,4 @@
-import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
+import subPropertiesHelper from '../../helper/subPropertiesHelper';
 
 var extensionElementsEntry = require('./custom/ExtensionElements');
 
