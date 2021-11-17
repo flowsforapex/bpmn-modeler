@@ -34,7 +34,7 @@ function enableAndResetValue(element, field) {
   var property;
   if (fieldNode) {
     // get property value
-    property = helper.getExtensionProperty(element, field.id)[field.id];
+    property = helper.getExtensionProperty(element, field.id)[field.id] || null;
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -182,12 +182,6 @@ export function contentAttributes(
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
-    if (elementIdentifier !== element) {
-      elementIdentifier = element;
-      // initiate ajax call for meta data
-      refreshApplications(element);
-    }
-
     // Use Template: Yes/No
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
@@ -228,6 +222,18 @@ export function contentAttributes(
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
       get: function (element) {
+        // if visible
+        if (
+          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+          'true'
+        ) {
+          // refresh applications (if necessary)
+          if (elementIdentifier !== element) {
+            elementIdentifier = element;
+            // initiate ajax call for meta data
+            refreshApplications(element);
+          }
+        }
         return helper.getExtensionProperty(element, 'applicationId');
       },
       hidden: function () {

@@ -44,9 +44,10 @@ var itemsLoading;
 function enableAndResetValue(element, field) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
+  var property;
   if (fieldNode) {
     // get property value
-    var property =
+    property =
       helper.getExtensionProperty(element, field.id)[field.id] ||
       subHelper.getExtensionSubProperty(
         pageItemsElement,
@@ -138,12 +139,6 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       type === 'apexPage' ||
       !forbiddenTypes.includes(type))
   ) {
-    if (elementIdentifier !== element) {
-      elementIdentifier = element;
-      // initiate ajax call for meta data
-      refreshApplications(element);
-    }
-
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
@@ -160,6 +155,11 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       get: function (element) {
+        // refresh applications (if necessary)
+        if (elementIdentifier !== element) {
+          elementIdentifier = element;
+          refreshApplications(element);
+        }
         var property = helper.getExtensionProperty(element, 'applicationId');
         return property;
       },
