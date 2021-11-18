@@ -119,7 +119,7 @@ function refreshTemplates(element, workspaceId, applicationId) {
     property =
       helper.getExtensionProperty(element, 'templateId').templateId || null;
     // add entry if not contained
-    if (property != null && !pages.map(e => e.value).includes(property)) {
+    if (property != null && !templates.map(e => e.value).includes(property)) {
       templates.unshift({ name: `${property}*`, value: property });
     }
     // refresh select box
