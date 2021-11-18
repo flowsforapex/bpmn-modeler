@@ -5,7 +5,8 @@ import subPropertiesHelper from '../../helper/subPropertiesHelper';
 import {
   getApplications,
   getItems,
-  getPages
+  getPages,
+  getWorkspaces
 } from '../../plugins/metaDataCollector';
 
 var domQuery = require('min-dom').query;
@@ -28,6 +29,7 @@ var forbiddenTypes = ['externalUrl', 'unifiedTaskList'];
 var elementIdentifier;
 
 // select list options container
+var workspaces = [];
 var applications = [];
 var pages = [];
 var items = [];
@@ -36,11 +38,13 @@ var items = [];
 var pageItemsElement;
 
 // select box container
+var workspaceSelectBox;
 var applicationSelectBox;
 var pageSelectBox;
 var itemSelectBox;
 
 // loading flags
+var workspacesLoading;
 var applicationsLoading;
 var pagesLoading;
 var itemsLoading;
@@ -59,13 +63,40 @@ function enableAndResetValue(element, field, property) {
   return null;
 }
 
-function refreshApplications(element) {
+function refreshWorkspaces(element) {
+  var property;
+  var newWorkspaceId;
+  // loading flag
+  workspacesLoading = true;
+  // ajax process
+  getWorkspaces().then((values) => {
+    workspaces = JSON.parse(values);
+    // loading flag
+    workspacesLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'workspaceId').workspaceId || null;
+    // add entry if not contained
+    if (
+      property != null &&
+      !workspaces.map(e => e.value).includes(property)
+    ) {
+      workspaces.unshift({ name: `${property}*`, value: property });
+    }
+    // refresh select box
+    newWorkspaceId = enableAndResetValue(element, workspaceSelectBox, property);
+    // refresh child item
+    refreshApplications(element, newWorkspaceId);
+  });
+}
+
+function refreshApplications(element, workspaceId) {
   var property;
   var newApplicationId;
   // loading flag
   applicationsLoading = true;
   // ajax process
-  getApplications().then((values) => {
+  getApplications(workspaceId).then((values) => {
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
@@ -91,13 +122,13 @@ function refreshApplications(element) {
   });
 }
 
-function refreshPages(element, applicationId) {
+function refreshPages(element, workspaceId, applicationId) {
   var property;
   var newPageId;
   // loading flag
   pagesLoading = true;
   // ajax process
-  getPages(applicationId).then((values) => {
+  getPages(workspaceId, applicationId).then((values) => {
     pages = JSON.parse(values);
     // loading flag
     pagesLoading = false;
@@ -110,17 +141,17 @@ function refreshPages(element, applicationId) {
     // refresh select box
     newPageId = enableAndResetValue(element, pageSelectBox, property);
     // refresh child item
-    refreshItems(element, applicationId, newPageId);
+    refreshItems(element, workspaceId, applicationId, newPageId);
   });
 }
 
-function refreshItems(element, applicationId, pageId) {
+function refreshItems(element, workspaceId, applicationId, pageId) {
   var property;
   var newItemName;
   // loading flag
   itemsLoading = true;
   // ajax process
-  getItems(applicationId, pageId).then((values) => {
+  getItems(workspaceId, applicationId, pageId).then((values) => {
     items = JSON.parse(values);
     // loading flag
     itemsLoading = false;
@@ -164,6 +195,40 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       type === 'apexPage' ||
       !forbiddenTypes.includes(type))
   ) {
+    // workspaces select list
+    workspaceSelectBox = entryFactory.selectBox(translate, {
+      id: 'workspaceId',
+      label: translate('Workspace'),
+      modelProperty: 'workspaceId',
+
+      selectOptions: function () {
+        return workspaces;
+      },
+
+      disabled: function () {
+        return workspacesLoading;
+      },
+
+      get: function (element) {
+        // refresh workspaces (if necessary)
+        if (elementIdentifier !== element) {
+          elementIdentifier = element;
+          refreshWorkspaces(element);
+        }
+        var property = helper.getExtensionProperty(element, 'workspaceId');
+        return property;
+      },
+
+      set: function (element, values, node) {
+        // refresh applications
+        refreshApplications(element, values.workspaceId);
+        // set value
+        return helper.setExtensionProperty(element, bpmnFactory, values);
+      },
+    });
+
+    userTaskProps.push(workspaceSelectBox);
+
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
@@ -176,22 +241,22 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       disabled: function () {
-        return applicationsLoading;
+        return workspacesLoading || applicationsLoading;
       },
 
       get: function (element) {
-        // refresh applications (if necessary)
-        if (elementIdentifier !== element) {
-          elementIdentifier = element;
-          refreshApplications(element);
-        }
         var property = helper.getExtensionProperty(element, 'applicationId');
         return property;
       },
 
       set: function (element, values, node) {
+        // workspaceId
+        var { workspaceId } = helper.getExtensionProperty(
+          element,
+          'workspaceId'
+        );
         // refresh pages
-        refreshPages(element, values.applicationId);
+        refreshPages(element, workspaceId, values.applicationId);
         // set value
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
@@ -211,7 +276,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       disabled: function () {
-        return applicationsLoading || pagesLoading;
+        return workspacesLoading || applicationsLoading || pagesLoading;
       },
 
       get: function (element) {
@@ -220,13 +285,18 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       set: function (element, values, node) {
+        // workspaceId
+        var { workspaceId } = helper.getExtensionProperty(
+          element,
+          'workspaceId'
+        );
         // applicationId
         var { applicationId } = helper.getExtensionProperty(
           element,
           'applicationId'
         );
         // refresh items
-        refreshItems(element, applicationId, values.pageId);
+        refreshItems(element, workspaceId, applicationId, values.pageId);
         // set value
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
@@ -280,6 +350,11 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       onSelectionChange: function (element, node) {
+        // workspaceId
+        var { workspaceId } = helper.getExtensionProperty(
+          element,
+          'workspaceId'
+        );
         // applicationId
         var { applicationId } = helper.getExtensionProperty(
           element,
@@ -288,7 +363,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
         // pageId
         var { pageId } = helper.getExtensionProperty(element, 'pageId');
         // refresh items
-        refreshItems(element, applicationId, pageId);
+        refreshItems(element, workspaceId, applicationId, pageId);
       },
     });
 
@@ -306,7 +381,12 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       disabled: function () {
-        return applicationsLoading || pagesLoading || itemsLoading;
+        return (
+          workspacesLoading ||
+          applicationsLoading ||
+          pagesLoading ||
+          itemsLoading
+        );
       },
 
       get: function (element, node) {

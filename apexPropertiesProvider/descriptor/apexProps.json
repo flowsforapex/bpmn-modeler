@@ -23,6 +23,10 @@
       "superClass": [ "Element" ],
       "properties": [
         {
+          "name": "workspaceId",
+          "type": "String"
+        },
+        {
           "name": "applicationId",
           "type": "String"
         },
@@ -123,6 +127,10 @@
         },
         {
           "name": "useTemplate",
+          "type": "String"
+        },
+        {
+          "name": "workspaceId",
           "type": "String"
         },
         {
