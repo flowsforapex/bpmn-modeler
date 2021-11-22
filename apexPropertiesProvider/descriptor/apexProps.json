@@ -130,15 +130,15 @@
           "type": "String"
         },
         {
-          "name": "workspaceId",
+          "name": "workspace",
           "type": "String"
         },
         {
-          "name": "applicationId",
+          "name": "application",
           "type": "String"
         },
         {
-          "name": "templateId",
+          "name": "template",
           "type": "String"
         },
         {

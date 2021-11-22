@@ -15,11 +15,11 @@ export function getWorkspaces() {
   );
 }
 
-export function getApplications(workspaceId) {
+export function getApplications(workspace) {
   // ajax process
   return apex.server.process(
     'GET_APPLICATIONS',
-    { x01: workspaceId },
+    { x01: workspace },
     {
       dataType: 'text',
       success: function (data) {
@@ -32,11 +32,11 @@ export function getApplications(workspaceId) {
   );
 }
 
-export function getApplicationsMail(workspaceId) {
+export function getApplicationsMail(workspace) {
   // ajax process
   return apex.server.process(
     'GET_APPLICATIONS_MAIL',
-    { x01: workspaceId },
+    { x01: workspace },
     {
       dataType: 'text',
       success: function (data) {
@@ -49,11 +49,11 @@ export function getApplicationsMail(workspaceId) {
   );
 }
 
-export function getPages(workspaceId, applicationId) {
+export function getPages(workspace, application) {
   // ajax process
   return apex.server.process(
     'GET_PAGES',
-    { x01: workspaceId, x02: applicationId },
+    { x01: workspace, x02: application },
     {
       dataType: 'text',
       success: function (data) {
@@ -66,14 +66,14 @@ export function getPages(workspaceId, applicationId) {
   );
 }
 
-export function getItems(workspaceId, applicationId, pageId) {
+export function getItems(workspace, application, page) {
   // ajax process
   return apex.server.process(
     'GET_ITEMS',
     {
-      x01: workspaceId,
-      x02: applicationId,
-      x03: pageId,
+      x01: workspace,
+      x02: application,
+      x03: page,
     },
     {
       dataType: 'text',
@@ -87,11 +87,11 @@ export function getItems(workspaceId, applicationId, pageId) {
   );
 }
 
-export function getTemplates(workspaceId, applicationId) {
+export function getTemplates(workspace, application) {
   // ajax process
   return apex.server.process(
     'GET_TEMPLATES',
-    { x01: workspaceId, x02: applicationId },
+    { x01: workspace, x02: application },
     {
       dataType: 'text',
       success: function (data) {
