@@ -23,15 +23,15 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "workspaceId",
+          "name": "workspace",
           "type": "String"
         },
         {
-          "name": "applicationId",
+          "name": "application",
           "type": "String"
         },
         {
-          "name": "pageId",
+          "name": "page",
           "type": "String"
         },
         {
