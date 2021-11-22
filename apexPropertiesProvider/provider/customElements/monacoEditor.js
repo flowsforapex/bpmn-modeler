@@ -26,6 +26,8 @@ export function getContainer(id) {
 
 export function openEditor(id, getText, saveText, language) {
   var modal = domQuery(`#modalDialog_${id}`);
+  var parent = modal.parentNode;
+  var container = domQuery('.dialogContainer');
 
   var undoBtn = domQuery(`#modalDialog_${id} #undoBtn`);
   var redoBtn = domQuery(`#modalDialog_${id} #redoBtn`);
@@ -51,6 +53,8 @@ export function openEditor(id, getText, saveText, language) {
   );
 
   modal.style.display = 'flex';
+
+  container.appendChild(modal);
 
   undoBtn.onclick = function () {
     monacoEditor.getModel().undo();
@@ -93,6 +97,7 @@ export function openEditor(id, getText, saveText, language) {
 
   closeBtn.onclick = function () {
     modal.style.display = 'none';
+    parent.appendChild(modal);
     monacoEditor.dispose();
   };
 
