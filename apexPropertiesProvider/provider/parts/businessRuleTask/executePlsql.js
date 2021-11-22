@@ -11,9 +11,9 @@ var helper = new propertiesHelper('apex:ExecutePlsql');
 var forbiddenTypes = [];
 
 export default function (element, bpmnFactory, commandStack, translate) {
-  const scriptTaskEngine = '[name="engine"]';
+  const businessRuleTaskEngine = '[name="engine"]';
   const engineNo = 0;
-  const scriptTaskProps = [];
+  const businessRuleTaskProps = [];
 
   var { type } = getBusinessObject(element);
 
@@ -24,7 +24,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
       !forbiddenTypes.includes(type))
   ) {
     // if 'yes' then add 'autoBinds'
-    scriptTaskProps.push(
+    businessRuleTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
         description: translate('Use APEX_EXEC'),
@@ -44,7 +44,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // Run PL/SQL Code
-    scriptTaskProps.push(
+    businessRuleTaskProps.push(
       entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: translate('Enter the PL/SQL code to be executed.'),
@@ -60,10 +60,10 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // container for script editor
-    scriptTaskProps.push(getContainer('plsqlCode'));
+    businessRuleTaskProps.push(getContainer('plsqlCode'));
 
     // link to script editor
-    scriptTaskProps.push(
+    businessRuleTaskProps.push(
       entryFactory.link(translate, {
         id: 'plsqlCodeEditor',
         buttonLabel: 'Open Editor',
@@ -83,7 +83,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // only shown, when APEX_EXEC is used
-    scriptTaskProps.push(
+    businessRuleTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
         description: translate(
@@ -96,7 +96,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
           { name: translate('Yes'), value: 'true' },
         ],
         hidden: function () {
-          return isOptionSelected(scriptTaskEngine, engineNo);
+          return isOptionSelected(businessRuleTaskEngine, engineNo);
         },
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
@@ -108,5 +108,5 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
   }
 
-  return scriptTaskProps;
+  return businessRuleTaskProps;
 }

@@ -8,6 +8,7 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
+import businessRuleTaskExecutePlsql from './parts/businessRuleTask/executePlsql.js';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
@@ -103,8 +104,18 @@ function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
       translate
     ),
   };
+  var apexBusinessRuleGroup = {
+    id: 'apex-businessRule-plsql',
+    label: translate('Execute PL/SQL'),
+    entries: businessRuleTaskExecutePlsql(
+      element,
+      bpmnFactory,
+      commandStack,
+      translate
+    ),
+  };
 
-  return [apexScriptGroup, apexServiceGroup];
+  return [apexScriptGroup, apexServiceGroup, apexBusinessRuleGroup];
 }
 
 function createExternalURLTabGroups(element, bpmnFactory, translate) {

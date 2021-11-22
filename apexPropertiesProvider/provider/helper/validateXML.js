@@ -80,6 +80,9 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
       } else if (getBusinessObject(element).type === 'sendMail') {
         filter.push('apex:SendMail');
       }
+      // filter business rule tasks
+    } else if (is(element, 'bpmn:BusinessRuleTask')) {
+      filter.push('apex:ExecutePlsql');
     }
 
     var bo = parent || businessObject;

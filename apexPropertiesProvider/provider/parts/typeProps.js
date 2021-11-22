@@ -23,6 +23,9 @@ export default function (
       { name: translate('Send Mail'), value: 'sendMail' },
     ],
     scriptTask: [{ name: translate('Execute PL/SQL'), value: 'executePlsql' }],
+    businessRuleTask: [
+      { name: translate('Execute PL/SQL'), value: 'executePlsql' },
+    ],
   };
 
   var setProperty = function () {
@@ -90,6 +93,18 @@ export default function (
         modelProperty: 'type',
         selectOptions: selectOptions.scriptTask,
         get: getProperty('scriptTask', 'executePlsql'),
+        set: setProperty(),
+      })
+    );
+    // type selection for Business Rule Tasks
+  } else if (is(element, 'bpmn:BusinessRuleTask')) {
+    group.entries.push(
+      entryFactory.selectBox(translate, {
+        id: 'businessRuleTaskType',
+        label: translate('Business Rule Task Type'),
+        modelProperty: 'type',
+        selectOptions: selectOptions.businessRuleTask,
+        get: getProperty('businessRuleTask', 'executePlsql'),
         set: setProperty(),
       })
     );
