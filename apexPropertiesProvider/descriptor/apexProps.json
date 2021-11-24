@@ -295,7 +295,11 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "interval",
+          "name": "intervalYM",
+          "type": "String"
+        },
+        {
+          "name": "intervalDS",
           "type": "String"
         }
       ]
@@ -313,7 +317,7 @@
           "type": "String"
         },
         {
-          "name": "maxRepeats",
+          "name": "maxRuns",
           "type": "String"
         }
       ]

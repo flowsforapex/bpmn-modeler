@@ -102,6 +102,7 @@ function TimerEventDefinition(
       { value: 'oracleCycle', name: translate('Cycle (Oracle)') },
       { value: 'timeDate', name: translate('Date (ISO 8601)') },
       { value: 'timeDuration', name: translate('Duration (ISO 8601)') },
+      { value: 'timeCycle', name: translate('Cycle (ISO 8601)') },
     ];
   }
 
@@ -372,20 +373,20 @@ function TimerEventDefinition(
 
   /* oracle duration properties */
 
-  // interval
+  // interval year-month
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'interval',
+      id: 'intervalYM',
       label: translate('Time until the timer fires'),
-      modelProperty: 'interval',
+      modelProperty: 'intervalYM',
       description: translate(
-        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+        'Interval in format <br/> YEAR(2) TO MONTH <br/> (YY-MM)'
       ),
 
       get: function (element) {
         return durationHelper.getExtensionProperty(
           element,
-          'interval',
+          'intervalYM',
           timerEventDefinition
         );
       },
@@ -417,15 +418,87 @@ function TimerEventDefinition(
           node
         );
         var type = getTimerDefinitionType(timerDefinition);
-        var value = durationHelper.getExtensionProperty(
-          element,
-          'interval',
-          timerEventDefinition
-        ).interval;
+        var value =
+          durationHelper.getExtensionProperty(
+            element,
+            'intervalYM',
+            timerEventDefinition
+          ).intervalYM ||
+          durationHelper.getExtensionProperty(
+            element,
+            'intervalDS',
+            timerEventDefinition
+          ).intervalDS;
 
         if (type === 'oracleDuration' && !value) {
           return {
-            interval: translate('Must provide a value'),
+            intervalYM: translate('Must provide a value'),
+          };
+        }
+      },
+    })
+  );
+
+  // interval day-second
+  group.entries.push(
+    entryFactory.textField(translate, {
+      id: 'intervalDS',
+      label: translate('Time until the timer fires'),
+      modelProperty: 'intervalDS',
+      description: translate(
+        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
+      ),
+
+      get: function (element) {
+        return durationHelper.getExtensionProperty(
+          element,
+          'intervalDS',
+          timerEventDefinition
+        );
+      },
+
+      set: function (element, values) {
+        return durationHelper.setExtensionProperty(
+          element,
+          bpmnFactory,
+          values,
+          timerEventDefinition
+        );
+      },
+
+      hidden: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+
+        return type !== 'oracleDuration';
+      },
+
+      validate: function (element, node) {
+        var timerDefinition = getTimerDefinition(
+          timerEventDefinition,
+          element,
+          node
+        );
+        var type = getTimerDefinitionType(timerDefinition);
+        var value =
+          durationHelper.getExtensionProperty(
+            element,
+            'intervalYM',
+            timerEventDefinition
+          ).intervalYM ||
+          durationHelper.getExtensionProperty(
+            element,
+            'intervalDS',
+            timerEventDefinition
+          ).intervalDS;
+
+        if (type === 'oracleDuration' && !value) {
+          return {
+            intervalDS: translate('Must provide a value'),
           };
         }
       },
@@ -441,7 +514,7 @@ function TimerEventDefinition(
       label: translate('Time until the timer fires first'),
       modelProperty: 'startInterval',
       description: translate(
-        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
       ),
 
       get: function (element) {
@@ -501,7 +574,7 @@ function TimerEventDefinition(
       label: translate('Time until timer fires again'),
       modelProperty: 'repeatInterval',
       description: translate(
-        'Interval in format DAY(3) TO SECOND(0) (DDD HH:MM:SS)'
+        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
       ),
 
       get: function (element) {
@@ -557,15 +630,14 @@ function TimerEventDefinition(
   // repitition
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'maxRepeats',
-      label: translate('Max Repeats'),
-      modelProperty: 'maxRepeats',
-      description: 'Maximum number of repeats after the first event',
+      id: 'maxRuns',
+      label: translate('Max Runs'),
+      modelProperty: 'maxRuns',
 
       get: function (element) {
         return cycleHelper.getExtensionProperty(
           element,
-          'maxRepeats',
+          'maxRuns',
           timerEventDefinition
         );
       },
@@ -599,13 +671,13 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
         var value = cycleHelper.getExtensionProperty(
           element,
-          'maxRepeats',
+          'maxRuns',
           timerEventDefinition
-        ).maxRepeats;
+        ).maxRuns;
 
         if (type === 'oracleCycle' && !value) {
           return {
-            maxRepeats: translate('Must provide a value'),
+            maxRuns: translate('Must provide a value'),
           };
         }
       },
