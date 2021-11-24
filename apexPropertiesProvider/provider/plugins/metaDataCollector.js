@@ -1,7 +1,7 @@
-export function getWorkspaces() {
+export function getApplications() {
   // ajax process
   return apex.server.process(
-    'GET_WORKSPACES',
+    'GET_APPLICATIONS',
     {},
     {
       dataType: 'text',
@@ -15,28 +15,11 @@ export function getWorkspaces() {
   );
 }
 
-export function getApplications(workspace) {
-  // ajax process
-  return apex.server.process(
-    'GET_APPLICATIONS',
-    { x01: workspace },
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
-      },
-    }
-  );
-}
-
-export function getApplicationsMail(workspace) {
+export function getApplicationsMail() {
   // ajax process
   return apex.server.process(
     'GET_APPLICATIONS_MAIL',
-    { x01: workspace },
+    {},
     {
       dataType: 'text',
       success: function (data) {
@@ -49,11 +32,11 @@ export function getApplicationsMail(workspace) {
   );
 }
 
-export function getPages(workspace, application) {
+export function getPages(applicationId) {
   // ajax process
   return apex.server.process(
     'GET_PAGES',
-    { x01: workspace, x02: application },
+    { x01: parseInt(applicationId, 10) || null },
     {
       dataType: 'text',
       success: function (data) {
@@ -66,14 +49,13 @@ export function getPages(workspace, application) {
   );
 }
 
-export function getItems(workspace, application, page) {
+export function getItems(applicationId, pageId) {
   // ajax process
   return apex.server.process(
     'GET_ITEMS',
     {
-      x01: workspace,
-      x02: application,
-      x03: page,
+      x01: parseInt(applicationId, 10) || null,
+      x02: parseInt(pageId, 10) || null,
     },
     {
       dataType: 'text',
@@ -87,11 +69,11 @@ export function getItems(workspace, application, page) {
   );
 }
 
-export function getTemplates(workspace, application) {
+export function getTemplates(applicationId) {
   // ajax process
   return apex.server.process(
     'GET_TEMPLATES',
-    { x01: workspace, x02: application },
+    { x01: parseInt(applicationId, 10) || null },
     {
       dataType: 'text',
       success: function (data) {

@@ -3,8 +3,7 @@ import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import propertiesHelper from '../../helper/propertiesHelper';
 import {
   getApplicationsMail,
-  getTemplates,
-  getWorkspaces
+  getTemplates
 } from '../../plugins/metaDataCollector';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
@@ -18,17 +17,14 @@ var helper = new propertiesHelper('apex:SendMail');
 var elementIdentifier;
 
 // select list options container
-var workspaces = [];
 var applications = [];
 var templates = [];
 
 // select box container
-var workspaceSelectBox;
 var applicationSelectBox;
 var templateSelectBox;
 
 // loading flags
-var workspacesLoading;
 var applicationsLoading;
 var templatesLoading;
 
@@ -46,46 +42,20 @@ function enableAndResetValue(element, field, property) {
   return null;
 }
 
-function refreshWorkspaces(element) {
+function refreshApplications(element) {
   var property;
-  var newWorkspace;
-  // loading flag
-  workspacesLoading = true;
-  // ajax process
-  getWorkspaces().then((values) => {
-    workspaces = JSON.parse(values);
-    // loading flag
-    workspacesLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'workspace').workspace || null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !workspaces.map(e => e.value).includes(property)
-    ) {
-      workspaces.unshift({ name: `${property}*`, value: property });
-    }
-    // refresh select box
-    newWorkspace = enableAndResetValue(element, workspaceSelectBox, property);
-    // refresh child item
-    refreshApplications(element, newWorkspace);
-  });
-}
-
-function refreshApplications(element, workspace) {
-  var property;
-  var newApplication;
+  var newApplicationId;
   // loading flag
   applicationsLoading = true;
   // ajax process
-  getApplicationsMail(workspace).then((values) => {
+  getApplicationsMail().then((values) => {
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
     // get property value
     property =
-      helper.getExtensionProperty(element, 'application').application || null;
+      helper.getExtensionProperty(element, 'applicationId').applicationId ||
+      null;
     // add entry if not contained
     if (
       property != null &&
@@ -94,35 +64,35 @@ function refreshApplications(element, workspace) {
       applications.unshift({ name: `${property}*`, value: property });
     }
     // refresh select box
-    newApplication = enableAndResetValue(
+    newApplicationId = enableAndResetValue(
       element,
       applicationSelectBox,
       property
     );
     // refresh child item
-    refreshTemplates(element, workspace, newApplication);
+    refreshTemplates(element, newApplicationId);
   });
 }
 
-function refreshTemplates(element, workspace, application) {
+function refreshTemplates(element, applicationId) {
   var property;
-  var newTemplate;
+  var newTemplateId;
   // loading flag
   templatesLoading = true;
   // ajax process
-  getTemplates(workspace, application).then((values) => {
+  getTemplates(applicationId).then((values) => {
     templates = JSON.parse(values);
     // loading flag
     templatesLoading = false;
     // get property value
     property =
-      helper.getExtensionProperty(element, 'template').template || null;
+      helper.getExtensionProperty(element, 'templateId').templateId || null;
     // add entry if not contained
     if (property != null && !templates.map(e => e.value).includes(property)) {
       templates.unshift({ name: `${property}*`, value: property });
     }
     // refresh select box
-    newTemplate = enableAndResetValue(element, templateSelectBox, property);
+    newTemplateId = enableAndResetValue(element, templateSelectBox, property);
   });
 }
 
@@ -248,23 +218,23 @@ export function contentAttributes(
       })
     );
 
-    // workspaceId
-    workspaceSelectBox = entryFactory.selectBox(translate, {
-      id: 'workspace',
-      label: translate('Workspace'),
-      modelProperty: 'workspace',
+    // applicationId
+    applicationSelectBox = entryFactory.selectBox(translate, {
+      id: 'applicationId',
+      label: translate('Application'),
+      modelProperty: 'applicationId',
 
       selectOptions: function () {
-        return workspaces;
+        return applications;
       },
 
       disabled: function () {
-        return workspacesLoading;
+        return applicationsLoading;
       },
 
       set: function (element, values) {
         // refresh templates
-        refreshApplications(element, values.workspace);
+        refreshTemplates(element, values.applicationId);
         // set value
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
@@ -274,51 +244,14 @@ export function contentAttributes(
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
           'true'
         ) {
-          // refresh workspaces (if necessary)
+          // refresh applications (if necessary)
           if (elementIdentifier !== element) {
             elementIdentifier = element;
             // initiate ajax call for meta data
-            refreshWorkspaces(element);
+            refreshApplications(element);
           }
         }
-        return helper.getExtensionProperty(element, 'workspace');
-      },
-      hidden: function () {
-        return (
-          typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate === 'undefined' ||
-          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-            'false'
-        );
-      },
-    });
-
-    serviceTaskProps.push(workspaceSelectBox);
-
-    // applicationId
-    applicationSelectBox = entryFactory.selectBox(translate, {
-      id: 'application',
-      label: translate('Application'),
-      modelProperty: 'application',
-
-      selectOptions: function () {
-        return applications;
-      },
-
-      disabled: function () {
-        return workspacesLoading || applicationsLoading;
-      },
-
-      set: function (element, values) {
-        // workspaceId
-        var { workspace } = helper.getExtensionProperty(element, 'workspace');
-        // refresh templates
-        refreshTemplates(element, workspace, values.application);
-        // set value
-        return helper.setExtensionProperty(element, bpmnFactory, values);
-      },
-      get: function (element) {
-        return helper.getExtensionProperty(element, 'application');
+        return helper.getExtensionProperty(element, 'applicationId');
       },
       hidden: function () {
         return (
@@ -334,23 +267,23 @@ export function contentAttributes(
 
     // templateId
     templateSelectBox = entryFactory.selectBox(translate, {
-      id: 'template',
+      id: 'templateId',
       label: translate('Template'),
-      modelProperty: 'template',
+      modelProperty: 'templateId',
 
       selectOptions: function () {
         return templates;
       },
 
       disabled: function () {
-        return workspacesLoading || applicationsLoading || templatesLoading;
+        return applicationsLoading || templatesLoading;
       },
 
       set: function (element, values) {
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
       get: function (element) {
-        return helper.getExtensionProperty(element, 'template');
+        return helper.getExtensionProperty(element, 'templateId');
       },
       hidden: function () {
         return (

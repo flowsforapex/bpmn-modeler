@@ -23,15 +23,11 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "workspace",
+          "name": "applicationId",
           "type": "String"
         },
         {
-          "name": "application",
-          "type": "String"
-        },
-        {
-          "name": "page",
+          "name": "pageId",
           "type": "String"
         },
         {
@@ -134,11 +130,11 @@
           "type": "String"
         },
         {
-          "name": "application",
+          "name": "applicationId",
           "type": "String"
         },
         {
-          "name": "template",
+          "name": "templateId",
           "type": "String"
         },
         {
