@@ -45,7 +45,7 @@ export function openEditor(id, getText, saveText, language) {
     domQuery(`#modal-dialog-${id} #editor-container`),
     {
       value: [getText()].join('\n'),
-      language: (language === 'plsql' ? 'sql' : language) || 'sql',
+      language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
       minimap: { enabled: 'false' },
       automaticLayout: true,
       theme: theme,
