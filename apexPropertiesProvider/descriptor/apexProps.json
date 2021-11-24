@@ -126,10 +126,6 @@
           "type": "String"
         },
         {
-          "name": "workspace",
-          "type": "String"
-        },
-        {
           "name": "applicationId",
           "type": "String"
         },
