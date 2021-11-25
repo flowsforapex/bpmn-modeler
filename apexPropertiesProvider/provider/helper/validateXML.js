@@ -57,32 +57,37 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
         filter.push('apex:OracleCycle');
         parent = businessObject.eventDefinitions[0];
       }
+      // filter tasks
+    } else if (is(element, 'bpmn:Task')) {
+      filter.push('apex:BeforeTask');
+      filter.push('apex:AfterTask');
       // filter user tasks
-    } else if (is(element, 'bpmn:UserTask')) {
-      if (
-        typeof businessObject.type === 'undefined' ||
-        businessObject.type === 'apexPage'
-      ) {
-        filter.push('apex:ApexPage');
-      } else if (businessObject.type === 'externalUrl') {
-        filter.push('apex:ExternalUrl');
-      }
-      // filter script tasks
-    } else if (is(element, 'bpmn:ScriptTask')) {
-      filter.push('apex:ExecutePlsql');
-      // filter service tasks
-    } else if (is(element, 'bpmn:ServiceTask')) {
-      if (
-        typeof getBusinessObject(element).type === 'undefined' ||
-        getBusinessObject(element).type === 'executePlsql'
-      ) {
+      if (is(element, 'bpmn:UserTask')) {
+        if (
+          typeof businessObject.type === 'undefined' ||
+          businessObject.type === 'apexPage'
+        ) {
+          filter.push('apex:ApexPage');
+        } else if (businessObject.type === 'externalUrl') {
+          filter.push('apex:ExternalUrl');
+        }
+        // filter script tasks
+      } else if (is(element, 'bpmn:ScriptTask')) {
         filter.push('apex:ExecutePlsql');
-      } else if (getBusinessObject(element).type === 'sendMail') {
-        filter.push('apex:SendMail');
+        // filter service tasks
+      } else if (is(element, 'bpmn:ServiceTask')) {
+        if (
+          typeof getBusinessObject(element).type === 'undefined' ||
+          getBusinessObject(element).type === 'executePlsql'
+        ) {
+          filter.push('apex:ExecutePlsql');
+        } else if (getBusinessObject(element).type === 'sendMail') {
+          filter.push('apex:SendMail');
+        }
+        // filter business rule tasks
+      } else if (is(element, 'bpmn:BusinessRuleTask')) {
+        filter.push('apex:ExecutePlsql');
       }
-      // filter business rule tasks
-    } else if (is(element, 'bpmn:BusinessRuleTask')) {
-      filter.push('apex:ExecutePlsql');
     }
 
     var bo = parent || businessObject;
