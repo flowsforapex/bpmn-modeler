@@ -510,9 +510,9 @@ function TimerEventDefinition(
   // start interval
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'startInterval',
+      id: 'startIntervalDS',
       label: translate('Time until the timer fires first'),
-      modelProperty: 'startInterval',
+      modelProperty: 'startIntervalDS',
       description: translate(
         'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
       ),
@@ -520,7 +520,7 @@ function TimerEventDefinition(
       get: function (element) {
         return cycleHelper.getExtensionProperty(
           element,
-          'startInterval',
+          'startIntervalDS',
           timerEventDefinition
         );
       },
@@ -554,13 +554,13 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
         var value = cycleHelper.getExtensionProperty(
           element,
-          'startInterval',
+          'startIntervalDS',
           timerEventDefinition
-        ).startInterval;
+        ).startIntervalDS;
 
         if (type === 'oracleCycle' && !value) {
           return {
-            startInterval: translate('Must provide a value'),
+            startIntervalDS: translate('Must provide a value'),
           };
         }
       },
@@ -570,9 +570,9 @@ function TimerEventDefinition(
   // gap interval
   group.entries.push(
     entryFactory.textField(translate, {
-      id: 'repeatInterval',
+      id: 'repeatIntervalDS',
       label: translate('Time until timer fires again'),
-      modelProperty: 'repeatInterval',
+      modelProperty: 'repeatIntervalDS',
       description: translate(
         'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
       ),
@@ -580,7 +580,7 @@ function TimerEventDefinition(
       get: function (element) {
         return cycleHelper.getExtensionProperty(
           element,
-          'repeatInterval',
+          'repeatIntervalDS',
           timerEventDefinition
         );
       },
@@ -614,13 +614,13 @@ function TimerEventDefinition(
         var type = getTimerDefinitionType(timerDefinition);
         var value = cycleHelper.getExtensionProperty(
           element,
-          'repeatInterval',
+          'repeatIntervalDS',
           timerEventDefinition
-        ).repeatInterval;
+        ).repeatIntervalDS;
 
         if (type === 'oracleCycle' && !value) {
           return {
-            repeatInterval: translate('Must provide a value'),
+            repeatIntervalDS: translate('Must provide a value'),
           };
         }
       },

@@ -309,11 +309,11 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "startInterval",
+          "name": "startIntervalDS",
           "type": "String"
         },
         {
-          "name": "repeatInterval",
+          "name": "repeatIntervalDS",
           "type": "String"
         },
         {
