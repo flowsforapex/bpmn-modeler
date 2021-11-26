@@ -610,7 +610,13 @@ button.dialog {
   position: static;
   height: 30px;
   width: 60px;
+  cursor: pointer;
+  border: 1px solid #ccc;
   border-radius: 2px;
+  background-color: #f8f8f8;
+}
+button.dialog:hover {
+  color: #52B415;
 }
 button.dialog.fa {
   width: 40px;
@@ -632,6 +638,13 @@ button.dialog.fa {
 /* dark mode monaco editor */
 .FLOWS-DARK .modal-content {
   background-color: #32383d;
+}
+.FLOWS-DARK button.dialog {
+  color: white;
+  background-color: #282c30;
+}
+.FLOWS-DARK button.dialog:hover {
+  color: #52B415;
 }
 /* quick picks */
 .bpp-properties-entry[data-entry="quickpick-process-id"],
