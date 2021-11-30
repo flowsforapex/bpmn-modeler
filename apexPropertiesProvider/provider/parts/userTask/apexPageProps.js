@@ -66,8 +66,7 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
-    console.log(values);
-    applications = JSON.parse(values);
+    applications = values;
     // loading flag
     applicationsLoading = false;
     // get property value
@@ -100,7 +99,7 @@ function refreshPages(element, applicationId) {
   console.log(applications);
   // ajax process
   getPages(applicationId).then((values) => {
-    pages = JSON.parse(values);
+    pages = values;
     // loading flag
     pagesLoading = false;
     // get property value
@@ -123,7 +122,7 @@ function refreshItems(element, applicationId, pageId) {
   itemsLoading = true;
   // ajax process
   getItems(applicationId, pageId).then((values) => {
-    items = JSON.parse(values);
+    items = values;
     // loading flag
     itemsLoading = false;
     // get property value

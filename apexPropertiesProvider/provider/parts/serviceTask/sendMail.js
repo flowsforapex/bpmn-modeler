@@ -49,7 +49,7 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplicationsMail().then((values) => {
-    applications = JSON.parse(values);
+    applications = values;
     // loading flag
     applicationsLoading = false;
     // get property value
@@ -81,7 +81,7 @@ function refreshTemplates(element, applicationId) {
   templatesLoading = true;
   // ajax process
   getTemplates(applicationId).then((values) => {
-    templates = JSON.parse(values);
+    templates = values;
     // loading flag
     templatesLoading = false;
     // get property value
