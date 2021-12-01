@@ -400,6 +400,37 @@ export function contentAttributes(
       })
     );
 
+    // container for bodyText editor
+    serviceTaskProps.push(getContainer('bodyText'));
+
+    // link to bodyText editor
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'bodyTextEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: function (element, node, event) {
+          var getBodyText = function () {
+            return helper.getExtensionProperty(element, 'bodyText').bodyText;
+          };
+          var saveBodyText = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              bodyText: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('bodyText', getBodyText, saveBodyText, 'plaintext');
+        },
+        showLink: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate === 'undefined' ||
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
+          );
+        },
+      })
+    );
+
     // bodyHTML
     serviceTaskProps.push(
       entryFactory.textBox(translate, {
@@ -414,6 +445,37 @@ export function contentAttributes(
           return helper.getExtensionProperty(element, 'bodyHTML');
         },
         show: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate === 'undefined' ||
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
+          );
+        },
+      })
+    );
+
+    // container for bodyHTML editor
+    serviceTaskProps.push(getContainer('bodyHTML'));
+
+    // link to bodyHTML editor
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'bodyHTMLEditor',
+        buttonLabel: 'Open Editor',
+        handleClick: function (element, node, event) {
+          var getBodyHTML = function () {
+            return helper.getExtensionProperty(element, 'bodyHTML').bodyHTML;
+          };
+          var saveBodyHTML = function (text) {
+            var commands = helper.setExtensionProperty(element, bpmnFactory, {
+              bodyHTML: text,
+            });
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor('bodyHTML', getBodyHTML, saveBodyHTML, 'html');
+        },
+        showLink: function () {
           return (
             typeof helper.getExtensionProperty(element, 'useTemplate')
               .useTemplate === 'undefined' ||

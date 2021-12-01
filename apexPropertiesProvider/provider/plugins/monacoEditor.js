@@ -4,35 +4,37 @@ var domQuery = require('min-dom').query;
 
 export function getContainer(id) {
   return {
-    id: 'plsqlCode-container',
+    id: `${id}-container`,
     html:
-      `<div id="modalDialog_${id}" class="modal">` +
-      '<div id="modalContent" class="modalContent">' +
-      '<div class="buttonContainer start">' +
-      '<button id="undoBtn" class="dialog undo fa fa-undo"></button>' +
-      '<button id="redoBtn" class="dialog redo fa fa-repeat"></button>' +
-      '<button id="searchBtn" class="dialog search fa fa-search"></button>' +
-      '<button id="parseBtn" class="dialog parse fa fa-check-circle-o"></button>' +
-      '<span id="errorText"></span>' +
+      `<div id="modal-dialog-${id}" class="modal">` +
+      '<div id="modal-content" class="modal-content">' +
+      '<div class="button-container start">' +
+      '<button id="undo-btn" class="dialog undo fa fa-undo"></button>' +
+      '<button id="redo-btn" class="dialog redo fa fa-repeat"></button>' +
+      '<button id="search-btn" class="dialog search fa fa-search"></button>' +
+      '<button id="parse-btn" class="dialog parse fa fa-check-circle-o"></button>' +
+      '<span id="error-text"></span>' +
       '</div>' +
-      '<div id="editorContainer"></div>' +
-      '<div class="buttonContainer end">' +
-      '<button id="closeBtn" class="dialog close">Cancel</button>' +
-      '<button id="saveBtn" class="dialog save">Ok</button>' +
+      '<div id="editor-container"></div>' +
+      '<div class="button-container end">' +
+      '<button id="close-btn" class="dialog close">Cancel</button>' +
+      '<button id="save-btn" class="dialog save">Ok</button>' +
       '</div>' +
       '</div>',
   };
 }
 
 export function openEditor(id, getText, saveText, language) {
-  var modal = domQuery(`#modalDialog_${id}`);
+  var modal = domQuery(`#modal-dialog-${id}`);
+  var parent = modal.parentNode;
+  var container = domQuery('.dialog-container');
 
-  var undoBtn = domQuery(`#modalDialog_${id} #undoBtn`);
-  var redoBtn = domQuery(`#modalDialog_${id} #redoBtn`);
-  var searchBtn = domQuery(`#modalDialog_${id} #searchBtn`);
-  var parseBtn = domQuery(`#modalDialog_${id} #parseBtn`);
-  var closeBtn = domQuery(`#modalDialog_${id} #closeBtn`);
-  var saveBtn = domQuery(`#modalDialog_${id} #saveBtn`);
+  var undoBtn = domQuery(`#modal-dialog-${id} #undo-btn`);
+  var redoBtn = domQuery(`#modal-dialog-${id} #redo-btn`);
+  var searchBtn = domQuery(`#modal-dialog-${id} #search-btn`);
+  var parseBtn = domQuery(`#modal-dialog-${id} #parse-btn`);
+  var closeBtn = domQuery(`#modal-dialog-${id} #close-btn`);
+  var saveBtn = domQuery(`#modal-dialog-${id} #save-btn`);
 
   var searchFlag = false;
 
@@ -40,10 +42,10 @@ export function openEditor(id, getText, saveText, language) {
     document.getElementsByClassName('flows4apex-modeler FLOWS-DARK').length > 0 ? 'vs-dark' : 'vs';
 
   var monacoEditor = editor.create(
-    domQuery(`#modalDialog_${id} #editorContainer`),
+    domQuery(`#modal-dialog-${id} #editor-container`),
     {
       value: [getText()].join('\n'),
-      language: (language === 'plsql' ? 'sql' : language) || 'sql',
+      language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
       minimap: { enabled: 'false' },
       automaticLayout: true,
       theme: theme,
@@ -51,6 +53,8 @@ export function openEditor(id, getText, saveText, language) {
   );
 
   modal.style.display = 'flex';
+
+  container.appendChild(modal);
 
   undoBtn.onclick = function () {
     monacoEditor.getModel().undo();
@@ -66,7 +70,7 @@ export function openEditor(id, getText, saveText, language) {
     else monacoEditor.trigger('keyboard', 'closeFindWidget');
   };
 
-  domQuery(`#modalDialog_${id} #errorText`).innerText = '';
+  domQuery(`#modal-dialog-${id} #error-text`).innerText = '';
 
   if (language === 'plsql' || language === 'sql') {
     parseBtn.onclick = function () {
@@ -76,10 +80,8 @@ export function openEditor(id, getText, saveText, language) {
         {
           dataType: 'text',
           success: function (data) {
-            domQuery(`#modalDialog_${id} #errorText`).innerText = data.replace(
-              /\n/g,
-              ' '
-            );
+            domQuery(`#modal-dialog-${id} #error-text`).innerText =
+              data.replace(/\n/g, ' ');
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log('error');
@@ -93,6 +95,7 @@ export function openEditor(id, getText, saveText, language) {
 
   closeBtn.onclick = function () {
     modal.style.display = 'none';
+    parent.appendChild(modal);
     monacoEditor.dispose();
   };
 

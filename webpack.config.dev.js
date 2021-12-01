@@ -7,7 +7,7 @@ module.exports = {
     "flows4apex.modeler": [path.resolve(__dirname, "index.js")],
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dev"),
     filename: "[name].js",
     library: "bpmnModeler",
     libraryTarget: "var",
@@ -15,7 +15,7 @@ module.exports = {
   },
   plugins: [
     new MonacoWebpackPlugin({
-      languages: ["sql", "json"],
+      languages: ["sql", "json", "html"],
     }),
   ],
   optimization: {

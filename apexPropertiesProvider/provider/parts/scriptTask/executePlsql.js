@@ -8,36 +8,21 @@ var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommand
 
 var helper = new propertiesHelper('apex:ExecutePlsql');
 
+var forbiddenTypes = [];
+
 export default function (element, bpmnFactory, commandStack, translate) {
   const scriptTaskEngine = '[name="engine"]';
   const engineNo = 0;
   const scriptTaskProps = [];
 
+  var { type } = getBusinessObject(element);
+
   if (
     is(element, 'bpmn:ScriptTask') &&
-    (typeof getBusinessObject(element).type === 'undefined' ||
-      getBusinessObject(element).type === 'executePlsql')
+    (typeof type === 'undefined' ||
+      type === 'executePlsql' ||
+      !forbiddenTypes.includes(type))
   ) {
-    // if 'yes' then add 'autoBinds'
-    scriptTaskProps.push(
-      entryFactory.selectBox(translate, {
-        id: 'engine',
-        description: translate('Use APEX_EXEC'),
-        modelProperty: 'engine',
-        label: translate('Engine'),
-        selectOptions: [
-          { name: translate('No'), value: 'false' },
-          { name: translate('Yes'), value: 'true' },
-        ],
-        set: function (element, values) {
-          return helper.setExtensionProperty(element, bpmnFactory, values);
-        },
-        get: function (element) {
-          return helper.getExtensionProperty(element, 'engine');
-        },
-      })
-    );
-
     // Run PL/SQL Code
     scriptTaskProps.push(
       entryFactory.textBox(translate, {
@@ -77,6 +62,26 @@ export default function (element, bpmnFactory, commandStack, translate) {
       })
     );
 
+    // if 'yes' then add 'autoBinds'
+    scriptTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'engine',
+        // description: translate('Use APEX_EXEC'),
+        modelProperty: 'engine',
+        label: translate('Use APEX_EXEC'),
+        selectOptions: [
+          { name: translate('No'), value: 'false' },
+          { name: translate('Yes (deprecated)'), value: 'true' },
+        ],
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'engine');
+        },
+      })
+    );
+
     // only shown, when APEX_EXEC is used
     scriptTaskProps.push(
       entryFactory.selectBox(translate, {
@@ -88,7 +93,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
         modelProperty: 'autoBinds',
         selectOptions: [
           { name: translate('No'), value: 'false' },
-          { name: translate('Yes'), value: 'true' },
+          { name: translate('Yes (deprecated)'), value: 'true' },
         ],
         hidden: function () {
           return isOptionSelected(scriptTaskEngine, engineNo);

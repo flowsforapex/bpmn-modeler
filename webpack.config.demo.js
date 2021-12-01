@@ -51,7 +51,7 @@ module.exports = {
       ],
     }),
     new MonacoWebpackPlugin({
-      languages: ["sql", "json"],
+      languages: ["sql", "json", "html"],
     }),
   ],
   devtool: "source-map",
