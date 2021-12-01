@@ -13,6 +13,7 @@ var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var domQuery = require('min-dom').query;
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var helper = new propertiesHelper('apex:ApexPage');
 
@@ -144,7 +145,13 @@ function refreshItems(element, applicationId, pageId) {
   });
 }
 
-export default function (element, bpmnFactory, elementRegistry, translate) {
+export default function (
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
   const userTaskProps = [];
 
   var enterQuickPick = function (node, values) {
@@ -156,6 +163,28 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     );
     new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
       command.context
+    );
+  };
+
+  var createUserTaskItems = function (extensionElements) {
+    const handler = new MultiCommandHandler(commandStack);
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'PROCESS_ID',
+        itemValue: '&F4A$PROCESS_ID.',
+      })
+    );
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'SUBFLOW_ID',
+        itemValue: '&F4A$SUBFLOW_ID.',
+      })
+    );
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'PROCESS_ID',
+        itemValue: '&F4A$STEP_KEY.',
+      })
     );
   };
 
@@ -379,6 +408,17 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     });
 
     userTaskProps.push(pageItemsElement);
+
+    // items quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-items',
+        buttonLabel: translate('generate user task items'),
+        handleClick: function (element, node, event, extensionElements) {
+          createUserTaskItems(extensionElements);
+        },
+      })
+    );
 
     // item select list
     itemSelectBox = entryFactory.selectBox(translate, {
