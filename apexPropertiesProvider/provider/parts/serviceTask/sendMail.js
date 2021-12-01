@@ -287,7 +287,21 @@ export function contentAttributes(
             refreshApplications(element);
           }
         }
-        return helper.getExtensionProperty(element, 'applicationId');
+        var property = helper.getExtensionProperty(element, 'applicationId');
+        // add entry if not contained
+        if (
+          property.applicationId != null &&
+          !applications.map(e => e.value).includes(property.applicationId)
+        ) {
+          // filter out old custom entries
+          applications = applications.filter(a => !a.name.endsWith('*'));
+          // add entry
+          applications.unshift({
+            name: `${property.applicationId}*`,
+            value: property.applicationId,
+          });
+        }
+        return property;
       },
       hidden: function () {
         return (
@@ -345,7 +359,21 @@ export function contentAttributes(
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
       get: function (element) {
-        return helper.getExtensionProperty(element, 'templateId');
+        var property = helper.getExtensionProperty(element, 'templateId');
+        // add entry if not contained
+        if (
+          property.templateId != null &&
+          !templates.map(e => e.value).includes(property.templateId)
+        ) {
+          // filter out old custom entries
+          templates = templates.filter(a => !a.name.endsWith('*'));
+          // add entry
+          templates.unshift({
+            name: `${property.templateId}*`,
+            value: property.templateId,
+          });
+        }
+        return property;
       },
       hidden: function () {
         return (

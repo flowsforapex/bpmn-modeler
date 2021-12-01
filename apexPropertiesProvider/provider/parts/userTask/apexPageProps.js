@@ -246,6 +246,19 @@ export default function (
           refreshApplications(element);
         }
         var property = helper.getExtensionProperty(element, 'applicationId');
+        // add entry if not contained
+        if (
+          property.applicationId != null &&
+          !applications.map(e => e.value).includes(property.applicationId)
+        ) {
+          // filter out old custom entries
+          applications = applications.filter(a => !a.name.endsWith('*'));
+          // add entry
+          applications.unshift({
+            name: `${property.applicationId}*`,
+            value: property.applicationId,
+          });
+        }
         return property;
       },
 
@@ -305,6 +318,19 @@ export default function (
 
       get: function (element) {
         var property = helper.getExtensionProperty(element, 'pageId');
+        // add entry if not contained
+        if (
+          property.pageId != null &&
+          !pages.map(e => e.value).includes(property.pageId)
+        ) {
+          // filter out old custom entries
+          pages = pages.filter(p => !p.name.endsWith('*'));
+          // add entry
+          pages.unshift({
+            name: `${property.pageId}*`,
+            value: property.pageId,
+          });
+        }
         return property;
       },
 
@@ -441,6 +467,19 @@ export default function (
           node,
           'itemName'
         );
+        // add entry if not contained
+        if (
+          property.itemName != null &&
+          !items.map(e => e.value).includes(property.itemName)
+        ) {
+          // filter out old custom entries
+          items = items.filter(i => !i.name.endsWith('*'));
+          // add entry
+          items.unshift({
+            name: `${property.itemName}*`,
+            value: property.itemName,
+          });
+        }
         return property;
       },
 
