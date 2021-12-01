@@ -99,7 +99,6 @@ function refreshPages(element, applicationId) {
   var newPageId;
   // loading flag
   pagesLoading = true;
-  console.log(applications);
   // ajax process
   getPages(applicationId).then((values) => {
     pages = values;
