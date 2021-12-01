@@ -182,7 +182,7 @@ export default function (
     );
     handler.preExecute(
       subHelper.newElement(element, extensionElements, bpmnFactory, {
-        itemName: 'PROCESS_ID',
+        itemName: 'STEP_KEY',
         itemValue: '&F4A$STEP_KEY.',
       })
     );
