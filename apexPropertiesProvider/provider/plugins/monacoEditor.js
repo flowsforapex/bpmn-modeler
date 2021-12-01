@@ -74,20 +74,23 @@ export function openEditor(id, getText, saveText, language) {
 
   if (language === 'plsql' || language === 'sql') {
     parseBtn.onclick = function () {
-      apex.server.process(
-        'PARSE_SQL',
-        { x01: monacoEditor.getValue(), x02: language },
-        {
-          dataType: 'text',
-          success: function (data) {
-            domQuery(`#modal-dialog-${id} #error-text`).innerText =
-              data.replace(/\n/g, ' ');
+      // ajaxIdentifier
+      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // ajax process
+      apex.server
+        .plugin(
+          ajaxIdentifier,
+          {
+            x01: 'PARSE_CODE',
+            x02: monacoEditor.getValue(),
+            x03: language,
           },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('error');
-          },
-        }
-      );
+          {}
+        )
+        .then((pData) => {
+          domQuery(`#modal-dialog-${id} #error-text`).innerText =
+            pData.message.replace(/\n/g, ' ');
+        });
     };
   } else {
     parseBtn.style.display = 'none';
