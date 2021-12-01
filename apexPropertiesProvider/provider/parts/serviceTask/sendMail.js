@@ -7,6 +7,8 @@ import {
 } from '../../plugins/metaDataCollector';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var domQuery = require('min-dom').query;
@@ -218,7 +220,41 @@ export function contentAttributes(
       })
     );
 
-    // applicationId
+    // manualInput switch
+    serviceTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'inputSelection',
+        label: 'Input',
+        selectOptions: [
+          { name: 'Use APEX meta data', value: 'false' },
+          { name: 'Manual input', value: 'true' },
+        ],
+        modelProperty: 'manualInput',
+
+        get: function (element) {
+          var bo = getBusinessObject(element);
+          return {
+            manualInput: bo.get('manualInput'),
+          };
+        },
+
+        set: function (element, values, node) {
+          var bo = getBusinessObject(element);
+          return cmdHelper.updateBusinessObject(element, bo, values);
+        },
+
+        hidden: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate === 'undefined' ||
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
+          );
+        },
+      })
+    );
+
+    // application select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
       label: translate('Application'),
@@ -255,6 +291,7 @@ export function contentAttributes(
       },
       hidden: function () {
         return (
+          getBusinessObject(element).manualInput === 'true' ||
           typeof helper.getExtensionProperty(element, 'useTemplate')
             .useTemplate === 'undefined' ||
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
@@ -265,7 +302,32 @@ export function contentAttributes(
 
     serviceTaskProps.push(applicationSelectBox);
 
-    // templateId
+    // application text field
+    serviceTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'applicationIdText',
+        label: translate('Application ID'),
+        modelProperty: 'applicationId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'applicationId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
+
+    // template select list
     templateSelectBox = entryFactory.selectBox(translate, {
       id: 'templateId',
       label: translate('Template'),
@@ -287,6 +349,7 @@ export function contentAttributes(
       },
       hidden: function () {
         return (
+          getBusinessObject(element).manualInput === 'true' ||
           typeof helper.getExtensionProperty(element, 'useTemplate')
             .useTemplate === 'undefined' ||
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
@@ -296,6 +359,31 @@ export function contentAttributes(
     });
 
     serviceTaskProps.push(templateSelectBox);
+
+    // template text field
+    serviceTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'templateIdText',
+        label: translate('Template ID'),
+        modelProperty: 'templateId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'templateId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
 
     // placeholder
     serviceTaskProps.push(

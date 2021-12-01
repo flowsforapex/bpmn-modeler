@@ -8,6 +8,8 @@ import {
   getPages
 } from '../../plugins/metaDataCollector';
 
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+
 var domQuery = require('min-dom').query;
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
@@ -165,7 +167,32 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       type === 'apexPage' ||
       !forbiddenTypes.includes(type))
   ) {
-    // applications select list
+    // manualInput switch
+    userTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'inputSelection',
+        label: 'Input',
+        selectOptions: [
+          { name: 'Use APEX meta data', value: 'false' },
+          { name: 'Manual input', value: 'true' },
+        ],
+        modelProperty: 'manualInput',
+
+        get: function (element) {
+          var bo = getBusinessObject(element);
+          return {
+            manualInput: bo.get('manualInput'),
+          };
+        },
+
+        set: function (element, values, node) {
+          var bo = getBusinessObject(element);
+          return cmdHelper.updateBusinessObject(element, bo, values);
+        },
+      })
+    );
+
+    // application select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
       // description: translate('Application ID or Alias'),
@@ -178,6 +205,10 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
       disabled: function () {
         return applicationsLoading;
+      },
+
+      hidden: function (element) {
+        return getBusinessObject(element).manualInput === 'true';
       },
 
       get: function (element) {
@@ -200,6 +231,31 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
     userTaskProps.push(applicationSelectBox);
 
+    // application text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'applicationIdText',
+        label: translate('Application ID'),
+        modelProperty: 'applicationId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'applicationId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
+
     // page select list
     pageSelectBox = entryFactory.selectBox(translate, {
       id: 'pageId',
@@ -213,6 +269,10 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
       disabled: function () {
         return applicationsLoading || pagesLoading;
+      },
+
+      hidden: function (element) {
+        return getBusinessObject(element).manualInput === 'true';
       },
 
       get: function (element) {
@@ -234,6 +294,31 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     });
 
     userTaskProps.push(pageSelectBox);
+
+    // page text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'pageIdText',
+        label: translate('Page ID'),
+        modelProperty: 'pageId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'pageId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
 
     pageItemsElement = extensionElementsEntry(element, bpmnFactory, {
       id: 'pageItems',
@@ -330,11 +415,50 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       hidden: function (element, node) {
-        return subHelper.isNotSelected(pageItemsElement, element, node);
+        return (
+          getBusinessObject(element).manualInput === 'true' ||
+          subHelper.isNotSelected(pageItemsElement, element, node)
+        );
       },
     });
 
     userTaskProps.push(itemSelectBox);
+
+    // item text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'itemNameText',
+        label: translate('Name of the page item'),
+        modelProperty: 'itemName',
+
+        hidden: function (element, node) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false' ||
+            subHelper.isNotSelected(pageItemsElement, element, node)
+          );
+        },
+
+        get: function (element, node) {
+          var property = subHelper.getExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            'itemName'
+          );
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return subHelper.setExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            values
+          );
+        },
+      })
+    );
 
     // item value
     userTaskProps.push(
