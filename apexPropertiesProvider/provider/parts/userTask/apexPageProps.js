@@ -1,8 +1,12 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../extensionElements/propertiesHelper';
-import subPropertiesHelper from '../../extensionElements/subPropertiesHelper';
-import { getApplications, getItems, getPages } from './metaDataCollector';
+import propertiesHelper from '../../helper/propertiesHelper';
+import subPropertiesHelper from '../../helper/subPropertiesHelper';
+import {
+  getApplications,
+  getItems,
+  getPages
+} from '../../plugins/metaDataCollector';
 
 var domQuery = require('min-dom').query;
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
@@ -41,20 +45,10 @@ var applicationsLoading;
 var pagesLoading;
 var itemsLoading;
 
-function enableAndResetValue(element, field) {
+function enableAndResetValue(element, field, property) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
   if (fieldNode) {
-    // get property value
-    var property =
-      helper.getExtensionProperty(element, field.id)[field.id] ||
-      subHelper.getExtensionSubProperty(
-        pageItemsElement,
-        element,
-        domQuery(`[data-entry="${field.id}"]`),
-        field.id
-      )[field.id] ||
-      null;
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -66,19 +60,32 @@ function enableAndResetValue(element, field) {
 }
 
 function refreshApplications(element) {
+  var property;
   var newApplicationId;
   // loading flag
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
+    console.log(values);
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'applicationId').applicationId ||
+      null;
+    // add entry if not contained
+    if (
+      property != null &&
+      !applications.map(e => e.value).includes(property)
+    ) {
+      applications.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
     newApplicationId = enableAndResetValue(
       element,
       applicationSelectBox,
-      false
+      property
     );
     // refresh child item
     refreshPages(element, newApplicationId);
@@ -86,22 +93,31 @@ function refreshApplications(element) {
 }
 
 function refreshPages(element, applicationId) {
+  var property;
   var newPageId;
   // loading flag
   pagesLoading = true;
+  console.log(applications);
   // ajax process
   getPages(applicationId).then((values) => {
     pages = JSON.parse(values);
     // loading flag
     pagesLoading = false;
+    // get property value
+    property = helper.getExtensionProperty(element, 'pageId').pageId || null;
+    // add entry if not contained
+    if (property != null && !pages.map(e => e.value).includes(property)) {
+      pages.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newPageId = enableAndResetValue(element, pageSelectBox, false);
+    newPageId = enableAndResetValue(element, pageSelectBox, property);
     // refresh child item
     refreshItems(element, applicationId, newPageId);
   });
 }
 
 function refreshItems(element, applicationId, pageId) {
+  var property;
   var newItemName;
   // loading flag
   itemsLoading = true;
@@ -110,8 +126,20 @@ function refreshItems(element, applicationId, pageId) {
     items = JSON.parse(values);
     // loading flag
     itemsLoading = false;
+    // get property value
+    property =
+      subHelper.getExtensionSubProperty(
+        pageItemsElement,
+        element,
+        pageSelectBox,
+        'itemName'
+      ).itemName || null;
+    // add entry if not contained
+    if (property != null && !items.map(e => e.value).includes(property)) {
+      items.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newItemName = enableAndResetValue(element, itemSelectBox, true);
+    newItemName = enableAndResetValue(element, itemSelectBox, property);
   });
 }
 
@@ -138,12 +166,6 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       type === 'apexPage' ||
       !forbiddenTypes.includes(type))
   ) {
-    if (elementIdentifier !== element) {
-      elementIdentifier = element;
-      // initiate ajax call for meta data
-      refreshApplications(element);
-    }
-
     // applications select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
@@ -160,6 +182,11 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       get: function (element) {
+        // refresh applications (if necessary)
+        if (elementIdentifier !== element) {
+          elementIdentifier = element;
+          refreshApplications(element);
+        }
         var property = helper.getExtensionProperty(element, 'applicationId');
         return property;
       },
@@ -195,7 +222,7 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       set: function (element, values, node) {
-        // applicationId
+        // application
         var { applicationId } = helper.getExtensionProperty(
           element,
           'applicationId'
@@ -252,6 +279,18 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
           'itemValue',
           idx
         );
+      },
+
+      onSelectionChange: function (element, node) {
+        // application
+        var { applicationId } = helper.getExtensionProperty(
+          element,
+          'applicationId'
+        );
+        // page
+        var { pageId } = helper.getExtensionProperty(element, 'pageId');
+        // refresh items
+        refreshItems(element, applicationId, pageId);
       },
     });
 

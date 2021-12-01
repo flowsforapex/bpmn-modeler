@@ -1,10 +1,7 @@
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-
 var entryFactory = require('bpmn-js-properties-panel/lib/factory/EntryFactory');
-const {
-  default: propertiesHelper,
-} = require('../../extensionElements/propertiesHelper');
+const { default: propertiesHelper } = require('../../helper/propertiesHelper');
 
 var dateHelper = new propertiesHelper('apex:OracleDate');
 var durationHelper = new propertiesHelper('apex:OracleDuration');

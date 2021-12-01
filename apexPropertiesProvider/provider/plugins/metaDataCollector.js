@@ -36,7 +36,7 @@ export function getPages(applicationId) {
   // ajax process
   return apex.server.process(
     'GET_PAGES',
-    { x01: applicationId },
+    { x01: parseInt(applicationId, 10) || null },
     {
       dataType: 'text',
       success: function (data) {
@@ -54,8 +54,8 @@ export function getItems(applicationId, pageId) {
   return apex.server.process(
     'GET_ITEMS',
     {
-      x01: applicationId,
-      x02: pageId,
+      x01: parseInt(applicationId, 10) || null,
+      x02: parseInt(pageId, 10) || null,
     },
     {
       dataType: 'text',
@@ -73,7 +73,7 @@ export function getTemplates(applicationId) {
   // ajax process
   return apex.server.process(
     'GET_TEMPLATES',
-    { x01: applicationId },
+    { x01: parseInt(applicationId, 10) || null },
     {
       dataType: 'text',
       success: function (data) {

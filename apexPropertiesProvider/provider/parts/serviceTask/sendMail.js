@@ -1,11 +1,11 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import { getContainer, openEditor } from '../../customElements/monacoEditor';
-import propertiesHelper from '../../extensionElements/propertiesHelper';
+import propertiesHelper from '../../helper/propertiesHelper';
 import {
   getApplicationsMail,
   getTemplates
-} from '../userTask/metaDataCollector';
+} from '../../plugins/metaDataCollector';
+import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
@@ -28,13 +28,10 @@ var templateSelectBox;
 var applicationsLoading;
 var templatesLoading;
 
-function enableAndResetValue(element, field) {
+function enableAndResetValue(element, field, property) {
   // get dom node
   var fieldNode = domQuery(`select[name="${field.id}"]`);
-  var property;
   if (fieldNode) {
-    // get property value
-    property = helper.getExtensionProperty(element, field.id)[field.id];
     // enable select box
     fieldNode.removeAttribute('disabled');
     // refresh select box options
@@ -46,6 +43,7 @@ function enableAndResetValue(element, field) {
 }
 
 function refreshApplications(element) {
+  var property;
   var newApplicationId;
   // loading flag
   applicationsLoading = true;
@@ -54,11 +52,22 @@ function refreshApplications(element) {
     applications = JSON.parse(values);
     // loading flag
     applicationsLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'applicationId').applicationId ||
+      null;
+    // add entry if not contained
+    if (
+      property != null &&
+      !applications.map(e => e.value).includes(property)
+    ) {
+      applications.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
     newApplicationId = enableAndResetValue(
       element,
       applicationSelectBox,
-      false
+      property
     );
     // refresh child item
     refreshTemplates(element, newApplicationId);
@@ -66,6 +75,7 @@ function refreshApplications(element) {
 }
 
 function refreshTemplates(element, applicationId) {
+  var property;
   var newTemplateId;
   // loading flag
   templatesLoading = true;
@@ -74,8 +84,15 @@ function refreshTemplates(element, applicationId) {
     templates = JSON.parse(values);
     // loading flag
     templatesLoading = false;
+    // get property value
+    property =
+      helper.getExtensionProperty(element, 'templateId').templateId || null;
+    // add entry if not contained
+    if (property != null && !templates.map(e => e.value).includes(property)) {
+      templates.unshift({ name: `${property}*`, value: property });
+    }
     // refresh select box
-    newTemplateId = enableAndResetValue(element, templateSelectBox, false);
+    newTemplateId = enableAndResetValue(element, templateSelectBox, property);
   });
 }
 
@@ -182,12 +199,6 @@ export function contentAttributes(
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
-    if (elementIdentifier !== element) {
-      elementIdentifier = element;
-      // initiate ajax call for meta data
-      refreshApplications(element);
-    }
-
     // Use Template: Yes/No
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
@@ -228,6 +239,18 @@ export function contentAttributes(
         return helper.setExtensionProperty(element, bpmnFactory, values);
       },
       get: function (element) {
+        // if visible
+        if (
+          helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+          'true'
+        ) {
+          // refresh applications (if necessary)
+          if (elementIdentifier !== element) {
+            elementIdentifier = element;
+            // initiate ajax call for meta data
+            refreshApplications(element);
+          }
+        }
         return helper.getExtensionProperty(element, 'applicationId');
       },
       hidden: function () {

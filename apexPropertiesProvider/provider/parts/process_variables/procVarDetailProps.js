@@ -1,9 +1,9 @@
-var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
+var { is } = require('bpmn-js/lib/util/ModelUtil');
 var entryFactory = require('./custom/EntryFactory');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-import { getContainer, openEditor } from '../../customElements/monacoEditor';
+import { getContainer, openEditor } from '../../plugins/monacoEditor';
 import { getSelectedEntry } from './procVarLists';
 
 export function procVarDetailProps(element, translate) {
