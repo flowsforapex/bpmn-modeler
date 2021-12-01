@@ -8,9 +8,12 @@ import {
   getPages
 } from '../../plugins/metaDataCollector';
 
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+
 var domQuery = require('min-dom').query;
 var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var helper = new propertiesHelper('apex:ApexPage');
 
@@ -66,8 +69,7 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
-    console.log(values);
-    applications = JSON.parse(values);
+    applications = values;
     // loading flag
     applicationsLoading = false;
     // get property value
@@ -97,10 +99,9 @@ function refreshPages(element, applicationId) {
   var newPageId;
   // loading flag
   pagesLoading = true;
-  console.log(applications);
   // ajax process
   getPages(applicationId).then((values) => {
-    pages = JSON.parse(values);
+    pages = values;
     // loading flag
     pagesLoading = false;
     // get property value
@@ -123,7 +124,7 @@ function refreshItems(element, applicationId, pageId) {
   itemsLoading = true;
   // ajax process
   getItems(applicationId, pageId).then((values) => {
-    items = JSON.parse(values);
+    items = values;
     // loading flag
     itemsLoading = false;
     // get property value
@@ -143,7 +144,13 @@ function refreshItems(element, applicationId, pageId) {
   });
 }
 
-export default function (element, bpmnFactory, elementRegistry, translate) {
+export default function (
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
   const userTaskProps = [];
 
   var enterQuickPick = function (node, values) {
@@ -158,6 +165,28 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     );
   };
 
+  var createUserTaskItems = function (extensionElements) {
+    const handler = new MultiCommandHandler(commandStack);
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'PROCESS_ID',
+        itemValue: '&F4A$PROCESS_ID.',
+      })
+    );
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'SUBFLOW_ID',
+        itemValue: '&F4A$SUBFLOW_ID.',
+      })
+    );
+    handler.preExecute(
+      subHelper.newElement(element, extensionElements, bpmnFactory, {
+        itemName: 'STEP_KEY',
+        itemValue: '&F4A$STEP_KEY.',
+      })
+    );
+  };
+
   var { type } = getBusinessObject(element);
 
   if (
@@ -166,7 +195,32 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       type === 'apexPage' ||
       !forbiddenTypes.includes(type))
   ) {
-    // applications select list
+    // manualInput switch
+    userTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'inputSelection',
+        label: 'Input',
+        selectOptions: [
+          { name: 'Use APEX meta data', value: 'false' },
+          { name: 'Manual input', value: 'true' },
+        ],
+        modelProperty: 'manualInput',
+
+        get: function (element) {
+          var bo = getBusinessObject(element);
+          return {
+            manualInput: bo.get('manualInput'),
+          };
+        },
+
+        set: function (element, values, node) {
+          var bo = getBusinessObject(element);
+          return cmdHelper.updateBusinessObject(element, bo, values);
+        },
+      })
+    );
+
+    // application select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
       // description: translate('Application ID or Alias'),
@@ -181,6 +235,10 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
         return applicationsLoading;
       },
 
+      hidden: function (element) {
+        return getBusinessObject(element).manualInput === 'true';
+      },
+
       get: function (element) {
         // refresh applications (if necessary)
         if (elementIdentifier !== element) {
@@ -188,6 +246,19 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
           refreshApplications(element);
         }
         var property = helper.getExtensionProperty(element, 'applicationId');
+        // add entry if not contained
+        if (
+          property.applicationId != null &&
+          !applications.map(e => e.value).includes(property.applicationId)
+        ) {
+          // filter out old custom entries
+          applications = applications.filter(a => !a.name.endsWith('*'));
+          // add entry
+          applications.unshift({
+            name: `${property.applicationId}*`,
+            value: property.applicationId,
+          });
+        }
         return property;
       },
 
@@ -200,6 +271,31 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     });
 
     userTaskProps.push(applicationSelectBox);
+
+    // application text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'applicationIdText',
+        label: translate('Application ID'),
+        modelProperty: 'applicationId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'applicationId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
 
     // page select list
     pageSelectBox = entryFactory.selectBox(translate, {
@@ -216,8 +312,25 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
         return applicationsLoading || pagesLoading;
       },
 
+      hidden: function (element) {
+        return getBusinessObject(element).manualInput === 'true';
+      },
+
       get: function (element) {
         var property = helper.getExtensionProperty(element, 'pageId');
+        // add entry if not contained
+        if (
+          property.pageId != null &&
+          !pages.map(e => e.value).includes(property.pageId)
+        ) {
+          // filter out old custom entries
+          pages = pages.filter(p => !p.name.endsWith('*'));
+          // add entry
+          pages.unshift({
+            name: `${property.pageId}*`,
+            value: property.pageId,
+          });
+        }
         return property;
       },
 
@@ -235,6 +348,31 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
     });
 
     userTaskProps.push(pageSelectBox);
+
+    // page text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'pageIdText',
+        label: translate('Page ID'),
+        modelProperty: 'pageId',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+
+        get: function (element) {
+          var property = helper.getExtensionProperty(element, 'pageId');
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+      })
+    );
 
     pageItemsElement = extensionElementsEntry(element, bpmnFactory, {
       id: 'pageItems',
@@ -296,6 +434,17 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
 
     userTaskProps.push(pageItemsElement);
 
+    // items quick pick
+    userTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-items',
+        buttonLabel: translate('generate user task items'),
+        handleClick: function (element, node, event, extensionElements) {
+          createUserTaskItems(extensionElements);
+        },
+      })
+    );
+
     // item select list
     itemSelectBox = entryFactory.selectBox(translate, {
       id: 'itemName',
@@ -318,6 +467,19 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
           node,
           'itemName'
         );
+        // add entry if not contained
+        if (
+          property.itemName != null &&
+          !items.map(e => e.value).includes(property.itemName)
+        ) {
+          // filter out old custom entries
+          items = items.filter(i => !i.name.endsWith('*'));
+          // add entry
+          items.unshift({
+            name: `${property.itemName}*`,
+            value: property.itemName,
+          });
+        }
         return property;
       },
 
@@ -331,11 +493,50 @@ export default function (element, bpmnFactory, elementRegistry, translate) {
       },
 
       hidden: function (element, node) {
-        return subHelper.isNotSelected(pageItemsElement, element, node);
+        return (
+          getBusinessObject(element).manualInput === 'true' ||
+          subHelper.isNotSelected(pageItemsElement, element, node)
+        );
       },
     });
 
     userTaskProps.push(itemSelectBox);
+
+    // item text field
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'itemNameText',
+        label: translate('Name of the page item'),
+        modelProperty: 'itemName',
+
+        hidden: function (element, node) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false' ||
+            subHelper.isNotSelected(pageItemsElement, element, node)
+          );
+        },
+
+        get: function (element, node) {
+          var property = subHelper.getExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            'itemName'
+          );
+          return property;
+        },
+
+        set: function (element, values, node) {
+          return subHelper.setExtensionSubProperty(
+            pageItemsElement,
+            element,
+            node,
+            values
+          );
+        },
+      })
+    );
 
     // item value
     userTaskProps.push(

@@ -1,87 +1,78 @@
 export function getApplications() {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
   // ajax process
-  return apex.server.process(
-    'GET_APPLICATIONS',
-    {},
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_APPLICATIONS',
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
-      },
-    }
-  );
-}
-
-export function getApplicationsMail() {
-  // ajax process
-  return apex.server.process(
-    'GET_APPLICATIONS_MAIL',
-    {},
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
-      },
-    }
-  );
+      {}
+    )
+    .then(pData => pData);
 }
 
 export function getPages(applicationId) {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
   // ajax process
-  return apex.server.process(
-    'GET_PAGES',
-    { x01: parseInt(applicationId, 10) || null },
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_PAGES',
+        x02: applicationId,
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
-      },
-    }
-  );
+      {}
+    )
+    .then(pData => pData);
 }
 
 export function getItems(applicationId, pageId) {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
   // ajax process
-  return apex.server.process(
-    'GET_ITEMS',
-    {
-      x01: parseInt(applicationId, 10) || null,
-      x02: parseInt(pageId, 10) || null,
-    },
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_ITEMS',
+        x02: applicationId,
+        x03: pageId,
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
+      {}
+    )
+    .then(pData => pData);
+}
+
+export function getApplicationsMail() {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+  // ajax process
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_APPLICATIONS_MAIL',
       },
-    }
-  );
+      {}
+    )
+    .then(pData => pData);
 }
 
 export function getTemplates(applicationId) {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
   // ajax process
-  return apex.server.process(
-    'GET_TEMPLATES',
-    { x01: parseInt(applicationId, 10) || null },
-    {
-      dataType: 'text',
-      success: function (data) {
-        return data;
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_TEMPLATES',
+        x02: applicationId,
       },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(errorThrown);
-      },
-    }
-  );
+      {}
+    )
+    .then(pData => pData);
 }
