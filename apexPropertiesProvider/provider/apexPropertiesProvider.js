@@ -8,8 +8,8 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
-import businessRuleTaskExecutePlsql from './parts/businessRuleTask/executePlsql.js';
 import eventProps from './parts/events/EventProps';
+import executePlsql from './parts/general/executePlsql.js';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
@@ -20,8 +20,6 @@ import {
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
-import scriptTaskExecutePlsql from './parts/scriptTask/executePlsql.js';
-import serviceTaskExecutePlsql from './parts/serviceTask/executePlsql';
 import {
   baseAttributes,
   contentAttributes
@@ -95,38 +93,12 @@ function createApexTabGroups(
 }
 
 function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
-  var apexScriptGroup = {
+  var plsqlGroup = {
     id: 'apex-script-plsql',
     label: translate('Execute PL/SQL'),
-    entries: scriptTaskExecutePlsql(
-      element,
-      bpmnFactory,
-      commandStack,
-      translate
-    ),
+    entries: executePlsql(element, bpmnFactory, commandStack, translate),
   };
-  var apexServiceGroup = {
-    id: 'apex-service-plsql',
-    label: translate('Execute PL/SQL'),
-    entries: serviceTaskExecutePlsql(
-      element,
-      bpmnFactory,
-      commandStack,
-      translate
-    ),
-  };
-  var apexBusinessRuleGroup = {
-    id: 'apex-businessRule-plsql',
-    label: translate('Execute PL/SQL'),
-    entries: businessRuleTaskExecutePlsql(
-      element,
-      bpmnFactory,
-      commandStack,
-      translate
-    ),
-  };
-
-  return [apexScriptGroup, apexServiceGroup, apexBusinessRuleGroup];
+  return [plsqlGroup];
 }
 
 function createExternalURLTabGroups(element, bpmnFactory, translate) {

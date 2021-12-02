@@ -8,23 +8,21 @@ var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommand
 
 var helper = new propertiesHelper('apex:ExecutePlsql');
 
-var forbiddenTypes = ['sendMail'];
-
 export default function (element, bpmnFactory, commandStack, translate) {
-  const serviceTaskEngine = '[name="engine"]';
+  const taskEngine = '[name="engine"]';
   const engineNo = 0;
-  const serviceTaskProps = [];
+  const taskProps = [];
 
   var { type } = getBusinessObject(element);
 
   if (
-    is(element, 'bpmn:ServiceTask') &&
-    (typeof type === 'undefined' ||
-      type === 'executePlsql' ||
-      !forbiddenTypes.includes(type))
+    (is(element, 'bpmn:ScriptTask') ||
+      is(element, 'bpmn:ServiceTask') ||
+      is(element, 'bpmn:BusinessRuleTask')) &&
+    (typeof type === 'undefined' || type === 'executePlsql')
   ) {
     // Run PL/SQL Code
-    serviceTaskProps.push(
+    taskProps.push(
       entryFactory.textBox(translate, {
         id: 'plsqlCode',
         description: translate('Enter the PL/SQL code to be executed.'),
@@ -39,11 +37,11 @@ export default function (element, bpmnFactory, commandStack, translate) {
       })
     );
 
-    // container for script editor
-    serviceTaskProps.push(getContainer('plsqlCode'));
+    // container for plsql editor
+    taskProps.push(getContainer('plsqlCode'));
 
     // link to script editor
-    serviceTaskProps.push(
+    taskProps.push(
       entryFactory.link(translate, {
         id: 'plsqlCodeEditor',
         buttonLabel: 'Open Editor',
@@ -63,7 +61,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // if 'yes' then add 'autoBinds'
-    serviceTaskProps.push(
+    taskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
         // description: translate('Use APEX_EXEC'),
@@ -83,7 +81,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // only shown, when APEX_EXEC is used
-    serviceTaskProps.push(
+    taskProps.push(
       entryFactory.selectBox(translate, {
         id: 'autoBinds',
         description: translate(
@@ -96,7 +94,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
           { name: translate('Yes (deprecated)'), value: 'true' },
         ],
         hidden: function () {
-          return isOptionSelected(serviceTaskEngine, engineNo);
+          return isOptionSelected(taskEngine, engineNo);
         },
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
@@ -108,5 +106,5 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
   }
 
-  return serviceTaskProps;
+  return taskProps;
 }
