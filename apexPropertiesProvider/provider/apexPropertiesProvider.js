@@ -24,8 +24,7 @@ import scriptTaskExecutePlsql from './parts/scriptTask/executePlsql.js';
 import serviceTaskExecutePlsql from './parts/serviceTask/executePlsql';
 import {
   baseAttributes,
-  contentAttributes,
-  miscAttributes
+  contentAttributes
 } from './parts/serviceTask/sendMail';
 import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
@@ -143,21 +142,16 @@ function createExternalURLTabGroups(element, bpmnFactory, translate) {
 function createMailTabGroups(element, bpmnFactory, commandStack, translate) {
   var apexServiceGroup1 = {
     id: 'apex-mail-base',
-    label: translate('Address settings'),
+    label: translate('General'),
     entries: baseAttributes(element, bpmnFactory, translate),
   };
   var apexServiceGroup2 = {
     id: 'apex-mail-content',
-    label: translate('Email content'),
+    label: translate('Content'),
     entries: contentAttributes(element, bpmnFactory, commandStack, translate),
   };
-  var apexServiceGroup3 = {
-    id: 'apex-mail-misc',
-    label: translate('Misc'),
-    entries: miscAttributes(element, bpmnFactory, commandStack, translate),
-  };
 
-  return [apexServiceGroup1, apexServiceGroup2, apexServiceGroup3];
+  return [apexServiceGroup1, apexServiceGroup2];
 }
 
 function createVariablesTabGroups(

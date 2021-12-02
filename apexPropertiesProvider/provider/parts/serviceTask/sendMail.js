@@ -105,6 +105,25 @@ export function baseAttributes(element, bpmnFactory, translate) {
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
+    // Immediately: Yes/No
+    serviceTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'immediately',
+        label: translate('Send Email Immediately'),
+        modelProperty: 'immediately',
+        selectOptions: [
+          { name: translate('Yes'), value: 'true' },
+          { name: translate('No'), value: 'false' },
+        ],
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'immediately');
+        },
+      })
+    );
+
     // emailFrom
     serviceTaskProps.push(
       entryFactory.textField(translate, {
@@ -601,17 +620,7 @@ export function contentAttributes(
         },
       })
     );
-  }
-  return serviceTaskProps;
-}
 
-export function miscAttributes(element, bpmnFactory, commandStack, translate) {
-  const serviceTaskProps = [];
-
-  if (
-    is(element, 'bpmn:ServiceTask') &&
-    getBusinessObject(element).type === 'sendMail'
-  ) {
     // attachment
     serviceTaskProps.push(
       entryFactory.textBox(translate, {
@@ -651,26 +660,6 @@ export function miscAttributes(element, bpmnFactory, commandStack, translate) {
         },
       })
     );
-
-    // Immediately: Yes/No
-    serviceTaskProps.push(
-      entryFactory.selectBox(translate, {
-        id: 'immediately',
-        label: translate('Send Email Immediately'),
-        modelProperty: 'immediately',
-        selectOptions: [
-          { name: translate('No'), value: 'false' },
-          { name: translate('Yes'), value: 'true' },
-        ],
-        set: function (element, values) {
-          return helper.setExtensionProperty(element, bpmnFactory, values);
-        },
-        get: function (element) {
-          return helper.getExtensionProperty(element, 'immediately');
-        },
-      })
-    );
   }
-
   return serviceTaskProps;
 }
