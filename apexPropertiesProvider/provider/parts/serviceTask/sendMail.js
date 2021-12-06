@@ -216,6 +216,11 @@ export function contentAttributes(
 ) {
   const serviceTaskProps = [];
 
+  var enterQuickPick = function (values) {
+    var commands = helper.setExtensionProperty(element, bpmnFactory, values);
+    new MultiCommandHandler(commandStack).preExecute(commands);
+  };
+
   if (
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
@@ -476,6 +481,44 @@ export function contentAttributes(
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
           openEditor('placeholder', getPlaceholder, savePlaceholder, 'json');
+        },
+        showLink: function () {
+          return (
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate !== 'undefined' &&
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'true'
+          );
+        },
+      })
+    );
+
+    // quick pick json placeholder
+    serviceTaskProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-placeholder',
+        buttonLabel: 'Load JSON',
+        handleClick: function (element, node, event) {
+          // ajaxIdentifier
+          var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+          // ajax process
+          apex.server
+            .plugin(
+              ajaxIdentifier,
+              {
+                x01: 'GET_JSON_PLACEHOLDERS',
+                x02: helper.getExtensionProperty(element, 'applicationId')
+                  .applicationId,
+                x03: helper.getExtensionProperty(element, 'templateId')
+                  .templateId,
+              },
+              {}
+            )
+            .then((pData) => {
+              enterQuickPick({
+                placeholder: JSON.stringify(pData, null, 1),
+              });
+            });
         },
         showLink: function () {
           return (
