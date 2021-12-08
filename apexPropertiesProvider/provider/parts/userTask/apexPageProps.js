@@ -165,22 +165,34 @@ export default function (
     );
   };
 
-  var createUserTaskItems = function (extensionElements) {
+  var createUserTaskItems = function () {
+    var bo = getBusinessObject(element);
+    var extensions = bo.extensionElements;
+    if (!extensions) {
+      var command = subPropertiesHelper.createExtensionElement(
+        element,
+        bpmnFactory
+      );
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        command.context
+      );
+    }
+    extensions = bo.extensionElements;
     const handler = new MultiCommandHandler(commandStack);
     handler.preExecute(
-      subHelper.newElement(element, extensionElements, bpmnFactory, {
+      subHelper.newElement(element, extensions, bpmnFactory, {
         itemName: 'PROCESS_ID',
         itemValue: '&F4A$PROCESS_ID.',
       })
     );
     handler.preExecute(
-      subHelper.newElement(element, extensionElements, bpmnFactory, {
+      subHelper.newElement(element, extensions, bpmnFactory, {
         itemName: 'SUBFLOW_ID',
         itemValue: '&F4A$SUBFLOW_ID.',
       })
     );
     handler.preExecute(
-      subHelper.newElement(element, extensionElements, bpmnFactory, {
+      subHelper.newElement(element, extensions, bpmnFactory, {
         itemName: 'STEP_KEY',
         itemValue: '&F4A$STEP_KEY.',
       })
@@ -439,8 +451,8 @@ export default function (
       entryFactory.link(translate, {
         id: 'quickpick-items',
         buttonLabel: translate('generate user task items'),
-        handleClick: function (element, node, event, extensionElements) {
-          createUserTaskItems(extensionElements);
+        handleClick: function (element, node, event) {
+          createUserTaskItems();
         },
       })
     );
