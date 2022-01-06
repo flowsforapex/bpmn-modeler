@@ -460,7 +460,7 @@ export default function (
     // item select list
     itemSelectBox = entryFactory.selectBox(translate, {
       id: 'itemName',
-      escription: translate('Name of the page item'),
+      // description: translate('Name of the page item'),
       label: translate('Item Name'),
       modelProperty: 'itemName',
 
@@ -518,7 +518,7 @@ export default function (
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'itemNameText',
-        label: translate('Name of the page item'),
+        label: translate('Item Name'),
         modelProperty: 'itemName',
 
         hidden: function (element, node) {
