@@ -15,7 +15,7 @@ export default function (
   var selectOptions = {
     userTask: [
       { name: translate('APEX Page'), value: 'apexPage' },
-      { name: translate('External URL'), value: 'externalUrl' },
+      // { name: translate('External URL'), value: 'externalUrl' },
       // { name: translate('Unified Task List'), value: 'unifiedTaskList' },
     ],
     serviceTask: [
