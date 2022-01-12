@@ -10,7 +10,6 @@ import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
 import eventProps from './parts/events/EventProps';
-import executePlsql from './parts/general/executePlsql.js';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
@@ -21,6 +20,8 @@ import {
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+import executePlsqlScript from './parts/scriptTask/executePlsql.js';
+import executePlsqlService from './parts/serviceTask/executePlsql.js';
 import {
   baseAttributes,
   contentAttributes
@@ -94,10 +95,15 @@ function createApexTabGroups(
 }
 
 function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
-  var plsqlGroup = {
-    id: 'apex-execute-plsql',
+  var scriptGroup = {
+    id: 'apex-execute-plsql-script',
     label: translate('Execute PL/SQL'),
-    entries: executePlsql(element, bpmnFactory, commandStack, translate),
+    entries: executePlsqlScript(element, bpmnFactory, commandStack, translate),
+  };
+  var serviceGroup = {
+    id: 'apex-execute-plsql-service',
+    label: translate('Execute PL/SQL'),
+    entries: executePlsqlService(element, bpmnFactory, commandStack, translate),
   };
   var businessRuleGroup = {
     id: 'apex-execute-plsql-business-rule',
@@ -109,7 +115,7 @@ function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
       translate
     ),
   };
-  return [plsqlGroup, businessRuleGroup];
+  return [scriptGroup, serviceGroup, businessRuleGroup];
 }
 
 function createExternalURLTabGroups(element, bpmnFactory, translate) {

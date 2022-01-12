@@ -8,6 +8,8 @@ var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommand
 
 var helper = new propertiesHelper('apex:ExecutePlsql');
 
+var forbiddenTypes = [];
+
 export default function (element, bpmnFactory, commandStack, translate) {
   const taskEngine = '[name="engine"]';
   const engineNo = 0;
@@ -16,8 +18,10 @@ export default function (element, bpmnFactory, commandStack, translate) {
   var { type } = getBusinessObject(element);
 
   if (
-    (is(element, 'bpmn:ScriptTask') || is(element, 'bpmn:ServiceTask')) &&
-    (typeof type === 'undefined' || type === 'executePlsql')
+    is(element, 'bpmn:ScriptTask') &&
+    (typeof type === 'undefined' ||
+      type === 'executePlsql' ||
+      !forbiddenTypes.includes(type))
   ) {
     // Run PL/SQL Code
     taskProps.push(
