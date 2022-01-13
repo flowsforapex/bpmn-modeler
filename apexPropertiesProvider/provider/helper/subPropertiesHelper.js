@@ -49,6 +49,21 @@ export default class subPropertiesHelper {
     option.value = entry && entry.get(value);
   }
 
+  static createExtensionElement(element, factory) {
+    var command;
+    var bo = getBusinessObject(element);
+    var extensions = elementHelper.createElement(
+      'bpmn:ExtensionElements',
+      {},
+      bo,
+      factory
+    );
+    command = cmdHelper.updateBusinessObject(element, bo, {
+      extensionElements: extensions,
+    });
+    return command;
+  }
+
   newElement(element, extensionElements, factory, values) {
     var commands = [];
     var newElem;

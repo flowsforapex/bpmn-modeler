@@ -193,9 +193,9 @@
 
           await myModeler.importXML(defaultDiagram);
 
-          if (myModeler._definitions && myModeler._definitions.exporter === 'Flows for APEX' && myModeler._definitions.exporterVersion != '22.1.0') {
-            const refactoredXml = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
-            await myModeler.importXML(refactoredXml);
+          if (myModeler._definitions && (myModeler._definitions.exporter !== 'Flows for APEX' || (myModeler._definitions.exporter === 'Flows for APEX' && myModeler._definitions.exporterVersion != '22.1.0'))) {
+            const refactored = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
+            await myModeler.importXML(refactored);
           }
 
           // access viewer components

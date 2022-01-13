@@ -1,7 +1,7 @@
 {
   "name": "APEX",
   "prefix": "apex",
-  "uri": "http://www.apex.mt-ag.com",
+  "uri": "https://flowsforapex.org",
   "xml": {
     "tagAlias": "lowerCase"
   },
