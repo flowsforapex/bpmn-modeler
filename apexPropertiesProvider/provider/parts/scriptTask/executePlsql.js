@@ -40,13 +40,13 @@ export default function (element, bpmnFactory, commandStack, translate) {
     );
 
     // container for plsql editor
-    taskProps.push(getContainer('plsqlCode'));
+    taskProps.push(getContainer('plsqlCode', translate));
 
     // link to script editor
     taskProps.push(
       entryFactory.link(translate, {
         id: 'plsqlCodeEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open Editor'),
         handleClick: function (element, node, event) {
           var getPlsqlCode = function () {
             return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
@@ -66,7 +66,6 @@ export default function (element, bpmnFactory, commandStack, translate) {
     taskProps.push(
       entryFactory.selectBox(translate, {
         id: 'engine',
-        // description: translate('Use APEX_EXEC'),
         modelProperty: 'engine',
         label: translate('Use APEX_EXEC'),
         selectOptions: [

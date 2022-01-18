@@ -192,7 +192,7 @@ export function baseAttributes(element, bpmnFactory, translate) {
     serviceTaskProps.push(
       entryFactory.textField(translate, {
         id: 'emailReplyTo',
-        description: translate('Email where the reply should be send'),
+        description: translate('Email where the reply should be send to'),
         label: translate('Reply To'),
         modelProperty: 'emailReplyTo',
         set: function (element, values) {
@@ -248,10 +248,10 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'inputSelection',
-        label: 'Input',
+        label: translate('Input'),
         selectOptions: [
-          { name: 'Use APEX meta data', value: 'false' },
-          { name: 'Manual input', value: 'true' },
+          { name: translate('Use APEX meta data'), value: 'false' },
+          { name: translate('Manual input'), value: 'true' },
         ],
         modelProperty: 'manualInput',
 
@@ -462,13 +462,13 @@ export function contentAttributes(
     );
 
     // container for placeholder editor
-    serviceTaskProps.push(getContainer('placeholder'));
+    serviceTaskProps.push(getContainer('placeholder', translate));
 
     // link to placeholder editor
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'placeholderEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open Editor'),
         handleClick: function (element, node, event) {
           var getPlaceholder = function () {
             return helper.getExtensionProperty(element, 'placeholder')
@@ -579,13 +579,13 @@ export function contentAttributes(
     );
 
     // container for bodyText editor
-    serviceTaskProps.push(getContainer('bodyText'));
+    serviceTaskProps.push(getContainer('bodyText', translate));
 
     // link to bodyText editor
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'bodyTextEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open Editor'),
         handleClick: function (element, node, event) {
           var getBodyText = function () {
             return helper.getExtensionProperty(element, 'bodyText').bodyText;
@@ -634,13 +634,13 @@ export function contentAttributes(
     );
 
     // container for bodyHTML editor
-    serviceTaskProps.push(getContainer('bodyHTML'));
+    serviceTaskProps.push(getContainer('bodyHTML', translate));
 
     // link to bodyHTML editor
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'bodyHTMLEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open Editor'),
         handleClick: function (element, node, event) {
           var getBodyHTML = function () {
             return helper.getExtensionProperty(element, 'bodyHTML').bodyHTML;
@@ -681,13 +681,13 @@ export function contentAttributes(
     );
 
     // container for attachment editor
-    serviceTaskProps.push(getContainer('attachment'));
+    serviceTaskProps.push(getContainer('attachment', translate));
 
     // link to attachment editor
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'attachmentEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open Editor'),
         handleClick: function (element, node, event) {
           var getAttachment = function () {
             return helper.getExtensionProperty(element, 'attachment')

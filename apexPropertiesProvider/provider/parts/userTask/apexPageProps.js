@@ -211,10 +211,10 @@ export default function (
     userTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'inputSelection',
-        label: 'Input',
+        label: translate('Input'),
         selectOptions: [
-          { name: 'Use APEX meta data', value: 'false' },
-          { name: 'Manual input', value: 'true' },
+          { name: translate('Use APEX meta data'), value: 'false' },
+          { name: translate('Manual input'), value: 'true' },
         ],
         modelProperty: 'manualInput',
 
@@ -235,7 +235,6 @@ export default function (
     // application select list
     applicationSelectBox = entryFactory.selectBox(translate, {
       id: 'applicationId',
-      // description: translate('Application ID or Alias'),
       label: translate('Application'),
       modelProperty: 'applicationId',
 
@@ -460,7 +459,6 @@ export default function (
     // item select list
     itemSelectBox = entryFactory.selectBox(translate, {
       id: 'itemName',
-      // description: translate('Name of the page item'),
       label: translate('Item Name'),
       modelProperty: 'itemName',
 
@@ -554,7 +552,6 @@ export default function (
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'itemValue',
-        // description: translate('Value of the page item'),
         label: translate('Item Value'),
         modelProperty: 'itemValue',
 
@@ -586,7 +583,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-process-id',
-        buttonLabel: 'process_id',
+        buttonLabel: translate('process_id'),
         handleClick: function (element, node, event) {
           enterQuickPick(node, {
             itemValue: '&F4A$PROCESS_ID.',
@@ -602,7 +599,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-subflow-id',
-        buttonLabel: 'subflow_id',
+        buttonLabel: translate('subflow_id'),
         handleClick: function (element, node, event) {
           enterQuickPick(node, {
             itemValue: '&F4A$SUBFLOW_ID.',
@@ -618,7 +615,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-step-key',
-        buttonLabel: 'step_key',
+        buttonLabel: translate('step_key'),
         handleClick: function (element, node, event) {
           enterQuickPick(node, {
             itemValue: '&F4A$STEP_KEY.',
@@ -634,7 +631,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-business-ref',
-        buttonLabel: 'business_ref',
+        buttonLabel: translate('business_ref'),
         handleClick: function (element, node, event) {
           enterQuickPick(node, {
             itemValue: '&F4A$BUSINESS_REF.',
