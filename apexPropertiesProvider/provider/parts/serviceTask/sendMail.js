@@ -350,7 +350,11 @@ export function contentAttributes(
         hidden: function (element) {
           return (
             typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
+            getBusinessObject(element).manualInput === 'false' ||
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate === 'undefined' ||
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
           );
         },
 
@@ -422,7 +426,11 @@ export function contentAttributes(
         hidden: function (element) {
           return (
             typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
+            getBusinessObject(element).manualInput === 'false' ||
+            typeof helper.getExtensionProperty(element, 'useTemplate')
+              .useTemplate === 'undefined' ||
+            helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
+              'false'
           );
         },
 
