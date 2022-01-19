@@ -12,97 +12,102 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
     var filter = [];
     var parent;
 
-    // filter gateways
-    if (
-      is(element, 'bpmn:ExclusiveGateway') ||
-      is(element, 'bpmn:ParallelGateway') ||
-      is(element, 'bpmn:InclusiveGateway') ||
-      is(element, 'bpmn:EventBasedGateway')
-    ) {
-      // opening gateway
-      if (element.incoming.length === 1 && element.outgoing.length > 1) {
-        filter.push('apex:BeforeSplit');
-        // closing gateway
-      } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
-        filter.push('apex:AfterMerge');
-        // opening & closing gateway
-      } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
-        filter.push('apex:AfterMerge');
-        filter.push('apex:BeforeSplit');
-      }
-      // filter events
-    } else if (
-      is(element, 'bpmn:StartEvent') ||
-      is(element, 'bpmn:IntermediateThrowEvent') ||
-      is(element, 'bpmn:IntermediateCatchEvent') ||
-      is(element, 'bpmn:BoundaryEvent') ||
-      is(element, 'bpmn:EndEvent')
-    ) {
-      // not timer event
-      if (typeof businessObject.eventDefinitions === 'undefined') {
-        filter.push('apex:OnEvent');
-      } else if (
-        businessObject.eventDefinitions[0].timerType === 'oracleDate'
+    if (element.type !== 'label') {
+      // filter gateways
+      if (
+        is(element, 'bpmn:ExclusiveGateway') ||
+        is(element, 'bpmn:ParallelGateway') ||
+        is(element, 'bpmn:InclusiveGateway') ||
+        is(element, 'bpmn:EventBasedGateway')
       ) {
-        filter.push('apex:OracleDate');
-        parent = businessObject.eventDefinitions[0];
-      } else if (
-        businessObject.eventDefinitions[0].timerType === 'oracleDuration'
-      ) {
-        filter.push('apex:OracleDuration');
-        parent = businessObject.eventDefinitions[0];
-      } else if (
-        businessObject.eventDefinitions[0].timerType === 'oracleCycle'
-      ) {
-        filter.push('apex:OracleCycle');
-        parent = businessObject.eventDefinitions[0];
-      }
-      // filter tasks
-    } else if (is(element, 'bpmn:Task')) {
-      filter.push('apex:BeforeTask');
-      filter.push('apex:AfterTask');
-      // filter user tasks
-      if (is(element, 'bpmn:UserTask')) {
-        if (
-          typeof businessObject.type === 'undefined' ||
-          businessObject.type === 'apexPage'
+        // opening gateway
+        if (element.incoming.length === 1 && element.outgoing.length > 1) {
+          filter.push('apex:BeforeSplit');
+          // closing gateway
+        } else if (
+          element.incoming.length > 1 &&
+          element.outgoing.length === 1
         ) {
-          filter.push('apex:ApexPage');
-        } else if (businessObject.type === 'externalUrl') {
-          filter.push('apex:ExternalUrl');
+          filter.push('apex:AfterMerge');
+          // opening & closing gateway
+        } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+          filter.push('apex:AfterMerge');
+          filter.push('apex:BeforeSplit');
         }
-        // filter script tasks
-      } else if (is(element, 'bpmn:ScriptTask')) {
-        filter.push('apex:ExecutePlsql');
-        // filter service tasks
-      } else if (is(element, 'bpmn:ServiceTask')) {
-        if (
-          typeof getBusinessObject(element).type === 'undefined' ||
-          getBusinessObject(element).type === 'executePlsql'
+        // filter events
+      } else if (
+        is(element, 'bpmn:StartEvent') ||
+        is(element, 'bpmn:IntermediateThrowEvent') ||
+        is(element, 'bpmn:IntermediateCatchEvent') ||
+        is(element, 'bpmn:BoundaryEvent') ||
+        is(element, 'bpmn:EndEvent')
+      ) {
+        // not timer event
+        if (typeof businessObject.eventDefinitions === 'undefined') {
+          filter.push('apex:OnEvent');
+        } else if (
+          businessObject.eventDefinitions[0].timerType === 'oracleDate'
         ) {
+          filter.push('apex:OracleDate');
+          parent = businessObject.eventDefinitions[0];
+        } else if (
+          businessObject.eventDefinitions[0].timerType === 'oracleDuration'
+        ) {
+          filter.push('apex:OracleDuration');
+          parent = businessObject.eventDefinitions[0];
+        } else if (
+          businessObject.eventDefinitions[0].timerType === 'oracleCycle'
+        ) {
+          filter.push('apex:OracleCycle');
+          parent = businessObject.eventDefinitions[0];
+        }
+        // filter tasks
+      } else if (is(element, 'bpmn:Task')) {
+        filter.push('apex:BeforeTask');
+        filter.push('apex:AfterTask');
+        // filter user tasks
+        if (is(element, 'bpmn:UserTask')) {
+          if (
+            typeof businessObject.type === 'undefined' ||
+            businessObject.type === 'apexPage'
+          ) {
+            filter.push('apex:ApexPage');
+          } else if (businessObject.type === 'externalUrl') {
+            filter.push('apex:ExternalUrl');
+          }
+          // filter script tasks
+        } else if (is(element, 'bpmn:ScriptTask')) {
           filter.push('apex:ExecutePlsql');
-        } else if (getBusinessObject(element).type === 'sendMail') {
-          filter.push('apex:SendMail');
+          // filter service tasks
+        } else if (is(element, 'bpmn:ServiceTask')) {
+          if (
+            typeof getBusinessObject(element).type === 'undefined' ||
+            getBusinessObject(element).type === 'executePlsql'
+          ) {
+            filter.push('apex:ExecutePlsql');
+          } else if (getBusinessObject(element).type === 'sendMail') {
+            filter.push('apex:SendMail');
+          }
+          // filter business rule tasks
+        } else if (is(element, 'bpmn:BusinessRuleTask')) {
+          filter.push('apex:ExecutePlsql');
         }
-        // filter business rule tasks
-      } else if (is(element, 'bpmn:BusinessRuleTask')) {
-        filter.push('apex:ExecutePlsql');
       }
-    }
 
-    var bo = parent || businessObject;
-    var toRemove =
-      bo.extensionElements &&
-      bo.extensionElements.values.filter(e => !filter.includes(e.$type));
+      var bo = parent || businessObject;
+      var toRemove =
+        bo.extensionElements &&
+        bo.extensionElements.values.filter(e => !filter.includes(e.$type));
 
-    if (toRemove && toRemove.length > 0) {
-      toRemove.forEach((e) => {
-        var command = extensionElementsHelper.removeEntry(bo, element, e);
-        new UpdateBusinessObjectListHandler(
-          elementRegistry,
-          bpmnFactory
-        ).execute(command.context);
-      });
+      if (toRemove && toRemove.length > 0) {
+        toRemove.forEach((e) => {
+          var command = extensionElementsHelper.removeEntry(bo, element, e);
+          new UpdateBusinessObjectListHandler(
+            elementRegistry,
+            bpmnFactory
+          ).execute(command.context);
+        });
+      }
     }
   });
 }
