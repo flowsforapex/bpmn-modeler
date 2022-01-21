@@ -17,8 +17,8 @@ export function getContainer(id, translate) {
       '</div>' +
       '<div id="editor-container"></div>' +
       '<div class="button-container end">' +
-      `<button id="close-btn" class="dialog close">'}${translate('Cancel')}</button>` +
-      `<button id="save-btn" class="dialog save">'}${translate('Save')}</button>` +
+      `<button id="close-btn" class="dialog close">${translate('Cancel')}</button>` +
+      `<button id="save-btn" class="dialog save">${translate('Save')}</button>` +
       '</div>' +
       '</div>',
   };
