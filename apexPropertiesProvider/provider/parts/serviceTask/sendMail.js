@@ -497,7 +497,7 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-placeholder',
-        buttonLabel: 'Load JSON',
+        buttonLabel: translate('Load JSON'),
         handleClick: function (element, node, event) {
           // ajaxIdentifier
           var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
