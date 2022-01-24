@@ -104,6 +104,7 @@ export function openEditor(id, getText, saveText, language) {
 
   saveBtn.onclick = function () {
     modal.style.display = 'none';
+    parent.appendChild(modal);
     saveText(monacoEditor.getValue());
     monacoEditor.dispose();
   };
