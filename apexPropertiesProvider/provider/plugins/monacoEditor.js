@@ -91,6 +91,16 @@ export function openEditor(id, getText, saveText, language, type) {
         .then((pData) => {
           domQuery(`#modal-dialog-${id} #error-text`).innerText =
             pData.message.replace(/\n/g, ' ');
+            switch (pData.success) {
+              case 'true':
+                domQuery(`#modal-dialog-${id} #error-text`).style.color = '#52B415';
+                break;
+              case 'false':
+                domQuery(`#modal-dialog-${id} #error-text`).style.color = '#cc3333';
+                break;
+              default:
+                domQuery(`#modal-dialog-${id} #error-text`).style.color = 'inherit';
+            }
         });
     };
   } else {
