@@ -258,6 +258,7 @@ function TimerEventDefinition(
     entryFactory.textField(translate, {
       id: 'date',
       label: translate('Date String'),
+      description: translate('e.g. 23-JUN-2027 14:10:00'),
       modelProperty: 'date',
 
       get: function (element) {
@@ -316,7 +317,7 @@ function TimerEventDefinition(
       id: 'formatMask',
       label: translate('Format Mask'),
       modelProperty: 'formatMask',
-      description: translate('e.g. MM-DD-YYYY'),
+      description: translate('e.g. DD-MON-YYYY HH24:MI:SS'),
 
       get: function (element) {
         return dateHelper.getExtensionProperty(
@@ -374,10 +375,10 @@ function TimerEventDefinition(
   group.entries.push(
     entryFactory.textField(translate, {
       id: 'intervalYM',
-      label: translate('Time until the timer fires'),
+      label: translate('Timer Duration'),
       modelProperty: 'intervalYM',
       description: translate(
-        'Interval in format <br/> YEAR(2) TO MONTH <br/> (YY-MM)'
+        'in format YY-MM'
       ),
 
       get: function (element) {
@@ -440,10 +441,10 @@ function TimerEventDefinition(
   group.entries.push(
     entryFactory.textField(translate, {
       id: 'intervalDS',
-      label: translate('Time until the timer fires'),
+      label: ' ',
       modelProperty: 'intervalDS',
       description: translate(
-        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
+        'in format DDD HH:MM:SS'
       ),
 
       get: function (element) {
@@ -511,7 +512,7 @@ function TimerEventDefinition(
       label: translate('Time until the timer fires first'),
       modelProperty: 'startIntervalDS',
       description: translate(
-        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
+        'in format DDD HH:MM:SS'
       ),
 
       get: function (element) {
@@ -571,7 +572,7 @@ function TimerEventDefinition(
       label: translate('Time until the timer fires again'),
       modelProperty: 'repeatIntervalDS',
       description: translate(
-        'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'
+        'in format DDD HH:MM:SS'
       ),
 
       get: function (element) {
