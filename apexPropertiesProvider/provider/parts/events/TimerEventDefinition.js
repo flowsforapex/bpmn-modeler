@@ -568,7 +568,7 @@ function TimerEventDefinition(
   group.entries.push(
     entryFactory.textField(translate, {
       id: 'repeatIntervalDS',
-      label: translate('Time until timer fires again'),
+      label: translate('Time until the timer fires again'),
       modelProperty: 'repeatIntervalDS',
       description: translate(
         'Interval in format <br/> DAY(3) TO SECOND(0) <br/> (DDD HH:MM:SS)'

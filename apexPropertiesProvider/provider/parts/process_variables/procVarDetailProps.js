@@ -231,7 +231,7 @@ export function procVarExpressionProps(element, commandStack, translate) {
     );
 
     // container for script editor
-    procVarProps.push(getContainer('varExpression'));
+    procVarProps.push(getContainer('varExpression', translate));
 
     // link to script editor
     procVarProps.push(
