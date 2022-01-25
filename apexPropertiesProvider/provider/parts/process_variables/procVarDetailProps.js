@@ -259,7 +259,8 @@ export function procVarExpressionProps(element, commandStack, translate) {
             'varExpression',
             getVarExpression,
             saveVarExpression,
-            language
+            language,
+            getProperty(element, node, 'varExpressionType').varExpressionType
           );
         },
         showLink: function (element, node) {

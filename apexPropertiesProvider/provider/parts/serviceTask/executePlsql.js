@@ -57,7 +57,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode, 'plsql');
+          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode, 'plsql', 'plsqlProcess');
         },
       })
     );

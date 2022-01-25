@@ -24,7 +24,7 @@ export function getContainer(id) {
   };
 }
 
-export function openEditor(id, getText, saveText, language) {
+export function openEditor(id, getText, saveText, language, type) {
   var modal = domQuery(`#modal-dialog-${id}`);
   var parent = modal.parentNode;
   var container = domQuery('.dialog-container');
@@ -84,6 +84,7 @@ export function openEditor(id, getText, saveText, language) {
             x01: 'PARSE_CODE',
             x02: monacoEditor.getValue(),
             x03: language,
+            x04: type
           },
           {}
         )

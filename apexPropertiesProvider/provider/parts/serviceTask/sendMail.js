@@ -488,7 +488,7 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('placeholder', getPlaceholder, savePlaceholder, 'json');
+          openEditor('placeholder', getPlaceholder, savePlaceholder, 'json', null);
         },
         showLink: function () {
           return (
@@ -604,7 +604,7 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('bodyText', getBodyText, saveBodyText, 'plaintext');
+          openEditor('bodyText', getBodyText, saveBodyText, 'plaintext', null);
         },
         showLink: function () {
           return (
@@ -659,7 +659,7 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('bodyHTML', getBodyHTML, saveBodyHTML, 'html');
+          openEditor('bodyHTML', getBodyHTML, saveBodyHTML, 'html', null);
         },
         showLink: function () {
           return (
@@ -707,7 +707,7 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('attachment', getAttachment, saveAttachment, 'sql');
+          openEditor('attachment', getAttachment, saveAttachment, 'sql', null);
         },
       })
     );
