@@ -7,6 +7,8 @@ import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
 export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
   var elements = Object.values(elementRegistry._elements).map(e => e.element);
 
+  console.log(elements);
+
   elements.forEach((element) => {
     var businessObject = getBusinessObject(element);
     var filter = [];
@@ -45,21 +47,21 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
         // not timer event
         if (typeof businessObject.eventDefinitions === 'undefined') {
           filter.push('apex:OnEvent');
-        } else if (
-          businessObject.eventDefinitions[0].timerType === 'oracleDate'
-        ) {
-          filter.push('apex:OracleDate');
+        } else {
           parent = businessObject.eventDefinitions[0];
-        } else if (
-          businessObject.eventDefinitions[0].timerType === 'oracleDuration'
-        ) {
-          filter.push('apex:OracleDuration');
-          parent = businessObject.eventDefinitions[0];
-        } else if (
-          businessObject.eventDefinitions[0].timerType === 'oracleCycle'
-        ) {
-          filter.push('apex:OracleCycle');
-          parent = businessObject.eventDefinitions[0];
+          if (
+            parent.timerType === 'oracleDate'
+          ) {
+            filter.push('apex:OracleDate');
+          } else if (
+            parent.timerType === 'oracleDuration'
+          ) {
+            filter.push('apex:OracleDuration');
+          } else if (
+            parent.timerType === 'oracleCycle'
+          ) {
+            filter.push('apex:OracleCycle');
+          }
         }
         // filter tasks
       } else if (is(element, 'bpmn:Task')) {
