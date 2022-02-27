@@ -33,12 +33,12 @@
           "type": "String"
         },
         {
-          "name": "calledDIagramVersionSelection",
+          "name": "calledDiagramVersionSelection",
           "isAttr": true,
           "type": "String"
         },
         {
-          "name": "calledDIagramVersion",
+          "name": "calledDiagramVersion",
           "isAttr": true,
           "type": "String"
         }
