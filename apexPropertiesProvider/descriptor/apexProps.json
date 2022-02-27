@@ -24,6 +24,27 @@
       ]
     },
     {
+      "name": "CallActivityAttributes",
+      "extends": [ "bpmn:CallActivity" ],
+      "properties": [
+        {
+          "name": "calledDiagram",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "calledDIagramVersionSelection",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "calledDIagramVersion",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "ApexPage",
       "superClass": [ "Element" ],
       "properties": [

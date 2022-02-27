@@ -9,6 +9,7 @@ import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/Proce
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
+import subProcessProps from './parts/callActivity/subProcess';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
@@ -59,6 +60,11 @@ function createGeneralTabGroups(
     label: translate('Documentation'),
     entries: [],
   };
+  var subProcessGroup = {
+    id: 'subProcess',
+    label: translate('Called SubProcess Diagram'),
+    entries: [],
+  };
 
   globalProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
@@ -68,8 +74,21 @@ function createGeneralTabGroups(
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
+  subProcessProps(
+    subProcessGroup,
+    elementRegistry,
+    bpmnFactory,
+    element,
+    translate
+  );
 
-  return [generalGroup, typeGroup, detailsGroup, documentationGroup];
+  return [
+    generalGroup,
+    typeGroup,
+    subProcessGroup,
+    detailsGroup,
+    documentationGroup,
+  ];
 }
 
 function createApexTabGroups(
