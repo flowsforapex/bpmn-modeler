@@ -279,6 +279,28 @@
       ]
     },
     {
+      "name": "InVariables",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "OutVariables",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
       "name": "OnEvent",
       "superClass": [ "Element" ],
       "properties": [

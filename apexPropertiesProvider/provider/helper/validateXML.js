@@ -49,17 +49,11 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
           filter.push('apex:OnEvent');
         } else {
           parent = businessObject.eventDefinitions[0];
-          if (
-            parent.timerType === 'oracleDate'
-          ) {
+          if (parent.timerType === 'oracleDate') {
             filter.push('apex:OracleDate');
-          } else if (
-            parent.timerType === 'oracleDuration'
-          ) {
+          } else if (parent.timerType === 'oracleDuration') {
             filter.push('apex:OracleDuration');
-          } else if (
-            parent.timerType === 'oracleCycle'
-          ) {
+          } else if (parent.timerType === 'oracleCycle') {
             filter.push('apex:OracleCycle');
           }
         }
@@ -94,6 +88,9 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
         } else if (is(element, 'bpmn:BusinessRuleTask')) {
           filter.push('apex:ExecutePlsql');
         }
+      } else if (is(element, 'bpmn:CallActivity')) {
+        filter.push('apex:InVariables');
+        filter.push('apex:OutVariables');
       }
 
       var bo = parent || businessObject;

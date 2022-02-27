@@ -13,14 +13,15 @@ import subProcessProps from './parts/callActivity/subProcess';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
-import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
-import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
+import generateCallActivityProcessVariables from './parts/process_variables/callActivityProcVarProps.js';
+import generateEventProcessVariables from './parts/process_variables/eventProcVarProps.js';
+import generateGatewayProcessVariables from './parts/process_variables/gatewayProcVarProps.js';
 import {
   procVarDetailProps,
   procVarExpressionProps
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
-import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+import generateTaskProcessVariables from './parts/process_variables/taskProcVarProps.js';
 import executePlsqlScript from './parts/scriptTask/executePlsql.js';
 import executePlsqlService from './parts/serviceTask/executePlsql.js';
 import {
@@ -171,27 +172,29 @@ function createVariablesTabGroups(
   var taskGroup = {
     id: 'apex-task',
     label: translate('Process Variables'),
-    entries: generateUserTaskProcessVariableLists(
-      element,
-      bpmnFactory,
-      translate
-    ),
+    entries: generateTaskProcessVariables(element, bpmnFactory, translate),
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
     label: translate('Process Variables'),
-    entries: generateGatewayTaskProcessVariableLists(
-      element,
-      bpmnFactory,
-      translate
-    ),
+    entries: generateGatewayProcessVariables(element, bpmnFactory, translate),
   };
 
   var eventGroup = {
     id: 'apex-event',
     label: translate('Process Variables'),
-    entries: generateEventTaskProcessVariables(element, bpmnFactory, translate),
+    entries: generateEventProcessVariables(element, bpmnFactory, translate),
+  };
+
+  var callActivityGroup = {
+    id: 'apex-callActivity',
+    label: translate('Process Variables'),
+    entries: generateCallActivityProcessVariables(
+      element,
+      bpmnFactory,
+      translate
+    ),
   };
 
   var detailGroup = {
@@ -208,7 +211,14 @@ function createVariablesTabGroups(
     enabled: isSelected,
   };
 
-  return [taskGroup, gatewayGroup, eventGroup, detailGroup, expressionGroup];
+  return [
+    taskGroup,
+    gatewayGroup,
+    eventGroup,
+    callActivityGroup,
+    detailGroup,
+    expressionGroup,
+  ];
 }
 
 export default function apexPropertiesProvider(
