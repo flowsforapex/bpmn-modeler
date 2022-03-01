@@ -1,6 +1,8 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { getDiagrams } from '../../plugins/metaDataCollector';
 
+var domQuery = require('min-dom').query;
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
@@ -41,7 +43,7 @@ function refreshDiagrams(element) {
   // loading flag
   diagramsLoading = true;
   // ajax process
-  getDiagrams(applicationId).then((values) => {
+  getDiagrams().then((values) => {
     diagrams = values;
     // loading flag
     diagramsLoading = false;
@@ -70,39 +72,41 @@ export default function (
 
   if (is(element, 'bpmn:CallActivity')) {
     // Diagram Name
-    group.entries.push(
-      entryFactory.selectBox(translate, {
-        id: 'calledDiagram',
-        description: translate('Select the diagram containing the SubProcess'),
-        label: translate('Diagram Name'),
-        modelProperty: 'calledDiagram',
-        selectOptions: function () {
-          return diagrams;
-        },
-        get: function (element) {
-          // refresh diagrams (if necessary)
-          if (elementIdentifier !== element) {
-            elementIdentifier = element;
-            // initiate ajax call for meta data // TODO ajax call schreiben
-            refreshDiagrams(element);
-          }
-          var value = getBusinessObject(element).get(
-            'calledDiagramVersionSelection'
-          );
-          // add entry if not contained // TODO check: warum hier und oben? -> Fallback wenn zwischen manualInput + metadata gewechselt?
-          if (value != null && !diagrams.map(e => e.value).includes(value)) {
-            // filter out old custom entries
-            diagrams = diagrams.filter(a => !a.name.endsWith('*'));
-            // add entry
-            diagrams.unshift({
-              name: `${value}*`,
-              value: value,
-            });
-          }
-          return value;
-        },
-      })
-    );
+    diagramSelectBox = entryFactory.selectBox(translate, {
+      id: 'calledDiagram',
+      description: translate('Select the diagram containing the SubProcess'),
+      label: translate('Diagram Name'),
+      modelProperty: 'calledDiagram',
+      selectOptions: function () {
+        return diagrams;
+      },
+      get: function (element) {
+        // refresh diagrams (if necessary)
+        if (elementIdentifier !== element) {
+          elementIdentifier = element;
+          // initiate ajax call for meta data
+          refreshDiagrams(element);
+        }
+        var value = getBusinessObject(element).get(
+          'calledDiagram'
+        );
+        // add entry if not contained // TODO check: warum hier und oben? -> Fallback wenn zwischen manualInput + metadata gewechselt?
+        if (value != null && !diagrams.map(e => e.value).includes(value)) {
+          // filter out old custom entries
+          diagrams = diagrams.filter(a => !a.name.endsWith('*'));
+          // add entry
+          diagrams.unshift({
+            name: `${value}*`,
+            value: value,
+          });
+        }
+        return {
+          calledDiagram: value
+        };
+      },
+    });
+
+    group.entries.push(diagramSelectBox);
 
     // Versioning
     group.entries.push(
