@@ -12,10 +12,6 @@ var elementIdentifier;
 
 // select list options container
 var diagrams = [];
-// var diagrams = [
-//   { name: 'diagram1', value: 'diagram1' },
-//   { name: 'diagram2', value: 'diagram2' },
-// ];
 
 // select box container
 var diagramSelectBox;
@@ -60,9 +56,9 @@ function refreshDiagrams(element) {
 
 export default function (
   group,
-  elementRegistry,
-  bpmnFactory,
   element,
+  bpmnFactory,
+  elementRegistry,
   translate
 ) {
   var versioning = [
@@ -71,10 +67,36 @@ export default function (
   ];
 
   if (is(element, 'bpmn:CallActivity')) {
-    // Diagram Name
+
+    // manualInput switch
+    group.entries.push(
+      entryFactory.selectBox(translate, {
+        id: 'inputSelection',
+        label: translate('Input'),
+        selectOptions: [
+          { name: translate('Use APEX meta data'), value: 'false' },
+          { name: translate('Manual input'), value: 'true' },
+        ],
+        modelProperty: 'manualInput',
+
+        get: function (element) {
+          var bo = getBusinessObject(element);
+          return {
+            manualInput: bo.get('manualInput'),
+          };
+        },
+
+        set: function (element, values, node) {
+          var bo = getBusinessObject(element);
+          return cmdHelper.updateBusinessObject(element, bo, values);
+        },
+      })
+    );
+
+    // diagram select list
     diagramSelectBox = entryFactory.selectBox(translate, {
       id: 'calledDiagram',
-      description: translate('Select the diagram containing the SubProcess'),
+      description: translate('Diagram containing the SubProcess'),
       label: translate('Diagram Name'),
       modelProperty: 'calledDiagram',
       selectOptions: function () {
@@ -104,9 +126,31 @@ export default function (
           calledDiagram: value
         };
       },
+      hidden: function () {
+        return (
+          getBusinessObject(element).manualInput === 'true'
+        );
+      },
     });
 
     group.entries.push(diagramSelectBox);
+
+    // diagram text field
+    group.entries.push(
+      entryFactory.textField(translate, {
+        id: 'calledDiagramText',
+        description: translate('Diagram containing the SubProcess'),
+        label: translate('Diagram Name'),
+        modelProperty: 'calledDiagram',
+
+        hidden: function (element) {
+          return (
+            typeof getBusinessObject(element).manualInput === 'undefined' ||
+            getBusinessObject(element).manualInput === 'false'
+          );
+        },
+      })
+    );
 
     // Versioning
     group.entries.push(

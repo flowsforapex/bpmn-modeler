@@ -28,6 +28,11 @@
       "extends": [ "bpmn:CallActivity" ],
       "properties": [
         {
+          "name": "manualInput",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "calledDiagram",
           "isAttr": true,
           "type": "String"

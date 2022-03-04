@@ -77,9 +77,9 @@ function createGeneralTabGroups(
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
   subProcessProps(
     subProcessGroup,
-    elementRegistry,
-    bpmnFactory,
     element,
+    bpmnFactory,
+    elementRegistry,
     translate
   );
 
