@@ -12,6 +12,7 @@ import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
+import backgroundTaskSessionProps from './parts/process/backgroundTaskSession';
 import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
 import {
@@ -59,6 +60,11 @@ function createGeneralTabGroups(
     label: translate('Documentation'),
     entries: [],
   };
+  var backgroundTaskSessionGroup = {
+    id: 'backgroundTaskSession',
+    label: translate('Background Task Session'),
+    entries: [],
+  };
 
   globalProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
@@ -68,8 +74,9 @@ function createGeneralTabGroups(
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
+  backgroundTaskSessionProps(backgroundTaskSessionGroup, element, translate);
 
-  return [generalGroup, typeGroup, detailsGroup, documentationGroup];
+  return [generalGroup, typeGroup, detailsGroup, documentationGroup, backgroundTaskSessionGroup];
 }
 
 function createApexTabGroups(
