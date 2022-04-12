@@ -284,7 +284,7 @@
       ]
     },
     {
-      "name": "InVariables",
+      "name": "IntoCalledActivity",
       "superClass": [ "Element" ],
       "properties": [
         {
@@ -295,7 +295,7 @@
       ]
     },
     {
-      "name": "OutVariables",
+      "name": "CalledActivityReturns",
       "superClass": [ "Element" ],
       "properties": [
         {
