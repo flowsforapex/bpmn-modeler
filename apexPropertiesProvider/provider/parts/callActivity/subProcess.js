@@ -74,7 +74,7 @@ export default function (
         id: 'inputSelection',
         label: translate('Input'),
         selectOptions: [
-          { name: translate('Use APEX meta data'), value: 'false' },
+          { name: translate('Use F4A meta data'), value: 'false' },
           { name: translate('Manual input'), value: 'true' },
         ],
         modelProperty: 'manualInput',
@@ -156,12 +156,16 @@ export default function (
     group.entries.push(
       entryFactory.selectBox(translate, {
         id: 'calledDiagramVersionSelection',
-        description: translate('Specify which diagram version to use'),
+        description: translate('Used diagram version'),
         label: translate('Versioning'),
         modelProperty: 'calledDiagramVersionSelection',
         selectOptions: versioning,
         set: function (element, values) {
           var bo = getBusinessObject(element);
+          // reset invalid value
+          if (values.calledDiagramVersionSelection === 'latestVersion') {
+            values.calledDiagramVersion = undefined;
+          }
           return cmdHelper.updateBusinessObject(element, bo, values);
         },
         get: function (element) {
