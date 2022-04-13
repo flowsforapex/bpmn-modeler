@@ -5,10 +5,10 @@ import { procVarLists } from './procVarLists';
 export default function (element, bpmnFactory, translate) {
   if (is(element, 'bpmn:CallActivity')) {
     return procVarLists(element, bpmnFactory, translate, {
-      type1: 'IntoCalledActivity',
-      label1: translate('Into Called Activity'),
-      type2: 'CalledActivityReturns',
-      label2: translate('Called Activity Returns'),
+      type1: 'InVariables',
+      label1: translate('In Variables'),
+      type2: 'OutVariables',
+      label2: translate('Out Variables'),
     });
   }
 }

@@ -9,7 +9,7 @@ import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/Proce
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
-import subProcessProps from './parts/callActivity/subProcess';
+import subProcessProps from './parts/callActivity/callActivity';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
@@ -187,6 +187,36 @@ function createVariablesTabGroups(
     entries: generateEventProcessVariables(element, bpmnFactory, translate),
   };
 
+  var detailGroup = {
+    id: 'details',
+    label: translate('Variable Details'),
+    entries: procVarDetailProps(element, translate),
+    enabled: isSelected,
+  };
+
+  var expressionGroup = {
+    id: 'expression',
+    label: translate('Variable Expression'),
+    entries: procVarExpressionProps(element, commandStack, translate),
+    enabled: isSelected,
+  };
+
+  return [
+    taskGroup,
+    gatewayGroup,
+    eventGroup,
+    detailGroup,
+    expressionGroup,
+  ];
+}
+
+function createMappingTabGroups(
+  element,
+  bpmnFactory,
+  commandStack,
+  translate
+) {
+
   var callActivityGroup = {
     id: 'apex-callActivity',
     label: translate('Process Variables'),
@@ -212,9 +242,6 @@ function createVariablesTabGroups(
   };
 
   return [
-    taskGroup,
-    gatewayGroup,
-    eventGroup,
     callActivityGroup,
     detailGroup,
     expressionGroup,
@@ -299,6 +326,17 @@ export default function apexPropertiesProvider(
       ),
     };
 
+    var MappingTab = {
+      id: 'mapping',
+      label: translate('Input/Output Mapping'),
+      groups: createMappingTabGroups(
+        element,
+        bpmnFactory,
+        commandStack,
+        translate
+      ),
+    };
+
     return [
       generalTab,
       ApexTab,
@@ -306,6 +344,7 @@ export default function apexPropertiesProvider(
       ExternalUrlTab,
       MailTabGroups,
       VariablesTab,
+      MappingTab,
     ];
   };
 }

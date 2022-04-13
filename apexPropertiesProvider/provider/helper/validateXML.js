@@ -87,8 +87,8 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
           filter.push('apex:ExecutePlsql');
         }
       } else if (is(element, 'bpmn:CallActivity')) {
-        filter.push('apex:IntoCalledActivity');
-        filter.push('apex:CalledActivityReturns');
+        filter.push('apex:InVariables');
+        filter.push('apex:OutVariables');
       }
 
       var bo = parent || businessObject;

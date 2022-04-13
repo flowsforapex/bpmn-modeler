@@ -96,8 +96,8 @@ export default function (
     // diagram select list
     diagramSelectBox = entryFactory.selectBox(translate, {
       id: 'calledDiagram',
-      description: translate('Diagram containing the SubProcess'),
-      label: translate('Diagram Name'),
+      description: translate('Name of the diagram'),
+      label: translate('Called Diagram'),
       modelProperty: 'calledDiagram',
       selectOptions: function () {
         return diagrams;
@@ -139,8 +139,8 @@ export default function (
     group.entries.push(
       entryFactory.textField(translate, {
         id: 'calledDiagramText',
-        description: translate('Diagram containing the SubProcess'),
-        label: translate('Diagram Name'),
+        description: translate('Name of the diagram'),
+        label: translate('Called Diagram'),
         modelProperty: 'calledDiagram',
 
         hidden: function (element) {
