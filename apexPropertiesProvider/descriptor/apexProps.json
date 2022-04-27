@@ -8,6 +8,32 @@
   "associations": [],
   "types": [
     {
+      "name": "BackgroundTaskSession",
+      "extends": [ "bpmn:Process" ],
+      "properties": [
+        {
+          "name": "manualInput",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "applicationId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "pageId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "username",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "TaskAttributes",
       "extends": [ "bpmn:Task" ],
       "properties": [
