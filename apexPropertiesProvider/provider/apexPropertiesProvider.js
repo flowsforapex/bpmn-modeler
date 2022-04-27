@@ -9,18 +9,20 @@ import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/Proce
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
+import subProcessProps from './parts/callActivity/callActivity';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
+import generateCallActivityProcessVariables from './parts/process_variables/callActivityProcVarProps.js';
+import generateEventProcessVariables from './parts/process_variables/eventProcVarProps.js';
+import generateGatewayProcessVariables from './parts/process_variables/gatewayProcVarProps.js';
 import backgroundTaskSessionProps from './parts/process/backgroundTaskSession';
-import generateEventTaskProcessVariables from './parts/process_variables/eventProcVarProps.js';
-import generateGatewayTaskProcessVariableLists from './parts/process_variables/gatewayProcVarProps.js';
 import {
   procVarDetailProps,
   procVarExpressionProps
 } from './parts/process_variables/procVarDetailProps.js';
 import { isSelected } from './parts/process_variables/procVarLists.js';
-import generateUserTaskProcessVariableLists from './parts/process_variables/taskProcVarProps.js';
+import generateTaskProcessVariables from './parts/process_variables/taskProcVarProps.js';
 import executePlsqlScript from './parts/scriptTask/executePlsql.js';
 import executePlsqlService from './parts/serviceTask/executePlsql.js';
 import {
@@ -60,6 +62,13 @@ function createGeneralTabGroups(
     label: translate('Documentation'),
     entries: [],
   };
+
+  var subProcessGroup = {
+    id: 'subProcess',
+    label: translate('Called SubProcess Diagram'),
+    entries: [],
+  };
+
   var backgroundTaskSessionGroup = {
     id: 'backgroundTaskSession',
     label: translate('Background Task Session'),
@@ -74,9 +83,25 @@ function createGeneralTabGroups(
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
+
+  subProcessProps(
+    subProcessGroup,
+    element,
+    bpmnFactory,
+    elementRegistry,
+    translate
+  );
+    
   backgroundTaskSessionProps(backgroundTaskSessionGroup, element, translate);
 
-  return [generalGroup, typeGroup, detailsGroup, documentationGroup, backgroundTaskSessionGroup];
+  return [
+    generalGroup,
+    typeGroup,
+    subProcessGroup,
+    detailsGroup,
+    documentationGroup,
+    backgroundTaskSessionGroup
+  ];
 }
 
 function createApexTabGroups(
@@ -159,27 +184,19 @@ function createVariablesTabGroups(
   var taskGroup = {
     id: 'apex-task',
     label: translate('Process Variables'),
-    entries: generateUserTaskProcessVariableLists(
-      element,
-      bpmnFactory,
-      translate
-    ),
+    entries: generateTaskProcessVariables(element, bpmnFactory, translate),
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
     label: translate('Process Variables'),
-    entries: generateGatewayTaskProcessVariableLists(
-      element,
-      bpmnFactory,
-      translate
-    ),
+    entries: generateGatewayProcessVariables(element, bpmnFactory, translate),
   };
 
   var eventGroup = {
     id: 'apex-event',
     label: translate('Process Variables'),
-    entries: generateEventTaskProcessVariables(element, bpmnFactory, translate),
+    entries: generateEventProcessVariables(element, bpmnFactory, translate),
   };
 
   var detailGroup = {
@@ -196,7 +213,51 @@ function createVariablesTabGroups(
     enabled: isSelected,
   };
 
-  return [taskGroup, gatewayGroup, eventGroup, detailGroup, expressionGroup];
+  return [
+    taskGroup,
+    gatewayGroup,
+    eventGroup,
+    detailGroup,
+    expressionGroup,
+  ];
+}
+
+function createMappingTabGroups(
+  element,
+  bpmnFactory,
+  commandStack,
+  translate
+) {
+
+  var callActivityGroup = {
+    id: 'apex-callActivity',
+    label: translate('Process Variables'),
+    entries: generateCallActivityProcessVariables(
+      element,
+      bpmnFactory,
+      translate
+    ),
+  };
+
+  var detailGroup = {
+    id: 'details',
+    label: translate('Variable Details'),
+    entries: procVarDetailProps(element, translate),
+    enabled: isSelected,
+  };
+
+  var expressionGroup = {
+    id: 'expression',
+    label: translate('Variable Expression'),
+    entries: procVarExpressionProps(element, commandStack, translate),
+    enabled: isSelected,
+  };
+
+  return [
+    callActivityGroup,
+    detailGroup,
+    expressionGroup,
+  ];
 }
 
 export default function apexPropertiesProvider(
@@ -277,6 +338,17 @@ export default function apexPropertiesProvider(
       ),
     };
 
+    var MappingTab = {
+      id: 'mapping',
+      label: translate('Input/Output Mapping'),
+      groups: createMappingTabGroups(
+        element,
+        bpmnFactory,
+        commandStack,
+        translate
+      ),
+    };
+
     return [
       generalTab,
       ApexTab,
@@ -284,6 +356,7 @@ export default function apexPropertiesProvider(
       ExternalUrlTab,
       MailTabGroups,
       VariablesTab,
+      MappingTab,
     ];
   };
 }

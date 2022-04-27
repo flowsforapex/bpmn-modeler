@@ -56,7 +56,9 @@ export function procVarDetailProps(element, translate) {
     is(element, 'bpmn:IntermediateThrowEvent') ||
     is(element, 'bpmn:IntermediateCatchEvent') ||
     is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    is(element, 'bpmn:EndEvent') ||
+    // callActivity elements
+    is(element, 'bpmn:CallActivity')
   ) {
     // name field
     procVarProps.push(
@@ -191,7 +193,9 @@ export function procVarExpressionProps(element, commandStack, translate) {
     is(element, 'bpmn:IntermediateThrowEvent') ||
     is(element, 'bpmn:IntermediateCatchEvent') ||
     is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    is(element, 'bpmn:EndEvent') ||
+    // callActivity elements
+    is(element, 'bpmn:CallActivity')
   ) {
     // expression type
     procVarProps.push(

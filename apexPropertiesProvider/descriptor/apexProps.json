@@ -50,6 +50,32 @@
       ]
     },
     {
+      "name": "CallActivityAttributes",
+      "extends": [ "bpmn:CallActivity" ],
+      "properties": [
+        {
+          "name": "manualInput",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "calledDiagram",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "calledDiagramVersionSelection",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "calledDiagramVersion",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "ApexPage",
       "superClass": [ "Element" ],
       "properties": [
@@ -274,6 +300,28 @@
     },
     {
       "name": "BeforeEvent",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "InVariables",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "procVars",
+          "type": "ProcessVariable",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "OutVariables",
       "superClass": [ "Element" ],
       "properties": [
         {
