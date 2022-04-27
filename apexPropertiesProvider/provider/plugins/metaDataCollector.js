@@ -91,3 +91,18 @@ export function getDiagrams() {
     )
     .then(pData => pData);
 }
+
+export function getUsernames() {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+  // ajax process
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_USERNAMES'
+      },
+      {}
+    )
+    .then(pData => pData);
+}

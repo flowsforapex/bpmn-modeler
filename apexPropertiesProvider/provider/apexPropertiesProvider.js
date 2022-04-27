@@ -16,6 +16,7 @@ import globalProps from './parts/globalProps.js';
 import generateCallActivityProcessVariables from './parts/process_variables/callActivityProcVarProps.js';
 import generateEventProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayProcessVariables from './parts/process_variables/gatewayProcVarProps.js';
+import backgroundTaskSessionProps from './parts/process/backgroundTaskSession';
 import {
   procVarDetailProps,
   procVarExpressionProps
@@ -61,9 +62,16 @@ function createGeneralTabGroups(
     label: translate('Documentation'),
     entries: [],
   };
+
   var subProcessGroup = {
     id: 'subProcess',
     label: translate('Called SubProcess Diagram'),
+    entries: [],
+  };
+
+  var backgroundTaskSessionGroup = {
+    id: 'backgroundTaskSession',
+    label: translate('Background Task Session'),
     entries: [],
   };
 
@@ -75,6 +83,7 @@ function createGeneralTabGroups(
   documentationProps(documentationGroup, element, bpmnFactory, translate);
 
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
+
   subProcessProps(
     subProcessGroup,
     element,
@@ -82,6 +91,8 @@ function createGeneralTabGroups(
     elementRegistry,
     translate
   );
+    
+  backgroundTaskSessionProps(backgroundTaskSessionGroup, element, translate);
 
   return [
     generalGroup,
@@ -89,6 +100,7 @@ function createGeneralTabGroups(
     subProcessGroup,
     detailsGroup,
     documentationGroup,
+    backgroundTaskSessionGroup
   ];
 }
 
