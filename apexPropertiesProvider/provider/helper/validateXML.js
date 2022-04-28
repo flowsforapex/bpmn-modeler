@@ -68,6 +68,8 @@ export function removeInvalidExtensionsElements(bpmnFactory, elementRegistry) {
             filter.push('apex:ApexPage');
           } else if (businessObject.type === 'externalUrl') {
             filter.push('apex:ExternalUrl');
+          } else if (businessObject.type === 'apexApproval') {
+            filter.push('apex:ApexApproval');
           }
           // filter script tasks
         } else if (is(element, 'bpmn:ScriptTask')) {

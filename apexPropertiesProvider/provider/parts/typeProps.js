@@ -16,7 +16,7 @@ export default function (
     userTask: [
       { name: translate('APEX Page'), value: 'apexPage' },
       // { name: translate('External URL'), value: 'externalUrl' },
-      // { name: translate('Unified Task List'), value: 'unifiedTaskList' },
+      { name: translate('APEX Approval'), value: 'apexApproval' },
     ],
     serviceTask: [
       { name: translate('Execute PL/SQL'), value: 'executePlsql' },

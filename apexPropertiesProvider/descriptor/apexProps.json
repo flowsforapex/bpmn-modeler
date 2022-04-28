@@ -102,6 +102,69 @@
       ]
     },
     {
+      "name": "ApexApproval",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "taskStaticId",
+          "type": "String"
+        },
+        {
+          "name": "subject",
+          "type": "String"
+        },
+        {
+          "name": "businessRef",
+          "type": "String"
+        },
+        {
+          "name": "parameters",
+          "type": "Parameters"
+        },
+        {
+          "name": "comment",
+          "type": "String"
+        },
+        {
+          "name": "returnValue",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Parameters",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "parameter",
+          "type": "Parameter",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "Parameter",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "parStaticId",
+          "type": "String"
+        },
+        {
+          "name": "parDataType",
+          "type": "String"
+        },
+        {
+          "name": "parValue",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "PageItems",
       "superClass": [ "Element" ],
       "properties": [

@@ -100,7 +100,23 @@ export function getUsernames() {
     .plugin(
       ajaxIdentifier,
       {
-        x01: 'GET_USERNAMES'
+        x01: 'GET_USERNAMES',
+      },
+      {}
+    )
+    .then(pData => pData);
+}
+
+export function getTasks(applicationId) {
+  // ajaxIdentifier
+  var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+  // ajax process
+  return apex.server
+    .plugin(
+      ajaxIdentifier,
+      {
+        x01: 'GET_TASKS',
+        x02: applicationId,
       },
       {}
     )

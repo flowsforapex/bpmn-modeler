@@ -25,7 +25,7 @@ var subHelper = new subPropertiesHelper(
   'apex:PageItems'
 );
 
-var forbiddenTypes = ['externalUrl', 'unifiedTaskList'];
+var forbiddenTypes = ['externalUrl', 'apexApproval'];
 
 // element identifier for current element
 var elementIdentifier;
@@ -449,7 +449,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-items',
-        buttonLabel: translate('generate user task items'),
+        buttonLabel: translate('Generate Default'),
         handleClick: function (element, node, event) {
           createUserTaskItems();
         },
