@@ -1,6 +1,10 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
+import {
+  getApplications,
+  getPages,
+  getUsernames
+} from '../../plugins/metaDataCollector';
 
 var domQuery = require('min-dom').query;
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
@@ -84,7 +88,7 @@ function refreshPages(element, applicationId) {
       pages.unshift({ name: `${property}*`, value: property });
     }
     // refresh select box
-    newPageId = enableAndResetValue(element, pageSelectBox, property);    
+    newPageId = enableAndResetValue(element, pageSelectBox, property);
   });
 }
 
@@ -109,14 +113,8 @@ function refreshUsernames(element) {
   });
 }
 
-export default function (
-  group,
-  element,
-  translate
-) {
-
+export default function (group, element, translate) {
   if (is(element, 'bpmn:Process')) {
-
     // manualInput switch
     group.entries.push(
       entryFactory.selectBox(translate, {
@@ -154,9 +152,7 @@ export default function (
         return applicationsLoading;
       },
       hidden: function () {
-        return (
-          getBusinessObject(element).manualInput === 'true'
-        );
+        return getBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
         // refresh applications (if necessary)
@@ -166,11 +162,12 @@ export default function (
           refreshApplications(element);
           refreshUsernames(element);
         }
-        var value = getBusinessObject(element).get(
-          'applicationId'
-        );
+        var value = getBusinessObject(element).get('applicationId');
         // add entry if not contained
-        if (value != null && !applications.map(e => e.value).includes(value)) {
+        if (
+          value != null &&
+          !applications.map(e => e.value).includes(value)
+        ) {
           // filter out old custom entries
           applications = applications.filter(a => !a.name.endsWith('*'));
           // add entry
@@ -180,7 +177,7 @@ export default function (
           });
         }
         return {
-          applicationId: value
+          applicationId: value,
         };
       },
       set: function (element, values, node) {
@@ -206,7 +203,7 @@ export default function (
             typeof getBusinessObject(element).manualInput === 'undefined' ||
             getBusinessObject(element).manualInput === 'false'
           );
-        }
+        },
       })
     );
 
@@ -220,17 +217,13 @@ export default function (
         return pages;
       },
       disabled: function () {
-        return pagesLoading;
+        return applicationsLoading || pagesLoading;
       },
       hidden: function () {
-        return (
-          getBusinessObject(element).manualInput === 'true'
-        );
+        return getBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
-        var value = getBusinessObject(element).get(
-          'pageId'
-        );
+        var value = getBusinessObject(element).get('pageId');
         // add entry if not contained
         if (value != null && !pages.map(e => e.value).includes(value)) {
           // filter out old custom entries
@@ -242,7 +235,7 @@ export default function (
           });
         }
         return {
-          pageId: value
+          pageId: value,
         };
       },
       set: function (element, values, node) {
@@ -266,7 +259,7 @@ export default function (
             typeof getBusinessObject(element).manualInput === 'undefined' ||
             getBusinessObject(element).manualInput === 'false'
           );
-        }
+        },
       })
     );
 
@@ -283,14 +276,10 @@ export default function (
         return usernamesLoading;
       },
       hidden: function () {
-        return (
-          getBusinessObject(element).manualInput === 'true'
-        );
+        return getBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
-        var value = getBusinessObject(element).get(
-          'username'
-        );
+        var value = getBusinessObject(element).get('username');
         // add entry if not contained
         if (value != null && !usernames.map(e => e.value).includes(value)) {
           // filter out old custom entries
@@ -302,7 +291,7 @@ export default function (
           });
         }
         return {
-          username: value
+          username: value,
         };
       },
       set: function (element, values, node) {
@@ -326,7 +315,7 @@ export default function (
             typeof getBusinessObject(element).manualInput === 'undefined' ||
             getBusinessObject(element).manualInput === 'false'
           );
-        }
+        },
       })
     );
   }
