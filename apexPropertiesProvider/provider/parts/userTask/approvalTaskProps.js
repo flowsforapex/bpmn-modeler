@@ -351,6 +351,9 @@ export function taskConfiguration(
     userTaskProps.push(
       entryFactory.textField(translate, {
         id: 'subject',
+        description: translate(
+          'Overwrite default value set in task definition'
+        ),
         label: translate('Subject'),
         modelProperty: 'subject',
         set: function (element, values) {
@@ -390,21 +393,6 @@ export function taskConfiguration(
       })
     );
 
-    // parameters
-    // userTaskProps.push(
-    //   entryFactory.textField(translate, {
-    //     id: 'parameters',
-    //     label: translate('Parameters'),
-    //     modelProperty: 'parameters',
-    //     set: function (element, values) {
-    //       return helper.setExtensionProperty(element, bpmnFactory, values);
-    //     },
-    //     get: function (element) {
-    //       return helper.getExtensionProperty(element, 'parameters');
-    //     },
-    //   })
-    // );
-
     parametersElement = extensionElementsEntry(element, bpmnFactory, {
       id: 'parameters',
       label: translate('Parameters'),
@@ -412,8 +400,8 @@ export function taskConfiguration(
       // function (element, extensionsElements, values)
       createExtensionElement: function (element, extensionElements, values) {
         return subHelper.newElement(element, extensionElements, bpmnFactory, {
-          parStaticId: 'String',
-          parDataType: '',
+          parStaticId: '',
+          parDataType: 'String',
           parValue: '',
         });
       },
@@ -561,60 +549,6 @@ export function taskConfiguration(
         },
       })
     );
-
-    // // container for parameters editor
-    // userTaskProps.push(getContainer('parameters', translate));
-
-    // // link to placeholder editor
-    // userTaskProps.push(
-    //   entryFactory.link(translate, {
-    //     id: 'parametersEditor',
-    //     buttonLabel: translate('Open Editor'),
-    //     handleClick: function (element, node, event) {
-    //       var getParameters = function () {
-    //         return helper.getExtensionProperty(element, 'parameters')
-    //           .parameters;
-    //       };
-    //       var saveParameters = function (text) {
-    //         var commands = helper.setExtensionProperty(element, bpmnFactory, {
-    //           parameters: text,
-    //         });
-    //         new MultiCommandHandler(commandStack).preExecute(commands);
-    //       };
-    //       openEditor('parameters', getParameters, saveParameters, 'json', null);
-    //     },
-    //   })
-    // );
-
-    // // quick pick json placeholder
-    // userTaskProps.push(
-    //   entryFactory.link(translate, {
-    //     id: 'quickpick-parameters',
-    //     buttonLabel: translate('Load JSON'),
-    //     handleClick: function (element, node, event) {
-    //       // ajaxIdentifier
-    //       var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-    //       // ajax process
-    //       apex.server
-    //         .plugin(
-    //           ajaxIdentifier,
-    //           {
-    //             x01: 'GET_JSON_PARAMETERS',
-    //             x02: helper.getExtensionProperty(element, 'applicationId')
-    //               .applicationId,
-    //             x03: helper.getExtensionProperty(element, 'taskStaticId')
-    //               .taskStaticId,
-    //           },
-    //           {}
-    //         )
-    //         .then((pData) => {
-    //           enterQuickPick({
-    //             parameters: JSON.stringify(pData, null, 1),
-    //           });
-    //         });
-    //     },
-    //   })
-    // );
 
     // comment
     userTaskProps.push(
