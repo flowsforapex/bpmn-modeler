@@ -96,7 +96,13 @@ function createGeneralTabGroups(
     translate
   );
 
-  backgroundTaskSessionProps(backgroundTaskSessionGroup, element, translate);
+  backgroundTaskSessionProps(
+    backgroundTaskSessionGroup,
+    element,
+    bpmnFactory,
+    elementRegistry,
+    translate
+  );
 
   return [
     generalGroup,
@@ -191,16 +197,28 @@ function createExternalURLTabGroups(element, bpmnFactory, translate) {
   ];
 }
 
-function createMailTabGroups(element, bpmnFactory, commandStack, translate) {
+function createMailTabGroups(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
   var apexServiceGroup1 = {
     id: 'apex-mail-base',
     label: translate('General'),
-    entries: baseAttributes(element, bpmnFactory, translate),
+    entries: baseAttributes(element, bpmnFactory, commandStack, translate),
   };
   var apexServiceGroup2 = {
     id: 'apex-mail-content',
     label: translate('Content'),
-    entries: contentAttributes(element, bpmnFactory, commandStack, translate),
+    entries: contentAttributes(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   return [apexServiceGroup1, apexServiceGroup2];
@@ -349,6 +367,7 @@ export default function apexPropertiesProvider(
       groups: createMailTabGroups(
         element,
         bpmnFactory,
+        elementRegistry,
         commandStack,
         translate
       ),

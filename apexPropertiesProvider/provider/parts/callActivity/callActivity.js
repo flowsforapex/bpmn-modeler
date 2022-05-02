@@ -67,7 +67,6 @@ export default function (
   ];
 
   if (is(element, 'bpmn:CallActivity')) {
-
     // manualInput switch
     group.entries.push(
       entryFactory.selectBox(translate, {
@@ -81,6 +80,18 @@ export default function (
 
         get: function (element) {
           var bo = getBusinessObject(element);
+          var value = bo.get('manualInput');
+
+          if (typeof value === 'undefined') {
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: 'false',
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          }
+
           return {
             manualInput: bo.get('manualInput'),
           };
@@ -109,9 +120,7 @@ export default function (
           // initiate ajax call for meta data
           refreshDiagrams(element);
         }
-        var value = getBusinessObject(element).get(
-          'calledDiagram'
-        );
+        var value = getBusinessObject(element).get('calledDiagram');
         // add entry if not contained // TODO check: warum hier und oben? -> Fallback wenn zwischen manualInput + metadata gewechselt?
         if (value != null && !diagrams.map(e => e.value).includes(value)) {
           // filter out old custom entries
@@ -123,13 +132,11 @@ export default function (
           });
         }
         return {
-          calledDiagram: value
+          calledDiagram: value,
         };
       },
       hidden: function () {
-        return (
-          getBusinessObject(element).manualInput === 'true'
-        );
+        return getBusinessObject(element).manualInput === 'true';
       },
     });
 
@@ -144,10 +151,7 @@ export default function (
         modelProperty: 'calledDiagram',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
       })
     );
@@ -172,10 +176,7 @@ export default function (
           var bo = getBusinessObject(element);
           var value = bo.get('calledDiagramVersionSelection');
 
-          if (
-            typeof value === 'undefined' ||
-            !versioning.some(v => v.value === value)
-          ) {
+          if (typeof value === 'undefined') {
             var command = cmdHelper.updateBusinessObject(element, bo, {
               calledDiagramVersionSelection: 'latestVersion',
             });
@@ -203,11 +204,8 @@ export default function (
         selectOptions: versioning,
         hidden: function (element) {
           return (
-            typeof getBusinessObject(element).get(
-              'calledDiagramVersionSelection'
-            ) === 'undefined' ||
             getBusinessObject(element).get('calledDiagramVersionSelection') !==
-              'namedVersion'
+            'namedVersion'
           );
         },
       })

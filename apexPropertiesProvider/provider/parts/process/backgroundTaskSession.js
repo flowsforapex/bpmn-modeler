@@ -9,6 +9,8 @@ import {
 var domQuery = require('min-dom').query;
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+
 // element identifier for current element
 var elementIdentifier;
 
@@ -122,7 +124,13 @@ function refreshUsernames(element) {
   });
 }
 
-export default function (group, element, translate) {
+export default function (
+  group,
+  element,
+  bpmnFactory,
+  elementRegistry,
+  translate
+) {
   if (is(element, 'bpmn:Process')) {
     // manualInput switch
     group.entries.push(
@@ -137,6 +145,18 @@ export default function (group, element, translate) {
 
         get: function (element) {
           var bo = getBusinessObject(element);
+          var value = bo.get('manualInput');
+
+          if (typeof value === 'undefined') {
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: 'false',
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          }
+
           return {
             manualInput: bo.get('manualInput'),
           };
@@ -208,10 +228,7 @@ export default function (group, element, translate) {
         modelProperty: 'applicationId',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
       })
     );
@@ -264,10 +281,7 @@ export default function (group, element, translate) {
         modelProperty: 'pageId',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
       })
     );
@@ -320,10 +334,7 @@ export default function (group, element, translate) {
         modelProperty: 'username',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
       })
     );

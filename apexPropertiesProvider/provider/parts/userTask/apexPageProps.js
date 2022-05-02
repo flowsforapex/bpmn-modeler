@@ -227,6 +227,18 @@ export default function (
 
         get: function (element) {
           var bo = getBusinessObject(element);
+          var value = bo.get('manualInput');
+
+          if (typeof value === 'undefined') {
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: 'false',
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          }
+
           return {
             manualInput: bo.get('manualInput'),
           };

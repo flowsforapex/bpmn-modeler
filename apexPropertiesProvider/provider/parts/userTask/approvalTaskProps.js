@@ -131,6 +131,18 @@ export function taskDefinition(element, bpmnFactory, translate) {
 
         get: function (element) {
           var bo = getBusinessObject(element);
+          var value = bo.get('manualInput');
+
+          if (typeof value === 'undefined') {
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: 'false',
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          }
+
           return {
             manualInput: bo.get('manualInput'),
           };
@@ -202,10 +214,7 @@ export function taskDefinition(element, bpmnFactory, translate) {
         modelProperty: 'applicationId',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
 
         get: function (element) {
@@ -270,10 +279,7 @@ export function taskDefinition(element, bpmnFactory, translate) {
         modelProperty: 'taskStaticId',
 
         hidden: function (element) {
-          return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
-            getBusinessObject(element).manualInput === 'false'
-          );
+          return getBusinessObject(element).manualInput === 'false';
         },
 
         get: function (element) {
