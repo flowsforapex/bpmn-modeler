@@ -51,28 +51,30 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplicationsMail().then((values) => {
-    applications = values;
     // loading flag
     applicationsLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'applicationId').applicationId ||
-      null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !applications.map(e => e.value).includes(property)
-    ) {
-      applications.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      applications = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'applicationId').applicationId ||
+        null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !applications.map(e => e.value).includes(property)
+      ) {
+        applications.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newApplicationId = enableAndResetValue(
+        element,
+        applicationSelectBox,
+        property
+      );
+      // refresh child item
+      refreshTemplates(element, newApplicationId);
     }
-    // refresh select box
-    newApplicationId = enableAndResetValue(
-      element,
-      applicationSelectBox,
-      property
-    );
-    // refresh child item
-    refreshTemplates(element, newApplicationId);
   });
 }
 
@@ -83,18 +85,23 @@ function refreshTemplates(element, applicationId) {
   templatesLoading = true;
   // ajax process
   getTemplates(applicationId).then((values) => {
-    templates = values;
     // loading flag
     templatesLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'templateId').templateId || null;
-    // add entry if not contained
-    if (property != null && !templates.map(e => e.value).includes(property)) {
-      templates.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      templates = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'templateId').templateId || null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !templates.map(e => e.value).includes(property)
+      ) {
+        templates.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newTemplateId = enableAndResetValue(element, templateSelectBox, property);
     }
-    // refresh select box
-    newTemplateId = enableAndResetValue(element, templateSelectBox, property);
   });
 }
 
@@ -488,7 +495,13 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('placeholder', getPlaceholder, savePlaceholder, 'json', null);
+          openEditor(
+            'placeholder',
+            getPlaceholder,
+            savePlaceholder,
+            'json',
+            null
+          );
         },
         showLink: function () {
           return (
@@ -507,26 +520,28 @@ export function contentAttributes(
         id: 'quickpick-placeholder',
         buttonLabel: translate('Load JSON'),
         handleClick: function (element, node, event) {
-          // ajaxIdentifier
-          var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-          // ajax process
-          apex.server
-            .plugin(
-              ajaxIdentifier,
-              {
-                x01: 'GET_JSON_PLACEHOLDERS',
-                x02: helper.getExtensionProperty(element, 'applicationId')
-                  .applicationId,
-                x03: helper.getExtensionProperty(element, 'templateId')
-                  .templateId,
-              },
-              {}
-            )
-            .then((pData) => {
-              enterQuickPick({
-                placeholder: JSON.stringify(pData, null, 1),
+          if (typeof apex !== 'undefined') {
+            // ajaxIdentifier
+            var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+            // ajax process
+            apex.server
+              .plugin(
+                ajaxIdentifier,
+                {
+                  x01: 'GET_JSON_PLACEHOLDERS',
+                  x02: helper.getExtensionProperty(element, 'applicationId')
+                    .applicationId,
+                  x03: helper.getExtensionProperty(element, 'templateId')
+                    .templateId,
+                },
+                {}
+              )
+              .then((pData) => {
+                enterQuickPick({
+                  placeholder: JSON.stringify(pData, null, 1),
+                });
               });
-            });
+          }
         },
         showLink: function () {
           return (

@@ -48,26 +48,28 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
-    applications = values;
     // loading flag
     applicationsLoading = false;
-    // get property value
-    property = getBusinessObject(element).get('applicationId') || null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !applications.map(e => e.value).includes(property)
-    ) {
-      applications.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      applications = values;
+      // get property value
+      property = getBusinessObject(element).get('applicationId') || null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !applications.map(e => e.value).includes(property)
+      ) {
+        applications.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newApplicationId = enableAndResetValue(
+        element,
+        applicationSelectBox,
+        property
+      );
+      // refresh child item
+      refreshPages(element, newApplicationId);
     }
-    // refresh select box
-    newApplicationId = enableAndResetValue(
-      element,
-      applicationSelectBox,
-      property
-    );
-    // refresh child item
-    refreshPages(element, newApplicationId);
   });
 }
 
@@ -78,17 +80,19 @@ function refreshPages(element, applicationId) {
   pagesLoading = true;
   // ajax process
   getPages(applicationId).then((values) => {
-    pages = values;
     // loading flag
     pagesLoading = false;
-    // get property value
-    property = getBusinessObject(element).get('pageId') || null;
-    // add entry if not contained
-    if (property != null && !pages.map(e => e.value).includes(property)) {
-      pages.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      pages = values;
+      // get property value
+      property = getBusinessObject(element).get('pageId') || null;
+      // add entry if not contained
+      if (property != null && !pages.map(e => e.value).includes(property)) {
+        pages.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newPageId = enableAndResetValue(element, pageSelectBox, property);
     }
-    // refresh select box
-    newPageId = enableAndResetValue(element, pageSelectBox, property);
   });
 }
 
@@ -99,17 +103,22 @@ function refreshUsernames(element) {
   usernamesLoading = true;
   // ajax process
   getUsernames().then((values) => {
-    usernames = values;
     // loading flag
     usernamesLoading = false;
-    // get property value
-    property = getBusinessObject(element).get('username') || null;
-    // add entry if not contained
-    if (property != null && !usernames.map(e => e.value).includes(property)) {
-      usernames.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      usernames = values;
+      // get property value
+      property = getBusinessObject(element).get('username') || null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !usernames.map(e => e.value).includes(property)
+      ) {
+        usernames.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newUsername = enableAndResetValue(element, usernameSelectBox, property);
     }
-    // refresh select box
-    newUsername = enableAndResetValue(element, usernameSelectBox, property);
   });
 }
 

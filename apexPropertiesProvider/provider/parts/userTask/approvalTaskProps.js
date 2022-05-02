@@ -60,28 +60,30 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
-    applications = values;
     // loading flag
     applicationsLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'applicationId').applicationId ||
-      null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !applications.map(e => e.value).includes(property)
-    ) {
-      applications.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      applications = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'applicationId').applicationId ||
+        null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !applications.map(e => e.value).includes(property)
+      ) {
+        applications.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newApplicationId = enableAndResetValue(
+        element,
+        applicationSelectBox,
+        property
+      );
+      // refresh child item
+      refreshTasks(element, newApplicationId);
     }
-    // refresh select box
-    newApplicationId = enableAndResetValue(
-      element,
-      applicationSelectBox,
-      property
-    );
-    // refresh child item
-    refreshTasks(element, newApplicationId);
   });
 }
 
@@ -92,18 +94,21 @@ function refreshTasks(element, applicationId) {
   tasksLoading = true;
   // ajax process
   getTasks(applicationId).then((values) => {
-    tasks = values;
     // loading flag
     tasksLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'taskStaticId').taskStaticId || null;
-    // add entry if not contained
-    if (property != null && !tasks.map(e => e.value).includes(property)) {
-      tasks.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      tasks = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'taskStaticId').taskStaticId ||
+        null;
+      // add entry if not contained
+      if (property != null && !tasks.map(e => e.value).includes(property)) {
+        tasks.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newTaskStaticId = enableAndResetValue(element, taskSelectBox, property);
     }
-    // refresh select box
-    newTaskStaticId = enableAndResetValue(element, taskSelectBox, property);
   });
 }
 
@@ -314,34 +319,36 @@ export function taskConfiguration(
     }
     extensions = bo.extensionElements;
 
-    // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-    // ajax process
-    apex.server
-      .plugin(
-        ajaxIdentifier,
-        {
-          x01: 'GET_JSON_PARAMETERS',
-          x02: helper.getExtensionProperty(element, 'applicationId')
-            .applicationId,
-          x03: helper.getExtensionProperty(element, 'taskStaticId')
-            .taskStaticId,
-        },
-        {}
-      )
-      .then((pData) => {
-        console.log(pData);
-        const handler = new MultiCommandHandler(commandStack);
-        pData.forEach((i) => {
-          handler.preExecute(
-            subHelper.newElement(element, extensions, bpmnFactory, {
-              parStaticId: i.STATIC_ID,
-              parDataType: i.DATA_TYPE,
-              parValue: i.VALUE,
-            })
-          );
+    if (typeof apex !== 'undefined') {
+      // ajaxIdentifier
+      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // ajax process
+      apex.server
+        .plugin(
+          ajaxIdentifier,
+          {
+            x01: 'GET_JSON_PARAMETERS',
+            x02: helper.getExtensionProperty(element, 'applicationId')
+              .applicationId,
+            x03: helper.getExtensionProperty(element, 'taskStaticId')
+              .taskStaticId,
+          },
+          {}
+        )
+        .then((pData) => {
+          console.log(pData);
+          const handler = new MultiCommandHandler(commandStack);
+          pData.forEach((i) => {
+            handler.preExecute(
+              subHelper.newElement(element, extensions, bpmnFactory, {
+                parStaticId: i.STATIC_ID,
+                parDataType: i.DATA_TYPE,
+                parValue: i.VALUE,
+              })
+            );
+          });
         });
-      });
+    }
   };
 
   var { type } = getBusinessObject(element);

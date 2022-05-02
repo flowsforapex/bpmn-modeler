@@ -69,28 +69,31 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplications().then((values) => {
-    applications = values;
     // loading flag
     applicationsLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'applicationId').applicationId ||
-      null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !applications.map(e => e.value).includes(property)
-    ) {
-      applications.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      applications = values;
+
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'applicationId').applicationId ||
+        null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !applications.map(e => e.value).includes(property)
+      ) {
+        applications.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newApplicationId = enableAndResetValue(
+        element,
+        applicationSelectBox,
+        property
+      );
+      // refresh child item
+      refreshPages(element, newApplicationId);
     }
-    // refresh select box
-    newApplicationId = enableAndResetValue(
-      element,
-      applicationSelectBox,
-      property
-    );
-    // refresh child item
-    refreshPages(element, newApplicationId);
   });
 }
 
@@ -101,19 +104,21 @@ function refreshPages(element, applicationId) {
   pagesLoading = true;
   // ajax process
   getPages(applicationId).then((values) => {
-    pages = values;
     // loading flag
     pagesLoading = false;
-    // get property value
-    property = helper.getExtensionProperty(element, 'pageId').pageId || null;
-    // add entry if not contained
-    if (property != null && !pages.map(e => e.value).includes(property)) {
-      pages.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      pages = values;
+      // get property value
+      property = helper.getExtensionProperty(element, 'pageId').pageId || null;
+      // add entry if not contained
+      if (property != null && !pages.map(e => e.value).includes(property)) {
+        pages.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newPageId = enableAndResetValue(element, pageSelectBox, property);
+      // refresh child item
+      refreshItems(element, applicationId, newPageId);
     }
-    // refresh select box
-    newPageId = enableAndResetValue(element, pageSelectBox, property);
-    // refresh child item
-    refreshItems(element, applicationId, newPageId);
   });
 }
 
@@ -124,23 +129,25 @@ function refreshItems(element, applicationId, pageId) {
   itemsLoading = true;
   // ajax process
   getItems(applicationId, pageId).then((values) => {
-    items = values;
     // loading flag
     itemsLoading = false;
-    // get property value
-    property =
-      subHelper.getExtensionSubProperty(
-        pageItemsElement,
-        element,
-        pageSelectBox,
-        'itemName'
-      ).itemName || null;
-    // add entry if not contained
-    if (property != null && !items.map(e => e.value).includes(property)) {
-      items.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      items = values;
+      // get property value
+      property =
+        subHelper.getExtensionSubProperty(
+          pageItemsElement,
+          element,
+          pageSelectBox,
+          'itemName'
+        ).itemName || null;
+      // add entry if not contained
+      if (property != null && !items.map(e => e.value).includes(property)) {
+        items.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newItemName = enableAndResetValue(element, itemSelectBox, property);
     }
-    // refresh select box
-    newItemName = enableAndResetValue(element, itemSelectBox, property);
   });
 }
 
