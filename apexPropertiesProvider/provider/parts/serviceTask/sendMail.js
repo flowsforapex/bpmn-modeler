@@ -9,6 +9,7 @@ import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var domQuery = require('min-dom').query;
@@ -17,6 +18,7 @@ var helper = new propertiesHelper('apex:SendMail');
 
 // element identifier for current element
 var elementIdentifier;
+var defaultsIdentifier;
 
 // select list options container
 var applications = [];
@@ -51,28 +53,30 @@ function refreshApplications(element) {
   applicationsLoading = true;
   // ajax process
   getApplicationsMail().then((values) => {
-    applications = values;
     // loading flag
     applicationsLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'applicationId').applicationId ||
-      null;
-    // add entry if not contained
-    if (
-      property != null &&
-      !applications.map(e => e.value).includes(property)
-    ) {
-      applications.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      applications = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'applicationId').applicationId ||
+        null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !applications.map(e => e.value).includes(property)
+      ) {
+        applications.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newApplicationId = enableAndResetValue(
+        element,
+        applicationSelectBox,
+        property
+      );
+      // refresh child item
+      refreshTemplates(element, newApplicationId);
     }
-    // refresh select box
-    newApplicationId = enableAndResetValue(
-      element,
-      applicationSelectBox,
-      property
-    );
-    // refresh child item
-    refreshTemplates(element, newApplicationId);
   });
 }
 
@@ -83,28 +87,53 @@ function refreshTemplates(element, applicationId) {
   templatesLoading = true;
   // ajax process
   getTemplates(applicationId).then((values) => {
-    templates = values;
     // loading flag
     templatesLoading = false;
-    // get property value
-    property =
-      helper.getExtensionProperty(element, 'templateId').templateId || null;
-    // add entry if not contained
-    if (property != null && !templates.map(e => e.value).includes(property)) {
-      templates.unshift({ name: `${property}*`, value: property });
+    if (values) {
+      templates = values;
+      // get property value
+      property =
+        helper.getExtensionProperty(element, 'templateId').templateId || null;
+      // add entry if not contained
+      if (
+        property != null &&
+        !templates.map(e => e.value).includes(property)
+      ) {
+        templates.unshift({ name: `${property}*`, value: property });
+      }
+      // refresh select box
+      newTemplateId = enableAndResetValue(element, templateSelectBox, property);
     }
-    // refresh select box
-    newTemplateId = enableAndResetValue(element, templateSelectBox, property);
   });
 }
 
-export function baseAttributes(element, bpmnFactory, translate) {
+function initDefaults(element, bpmnFactory, commandStack) {
+  var { immediately } = helper.getExtensionProperty(element, 'immediately');
+  var { useTemplate } = helper.getExtensionProperty(element, 'useTemplate');
+
+  if (
+    defaultsIdentifier !== element &&
+    (typeof immediately === 'undefined' || typeof useTemplate === 'undefined')
+  ) {
+    defaultsIdentifier = element;
+    var commands = helper.setExtensionProperty(element, bpmnFactory, {
+      immediately: 'true',
+      useTemplate: 'false',
+    });
+    new MultiCommandHandler(commandStack).preExecute(commands);
+  }
+}
+
+export function baseAttributes(element, bpmnFactory, commandStack, translate) {
   const serviceTaskProps = [];
 
   if (
     is(element, 'bpmn:ServiceTask') &&
     getBusinessObject(element).type === 'sendMail'
   ) {
+    // init defaults
+    initDefaults(element, bpmnFactory, commandStack);
+
     // Immediately: Yes/No
     serviceTaskProps.push(
       entryFactory.selectBox(translate, {
@@ -211,6 +240,7 @@ export function baseAttributes(element, bpmnFactory, translate) {
 export function contentAttributes(
   element,
   bpmnFactory,
+  elementRegistry,
   commandStack,
   translate
 ) {
@@ -236,6 +266,34 @@ export function contentAttributes(
           { name: translate('Yes'), value: 'true' },
         ],
         set: function (element, values) {
+          var bo = getBusinessObject(element);
+          // reset invalid value
+          if (values.useTemplate === 'true') {
+            values.subject = undefined;
+            values.bodyText = undefined;
+            values.bodyHTML = undefined;
+            // set manual input attribute
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: 'false',
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          } else if (values.useTemplate === 'false') {
+            values.applicationId = undefined;
+            values.templateId = undefined;
+            values.placeholder = undefined;
+            // remove manual input attribute
+            var command = cmdHelper.updateBusinessObject(element, bo, {
+              manualInput: undefined,
+            });
+            new UpdateBusinessObjectHandler(
+              elementRegistry,
+              bpmnFactory
+            ).execute(command.context);
+          }
+
           return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
@@ -269,10 +327,8 @@ export function contentAttributes(
 
         hidden: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false'
+            'false'
           );
         },
       })
@@ -330,8 +386,6 @@ export function contentAttributes(
       hidden: function () {
         return (
           getBusinessObject(element).manualInput === 'true' ||
-          typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate === 'undefined' ||
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
             'false'
         );
@@ -349,10 +403,7 @@ export function contentAttributes(
 
         hidden: function (element) {
           return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
             getBusinessObject(element).manualInput === 'false' ||
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
               'false'
           );
@@ -406,8 +457,6 @@ export function contentAttributes(
       hidden: function () {
         return (
           getBusinessObject(element).manualInput === 'true' ||
-          typeof helper.getExtensionProperty(element, 'useTemplate')
-            .useTemplate === 'undefined' ||
           helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
             'false'
         );
@@ -425,10 +474,7 @@ export function contentAttributes(
 
         hidden: function (element) {
           return (
-            typeof getBusinessObject(element).manualInput === 'undefined' ||
             getBusinessObject(element).manualInput === 'false' ||
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
               'false'
           );
@@ -460,10 +506,8 @@ export function contentAttributes(
         },
         show: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate !== 'undefined' &&
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'true'
+            'true'
           );
         },
       })
@@ -488,14 +532,18 @@ export function contentAttributes(
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('placeholder', getPlaceholder, savePlaceholder, 'json', null);
+          openEditor(
+            'placeholder',
+            getPlaceholder,
+            savePlaceholder,
+            'json',
+            null
+          );
         },
         showLink: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate !== 'undefined' &&
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'true'
+            'true'
           );
         },
       })
@@ -507,33 +555,33 @@ export function contentAttributes(
         id: 'quickpick-placeholder',
         buttonLabel: translate('Load JSON'),
         handleClick: function (element, node, event) {
-          // ajaxIdentifier
-          var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-          // ajax process
-          apex.server
-            .plugin(
-              ajaxIdentifier,
-              {
-                x01: 'GET_JSON_PLACEHOLDERS',
-                x02: helper.getExtensionProperty(element, 'applicationId')
-                  .applicationId,
-                x03: helper.getExtensionProperty(element, 'templateId')
-                  .templateId,
-              },
-              {}
-            )
-            .then((pData) => {
-              enterQuickPick({
-                placeholder: JSON.stringify(pData, null, 1),
+          if (typeof apex !== 'undefined') {
+            // ajaxIdentifier
+            var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+            // ajax process
+            apex.server
+              .plugin(
+                ajaxIdentifier,
+                {
+                  x01: 'GET_JSON_PLACEHOLDERS',
+                  x02: helper.getExtensionProperty(element, 'applicationId')
+                    .applicationId,
+                  x03: helper.getExtensionProperty(element, 'templateId')
+                    .templateId,
+                },
+                {}
+              )
+              .then((pData) => {
+                enterQuickPick({
+                  placeholder: JSON.stringify(pData, null, 1),
+                });
               });
-            });
+          }
         },
         showLink: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate !== 'undefined' &&
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'true'
+            'true'
           );
         },
       })
@@ -553,10 +601,8 @@ export function contentAttributes(
         },
         hidden: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate !== 'undefined' &&
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'true'
+            'true'
           );
         },
       })
@@ -577,10 +623,8 @@ export function contentAttributes(
         },
         show: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false'
+            'false'
           );
         },
       })
@@ -608,10 +652,8 @@ export function contentAttributes(
         },
         showLink: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false'
+            'false'
           );
         },
       })
@@ -632,10 +674,8 @@ export function contentAttributes(
         },
         show: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false'
+            'false'
           );
         },
       })
@@ -663,10 +703,8 @@ export function contentAttributes(
         },
         showLink: function () {
           return (
-            typeof helper.getExtensionProperty(element, 'useTemplate')
-              .useTemplate === 'undefined' ||
             helper.getExtensionProperty(element, 'useTemplate').useTemplate ===
-              'false'
+            'false'
           );
         },
       })

@@ -13,10 +13,10 @@ import subProcessProps from './parts/callActivity/callActivity';
 import eventProps from './parts/events/EventProps';
 // Require your custom property entries.
 import globalProps from './parts/globalProps.js';
+import backgroundTaskSessionProps from './parts/process/backgroundTaskSession';
 import generateCallActivityProcessVariables from './parts/process_variables/callActivityProcVarProps.js';
 import generateEventProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayProcessVariables from './parts/process_variables/gatewayProcVarProps.js';
-import backgroundTaskSessionProps from './parts/process/backgroundTaskSession';
 import {
   procVarDetailProps,
   procVarExpressionProps
@@ -31,6 +31,10 @@ import {
 } from './parts/serviceTask/sendMail';
 import typeProps from './parts/typeProps';
 import apexPageProps from './parts/userTask/apexPageProps';
+import {
+  taskConfiguration,
+  taskDefinition
+} from './parts/userTask/approvalTaskProps';
 import externalUrlProps from './parts/userTask/externalUrlProps';
 
 // The general tab contains all bpmn relevant properties.
@@ -91,8 +95,14 @@ function createGeneralTabGroups(
     elementRegistry,
     translate
   );
-    
-  backgroundTaskSessionProps(backgroundTaskSessionGroup, element, translate);
+
+  backgroundTaskSessionProps(
+    backgroundTaskSessionGroup,
+    element,
+    bpmnFactory,
+    elementRegistry,
+    translate
+  );
 
   return [
     generalGroup,
@@ -100,11 +110,11 @@ function createGeneralTabGroups(
     subProcessGroup,
     detailsGroup,
     documentationGroup,
-    backgroundTaskSessionGroup
+    backgroundTaskSessionGroup,
   ];
 }
 
-function createApexTabGroups(
+function createApexPageTabGroups(
   element,
   bpmnFactory,
   elementRegistry,
@@ -124,6 +134,33 @@ function createApexTabGroups(
       ),
     },
   ];
+}
+
+function createApexApprovalTabGroups(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
+  var taskDefinitionGroup = {
+    id: 'approval-task-definition',
+    label: translate('Task Definition'),
+    entries: taskDefinition(element, bpmnFactory, translate),
+  };
+  var taskConfigurationGroup = {
+    id: 'approval-task-configuration',
+    label: translate('Task Configuration'),
+    entries: taskConfiguration(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
+  };
+
+  return [taskDefinitionGroup, taskConfigurationGroup];
 }
 
 function createPLSQLTabGroups(element, bpmnFactory, commandStack, translate) {
@@ -160,16 +197,28 @@ function createExternalURLTabGroups(element, bpmnFactory, translate) {
   ];
 }
 
-function createMailTabGroups(element, bpmnFactory, commandStack, translate) {
+function createMailTabGroups(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
   var apexServiceGroup1 = {
     id: 'apex-mail-base',
     label: translate('General'),
-    entries: baseAttributes(element, bpmnFactory, translate),
+    entries: baseAttributes(element, bpmnFactory, commandStack, translate),
   };
   var apexServiceGroup2 = {
     id: 'apex-mail-content',
     label: translate('Content'),
-    entries: contentAttributes(element, bpmnFactory, commandStack, translate),
+    entries: contentAttributes(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   return [apexServiceGroup1, apexServiceGroup2];
@@ -213,22 +262,10 @@ function createVariablesTabGroups(
     enabled: isSelected,
   };
 
-  return [
-    taskGroup,
-    gatewayGroup,
-    eventGroup,
-    detailGroup,
-    expressionGroup,
-  ];
+  return [taskGroup, gatewayGroup, eventGroup, detailGroup, expressionGroup];
 }
 
-function createMappingTabGroups(
-  element,
-  bpmnFactory,
-  commandStack,
-  translate
-) {
-
+function createMappingTabGroups(element, bpmnFactory, commandStack, translate) {
   var callActivityGroup = {
     id: 'apex-callActivity',
     label: translate('Process Variables'),
@@ -253,11 +290,7 @@ function createMappingTabGroups(
     enabled: isSelected,
   };
 
-  return [
-    callActivityGroup,
-    detailGroup,
-    expressionGroup,
-  ];
+  return [callActivityGroup, detailGroup, expressionGroup];
 }
 
 export default function apexPropertiesProvider(
@@ -287,10 +320,22 @@ export default function apexPropertiesProvider(
       ),
     };
 
-    var ApexTab = {
-      id: 'apex',
-      label: translate('APEX'),
-      groups: createApexTabGroups(
+    var ApexPageTab = {
+      id: 'apex-page',
+      label: translate('APEX Page'),
+      groups: createApexPageTabGroups(
+        element,
+        bpmnFactory,
+        elementRegistry,
+        commandStack,
+        translate
+      ),
+    };
+
+    var ApexApprovalTab = {
+      id: 'apex-approval',
+      label: translate('APEX Approval'),
+      groups: createApexApprovalTabGroups(
         element,
         bpmnFactory,
         elementRegistry,
@@ -322,6 +367,7 @@ export default function apexPropertiesProvider(
       groups: createMailTabGroups(
         element,
         bpmnFactory,
+        elementRegistry,
         commandStack,
         translate
       ),
@@ -351,7 +397,8 @@ export default function apexPropertiesProvider(
 
     return [
       generalTab,
-      ApexTab,
+      ApexPageTab,
+      ApexApprovalTab,
       PlsqlTab,
       ExternalUrlTab,
       MailTabGroups,

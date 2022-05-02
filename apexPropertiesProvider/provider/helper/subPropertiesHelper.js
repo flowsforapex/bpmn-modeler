@@ -99,7 +99,7 @@ export default class subPropertiesHelper {
         );
         commands.push(
           cmdHelper.updateBusinessObject(element, container, {
-            pageItems: subContainer,
+            [this.parentAttribute]: subContainer,
           })
         );
       }
