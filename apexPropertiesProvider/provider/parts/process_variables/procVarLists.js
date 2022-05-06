@@ -1,7 +1,10 @@
+import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import SubPropertiesHelper from '../../helper/subPropertiesHelper';
 
-var { is } = require('bpmn-js/lib/util/ModelUtil');
+var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
 var extensionElementsEntry = require('./custom/ExtensionElements');
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var procVarProps = [];
 
@@ -21,10 +24,12 @@ export function getSelectedEntry(element, node) {
 
   if (element && procVarProps) {
     procVarProps.forEach((e) => {
-      if (e.getSelected(element, node).idx > -1) {
-        selection = e.getSelected(element, node);
-        entry =
-          e.type === 'pre' ? preSubPropertiesHelper.getEntries(element)[selection.idx] : postSubPropertiesHelper.getEntries(element)[selection.idx];
+      if (e.type === 'pre' || e.type === 'post') {
+        if (e.getSelected(element, node).idx > -1) {
+          selection = e.getSelected(element, node);
+          entry =
+            e.type === 'pre' ? preSubPropertiesHelper.getEntries(element)[selection.idx] : postSubPropertiesHelper.getEntries(element)[selection.idx];
+        }
       }
     });
   }
@@ -32,14 +37,138 @@ export function getSelectedEntry(element, node) {
   return entry;
 }
 
-export function procVarLists(element, bpmnFactory, translate, options) {
+export function procVarLists(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate,
+  options
+) {
   var type1;
   var label1;
 
   var type2;
   var label2;
 
+  var loadDefinedVariables = function () {
+    var bo = getBusinessObject(element);
+    var extensions = bo.extensionElements;
+    if (!extensions) {
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        SubPropertiesHelper.createExtensionElement(element, bpmnFactory).context
+      );
+    }
+    extensions = bo.extensionElements;
+
+    if (typeof apex !== 'undefined') {
+      // ajaxIdentifier
+      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // ajax process
+      apex.server
+        .plugin(
+          ajaxIdentifier,
+          {
+            x01: 'GET_VARIABLE_MAPPING',
+            x02: bo.calledDiagram,
+            x03: bo.calledDiagramVersionSelection,
+            x04: bo.calledDiagramVersion,
+          },
+          {}
+        )
+        .then((pData) => {
+          const handler = new MultiCommandHandler(commandStack);
+          if (pData.InVariables) {
+            pData.InVariables.forEach((v) => {
+              handler.preExecute(
+                preSubPropertiesHelper.newElement(
+                  element,
+                  extensions,
+                  bpmnFactory,
+                  {
+                    varSequence:
+                      preSubPropertiesHelper.getNextSequence(element),
+                    varName: v.varName,
+                    varDataType: v.varDataType,
+                    varExpression: '',
+                    varExpressionType: 'static',
+                    varDescription: v.varDescription,
+                  }
+                )
+              );
+            });
+          }
+          if (pData.OutVariables) {
+            pData.OutVariables.forEach((v) => {
+              handler.preExecute(
+                postSubPropertiesHelper.newElement(
+                  element,
+                  extensions,
+                  bpmnFactory,
+                  {
+                    varSequence:
+                      postSubPropertiesHelper.getNextSequence(element),
+                    varName: v.varName,
+                    varDataType: v.varDataType,
+                    varExpression: '',
+                    varExpressionType: 'static',
+                    varDescription: v.varDescription,
+                  }
+                )
+              );
+            });
+          }
+        });
+    }
+  };
+
+  var copyBusinessRef = function () {
+    var bo = getBusinessObject(element);
+    var extensions = bo.extensionElements;
+    if (!extensions) {
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        SubPropertiesHelper.createExtensionElement(element, bpmnFactory).context
+      );
+    }
+    extensions = bo.extensionElements;
+
+    const handler = new MultiCommandHandler(commandStack);
+    handler.preExecute(
+      preSubPropertiesHelper.newElement(element, extensions, bpmnFactory, {
+        varSequence: preSubPropertiesHelper.getNextSequence(element),
+        varName: 'BUSINESS_REF',
+        varDataType: 'VARCHAR2',
+        varExpression: '&F4A$BUSINESS_REF.',
+        varExpressionType: 'processVariable',
+      })
+    );
+  };
+
   procVarProps = [];
+
+  if (is(element, 'bpmn:CallActivity')) {
+    // load variables
+    procVarProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-load-variables',
+        buttonLabel: translate('Load defined variables'),
+        handleClick: function (element, node, event) {
+          loadDefinedVariables();
+        },
+      })
+    );
+
+    // business ref quick pick
+    procVarProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-business-ref',
+        buttonLabel: translate('Copy business ref'),
+        handleClick: function (element, node, event) {
+          copyBusinessRef();
+        },
+      })
+    );
+  }
 
   if (options.type1) {
     ({ type1 } = options);

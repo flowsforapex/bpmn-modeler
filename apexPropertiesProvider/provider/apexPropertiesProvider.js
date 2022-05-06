@@ -237,25 +237,44 @@ function createMailTabGroups(
 function createVariablesTabGroups(
   element,
   bpmnFactory,
+  elementRegistry,
   commandStack,
   translate
 ) {
   var taskGroup = {
     id: 'apex-task',
     label: translate('Process Variables'),
-    entries: generateTaskProcessVariables(element, bpmnFactory, translate),
+    entries: generateTaskProcessVariables(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   var gatewayGroup = {
     id: 'apex-gateway',
     label: translate('Process Variables'),
-    entries: generateGatewayProcessVariables(element, bpmnFactory, translate),
+    entries: generateGatewayProcessVariables(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   var eventGroup = {
     id: 'apex-event',
     label: translate('Process Variables'),
-    entries: generateEventProcessVariables(element, bpmnFactory, translate),
+    entries: generateEventProcessVariables(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   var detailGroup = {
@@ -275,13 +294,21 @@ function createVariablesTabGroups(
   return [taskGroup, gatewayGroup, eventGroup, detailGroup, expressionGroup];
 }
 
-function createMappingTabGroups(element, bpmnFactory, commandStack, translate) {
+function createMappingTabGroups(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
   var callActivityGroup = {
     id: 'apex-callActivity',
     label: translate('Process Variables'),
     entries: generateCallActivityProcessVariables(
       element,
       bpmnFactory,
+      elementRegistry,
+      commandStack,
       translate
     ),
   };
@@ -289,7 +316,13 @@ function createMappingTabGroups(element, bpmnFactory, commandStack, translate) {
   var processGroup = {
     id: 'apex-process',
     label: translate('Process Variables'),
-    entries: generateProcessProcessVariables(element, bpmnFactory, translate),
+    entries: generateProcessProcessVariables(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
   };
 
   var detailGroup = {
@@ -395,6 +428,7 @@ export default function apexPropertiesProvider(
       groups: createVariablesTabGroups(
         element,
         bpmnFactory,
+        elementRegistry,
         commandStack,
         translate
       ),
@@ -406,6 +440,7 @@ export default function apexPropertiesProvider(
       groups: createMappingTabGroups(
         element,
         bpmnFactory,
+        elementRegistry,
         commandStack,
         translate
       ),

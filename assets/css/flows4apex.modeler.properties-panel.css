@@ -661,3 +661,8 @@ button.dialog.fa {
 .bpp-properties-entry[data-entry="quickpick-business-ref"] {
   margin-bottom: 9px;
 }
+/* override label */
+.bpp-properties-panel label {
+  font-weight: normal !important;
+  font-size: 100% !important;
+}

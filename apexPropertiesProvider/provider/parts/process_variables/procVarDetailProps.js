@@ -104,6 +104,36 @@ export function procVarDetailProps(element, translate) {
         ],
       })
     );
+
+    if (is(element, 'bpmn:CallActivity')) {
+      // description
+      procVarProps.push(
+        entryFactory.label({
+          id: 'varDescription',
+
+          get: function (element, node) {
+            var description = getProperty(
+              element,
+              node,
+              'varDescription'
+            ).varDescription;
+            return {
+              label: description,
+            };
+          },
+
+          showLabel: function (element, node) {
+            var description = getProperty(
+              element,
+              node,
+              'varDescription'
+            ).varDescription;
+
+            return description;
+          },
+        })
+      );
+    }
   }
 
   // process elements

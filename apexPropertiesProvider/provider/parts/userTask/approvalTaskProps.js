@@ -342,7 +342,6 @@ export function taskConfiguration(
           {}
         )
         .then((pData) => {
-          console.log(pData);
           const handler = new MultiCommandHandler(commandStack);
           pData.forEach((i) => {
             handler.preExecute(
