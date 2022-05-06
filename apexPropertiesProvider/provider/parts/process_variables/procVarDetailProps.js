@@ -1,10 +1,10 @@
-var { is } = require('bpmn-js/lib/util/ModelUtil');
+import { getContainer, openEditor } from '../../plugins/monacoEditor';
+import { getSelectedEntry } from './procVarLists';
+
+var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
 var entryFactory = require('./custom/EntryFactory');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
-
-import { getContainer, openEditor } from '../../plugins/monacoEditor';
-import { getSelectedEntry } from './procVarLists';
 
 export function procVarDetailProps(element, translate) {
   const DATA_TYPE_DESCRIPTION = {
@@ -17,7 +17,7 @@ export function procVarDetailProps(element, translate) {
     var entry = getSelectedEntry(element, node);
 
     return {
-      [property]: (entry && entry.get(property)) || undefined,
+      [property]: entry && entry.get(property),
       varDataTypeDynamicDescription:
         DATA_TYPE_DESCRIPTION[entry && entry.get('varDataType')],
     };
@@ -26,7 +26,7 @@ export function procVarDetailProps(element, translate) {
   function setProperty(element, values, node) {
     var entry = getSelectedEntry(element, node);
 
-    if (values.varDataType !== undefined) {
+    if (typeof values.varDataType !== 'undefined') {
       if (values.varDataType === 'NUMBER' || values.varDataType === 'DATE') {
         if (entry.varExpressionType === 'sqlQueryList') {
           entry.varExpressionType = 'static';
@@ -58,7 +58,10 @@ export function procVarDetailProps(element, translate) {
     is(element, 'bpmn:BoundaryEvent') ||
     is(element, 'bpmn:EndEvent') ||
     // callActivity elements
-    is(element, 'bpmn:CallActivity')
+    is(element, 'bpmn:CallActivity') ||
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true')
   ) {
     // name field
     procVarProps.push(
@@ -99,6 +102,29 @@ export function procVarDetailProps(element, translate) {
           { name: translate('Date'), value: 'DATE' },
           { name: translate('Clob'), value: 'CLOB' },
         ],
+      })
+    );
+  }
+
+  // process elements
+  if (
+    is(element, 'bpmn:Process') &&
+    getBusinessObject(element).isCallable === 'true'
+  ) {
+    // description field
+    procVarProps.push(
+      entryFactory.textField(translate, {
+        id: 'varDescription',
+        label: translate('Description'),
+        modelProperty: 'varDescription',
+
+        get: function (element, node) {
+          return getProperty(element, node, 'varDescription');
+        },
+
+        set: function (element, values, node) {
+          return setProperty(element, values, node);
+        },
       })
     );
   }
@@ -164,7 +190,7 @@ export function procVarExpressionProps(element, commandStack, translate) {
     var entry = getSelectedEntry(element, node);
 
     return {
-      [property]: (entry && entry.get(property)) || undefined,
+      [property]: entry && entry.get(property),
       varExpressionDynamicDescription:
         EXPRESSION_DESCRIPTION[entry && entry.get('varExpressionType')],
     };

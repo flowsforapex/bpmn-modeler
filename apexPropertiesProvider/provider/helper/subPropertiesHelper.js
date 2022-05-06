@@ -33,7 +33,7 @@ export default class subPropertiesHelper {
     var entry = this.getSelectedEntry(container, element, node);
 
     return {
-      [property]: (entry && entry.get(property)) || undefined,
+      [property]: entry && entry.get(property),
     };
   }
 
@@ -45,7 +45,9 @@ export default class subPropertiesHelper {
 
     var label = entry ? `${entry.get(labelKey)}:${entry.get(labelValue)}` : '';
 
+    // eslint-disable-next-line no-param-reassign
     option.text = label;
+    // eslint-disable-next-line no-param-reassign
     option.value = entry && entry.get(value);
   }
 
@@ -73,6 +75,8 @@ export default class subPropertiesHelper {
       this.type
     );
 
+    var subContainer;
+
     if (!container) {
       container = elementHelper.createElement(
         this.type,
@@ -88,7 +92,7 @@ export default class subPropertiesHelper {
     }
 
     if (this.parentAttribute) {
-      var subContainer = container[this.parentAttribute];
+      subContainer = container[this.parentAttribute];
 
       if (!subContainer) {
         subContainer = elementHelper.createElement(
@@ -138,11 +142,13 @@ export default class subPropertiesHelper {
       this.type
     );
 
+    var subContainer;
+
     var entries = this.getEntries(element);
     var entry = entries[idx];
 
     if (this.parentAttribute) {
-      var subContainer = container[this.parentAttribute];
+      subContainer = container[this.parentAttribute];
 
       command =
         subContainer[this.attribute].length > 1 ? (command = cmdHelper.removeElementsFromList(

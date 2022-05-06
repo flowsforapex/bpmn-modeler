@@ -61,6 +61,12 @@ function getFilters(element) {
     // filter tasks
   } else if (is(element, 'bpmn:Task')) {
     return getTaskFilters(element);
+    // filter call activites
+  } else if (is(element, 'bpmn:CallActivity')) {
+    return getCallActivityFilters();
+    // filter processes
+  } else if (is(element, 'bpmn:Process')) {
+    return getProcessFilters(element);
   }
 
   return [];
@@ -139,10 +145,27 @@ function getTaskFilters(element) {
     // filter business rule tasks
   } else if (is(element, 'bpmn:BusinessRuleTask')) {
     filter.push('apex:ExecutePlsql');
-    // filter call activity tasks
-  } else if (is(element, 'bpmn:CallActivity')) {
+  }
+  return filter;
+}
+
+function getCallActivityFilters() {
+  var filter = [];
+
+  filter.push('apex:InVariables');
+  filter.push('apex:OutVariables');
+
+  return filter;
+}
+
+function getProcessFilters(element) {
+  var filter = [];
+  var businessObject = getBusinessObject(element);
+
+  if (businessObject.isCallable === 'true') {
     filter.push('apex:InVariables');
     filter.push('apex:OutVariables');
   }
+
   return filter;
 }
