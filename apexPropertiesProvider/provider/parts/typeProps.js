@@ -44,11 +44,10 @@ export default function (
         typeof type === 'undefined' ||
         !selectOptions[elementType].some(v => v.value === type)
       ) {
-        var command = cmdHelper.updateBusinessObject(element, bo, {
-          type: defaultValue,
-        });
         new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
-          command.context
+          cmdHelper.updateBusinessObject(element, bo, {
+            type: defaultValue,
+          }).context
         );
       }
 
@@ -114,7 +113,7 @@ export default function (
       element,
       getBusinessObject(element),
       {
-        type: undefined,
+        type: null,
       }
     );
     new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(

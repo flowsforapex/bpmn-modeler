@@ -1,5 +1,4 @@
-var { is } = require('bpmn-js/lib/util/ModelUtil');
-
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { procVarLists } from './procVarLists';
 
 export default function (

@@ -1,6 +1,4 @@
-var { is } = require('bpmn-js/lib/util/ModelUtil');
-var { getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
-
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { procVarLists } from './procVarLists';
 
 export default function (
@@ -20,7 +18,7 @@ export default function (
     if (
       getBusinessObject(element).eventDefinitions &&
       getBusinessObject(element).eventDefinitions.some(
-        e => e.$type == 'bpmn:TimerEventDefinition'
+        e => e.$type === 'bpmn:TimerEventDefinition'
       )
     ) {
       return procVarLists(

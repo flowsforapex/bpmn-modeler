@@ -1,8 +1,8 @@
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
+import entryFactory from './custom/EntryFactory';
 import { getSelectedEntry } from './procVarLists';
 
-var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
-var entryFactory = require('./custom/EntryFactory');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 

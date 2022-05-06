@@ -1,5 +1,4 @@
-var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
-
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { procVarLists } from './procVarLists';
 
 export default function (

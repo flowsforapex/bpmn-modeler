@@ -1,8 +1,8 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import SubPropertiesHelper from '../../helper/subPropertiesHelper';
+import extensionElementsEntry from './custom/ExtensionElements';
 
-var { is, getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
-var extensionElementsEntry = require('./custom/ExtensionElements');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 

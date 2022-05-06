@@ -1,11 +1,11 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../helper/propertiesHelper';
+import PropertiesHelper from '../../helper/propertiesHelper';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var helper = new propertiesHelper('apex:ExecutePlsql');
+var helper = new PropertiesHelper('apex:ExecutePlsql');
 
 var forbiddenTypes = [];
 
@@ -54,7 +54,13 @@ export default function (element, bpmnFactory, commandStack, translate) {
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode, 'plsql', 'plsqlProcess');
+          openEditor(
+            'plsqlCode',
+            getPlsqlCode,
+            savePlsqlCode,
+            'plsql',
+            'plsqlProcess'
+          );
         },
       })
     );

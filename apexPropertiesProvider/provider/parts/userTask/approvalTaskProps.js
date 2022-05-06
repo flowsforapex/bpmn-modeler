@@ -1,19 +1,19 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
+import extensionElementsEntry from 'bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../helper/propertiesHelper';
-import subPropertiesHelper from '../../helper/subPropertiesHelper';
+import PropertiesHelper from '../../helper/propertiesHelper';
+import SubPropertiesHelper from '../../helper/subPropertiesHelper';
 import { getApplications, getTasks } from '../../plugins/metaDataCollector';
 
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 
 var domQuery = require('min-dom').query;
-var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camunda/parts/implementation/ExtensionElements');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var helper = new propertiesHelper('apex:ApexApproval');
+var helper = new PropertiesHelper('apex:ApexApproval');
 
-var subHelper = new subPropertiesHelper(
+var subHelper = new SubPropertiesHelper(
   'apex:ApexApproval',
   'apex:Parameter',
   'parameter',
@@ -134,13 +134,14 @@ export function taskDefinition(element, bpmnFactory, translate) {
           var value = bo.get('manualInput');
 
           if (typeof value === 'undefined') {
-            var command = cmdHelper.updateBusinessObject(element, bo, {
-              manualInput: 'false',
-            });
             new UpdateBusinessObjectHandler(
               elementRegistry,
               bpmnFactory
-            ).execute(command.context);
+            ).execute(
+              cmdHelper.updateBusinessObject(element, bo, {
+                manualInput: 'false',
+              }).context
+            );
           }
 
           return {
@@ -174,12 +175,13 @@ export function taskDefinition(element, bpmnFactory, translate) {
       },
 
       get: function (element) {
+        var property;
         // refresh applications (if necessary)
         if (elementIdentifier !== element) {
           elementIdentifier = element;
           refreshApplications(element);
         }
-        var property = helper.getExtensionProperty(element, 'applicationId');
+        property = helper.getExtensionProperty(element, 'applicationId');
         // add entry if not contained
         if (
           property.applicationId != null &&
@@ -315,12 +317,8 @@ export function taskConfiguration(
     var bo = getBusinessObject(element);
     var extensions = bo.extensionElements;
     if (!extensions) {
-      var command = subPropertiesHelper.createExtensionElement(
-        element,
-        bpmnFactory
-      );
       new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
-        command.context
+        SubPropertiesHelper.createExtensionElement(element, bpmnFactory).context
       );
     }
     extensions = bo.extensionElements;
