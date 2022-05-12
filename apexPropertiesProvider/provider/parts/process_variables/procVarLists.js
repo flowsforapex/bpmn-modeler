@@ -277,6 +277,8 @@ export function procVarLists(
     });
 
     procVarProps.push(preProcessVariables);
+  } else {
+    preProcessVariables = null;
   }
 
   if (options.type2) {
@@ -386,6 +388,8 @@ export function procVarLists(
     });
 
     procVarProps.push(postProcessVariables);
+  } else {
+    postProcessVariables = null;
   }
 
   return procVarProps;
