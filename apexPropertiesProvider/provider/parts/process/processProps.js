@@ -40,7 +40,6 @@ export default function (
     };
   };
 
-  // type selection for User Tasks
   if (is(element, 'bpmn:Process')) {
     group.entries.push(
       entryFactory.selectBox(translate, {

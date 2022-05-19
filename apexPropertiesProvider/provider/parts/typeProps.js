@@ -113,7 +113,7 @@ export default function (
       element,
       getBusinessObject(element),
       {
-        type: null,
+        type: undefined,
       }
     );
     new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
