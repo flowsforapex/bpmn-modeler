@@ -8,6 +8,17 @@
   "associations": [],
   "types": [
     {
+      "name": "ProcessAttributes",
+      "extends": [ "bpmn:Process" ],
+      "properties": [
+        {
+          "name": "isCallable",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "BackgroundTaskSession",
       "extends": [ "bpmn:Process" ],
       "properties": [
@@ -313,6 +324,10 @@
         },
         {
           "name": "varExpression",
+          "type": "String"
+        },
+        {
+          "name": "varDescription",
           "type": "String"
         }
       ]

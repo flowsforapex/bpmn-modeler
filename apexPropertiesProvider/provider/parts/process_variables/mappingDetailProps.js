@@ -1,4 +1,4 @@
-import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 import entryFactory from './custom/EntryFactory';
 import { getSelectedEntry } from './procVarLists';
@@ -6,7 +6,7 @@ import { getSelectedEntry } from './procVarLists';
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-export function procVarDetailProps(element, translate) {
+export function mappingDetailProps(element, translate) {
   const DATA_TYPE_DESCRIPTION = {
     DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
   };
@@ -40,23 +40,11 @@ export function procVarDetailProps(element, translate) {
   }
 
   if (
-    // task elements
-    is(element, 'bpmn:Task') ||
-    is(element, 'bpmn:UserTask') ||
-    is(element, 'bpmn:ScriptTask') ||
-    is(element, 'bpmn:ServiceTask') ||
-    is(element, 'bpmn:ManualTask') ||
-    // gateway elements
-    is(element, 'bpmn:ExclusiveGateway') ||
-    is(element, 'bpmn:ParallelGateway') ||
-    is(element, 'bpmn:InclusiveGateway') ||
-    is(element, 'bpmn:EventBasedGateway') ||
-    // event elements
-    is(element, 'bpmn:StartEvent') ||
-    is(element, 'bpmn:IntermediateThrowEvent') ||
-    is(element, 'bpmn:IntermediateCatchEvent') ||
-    is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    // callActivity elements
+    is(element, 'bpmn:CallActivity') ||
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true')
   ) {
     // name field
     procVarProps.push(
@@ -131,10 +119,33 @@ export function procVarDetailProps(element, translate) {
     }
   }
 
+  // process elements
+  if (
+    is(element, 'bpmn:Process') &&
+    getBusinessObject(element).isCallable === 'true'
+  ) {
+    // description field
+    procVarProps.push(
+      entryFactory.textField(translate, {
+        id: 'varDescription',
+        label: translate('Description'),
+        modelProperty: 'varDescription',
+
+        get: function (element, node) {
+          return getProperty(element, node, 'varDescription');
+        },
+
+        set: function (element, values, node) {
+          return setProperty(element, values, node);
+        },
+      })
+    );
+  }
+
   return procVarProps;
 }
 
-export function procVarExpressionProps(element, commandStack, translate) {
+export function mappingExpressionProps(element, commandStack, translate) {
   const EXPRESSION_DESCRIPTION = {
     static: translate('Static value'),
     processVariable: translate('Name of the Process Variable'),
@@ -205,23 +216,8 @@ export function procVarExpressionProps(element, commandStack, translate) {
   }
 
   if (
-    // task elements
-    is(element, 'bpmn:Task') ||
-    is(element, 'bpmn:UserTask') ||
-    is(element, 'bpmn:ScriptTask') ||
-    is(element, 'bpmn:ServiceTask') ||
-    is(element, 'bpmn:ManualTask') ||
-    // gateway elements
-    is(element, 'bpmn:ExclusiveGateway') ||
-    is(element, 'bpmn:ParallelGateway') ||
-    is(element, 'bpmn:InclusiveGateway') ||
-    is(element, 'bpmn:EventBasedGateway') ||
-    // event elements
-    is(element, 'bpmn:StartEvent') ||
-    is(element, 'bpmn:IntermediateThrowEvent') ||
-    is(element, 'bpmn:IntermediateCatchEvent') ||
-    is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    // callActivity elements
+    is(element, 'bpmn:CallActivity')
   ) {
     // expression type
     procVarProps.push(

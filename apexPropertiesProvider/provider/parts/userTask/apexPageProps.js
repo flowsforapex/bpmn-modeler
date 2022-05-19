@@ -1,7 +1,7 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../helper/propertiesHelper';
-import subPropertiesHelper from '../../helper/subPropertiesHelper';
+import PropertiesHelper from '../../helper/propertiesHelper';
+import SubPropertiesHelper from '../../helper/subPropertiesHelper';
 import {
   getApplications,
   getItems,
@@ -15,9 +15,9 @@ var extensionElementsEntry = require('bpmn-js-properties-panel/lib/provider/camu
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var helper = new propertiesHelper('apex:ApexPage');
+var helper = new PropertiesHelper('apex:ApexPage');
 
-var subHelper = new subPropertiesHelper(
+var subHelper = new SubPropertiesHelper(
   'apex:ApexPage',
   'apex:PageItem',
   'pageItem',
@@ -176,7 +176,7 @@ export default function (
     var bo = getBusinessObject(element);
     var extensions = bo.extensionElements;
     if (!extensions) {
-      var command = subPropertiesHelper.createExtensionElement(
+      var command = SubPropertiesHelper.createExtensionElement(
         element,
         bpmnFactory
       );

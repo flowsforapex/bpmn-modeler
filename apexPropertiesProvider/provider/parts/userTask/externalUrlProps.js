@@ -1,8 +1,8 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
 import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
-import propertiesHelper from '../../helper/propertiesHelper';
+import PropertiesHelper from '../../helper/propertiesHelper';
 
-var helper = new propertiesHelper('apex:ExternalUrl');
+var helper = new PropertiesHelper('apex:ExternalUrl');
 
 export default function (element, bpmnFactory, translate) {
   const userTaskProps = [];

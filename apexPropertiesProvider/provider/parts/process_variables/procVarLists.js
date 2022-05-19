@@ -1,11 +1,18 @@
-import subPropertiesHelper from '../../helper/subPropertiesHelper';
+import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import SubPropertiesHelper from '../../helper/subPropertiesHelper';
+import extensionElementsEntry from './custom/ExtensionElements';
 
-var extensionElementsEntry = require('./custom/ExtensionElements');
+var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 var procVarProps = [];
 
 var preSubPropertiesHelper;
 var postSubPropertiesHelper;
+
+var preProcessVariables;
+var postProcessVariables;
 
 export function isSelected(element, node) {
   return typeof getSelectedEntry(element, node) !== 'undefined';
@@ -17,10 +24,12 @@ export function getSelectedEntry(element, node) {
 
   if (element && procVarProps) {
     procVarProps.forEach((e) => {
-      if (e.getSelected(element, node).idx > -1) {
-        selection = e.getSelected(element, node);
-        entry =
-          e.type === 'pre' ? preSubPropertiesHelper.getEntries(element)[selection.idx] : postSubPropertiesHelper.getEntries(element)[selection.idx];
+      if (e.type === 'pre' || e.type === 'post') {
+        if (e.getSelected(element, node).idx > -1) {
+          selection = e.getSelected(element, node);
+          entry =
+            e.type === 'pre' ? preSubPropertiesHelper.getEntries(element)[selection.idx] : postSubPropertiesHelper.getEntries(element)[selection.idx];
+        }
       }
     });
   }
@@ -28,26 +37,172 @@ export function getSelectedEntry(element, node) {
   return entry;
 }
 
-export function procVarLists(element, bpmnFactory, translate, options) {
+export function procVarLists(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate,
+  options
+) {
+  var type1;
+  var label1;
+
+  var type2;
+  var label2;
+
+  var loadDefinedVariables = function () {
+    var bo = getBusinessObject(element);
+    var extensions = bo.extensionElements;
+    if (!extensions) {
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        SubPropertiesHelper.createExtensionElement(element, bpmnFactory).context
+      );
+    }
+    extensions = bo.extensionElements;
+
+    if (typeof apex !== 'undefined') {
+      // ajaxIdentifier
+      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // ajax process
+      apex.server
+        .plugin(
+          ajaxIdentifier,
+          {
+            x01: 'GET_VARIABLE_MAPPING',
+            x02: bo.calledDiagram,
+            x03: bo.calledDiagramVersionSelection,
+            x04: bo.calledDiagramVersion,
+          },
+          {}
+        )
+        .then((pData) => {
+          const handler = new MultiCommandHandler(commandStack);
+          if (pData.InVariables) {
+            pData.InVariables.forEach((v) => {
+              handler.preExecute(
+                preSubPropertiesHelper.newElement(
+                  element,
+                  extensions,
+                  bpmnFactory,
+                  {
+                    varSequence:
+                      preSubPropertiesHelper.getNextSequence(element),
+                    varName: v.varName,
+                    varDataType: v.varDataType,
+                    varExpression: '',
+                    varExpressionType: 'static',
+                    varDescription: v.varDescription,
+                  }
+                )
+              );
+            });
+          }
+          if (pData.OutVariables) {
+            pData.OutVariables.forEach((v) => {
+              handler.preExecute(
+                postSubPropertiesHelper.newElement(
+                  element,
+                  extensions,
+                  bpmnFactory,
+                  {
+                    varSequence:
+                      postSubPropertiesHelper.getNextSequence(element),
+                    varName: v.varName,
+                    varDataType: v.varDataType,
+                    varExpression: '',
+                    varExpressionType: 'static',
+                    varDescription: v.varDescription,
+                  }
+                )
+              );
+            });
+          }
+        });
+    }
+  };
+
+  var copyBusinessRef = function () {
+    var bo = getBusinessObject(element);
+    var extensions = bo.extensionElements;
+    if (!extensions) {
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        SubPropertiesHelper.createExtensionElement(element, bpmnFactory).context
+      );
+    }
+    extensions = bo.extensionElements;
+
+    const handler = new MultiCommandHandler(commandStack);
+    handler.preExecute(
+      preSubPropertiesHelper.newElement(element, extensions, bpmnFactory, {
+        varSequence: preSubPropertiesHelper.getNextSequence(element),
+        varName: 'BUSINESS_REF',
+        varDataType: 'VARCHAR2',
+        varExpression: '&F4A$BUSINESS_REF.',
+        varExpressionType: 'processVariable',
+      })
+    );
+  };
+
   procVarProps = [];
 
-  if (options.type1) {
-    var { type1 } = options;
-    var { label1 } = options;
+  if (is(element, 'bpmn:CallActivity')) {
+    // load variables
+    procVarProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-load-variables',
+        buttonLabel: translate('Load defined variables'),
+        handleClick: function (element, node, event) {
+          loadDefinedVariables();
+        },
+      })
+    );
 
-    preSubPropertiesHelper = new subPropertiesHelper(
+    // business ref quick pick
+    procVarProps.push(
+      entryFactory.link(translate, {
+        id: 'quickpick-business-ref',
+        buttonLabel: translate('Copy business ref'),
+        handleClick: function (element, node, event) {
+          copyBusinessRef();
+        },
+      })
+    );
+  }
+
+  if (options.type1) {
+    ({ type1 } = options);
+    ({ label1 } = options);
+
+    preSubPropertiesHelper = new SubPropertiesHelper(
       `apex:${type1}`,
       'apex:ProcessVariable',
       'procVars'
     );
 
     // create first list element
-    var preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    preProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type1,
       label: label1,
       type: 'pre',
 
       createExtensionElement: function (element, extensionElements, values) {
+        if (is(element, 'bpmn:Process')) {
+          return preSubPropertiesHelper.newElement(
+            element,
+            extensionElements,
+            bpmnFactory,
+            {
+              varName: preSubPropertiesHelper.getIndexedName(
+                element,
+                translate(type1),
+                'varName'
+              ),
+              varDataType: 'VARCHAR2',
+              varDescription: '',
+            }
+          );
+        }
         return preSubPropertiesHelper.newElement(
           element,
           extensionElements,
@@ -94,14 +249,25 @@ export function procVarLists(element, bpmnFactory, translate, options) {
         value,
         idx
       ) {
-        preSubPropertiesHelper.setOptionLabelValue(
-          element,
-          option,
-          'varName',
-          'varExpression',
-          'varName',
-          idx
-        );
+        if (is(element, 'bpmn:Process')) {
+          preSubPropertiesHelper.setOptionLabelValue(
+            element,
+            option,
+            'varName',
+            'varDescription',
+            'varName',
+            idx
+          );
+        } else {
+          preSubPropertiesHelper.setOptionLabelValue(
+            element,
+            option,
+            'varName',
+            'varExpression',
+            'varName',
+            idx
+          );
+        }
       },
 
       onEntryMoved: function (element) {
@@ -111,25 +277,43 @@ export function procVarLists(element, bpmnFactory, translate, options) {
     });
 
     procVarProps.push(preProcessVariables);
+  } else {
+    preProcessVariables = null;
   }
 
   if (options.type2) {
-    var { type2 } = options;
-    var { label2 } = options;
+    ({ type2 } = options);
+    ({ label2 } = options);
 
-    postSubPropertiesHelper = new subPropertiesHelper(
+    postSubPropertiesHelper = new SubPropertiesHelper(
       `apex:${type2}`,
       'apex:ProcessVariable',
       'procVars'
     );
 
     // create second list element
-    var postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
+    postProcessVariables = extensionElementsEntry(element, bpmnFactory, {
       id: type2,
       label: label2,
       type: 'post',
 
       createExtensionElement: function (element, extensionElements, values) {
+        if (is(element, 'bpmn:Process')) {
+          return postSubPropertiesHelper.newElement(
+            element,
+            extensionElements,
+            bpmnFactory,
+            {
+              varName: postSubPropertiesHelper.getIndexedName(
+                element,
+                translate(type2),
+                'varName'
+              ),
+              varDataType: 'VARCHAR2',
+              varDescription: '',
+            }
+          );
+        }
         return postSubPropertiesHelper.newElement(
           element,
           extensionElements,
@@ -176,14 +360,25 @@ export function procVarLists(element, bpmnFactory, translate, options) {
         value,
         idx
       ) {
-        postSubPropertiesHelper.setOptionLabelValue(
-          element,
-          option,
-          'varName',
-          'varExpression',
-          'varName',
-          idx
-        );
+        if (is(element, 'bpmn:Process')) {
+          postSubPropertiesHelper.setOptionLabelValue(
+            element,
+            option,
+            'varName',
+            'varDescription',
+            'varName',
+            idx
+          );
+        } else {
+          postSubPropertiesHelper.setOptionLabelValue(
+            element,
+            option,
+            'varName',
+            'varExpression',
+            'varName',
+            idx
+          );
+        }
       },
 
       onEntryMoved: function (element) {
@@ -193,6 +388,8 @@ export function procVarLists(element, bpmnFactory, translate, options) {
     });
 
     procVarProps.push(postProcessVariables);
+  } else {
+    postProcessVariables = null;
   }
 
   return procVarProps;

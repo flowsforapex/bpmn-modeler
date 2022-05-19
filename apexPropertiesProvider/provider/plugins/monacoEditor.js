@@ -17,8 +17,12 @@ export function getContainer(id, translate) {
       '</div>' +
       '<div id="editor-container"></div>' +
       '<div class="button-container end">' +
-      `<button id="close-btn" class="dialog close">${translate('Cancel')}</button>` +
-      `<button id="save-btn" class="dialog save">${translate('Save')}</button>` +
+      `<button id="close-btn" class="dialog close">${translate(
+        'Cancel'
+      )}</button>` +
+      `<button id="save-btn" class="dialog save">${translate(
+        'Save'
+      )}</button>` +
       '</div>' +
       '</div>',
   };
@@ -84,23 +88,26 @@ export function openEditor(id, getText, saveText, language, type) {
             x01: 'PARSE_CODE',
             x02: monacoEditor.getValue(),
             x03: language,
-            x04: type
+            x04: type,
           },
           {}
         )
         .then((pData) => {
           domQuery(`#modal-dialog-${id} #error-text`).innerText =
             pData.message.replace(/\n/g, ' ');
-            switch (pData.success) {
-              case 'true':
-                domQuery(`#modal-dialog-${id} #error-text`).style.color = '#52B415';
-                break;
-              case 'false':
-                domQuery(`#modal-dialog-${id} #error-text`).style.color = '#cc3333';
-                break;
-              default:
-                domQuery(`#modal-dialog-${id} #error-text`).style.color = 'inherit';
-            }
+          switch (pData.success) {
+            case 'true':
+              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+                '#52B415';
+              break;
+            case 'false':
+              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+                '#cc3333';
+              break;
+            default:
+              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+                'inherit';
+          }
         });
     };
   } else {
