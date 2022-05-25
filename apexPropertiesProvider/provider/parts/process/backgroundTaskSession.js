@@ -29,7 +29,7 @@ var applicationsLoading;
 var pagesLoading;
 var usernamesLoading;
 
-function getBusinessObjectCustom(element) {
+function getActualBusinessObject(element) {
   return is(element, 'bpmn:Participant') ? getBusinessObject(element).processRef : getBusinessObject(element);
 }
 
@@ -59,7 +59,7 @@ function refreshApplications(element) {
     if (values) {
       applications = values;
       // get property value
-      property = getBusinessObjectCustom(element).get('applicationId') || null;
+      property = getActualBusinessObject(element).get('applicationId') || null;
       // add entry if not contained
       if (
         property != null &&
@@ -91,7 +91,7 @@ function refreshPages(element, applicationId) {
     if (values) {
       pages = values;
       // get property value
-      property = getBusinessObjectCustom(element).get('pageId') || null;
+      property = getActualBusinessObject(element).get('pageId') || null;
       // add entry if not contained
       if (property != null && !pages.map(e => e.value).includes(property)) {
         pages.unshift({ name: `${property}*`, value: property });
@@ -114,7 +114,7 @@ function refreshUsernames(element) {
     if (values) {
       usernames = values;
       // get property value
-      property = getBusinessObjectCustom(element).get('username') || null;
+      property = getActualBusinessObject(element).get('username') || null;
       // add entry if not contained
       if (
         property != null &&
@@ -148,7 +148,7 @@ export default function (
         modelProperty: 'manualInput',
 
         get: function (element) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           var value = bo.get('manualInput');
 
           if (typeof value === 'undefined') {
@@ -167,7 +167,7 @@ export default function (
         },
 
         set: function (element, values, node) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           return cmdHelper.updateBusinessObject(element, bo, values);
         },
       })
@@ -185,10 +185,10 @@ export default function (
         return applicationsLoading;
       },
       hidden: function () {
-        return getBusinessObjectCustom(element).manualInput === 'true';
+        return getActualBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         var value = bo.get('applicationId');
 
         // refresh applications (if necessary)
@@ -216,7 +216,7 @@ export default function (
         };
       },
       set: function (element, values, node) {
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         // refresh pages
         refreshPages(element, values.applicationId);
         // set value
@@ -234,17 +234,17 @@ export default function (
         modelProperty: 'applicationId',
 
         hidden: function (element) {
-          return getBusinessObjectCustom(element).manualInput === 'false';
+          return getActualBusinessObject(element).manualInput === 'false';
         },
         get: function (element) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           var value = bo.get('applicationId');
           return {
             applicationId: value,
           };
         },
         set: function (element, values, node) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           return cmdHelper.updateBusinessObject(element, bo, values);
         },
       })
@@ -263,10 +263,10 @@ export default function (
         return applicationsLoading || pagesLoading;
       },
       hidden: function () {
-        return getBusinessObjectCustom(element).manualInput === 'true';
+        return getActualBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         var value = bo.get('pageId');
         // add entry if not contained
         if (value != null && !pages.map(e => e.value).includes(value)) {
@@ -283,7 +283,7 @@ export default function (
         };
       },
       set: function (element, values, node) {
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         return cmdHelper.updateBusinessObject(element, bo, values);
       },
     });
@@ -298,17 +298,17 @@ export default function (
         modelProperty: 'pageId',
 
         hidden: function (element) {
-          return getBusinessObjectCustom(element).manualInput === 'false';
+          return getActualBusinessObject(element).manualInput === 'false';
         },
         get: function (element) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           var value = bo.get('pageId');
           return {
             pageId: value,
           };
         },
         set: function (element, values, node) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           return cmdHelper.updateBusinessObject(element, bo, values);
         },
       })
@@ -327,10 +327,10 @@ export default function (
         return usernamesLoading;
       },
       hidden: function () {
-        return getBusinessObjectCustom(element).manualInput === 'true';
+        return getActualBusinessObject(element).manualInput === 'true';
       },
       get: function (element) {
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         var value = bo.get('username');
         // add entry if not contained
         if (value != null && !usernames.map(e => e.value).includes(value)) {
@@ -347,8 +347,7 @@ export default function (
         };
       },
       set: function (element, values, node) {
-        // set value
-        var bo = getBusinessObjectCustom(element);
+        var bo = getActualBusinessObject(element);
         return cmdHelper.updateBusinessObject(element, bo, values);
       },
     });
@@ -363,17 +362,17 @@ export default function (
         modelProperty: 'username',
 
         hidden: function (element) {
-          return getBusinessObjectCustom(element).manualInput === 'false';
+          return getActualBusinessObject(element).manualInput === 'false';
         },
         get: function (element) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           var value = bo.get('username');
           return {
             username: value,
           };
         },
         set: function (element, values, node) {
-          var bo = getBusinessObjectCustom(element);
+          var bo = getActualBusinessObject(element);
           return cmdHelper.updateBusinessObject(element, bo, values);
         },
       })
