@@ -1,4 +1,5 @@
-import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from '../../helper/getBusinessObjectHelper';
 import { procVarLists } from './procVarLists';
 
 export default function (
@@ -9,8 +10,12 @@ export default function (
   translate
 ) {
   if (
-    is(element, 'bpmn:Process') &&
-    getBusinessObject(element).isCallable === 'true'
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true') ||
+    // participants
+    (is(element, 'bpmn:Participant') &&
+      getBusinessObject(element).isCallable === 'true')
   ) {
     return procVarLists(
       element,

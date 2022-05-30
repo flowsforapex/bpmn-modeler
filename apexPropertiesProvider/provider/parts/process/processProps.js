@@ -1,5 +1,6 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
-import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from '../../helper/getBusinessObjectHelper';
 
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
@@ -40,7 +41,7 @@ export default function (
     };
   };
 
-  if (is(element, 'bpmn:Process')) {
+  if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
     group.entries.push(
       entryFactory.selectBox(translate, {
         id: 'isCallable',

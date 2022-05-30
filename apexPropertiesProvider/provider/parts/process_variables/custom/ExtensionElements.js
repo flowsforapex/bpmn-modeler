@@ -1,21 +1,22 @@
-
-
-var {getBusinessObject} = require('bpmn-js/lib/util/ModelUtil');
+// var {getBusinessObject} = require('bpmn-js/lib/util/ModelUtil');
+var { getBusinessObject } = require('../../../helper/getBusinessObjectHelper');
 
 var domQuery = require('min-dom').query;
-    var domClosest = require('min-dom').closest;
-    var {domify} = require('min-dom');
-    var forEach = require('lodash/forEach');
+var domClosest = require('min-dom').closest;
+var { domify } = require('min-dom');
+var forEach = require('lodash/forEach');
 
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
-    var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
-    var utils = require('bpmn-js-properties-panel/lib/Utils');
+var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
+var utils = require('bpmn-js-properties-panel/lib/Utils');
 
-    var {escapeHTML} = utils;
+var { escapeHTML } = utils;
 
 function getSelectBox(node, id) {
   var currentTab = domClosest(node, 'div.bpp-properties-tab');
-  var query = `select[name=selectedExtensionElement]${id ? `[id=cam-extensionElements-${id}]` : ''}`;
+  var query = `select[name=selectedExtensionElement]${
+    id ? `[id=cam-extensionElements-${id}]` : ''
+  }`;
   return domQuery(query, currentTab);
 }
 
@@ -23,7 +24,7 @@ function getSelected(node, id) {
   var selectBox = getSelectBox(node, id);
   return {
     value: (selectBox || {}).value,
-    idx: (selectBox || {}).selectedIndex
+    idx: (selectBox || {}).selectedIndex,
   };
 }
 
@@ -33,37 +34,37 @@ function generateElementId(prefix) {
 }
 
 var CREATE_EXTENSION_ELEMENT_ACTION = 'create-extension-element';
-    var REMOVE_EXTENSION_ELEMENT_ACTION = 'remove-extension-element';
+var REMOVE_EXTENSION_ELEMENT_ACTION = 'remove-extension-element';
 
 module.exports = function (element, bpmnFactory, options, translate) {
-
-  var {id} = options;
-      var prefix = options.prefix || 'elem';
-      var label = options.label || id;
-      var idGeneration = (options.idGeneration === false) ? options.idGeneration : true;
-      var businessObject = options.businessObject || getBusinessObject(element);
-      var {type} = options;
+  var { id } = options;
+  var prefix = options.prefix || 'elem';
+  var label = options.label || id;
+  var idGeneration =
+    options.idGeneration === false ? options.idGeneration : true;
+  var businessObject = options.businessObject || getBusinessObject(element);
+  var { type } = options;
 
   var modelProperty = options.modelProperty || 'id';
 
   var getElements = options.getExtensionElements;
 
   var createElement = options.createExtensionElement;
-      var canCreate = typeof createElement === 'function';
+  var canCreate = typeof createElement === 'function';
 
   var removeElement = options.removeExtensionElement;
-      var canRemove = typeof removeElement === 'function';
+  var canRemove = typeof removeElement === 'function';
 
-  var {onSelectionChange} = options;
-  var {onEntryMoved} = options;
+  var { onSelectionChange } = options;
+  var { onEntryMoved } = options;
 
   var hideElements = options.hideExtensionElements;
-      var canBeHidden = typeof hideElements === 'function';
+  var canBeHidden = typeof hideElements === 'function';
 
-  var {setOptionLabelValue} = options;
+  var { setOptionLabelValue } = options;
 
   var defaultSize = options.size || 5;
-      var {resizable} = options;
+  var { resizable } = options;
 
   var reference = options.reference || undefined;
 
@@ -80,43 +81,61 @@ module.exports = function (element, bpmnFactory, options, translate) {
   };
 
   var createOption = function (value) {
-    return `<option value="${escapeHTML(value)}" data-value data-name="extensionElementValue">${escapeHTML(value)}</option>`;
+    return `<option value="${escapeHTML(
+      value
+    )}" data-value data-name="extensionElementValue">${escapeHTML(
+      value
+    )}</option>`;
   };
 
   var initSelectionSize = function (selectBox, optionsLength) {
     if (resizable) {
-      selectBox.size = optionsLength > defaultSize ? optionsLength : defaultSize;
+      selectBox.size =
+        optionsLength > defaultSize ? optionsLength : defaultSize;
     }
   };
 
   return {
     id: id,
     type: type,
-    html: `<div class="bpp-row bpp-element-list" ${ 
-            canBeHidden ? 'data-show="hideElements"' : ''}>` +
-            `<label for="cam-extensionElements-${escapeHTML(id)}">${escapeHTML(label)}</label>` +
-            '<div class="bpp-field-wrapper">' +
-              `<select id="cam-extensionElements-${escapeHTML(id)}"` +
-                      'name="selectedExtensionElement" ' +
-                      `size="${escapeHTML(defaultSize)}" ` +
-                      'data-list-entry-container ' +
-                      'data-on-change="selectElement">' +
-              `</select>${ 
-              canCreate ? `${'<button class="action-button add" ' +
-                                   'id="cam-extensionElements-create-'}${escapeHTML(id)}" ` +
-                                   'data-action="createElement">' +
-                             '<span>+</span>' +
-                           '</button>' : '' 
-              }${canRemove ? `${'<button class="action-button clear" ' +
-                                   'id="cam-extensionElements-remove-'}${escapeHTML(id)}" ` +
-                                   'data-action="removeElement" ' +
-                                   'data-disable="disableRemove">' +
-                             '<span>-</span>' +
-                           '</button>' : '' 
-              }<button class="action-button down fa fa-arrow-down" id="cam-extensionElements-down-${escapeHTML(id)}" data-action="moveDown" data-disable="disableMoveDown"><span>d</span></button>` +
-              `<button class="action-button up fa fa-arrow-up" id="cam-extensionElements-up-${escapeHTML(id)}" data-action="moveUp" data-disable="disableMoveUp"><span>u</span></button>` +
-            '</div>' +
-          '</div>',
+    html:
+      `<div class="bpp-row bpp-element-list" ${
+        canBeHidden ? 'data-show="hideElements"' : ''
+      }>` +
+      `<label for="cam-extensionElements-${escapeHTML(id)}">${escapeHTML(
+        label
+      )}</label>` +
+      '<div class="bpp-field-wrapper">' +
+      `<select id="cam-extensionElements-${escapeHTML(id)}"` +
+      'name="selectedExtensionElement" ' +
+      `size="${escapeHTML(defaultSize)}" ` +
+      'data-list-entry-container ' +
+      'data-on-change="selectElement">' +
+      `</select>${
+        canCreate ? `${
+              '<button class="action-button add" ' +
+              'id="cam-extensionElements-create-'
+            }${escapeHTML(id)}" ` +
+            'data-action="createElement">' +
+            '<span>+</span>' +
+            '</button>' : ''
+      }${
+        canRemove ? `${
+              '<button class="action-button clear" ' +
+              'id="cam-extensionElements-remove-'
+            }${escapeHTML(id)}" ` +
+            'data-action="removeElement" ' +
+            'data-disable="disableRemove">' +
+            '<span>-</span>' +
+            '</button>' : ''
+      }<button class="action-button down fa fa-arrow-down" id="cam-extensionElements-down-${escapeHTML(
+        id
+      )}" data-action="moveDown" data-disable="disableMoveDown"><span>d</span></button>` +
+      `<button class="action-button up fa fa-arrow-up" id="cam-extensionElements-up-${escapeHTML(
+        id
+      )}" data-action="moveUp" data-disable="disableMoveUp"><span>u</span></button>` +
+      '</div>' +
+      '</div>',
 
     get: function (element, node) {
       var elements = getElements(element, node);
@@ -124,7 +143,7 @@ module.exports = function (element, bpmnFactory, options, translate) {
       var result = [];
       forEach(elements, function (elem) {
         result.push({
-          extensionElementValue: elem.get(modelProperty)
+          extensionElementValue: elem.get(modelProperty),
         });
       });
 
@@ -141,23 +160,38 @@ module.exports = function (element, bpmnFactory, options, translate) {
       businessObject = businessObject || getBusinessObject(element);
 
       var bo =
-        (reference && businessObject.get(reference)) ? businessObject.get(reference) : businessObject;
+        reference && businessObject.get(reference) ? businessObject.get(reference) : businessObject;
 
       var extensionElements = bo.get('extensionElements');
 
       if (action.id === CREATE_EXTENSION_ELEMENT_ACTION) {
         var commands = [];
         if (!extensionElements) {
-          extensionElements = elementHelper.createElement('bpmn:ExtensionElements', { values: [] }, bo, bpmnFactory);
-          commands.push(cmdHelper.updateBusinessObject(element, bo, { extensionElements: extensionElements }));
+          extensionElements = elementHelper.createElement(
+            'bpmn:ExtensionElements',
+            { values: [] },
+            bo,
+            bpmnFactory
+          );
+          commands.push(
+            cmdHelper.updateBusinessObject(element, bo, {
+              extensionElements: extensionElements,
+            })
+          );
         }
-        commands.push(createElement(element, extensionElements, action.value, node));
+        commands.push(
+          createElement(element, extensionElements, action.value, node)
+        );
         return commands;
-
       } else if (action.id === REMOVE_EXTENSION_ELEMENT_ACTION) {
-        return removeElement(element, extensionElements, action.value, action.idx, node);
+        return removeElement(
+          element,
+          extensionElements,
+          action.value,
+          action.idx,
+          node
+        );
       }
-
     },
 
     createListEntryTemplate: function (value, index, selectBox) {
@@ -185,7 +219,6 @@ module.exports = function (element, bpmnFactory, options, translate) {
     },
 
     createElement: function (element, node) {
-
       // create option template
       var generatedId;
       if (idGeneration) {
@@ -207,7 +240,7 @@ module.exports = function (element, bpmnFactory, options, translate) {
 
       this.__action = {
         id: CREATE_EXTENSION_ELEMENT_ACTION,
-        value: generatedId
+        value: generatedId,
       };
 
       return true;
@@ -225,7 +258,7 @@ module.exports = function (element, bpmnFactory, options, translate) {
       this.__action = {
         id: REMOVE_EXTENSION_ELEMENT_ACTION,
         value: selection.value,
-        idx: selection.idx
+        idx: selection.idx,
       };
 
       return true;
@@ -242,55 +275,60 @@ module.exports = function (element, bpmnFactory, options, translate) {
     selectElement: selectionChanged,
 
     moveUp: function (element, node) {
-        var selection = getSelected(node, id);
-            var selectBox = getSelectBox(node, id);
-            var elements = getElements(element, node);
+      var selection = getSelected(node, id);
+      var selectBox = getSelectBox(node, id);
+      var elements = getElements(element, node);
 
-        var prevOption = selectBox.options[selection.idx - 1];
-            var currentOption = selectBox.options[selection.idx];
+      var prevOption = selectBox.options[selection.idx - 1];
+      var currentOption = selectBox.options[selection.idx];
 
-        var prevElement = elements[prevOption.index];
-            var currentElement = elements[currentOption.index];
+      var prevElement = elements[prevOption.index];
+      var currentElement = elements[currentOption.index];
 
-        elements[prevOption.index] = currentElement;
-        elements[currentOption.index] = prevElement;
+      elements[prevOption.index] = currentElement;
+      elements[currentOption.index] = prevElement;
 
-        currentOption.parentNode.insertBefore(currentOption, prevOption);    
-        
-        entryMoved(element);
+      currentOption.parentNode.insertBefore(currentOption, prevOption);
+
+      entryMoved(element);
     },
 
     disableMoveUp: function (element, node) {
-        var selection = getSelected(node, id);
-            var selectBox = getSelectBox(node, id);
+      var selection = getSelected(node, id);
+      var selectBox = getSelectBox(node, id);
 
-        return !(selectBox && selection && selectBox.options[selection.idx - 1]);
+      return !(selectBox && selection && selectBox.options[selection.idx - 1]);
     },
 
     moveDown: function (element, node) {
-        var selection = getSelected(node, id);
-            var selectBox = getSelectBox(node, id);
-            var elements = getElements(element, node);
+      var selection = getSelected(node, id);
+      var selectBox = getSelectBox(node, id);
+      var elements = getElements(element, node);
 
-        var nextOption = selectBox.options[selection.idx + 1];
-            var currentOption = selectBox.options[selection.idx];
+      var nextOption = selectBox.options[selection.idx + 1];
+      var currentOption = selectBox.options[selection.idx];
 
-        var nextElement = elements[nextOption.index];
-            var currentElement = elements[currentOption.index];
+      var nextElement = elements[nextOption.index];
+      var currentElement = elements[currentOption.index];
 
-        elements[nextOption.index] = currentElement;
-        elements[currentOption.index] = nextElement;
+      elements[nextOption.index] = currentElement;
+      elements[currentOption.index] = nextElement;
 
-        currentOption.parentNode.insertBefore(nextOption, currentOption);
+      currentOption.parentNode.insertBefore(nextOption, currentOption);
 
-        entryMoved(element);
+      entryMoved(element);
     },
 
     disableMoveDown: function (element, node) {
-        var selection = getSelected(node, id);
-            var selectBox = getSelectBox(node, id);
+      var selection = getSelected(node, id);
+      var selectBox = getSelectBox(node, id);
 
-        return !(selectBox && selection && selectBox.options[selection.idx + 1] && selection.idx > -1);
-    }
+      return !(
+        selectBox &&
+        selection &&
+        selectBox.options[selection.idx + 1] &&
+        selection.idx > -1
+      );
+    },
   };
 };

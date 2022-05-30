@@ -187,7 +187,7 @@ export function procVarLists(
       type: 'pre',
 
       createExtensionElement: function (element, extensionElements, values) {
-        if (is(element, 'bpmn:Process')) {
+        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
           return preSubPropertiesHelper.newElement(
             element,
             extensionElements,
@@ -249,7 +249,7 @@ export function procVarLists(
         value,
         idx
       ) {
-        if (is(element, 'bpmn:Process')) {
+        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
           preSubPropertiesHelper.setOptionLabelValue(
             element,
             option,
@@ -298,7 +298,7 @@ export function procVarLists(
       type: 'post',
 
       createExtensionElement: function (element, extensionElements, values) {
-        if (is(element, 'bpmn:Process')) {
+        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
           return postSubPropertiesHelper.newElement(
             element,
             extensionElements,
@@ -360,7 +360,7 @@ export function procVarLists(
         value,
         idx
       ) {
-        if (is(element, 'bpmn:Process')) {
+        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
           postSubPropertiesHelper.setOptionLabelValue(
             element,
             option,
