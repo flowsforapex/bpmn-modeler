@@ -1,13 +1,14 @@
 import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
+import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 var { is } = require('bpmn-js/lib/util/ModelUtil');
 var { isAny } = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 var { getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
-var eventDefinitionHelper = require('bpmn-js-properties-panel/lib/helper/EventDefinitionHelper');
 
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
+var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
 function getNextSequence(element) {
   var { sourceRef } = getBusinessObject(element);
@@ -20,24 +21,14 @@ function getNextSequence(element) {
 export function setDefaultSequence(element, bpmnFactory, elementRegistry) {
   var businessObject = getBusinessObject(element);
 
-  var conditionalEventDefinition =
-    eventDefinitionHelper.getConditionalEventDefinition(element);
-
-  if (
-    !(
-      is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)
-    ) &&
-    !conditionalEventDefinition
-  ) {
-    return;
-  }
-
-  if (businessObject.sourceRef && !businessObject.sequence) {
-    new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
-      cmdHelper.updateBusinessObject(element, businessObject, {
-        sequence: getNextSequence(element),
-      }).context
-    );
+  if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
+    if (businessObject.sourceRef && !businessObject.sequence) {
+      new UpdateBusinessObjectHandler(elementRegistry, bpmnFactory).execute(
+        cmdHelper.updateBusinessObject(element, businessObject, {
+          sequence: getNextSequence(element),
+        }).context
+      );
+    }
   }
 }
 
@@ -46,6 +37,7 @@ export function conditionProps(
   element,
   bpmnFactory,
   elementRegistry,
+  commandStack,
   translate
 ) {
   var getProperty = function (property) {
@@ -88,102 +80,132 @@ export function conditionProps(
 
     var { conditionExpression } = businessObject;
 
-    if (values.sequence) {
+    if (values.conditionType === 'null') {
       commands.push(
         cmdHelper.updateBusinessObject(element, businessObject, {
-          sequence: values.sequence,
+          conditionExpression: undefined,
+        })
+      );
+    } else {
+      if (values.sequence) {
+        commands.push(
+          cmdHelper.updateBusinessObject(element, businessObject, {
+            sequence: values.sequence,
+          })
+        );
+      }
+
+      if (!conditionExpression) {
+        conditionExpression = elementHelper.createElement(
+          'bpmn:FormalExpression',
+          values,
+          businessObject,
+          bpmnFactory
+        );
+      } else {
+        if (values.condition) {
+          conditionExpression.set('body', values.condition);
+        }
+        if (values.conditionType) {
+          conditionExpression.set('conditionType', values.conditionType);
+        }
+      }
+
+      commands.push(
+        cmdHelper.updateBusinessObject(element, businessObject, {
+          conditionExpression: conditionExpression,
         })
       );
     }
 
-    if (!conditionExpression) {
-      conditionExpression = elementHelper.createElement(
-        'bpmn:FormalExpression',
-        values,
-        businessObject,
-        bpmnFactory
-      );
-    } else {
-      if (values.condition) {
-        conditionExpression.set('body', values.condition);
-      }
-      if (values.conditionType) {
-        conditionExpression.set('conditionType', values.conditionType);
-      }
-    }
-
-    commands.push(
-      cmdHelper.updateBusinessObject(element, businessObject, {
-        conditionExpression: conditionExpression,
-      })
-    );
-
     return commands;
   };
 
-  var bo = getBusinessObject(element);
+  if (is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
+    group.entries.push(
+      entryFactory.textField(translate, {
+        id: 'sequence',
+        label: translate('Sequence'),
+        modelProperty: 'sequence',
+        set: function (element, values) {
+          return setProperty(values);
+        },
+        get: function (element) {
+          return getProperty('sequence');
+        },
+      })
+    );
 
-  if (!bo) {
-    return;
+    group.entries.push(
+      entryFactory.selectBox(translate, {
+        id: 'conditionType',
+        label: translate('Condition Type'),
+        modelProperty: 'conditionType',
+        selectOptions: [
+          { name: '', value: null },
+          { name: translate('PL/SQL Expression'), value: 'plsqlExpression' },
+          {
+            name: translate('PL/SQL Function Body'),
+            value: 'plsqlFunctionBody',
+          },
+        ],
+        set: function (element, values) {
+          return setProperty(values);
+        },
+        get: function (element) {
+          return getProperty('conditionType');
+        },
+      })
+    );
+
+    group.entries.push(
+      entryFactory.textBox(translate, {
+        id: 'condition',
+        label: translate('Condition'),
+        modelProperty: 'condition',
+        set: function (element, values) {
+          return setProperty(values);
+        },
+        get: function (element) {
+          return getProperty('condition');
+        },
+        show: function () {
+          return getProperty('conditionType').conditionType != null;
+        },
+      })
+    );
+
+    // container for plsql editor
+    group.entries.push(getContainer('condition', translate));
+
+    // link to script editor
+    group.entries.push(
+      entryFactory.link(translate, {
+        id: 'conditionEditor',
+        buttonLabel: translate('Open Editor'),
+        handleClick: function (element, node, event) {
+          var getCondition = function () {
+            return getProperty('condition').condition;
+          };
+          var setCondition = function (text) {
+            var commands = setProperty({ condition: text });
+            console.log(commands);
+            new MultiCommandHandler(commandStack).preExecute(commands);
+          };
+          openEditor(
+            'condition',
+            getCondition,
+            setCondition,
+            'plsql',
+            getProperty('conditionType').conditionType
+          );
+        },
+        showLink: function () {
+          return getProperty('conditionType').conditionType != null;
+        },
+      })
+    );
   }
-
-  var conditionalEventDefinition =
-    eventDefinitionHelper.getConditionalEventDefinition(element);
-
-  if (
-    !(
-      is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)
-    ) &&
-    !conditionalEventDefinition
-  ) {
-    return;
-  }
-
-  group.entries.push(
-    entryFactory.selectBox(translate, {
-      id: 'conditionType',
-      label: translate('Condition Type'),
-      modelProperty: 'conditionType',
-      selectOptions: [
-        { name: translate('PL/SQL Expression'), value: 'plsqlExpression' },
-        { name: translate('PL/SQL Function Body'), value: 'plsqlFunctionBody' },
-      ],
-      set: function (element, values) {
-        return setProperty(values);
-      },
-      get: function (element) {
-        return getProperty('conditionType');
-      },
-    })
-  );
-
-  group.entries.push(
-    entryFactory.textField(translate, {
-      id: 'sequence',
-      label: translate('Sequence'),
-      modelProperty: 'sequence',
-      set: function (element, values) {
-        return setProperty(values);
-      },
-      get: function (element) {
-        return getProperty('sequence');
-      },
-    })
-  );
-
-  group.entries.push(
-    entryFactory.textField(translate, {
-      id: 'condition',
-      label: translate('Condition'),
-      modelProperty: 'condition',
-      set: function (element, values) {
-        return setProperty(values);
-      },
-      get: function (element) {
-        return getProperty('condition');
-      },
-    })
-  );
 
   /*
   var script = scriptImplementation('language', 'body', true, translate);

@@ -55,6 +55,7 @@ function createGeneralTabGroups(
   bpmnFactory,
   canvas,
   elementRegistry,
+  commandStack,
   translate
 ) {
   var generalGroup = {
@@ -117,6 +118,7 @@ function createGeneralTabGroups(
     element,
     bpmnFactory,
     elementRegistry,
+    commandStack,
     translate
   );
 
@@ -397,6 +399,7 @@ export default function apexPropertiesProvider(
         bpmnFactory,
         canvas,
         elementRegistry,
+        commandStack,
         translate
       ),
     };
