@@ -1,16 +1,15 @@
-import entryFactory from 'bpmn-js-properties-panel/lib/factory/EntryFactory';
+import { isAny } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
+import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
+import entryFactory from '../process_variables/custom/EntryFactory';
 
-var { is } = require('bpmn-js/lib/util/ModelUtil');
-var { isAny } = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
-var { getBusinessObject } = require('bpmn-js/lib/util/ModelUtil');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
 var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper');
 
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
-var CONDITIONAL_SOURCES = [
+const CONDITIONAL_SOURCES = [
   'bpmn:ExclusiveGateway',
   'bpmn:InclusiveGateway',
   'bpmn:ComplexGateway',
@@ -50,6 +49,13 @@ export function conditionProps(
   commandStack,
   translate
 ) {
+  const EXPRESSION_DESCRIPTION = {
+    plsqlExpression: translate('PL/SQL Expression returning a boolean value'),
+    plsqlFunctionBody: translate(
+      'PL/SQL Function Body returning a boolean value'
+    ),
+  };
+
   var getProperty = function (property) {
     var businessObject = getBusinessObject(element);
     var { conditionExpression } = businessObject;
@@ -72,11 +78,13 @@ export function conditionProps(
       if (property === 'condition') {
         values = {
           condition: conditionExpression.get('body'),
+          varExpressionDynamicDescription:
+            EXPRESSION_DESCRIPTION[conditionExpression.get('conditionType')],
         };
       }
       if (property === 'conditionType') {
         values = {
-          [property]: conditionExpression.get(property),
+          [property]: conditionExpression.get('conditionType'),
         };
       }
     }
@@ -153,9 +161,9 @@ export function conditionProps(
         modelProperty: 'conditionType',
         selectOptions: [
           { name: '', value: null },
-          { name: translate('PL/SQL Expression'), value: 'plsqlExpression' },
+          { name: translate('Expression'), value: 'plsqlExpression' },
           {
-            name: translate('PL/SQL Function Body'),
+            name: translate('Function Body'),
             value: 'plsqlFunctionBody',
           },
         ],
@@ -169,10 +177,12 @@ export function conditionProps(
     );
 
     group.entries.push(
-      entryFactory.textBox(translate, {
+      entryFactory.dynamicTextBox(translate, {
         id: 'condition',
         label: translate('Condition'),
         modelProperty: 'condition',
+        dataValueDescription: 'varExpressionDynamicDescription',
+
         set: function (element, values) {
           return setProperty(values);
         },
@@ -199,7 +209,6 @@ export function conditionProps(
           };
           var setCondition = function (text) {
             var commands = setProperty({ condition: text });
-            console.log(commands);
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
           openEditor(
