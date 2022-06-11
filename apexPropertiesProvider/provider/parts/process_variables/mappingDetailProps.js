@@ -1,4 +1,5 @@
-import { getBusinessObject, is } from 'bpmn-js/lib/util/ModelUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from '../../helper/getBusinessObjectHelper';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 import entryFactory from './custom/EntryFactory';
 import { getSelectedEntry } from './procVarLists';
@@ -44,6 +45,9 @@ export function mappingDetailProps(element, translate) {
     is(element, 'bpmn:CallActivity') ||
     // process elements
     (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true') ||
+    // participants
+    (is(element, 'bpmn:Participant') &&
       getBusinessObject(element).isCallable === 'true')
   ) {
     // name field
@@ -119,10 +123,13 @@ export function mappingDetailProps(element, translate) {
     }
   }
 
-  // process elements
   if (
-    is(element, 'bpmn:Process') &&
-    getBusinessObject(element).isCallable === 'true'
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true') ||
+    // participants
+    (is(element, 'bpmn:Participant') &&
+      getBusinessObject(element).isCallable === 'true')
   ) {
     // description field
     procVarProps.push(

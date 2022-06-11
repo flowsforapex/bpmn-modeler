@@ -1,4 +1,4 @@
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from './getBusinessObjectHelper';
 
 var extensionElementsHelper = require('bpmn-js-properties-panel/lib/helper/ExtensionElementsHelper');
 var cmdHelper = require('bpmn-js-properties-panel/lib/helper/CmdHelper');
