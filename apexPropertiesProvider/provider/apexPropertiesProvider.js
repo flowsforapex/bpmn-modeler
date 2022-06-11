@@ -6,6 +6,7 @@ import nameProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/NameProp
 // Require all properties you need from existing providers.
 // In this case all available bpmn relevant properties without camunda extensions.
 import processProps from 'bpmn-js-properties-panel/lib/provider/bpmn/parts/ProcessProps';
+// import conditionProps from 'bpmn-js-properties-panel/lib/provider/camunda/parts/ConditionalProps';
 import inherits from 'inherits';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import executePlsqlBusinessRule from './parts/businessRuleTask/executePlsql.js';
@@ -30,6 +31,10 @@ import {
 import { isSelected } from './parts/process_variables/procVarLists.js';
 import generateTaskProcessVariables from './parts/process_variables/taskProcVarProps.js';
 import executePlsqlScript from './parts/scriptTask/executePlsql.js';
+import {
+  conditionProps,
+  setDefaultSequence
+} from './parts/sequenceFlow/conditionProps';
 import executePlsqlService from './parts/serviceTask/executePlsql.js';
 import {
   baseAttributes,
@@ -50,6 +55,7 @@ function createGeneralTabGroups(
   bpmnFactory,
   canvas,
   elementRegistry,
+  commandStack,
   translate
 ) {
   var generalGroup = {
@@ -91,6 +97,12 @@ function createGeneralTabGroups(
     entries: [],
   };
 
+  var conditionGroup = {
+    id: 'condition',
+    label: translate('Condition'),
+    entries: [],
+  };
+
   globalProps(generalGroup, element, translate);
   nameProps(generalGroup, element, bpmnFactory, canvas, translate);
   processProps(generalGroup, element, translate);
@@ -100,6 +112,15 @@ function createGeneralTabGroups(
 
   typeProps(typeGroup, elementRegistry, bpmnFactory, element, translate);
   customProcessProps(executionGroup, element, bpmnFactory, element, translate);
+
+  conditionProps(
+    conditionGroup,
+    element,
+    bpmnFactory,
+    elementRegistry,
+    commandStack,
+    translate
+  );
 
   callActivityProps(
     subProcessGroup,
@@ -125,6 +146,7 @@ function createGeneralTabGroups(
     executionGroup,
     backgroundTaskSessionGroup,
     documentationGroup,
+    conditionGroup,
   ];
 }
 
@@ -360,6 +382,14 @@ export default function apexPropertiesProvider(
     removeInvalidExtensionsElements(bpmnFactory, elementRegistry);
   });
 
+  eventBus.on('connection.added', function (event) {
+    setDefaultSequence(event.element, bpmnFactory, elementRegistry);
+  });
+
+  eventBus.on('commandStack.connection.create.postExecute', function (event) {
+    setDefaultSequence(event.context.connection, bpmnFactory, elementRegistry);
+  });
+
   this.getTabs = function (element) {
     var generalTab = {
       id: 'general',
@@ -369,6 +399,7 @@ export default function apexPropertiesProvider(
         bpmnFactory,
         canvas,
         elementRegistry,
+        commandStack,
         translate
       ),
     };
