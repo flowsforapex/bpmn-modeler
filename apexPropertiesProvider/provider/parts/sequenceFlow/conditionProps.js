@@ -10,6 +10,16 @@ var elementHelper = require('bpmn-js-properties-panel/lib/helper/ElementHelper')
 var UpdateBusinessObjectHandler = require('bpmn-js-properties-panel/lib/cmd/UpdateBusinessObjectHandler');
 var MultiCommandHandler = require('bpmn-js-properties-panel/lib/cmd/MultiCommandHandler');
 
+var CONDITIONAL_SOURCES = [
+  'bpmn:ExclusiveGateway',
+  'bpmn:InclusiveGateway',
+  'bpmn:ComplexGateway',
+];
+
+function isConditionalSource(element) {
+  return isAny(element, CONDITIONAL_SOURCES);
+}
+
 function getNextSequence(element) {
   var { sourceRef } = getBusinessObject(element);
   var maxSequence =
@@ -206,181 +216,4 @@ export function conditionProps(
       })
     );
   }
-
-  /*
-  var script = scriptImplementation('language', 'body', true, translate);
-  group.entries.push({
-    id: 'condition',
-    label: translate('Condition'),
-    html:
-      `${'<div class="bpp-row">' + '<label for="conditionType">'}${escapeHTML(
-        translate('Condition Type')
-      )}</label>` +
-      '<div class="bpp-field-wrapper">' +
-      '<select id="conditionType" name="conditionType" data-value>' +
-      `<option value="plsqlExpression">${escapeHTML(
-        translate('PL/SQL Expression')
-      )}</option>` +
-      `<option value="plsqlFunctionBody">${escapeHTML(
-        translate('PL/SQL Function Body')
-      )}</option>` +
-      '<option value="" selected></option>' +
-      '</select>' +
-      '</div>' +
-      '</div>' +
-      // expression
-      '<div class="bpp-row">' +
-      `<label for="plsqlExpression" data-show="isExpression">${escapeHTML(
-        translate('PL/SQL Expression')
-      )}</label>` +
-      '<div class="bpp-field-wrapper" data-show="isExpression">' +
-      '<input id="plsqlExpression" type="text" name="condition" />' +
-      '<button class="action-button clear" data-action="clear" data-show="canClear">' +
-      '<span>X</span>' +
-      '</button>' +
-      '</div>' +
-      // `<div data-show="isScript">${script.template}</div>` +
-      // function body
-      '<div class="bpp-row">' +
-      `<label for="plsqlFunctionBody" data-show="isFunctionBody">${escapeHTML(
-        translate('PL/SQL Function Body')
-      )}</label>` +
-      '<div class="bpp-field-wrapper" data-show="isFunctionBody">' +
-      '<input id="plsqlFunctionBody" type="text" name="condition" />' +
-      '<button class="action-button clear" data-action="clear" data-show="canClear">' +
-      '<span>X</span>' +
-      '</button>' +
-      '</div>' +
-      '</div>',
-
-    get: function (element, propertyName) {
-      var { conditionExpression } = bo;
-
-      console.log(conditionExpression);
-
-      var values = {};
-
-      if (conditionExpression) {
-        values = conditionExpression;
-        values.conditionType = conditionExpression.language;
-        values.condition = conditionExpression.get('body');
-      }
-
-      console.log(values);
-
-      return values;
-    },
-
-    set: function (element, values, containerElement) {
-      var { conditionType, condition } = values;
-      var commands = [];
-
-      var conditionProps = {
-        body: condition,
-        language: conditionType,
-      };
-
-      var conditionOrConditionExpression;
-
-      if (conditionType) {
-        conditionOrConditionExpression = elementHelper.createElement(
-          'bpmn:FormalExpression',
-          conditionProps,
-          conditionalEventDefinition || bo,
-          bpmnFactory
-        );
-
-        var { source } = element;
-
-        // if default-flow, remove default-property from source
-        if (source && source.businessObject.default === bo) {
-          commands.push(
-            cmdHelper.updateProperties(source, { default: undefined })
-          );
-        }
-      }
-
-      commands.push(
-        cmdHelper.updateBusinessObject(
-          element,
-          conditionalEventDefinition || bo,
-          { conditionExpression: conditionOrConditionExpression }
-        )
-      );
-
-      return commands;
-    },
-
-    validate: function (element, values) {
-      var validationResult = {};
-
-      if (!values.condition && values.conditionType === 'expression') {
-        validationResult.condition = translate('Must provide a value');
-      } else if (values.conditionType === 'script') {
-        validationResult = script.validate(element, values);
-      }
-
-      return validationResult;
-    },
-
-    isExpression: function (element, inputNode) {
-      var conditionType = domQuery('select[name=conditionType]', inputNode);
-      if (conditionType.selectedIndex >= 0) {
-        return (
-          conditionType.options[conditionType.selectedIndex].value ===
-          'plsqlExpression'
-        );
-      }
-    },
-
-    isFunctionBody: function (element, inputNode) {
-      var conditionType = domQuery('select[name=conditionType]', inputNode);
-      if (conditionType.selectedIndex >= 0) {
-        return (
-          conditionType.options[conditionType.selectedIndex].value ===
-          'plsqlFunctionBody'
-        );
-      }
-    },
-
-    // isScript: function (element, inputNode) {
-    //   var conditionType = domQuery('select[name=conditionType]', inputNode);
-    //   if (conditionType.selectedIndex >= 0) {
-    //     return (
-    //       conditionType.options[conditionType.selectedIndex].value === 'script'
-    //     );
-    //   }
-    // },
-
-    clear: function (element, inputNode) {
-      // clear text input
-      domQuery('input[name=condition]', inputNode).value = '';
-
-      return true;
-    },
-
-    canClear: function (element, inputNode) {
-      var input = domQuery('input[name=condition]', inputNode);
-
-      return input.value !== '';
-    },
-
-    script: script,
-
-    cssClasses: ['bpp-textfield'],
-  });
-  */
-}
-
-// utilities //////////////////////////
-
-var CONDITIONAL_SOURCES = [
-  'bpmn:Activity',
-  'bpmn:ExclusiveGateway',
-  'bpmn:InclusiveGateway',
-  'bpmn:ComplexGateway',
-];
-
-function isConditionalSource(element) {
-  return isAny(element, CONDITIONAL_SOURCES);
 }
