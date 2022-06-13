@@ -216,7 +216,7 @@ export function conditionProps(
             getCondition,
             setCondition,
             'plsql',
-            getProperty('conditionType').conditionType
+            `${getProperty('conditionType').conditionType}Boolean`
           );
         },
         showLink: function () {
