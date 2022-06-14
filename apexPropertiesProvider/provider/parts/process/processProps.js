@@ -47,7 +47,7 @@ export default function (
         id: 'isCallable',
         label: translate('Is Callable'),
         description: translate(
-          'Select if this diagram should be called in a call activity'
+          'Select if this diagram should be called in a Call Activity'
         ),
         modelProperty: 'isCallable',
         selectOptions: [

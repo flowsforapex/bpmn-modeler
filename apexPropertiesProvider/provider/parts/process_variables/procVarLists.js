@@ -162,7 +162,7 @@ export function procVarLists(
     procVarProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-business-ref',
-        buttonLabel: translate('Copy business ref'),
+        buttonLabel: translate('Copy business reference'),
         handleClick: function (element, node, event) {
           copyBusinessRef();
         },
