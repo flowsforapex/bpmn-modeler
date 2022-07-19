@@ -18,8 +18,10 @@ export default function (
       {
         type1: 'InVariables',
         label1: translate('In Variables'),
+        name1: 'In',
         type2: 'OutVariables',
         label2: translate('Out Variables'),
+        name2: 'Out',
       }
     );
   }

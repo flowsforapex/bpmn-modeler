@@ -25,6 +25,7 @@ export default function (
         {
           type1: 'BeforeSplit',
           label1: translate('Before Split'),
+          name1: 'BeforeSplit',
         }
       );
     }
@@ -39,6 +40,7 @@ export default function (
         {
           type1: 'AfterMerge',
           label1: translate('After Merge'),
+          name1: 'AfterMerge',
         }
       );
     } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
@@ -51,8 +53,10 @@ export default function (
         {
           type1: 'AfterMerge',
           label1: translate('After Merge'),
+          name1: 'AfterMerge',
           type2: 'BeforeSplit',
           label2: translate('Before Split'),
+          name2: 'BeforeSplit',
         }
       );
     }

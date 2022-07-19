@@ -30,8 +30,10 @@ export default function (
         {
           type1: 'BeforeEvent',
           label1: translate('Before Event'),
+          name1: 'BeforeEvent',
           type2: 'OnEvent',
           label2: translate('On Event'),
+          name2: 'OnEvent',
         }
       );
     }
@@ -45,6 +47,7 @@ export default function (
       {
         type1: 'OnEvent',
         label1: translate('On Event'),
+        name1: 'OnEvent',
       }
     );
   }

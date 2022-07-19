@@ -1,4 +1,5 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from '../../helper/getBusinessObjectHelper';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 import entryFactory from './custom/EntryFactory';
 import { getSelectedEntry } from './procVarLists';
@@ -56,7 +57,15 @@ export function procVarDetailProps(element, translate) {
     is(element, 'bpmn:IntermediateThrowEvent') ||
     is(element, 'bpmn:IntermediateCatchEvent') ||
     is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    is(element, 'bpmn:EndEvent') ||
+    // call activity elements
+    is(element, 'bpmn:CallActivity') ||
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true') ||
+    // participant elements
+    (is(element, 'bpmn:Participant') &&
+      getBusinessObject(element).isCallable === 'true')
   ) {
     // name field
     procVarProps.push(
@@ -129,6 +138,32 @@ export function procVarDetailProps(element, translate) {
         })
       );
     }
+  }
+
+  if (
+    // process elements
+    (is(element, 'bpmn:Process') &&
+      getBusinessObject(element).isCallable === 'true') ||
+    // participants
+    (is(element, 'bpmn:Participant') &&
+      getBusinessObject(element).isCallable === 'true')
+  ) {
+    // description field
+    procVarProps.push(
+      entryFactory.textField(translate, {
+        id: 'varDescription',
+        label: translate('Description'),
+        modelProperty: 'varDescription',
+
+        get: function (element, node) {
+          return getProperty(element, node, 'varDescription');
+        },
+
+        set: function (element, values, node) {
+          return setProperty(element, values, node);
+        },
+      })
+    );
   }
 
   return procVarProps;
@@ -221,7 +256,9 @@ export function procVarExpressionProps(element, commandStack, translate) {
     is(element, 'bpmn:IntermediateThrowEvent') ||
     is(element, 'bpmn:IntermediateCatchEvent') ||
     is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
+    is(element, 'bpmn:EndEvent') ||
+    // callActivity elements
+    is(element, 'bpmn:CallActivity')
   ) {
     // expression type
     procVarProps.push(
