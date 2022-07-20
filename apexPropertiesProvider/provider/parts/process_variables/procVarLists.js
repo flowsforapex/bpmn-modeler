@@ -47,9 +47,11 @@ export function procVarLists(
 ) {
   var type1;
   var label1;
+  var name1;
 
   var type2;
   var label2;
+  var name2;
 
   var loadDefinedVariables = function () {
     var bo = getBusinessObject(element);
@@ -171,8 +173,7 @@ export function procVarLists(
   }
 
   if (options.type1) {
-    ({ type1 } = options);
-    ({ label1 } = options);
+    ({ type1, label1, name1 } = options);
 
     preSubPropertiesHelper = new SubPropertiesHelper(
       `apex:${type1}`,
@@ -187,36 +188,25 @@ export function procVarLists(
       type: 'pre',
 
       createExtensionElement: function (element, extensionElements, values) {
-        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
-          return preSubPropertiesHelper.newElement(
-            element,
-            extensionElements,
-            bpmnFactory,
-            {
-              varName: preSubPropertiesHelper.getIndexedName(
-                element,
-                translate(type1),
-                'varName'
-              ),
-              varDataType: 'VARCHAR2',
-              varDescription: '',
-            }
-          );
-        }
+        var procOrPart =
+          is(element, 'bpmn:Process') || is(element, 'bpmn:Participant');
         return preSubPropertiesHelper.newElement(
           element,
           extensionElements,
           bpmnFactory,
           {
-            varSequence: preSubPropertiesHelper.getNextSequence(element),
+            ...(!procOrPart && {
+              varSequence: preSubPropertiesHelper.getNextSequence(element),
+            }),
             varName: preSubPropertiesHelper.getIndexedName(
               element,
-              translate(type1),
+              translate(name1),
               'varName'
             ),
             varDataType: 'VARCHAR2',
-            varExpression: '',
-            varExpressionType: 'static',
+            ...(procOrPart && { varDescription: '' }),
+            ...(!procOrPart && { varExpression: '' }),
+            ...(!procOrPart && { varExpressionType: 'static' }),
           }
         );
       },
@@ -282,8 +272,7 @@ export function procVarLists(
   }
 
   if (options.type2) {
-    ({ type2 } = options);
-    ({ label2 } = options);
+    ({ type2, label2, name2 } = options);
 
     postSubPropertiesHelper = new SubPropertiesHelper(
       `apex:${type2}`,
@@ -298,36 +287,25 @@ export function procVarLists(
       type: 'post',
 
       createExtensionElement: function (element, extensionElements, values) {
-        if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
-          return postSubPropertiesHelper.newElement(
-            element,
-            extensionElements,
-            bpmnFactory,
-            {
-              varName: postSubPropertiesHelper.getIndexedName(
-                element,
-                translate(type2),
-                'varName'
-              ),
-              varDataType: 'VARCHAR2',
-              varDescription: '',
-            }
-          );
-        }
+        var procOrPart =
+          is(element, 'bpmn:Process') || is(element, 'bpmn:Participant');
         return postSubPropertiesHelper.newElement(
           element,
           extensionElements,
           bpmnFactory,
           {
-            varSequence: postSubPropertiesHelper.getNextSequence(element),
+            ...(!procOrPart && {
+              varSequence: postSubPropertiesHelper.getNextSequence(element),
+            }),
             varName: postSubPropertiesHelper.getIndexedName(
               element,
-              translate(type2),
+              translate(name2),
               'varName'
             ),
             varDataType: 'VARCHAR2',
-            varExpression: '',
-            varExpressionType: 'static',
+            ...(procOrPart && { varDescription: '' }),
+            ...(!procOrPart && { varExpression: '' }),
+            ...(!procOrPart && { varExpressionType: 'static' }),
           }
         );
       },

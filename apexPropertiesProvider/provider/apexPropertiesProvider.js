@@ -19,10 +19,6 @@ import customProcessProps from './parts/process/processProps';
 import generateCallActivityProcessVariables from './parts/process_variables/callActivityProcVarProps.js';
 import generateEventProcessVariables from './parts/process_variables/eventProcVarProps.js';
 import generateGatewayProcessVariables from './parts/process_variables/gatewayProcVarProps.js';
-import {
-  mappingDetailProps,
-  mappingExpressionProps
-} from './parts/process_variables/mappingDetailProps.js';
 import generateProcessProcessVariables from './parts/process_variables/processProcVarProps.js';
 import {
   procVarDetailProps,
@@ -354,14 +350,14 @@ function createMappingTabGroups(
   var detailGroup = {
     id: 'details',
     label: translate('Variable Details'),
-    entries: mappingDetailProps(element, translate),
+    entries: procVarDetailProps(element, translate),
     enabled: isSelected,
   };
 
   var expressionGroup = {
     id: 'expression',
     label: translate('Variable Expression'),
-    entries: mappingExpressionProps(element, commandStack, translate),
+    entries: procVarExpressionProps(element, commandStack, translate),
     enabled: isSelected,
   };
 

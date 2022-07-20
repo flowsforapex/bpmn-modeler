@@ -93,7 +93,7 @@
       },
       exporter: {
         name: 'Flows for APEX',
-        version: '22.1.0',
+        version: '22.2.0',
       }
     });
 
@@ -191,7 +191,10 @@
 
           await myModeler.importXML(defaultDiagram);
 
-          if (myModeler._definitions && (myModeler._definitions.exporter !== 'Flows for APEX' || (myModeler._definitions.exporter === 'Flows for APEX' && myModeler._definitions.exporterVersion != '22.1.0'))) {
+          var exporter = myModeler._definitions && myModeler._definitions.exporter;
+          var exporterVersion = myModeler._definitions && myModeler._definitions.exporterVersion;
+
+          if (exporter !== 'Flows for APEX' || !exporterVersion || exporterVersion.substr(0, exporterVersion.indexOf('.')) < 22) {
             const refactored = myModeler.get('xmlModule').refactorDiagram(defaultDiagram);
             await myModeler.importXML(refactored);
           }
