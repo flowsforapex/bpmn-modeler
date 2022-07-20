@@ -500,7 +500,7 @@ export function taskConfiguration(
     userTaskProps.push(
       entryFactory.selectBox(translate, {
         id: 'parDataType',
-        label: translate('Datatype'),
+        label: translate('Data Type'),
         modelProperty: 'parDataType',
 
         selectOptions: [{ name: translate('String'), value: 'String' }],

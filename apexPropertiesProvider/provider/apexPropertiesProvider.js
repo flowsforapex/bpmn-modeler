@@ -75,9 +75,9 @@ function createGeneralTabGroups(
     entries: [],
   };
 
-  var subProcessGroup = {
-    id: 'subProcess',
-    label: translate('Called SubProcess Diagram'),
+  var subprocessGroup = {
+    id: 'subprocess',
+    label: translate('Called Subprocess Diagram'),
     entries: [],
   };
 
@@ -119,7 +119,7 @@ function createGeneralTabGroups(
   );
 
   callActivityProps(
-    subProcessGroup,
+    subprocessGroup,
     element,
     bpmnFactory,
     elementRegistry,
@@ -137,7 +137,7 @@ function createGeneralTabGroups(
   return [
     generalGroup,
     typeGroup,
-    subProcessGroup,
+    subprocessGroup,
     detailsGroup,
     executionGroup,
     backgroundTaskSessionGroup,

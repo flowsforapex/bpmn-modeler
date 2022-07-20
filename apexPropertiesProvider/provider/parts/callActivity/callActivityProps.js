@@ -62,8 +62,8 @@ export default function (
   translate
 ) {
   var versioning = [
-    { name: 'Latest version', value: 'latestVersion' },
-    { name: 'Named Version', value: 'namedVersion' },
+    { name: translate('Latest version'), value: 'latestVersion' },
+    { name: translate('Named version'), value: 'namedVersion' },
   ];
 
   if (is(element, 'bpmn:CallActivity')) {
@@ -73,7 +73,7 @@ export default function (
         id: 'inputSelection',
         label: translate('Input'),
         selectOptions: [
-          { name: translate('Use F4A meta data'), value: 'false' },
+          { name: translate('Use Flows meta data'), value: 'false' },
           { name: translate('Manual input'), value: 'true' },
         ],
         modelProperty: 'manualInput',
@@ -199,9 +199,8 @@ export default function (
     group.entries.push(
       entryFactory.textField(translate, {
         id: 'calledDiagramVersion',
-        label: translate('Version name'),
+        label: translate('Version Name'),
         modelProperty: 'calledDiagramVersion',
-        selectOptions: versioning,
         hidden: function (element) {
           return (
             getBusinessObject(element).get('calledDiagramVersionSelection') !==
