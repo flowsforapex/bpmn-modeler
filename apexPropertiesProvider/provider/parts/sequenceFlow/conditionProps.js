@@ -79,12 +79,12 @@ export function conditionProps(
         values = {
           condition: conditionExpression.get('body'),
           varExpressionDynamicDescription:
-            EXPRESSION_DESCRIPTION[conditionExpression.get('conditionType')],
+            EXPRESSION_DESCRIPTION[conditionExpression.get('language')],
         };
       }
-      if (property === 'conditionType') {
+      if (property === 'language') {
         values = {
-          [property]: conditionExpression.get('conditionType'),
+          [property]: conditionExpression.get('language'),
         };
       }
     }
@@ -98,7 +98,7 @@ export function conditionProps(
 
     var { conditionExpression } = businessObject;
 
-    if (values.conditionType === 'null') {
+    if (values.language === 'null') {
       commands.push(
         cmdHelper.updateBusinessObject(element, businessObject, {
           conditionExpression: undefined,
@@ -124,8 +124,8 @@ export function conditionProps(
         if (values.condition) {
           conditionExpression.set('body', values.condition);
         }
-        if (values.conditionType) {
-          conditionExpression.set('conditionType', values.conditionType);
+        if (values.language) {
+          conditionExpression.set('language', values.language);
         }
       }
 
@@ -156,9 +156,9 @@ export function conditionProps(
 
     group.entries.push(
       entryFactory.selectBox(translate, {
-        id: 'conditionType',
+        id: 'language',
         label: translate('Condition Type'),
-        modelProperty: 'conditionType',
+        modelProperty: 'language',
         selectOptions: [
           { name: '', value: null },
           { name: translate('Expression'), value: 'plsqlExpression' },
@@ -171,7 +171,7 @@ export function conditionProps(
           return setProperty(values);
         },
         get: function (element) {
-          return getProperty('conditionType');
+          return getProperty('language');
         },
       })
     );
@@ -190,7 +190,7 @@ export function conditionProps(
           return getProperty('condition');
         },
         show: function () {
-          return getProperty('conditionType').conditionType != null;
+          return getProperty('language').language != null;
         },
       })
     );
@@ -216,11 +216,11 @@ export function conditionProps(
             getCondition,
             setCondition,
             'plsql',
-            `${getProperty('conditionType').conditionType}Boolean`
+            `${getProperty('language').language}Boolean`
           );
         },
         showLink: function () {
-          return getProperty('conditionType').conditionType != null;
+          return getProperty('language').language != null;
         },
       })
     );
