@@ -137,11 +137,15 @@
           "type": "Parameters"
         },
         {
-          "name": "comment",
+          "name": "resultVariable",
           "type": "String"
         },
         {
-          "name": "returnValue",
+          "name": "initiator",
+          "type": "String"
+        },
+        {
+          "name": "priority",
           "type": "String"
         }
       ]
