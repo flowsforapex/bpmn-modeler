@@ -560,17 +560,62 @@ export function taskConfiguration(
       })
     );
 
-    // comment
+    // result variable
     userTaskProps.push(
       entryFactory.textField(translate, {
-        id: 'comment',
-        label: translate('Opening Comment'),
-        modelProperty: 'comment',
+        id: 'resultVariable',
+        label: translate('Result Variable'),
+        description: translate(
+          'Name of the variable to return the approval result into'
+        ),
+        modelProperty: 'resultVariable',
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
         },
         get: function (element) {
-          return helper.getExtensionProperty(element, 'comment');
+          return helper.getExtensionProperty(element, 'resultVariable');
+        },
+      })
+    );
+
+    // initiator
+    userTaskProps.push(
+      entryFactory.textField(translate, {
+        id: 'initiator',
+        label: translate('Initiator'),
+        description: translate('Initiator of this approval task'),
+        modelProperty: 'initiator',
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'initiator');
+        },
+      })
+    );
+
+    // priority
+    userTaskProps.push(
+      entryFactory.selectBox(translate, {
+        id: 'priority',
+        label: translate('Priority'),
+        description: translate(
+          'Overwrite default value set in task definition'
+        ),
+        modelProperty: 'priority',
+        selectOptions: [
+          { name: '', value: '' },
+          { name: translate('1-Urgent'), value: '1' },
+          { name: translate('2-High'), value: '2' },
+          { name: translate('3-Medium'), value: '3' },
+          { name: translate('4-Low'), value: '4' },
+          { name: translate('5-Lowest'), value: '5' },
+        ],
+        set: function (element, values) {
+          return helper.setExtensionProperty(element, bpmnFactory, values);
+        },
+        get: function (element) {
+          return helper.getExtensionProperty(element, 'priority');
         },
       })
     );
