@@ -43,7 +43,7 @@ export default class subPropertiesHelper {
     var entries = this.getEntries(element);
     var entry = entries[idx];
 
-    var label = entry ? `${entry.get(labelKey)}:${entry.get(labelValue)}` : '';
+    var label = entry ? `${entry.get(labelKey)} : ${entry.get(labelValue)}` : '';
 
     // eslint-disable-next-line no-param-reassign
     option.text = label;
