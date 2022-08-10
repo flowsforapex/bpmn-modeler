@@ -142,6 +142,7 @@
   "URL": "URL",
   "Mail": "Courriel",
   "Variables": "Variables",
+  "Variable Expressions": "",
 
   "General": "Général",
   "Id": "Id",
@@ -370,9 +371,12 @@
   "Default Page": "",
   "Default Username": "",
 
-  "Input/Output Mapping": "",
+  "In/Out Mapping": "",
+  "In/Out Variables": "",
   "In Variables": "",
+  "In": "",
   "Out Variables": "",
+  "Out": "",
   "Description": "",
 
   "Called Subprocess Diagram": "",

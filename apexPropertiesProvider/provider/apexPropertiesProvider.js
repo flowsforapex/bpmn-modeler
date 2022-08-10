@@ -256,7 +256,7 @@ function createMailTabGroups(
   return [apexServiceGroup1, apexServiceGroup2];
 }
 
-function createVariablesTabGroups(
+function createProcessVariablesTabGroups(
   element,
   bpmnFactory,
   elementRegistry,
@@ -265,7 +265,7 @@ function createVariablesTabGroups(
 ) {
   var taskGroup = {
     id: 'apex-task',
-    label: translate('Process Variables'),
+    label: '',
     entries: generateTaskProcessVariables(
       element,
       bpmnFactory,
@@ -316,28 +316,16 @@ function createVariablesTabGroups(
   return [taskGroup, gatewayGroup, eventGroup, detailGroup, expressionGroup];
 }
 
-function createMappingTabGroups(
+function createInOutVariablesTabGroups(
   element,
   bpmnFactory,
   elementRegistry,
   commandStack,
   translate
 ) {
-  var callActivityGroup = {
-    id: 'apex-callActivity',
-    label: translate('Process Variables'),
-    entries: generateCallActivityProcessVariables(
-      element,
-      bpmnFactory,
-      elementRegistry,
-      commandStack,
-      translate
-    ),
-  };
-
   var processGroup = {
     id: 'apex-process',
-    label: translate('Process Variables'),
+    label: '',
     entries: generateProcessProcessVariables(
       element,
       bpmnFactory,
@@ -361,7 +349,43 @@ function createMappingTabGroups(
     enabled: isSelected,
   };
 
-  return [callActivityGroup, processGroup, detailGroup, expressionGroup];
+  return [processGroup, detailGroup, expressionGroup];
+}
+
+function createInOutMappingTabGroups(
+  element,
+  bpmnFactory,
+  elementRegistry,
+  commandStack,
+  translate
+) {
+  var callActivityGroup = {
+    id: 'apex-callActivity',
+    label: '',
+    entries: generateCallActivityProcessVariables(
+      element,
+      bpmnFactory,
+      elementRegistry,
+      commandStack,
+      translate
+    ),
+  };
+
+  var detailGroup = {
+    id: 'details',
+    label: translate('Variable Details'),
+    entries: procVarDetailProps(element, translate),
+    enabled: isSelected,
+  };
+
+  var expressionGroup = {
+    id: 'expression',
+    label: translate('Variable Expression'),
+    entries: procVarExpressionProps(element, commandStack, translate),
+    enabled: isSelected,
+  };
+
+  return [callActivityGroup, detailGroup, expressionGroup];
 }
 
 export default function apexPropertiesProvider(
@@ -453,10 +477,10 @@ export default function apexPropertiesProvider(
       ),
     };
 
-    var VariablesTab = {
-      id: 'variables',
-      label: translate('Variables'),
-      groups: createVariablesTabGroups(
+    var ProcessVariablesTab = {
+      id: 'process-variables',
+      label: translate('Variable Expressions'),
+      groups: createProcessVariablesTabGroups(
         element,
         bpmnFactory,
         elementRegistry,
@@ -465,10 +489,22 @@ export default function apexPropertiesProvider(
       ),
     };
 
-    var MappingTab = {
+    var InOutMappingTab = {
       id: 'mapping',
-      label: translate('Input/Output Mapping'),
-      groups: createMappingTabGroups(
+      label: translate('In/Out Mapping'),
+      groups: createInOutMappingTabGroups(
+        element,
+        bpmnFactory,
+        elementRegistry,
+        commandStack,
+        translate
+      ),
+    };
+
+    var InOutVariablesTab = {
+      id: 'in-out-variables',
+      label: translate('In/Out Variables'),
+      groups: createInOutVariablesTabGroups(
         element,
         bpmnFactory,
         elementRegistry,
@@ -484,8 +520,9 @@ export default function apexPropertiesProvider(
       PlsqlTab,
       ExternalUrlTab,
       MailTabGroups,
-      VariablesTab,
-      MappingTab,
+      ProcessVariablesTab,
+      InOutMappingTab,
+      InOutVariablesTab,
     ];
   };
 }

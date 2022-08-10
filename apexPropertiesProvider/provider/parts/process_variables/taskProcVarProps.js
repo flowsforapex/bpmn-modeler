@@ -24,10 +24,10 @@ export default function (
       {
         type1: 'BeforeTask',
         label1: translate('Before Task'),
-        name1: 'BeforeTask',
+        name1: translate('BeforeTask'),
         type2: 'AfterTask',
         label2: translate('After Task'),
-        name2: 'AfterTask',
+        name2: translate('AfterTask'),
       }
     );
   }
