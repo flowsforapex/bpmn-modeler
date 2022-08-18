@@ -193,7 +193,7 @@
   "Enter the PL/SQL code to be executed.": "Entrer le code PL/SQL à exécuter.",
   "Bind Page Item Values": "Lier les valeurs des éléments de page",
   "Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.": "Activer la liaison automatique des paramètres pour les éléments de page APEX.<br>Indiquer Oui seulement si vous référencez des éléments de page APEX.",
-  "Open Editor": "Ouvrir l'éditeur",
+  "Open editor": "Ouvrir l'éditeur",
   "Yes (deprecated)": "Oui (déprécié)",
   "Cancel": "Annuler",
   "Save": "Enregistrer",
@@ -337,7 +337,7 @@
 
   "{errors} Errors, {warnings} Warnings": "{errors} Erreurs, {warnings} Avertissements",
 
-  "Generate Default": "",
+  "Generate defaults": "",
   "Email content": "",
 
   "Use Flows meta data": "",

@@ -202,7 +202,7 @@ export function conditionProps(
     group.entries.push(
       entryFactory.link(translate, {
         id: 'conditionEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getCondition = function () {
             return getProperty('condition').condition;

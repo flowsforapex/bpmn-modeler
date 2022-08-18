@@ -193,7 +193,7 @@
   "Enter the PL/SQL code to be executed.": "x",
   "Bind Page Item Values": "x",
   "Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.": "x",
-  "Open Editor": "x",
+  "Open editor": "x",
   "Yes (deprecated)": "x",
   "Cancel": "x",
   "Save": "x",
@@ -337,7 +337,7 @@
 
   "{errors} Errors, {warnings} Warnings": "x",
 
-  "Generate Default": "x",
+  "Generate defaults": "x",
   "Email content": "x",
 
   "Use Flows meta data": "x",

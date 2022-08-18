@@ -520,7 +520,7 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'placeholderEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getPlaceholder = function () {
             return helper.getExtensionProperty(element, 'placeholder')
@@ -637,7 +637,7 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'bodyTextEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getBodyText = function () {
             return helper.getExtensionProperty(element, 'bodyText').bodyText;
@@ -688,7 +688,7 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'bodyHTMLEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getBodyHTML = function () {
             return helper.getExtensionProperty(element, 'bodyHTML').bodyHTML;
@@ -733,7 +733,7 @@ export function contentAttributes(
     serviceTaskProps.push(
       entryFactory.link(translate, {
         id: 'attachmentEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getAttachment = function () {
             return helper.getExtensionProperty(element, 'attachment')

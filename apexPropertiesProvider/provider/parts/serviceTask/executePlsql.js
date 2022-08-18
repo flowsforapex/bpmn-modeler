@@ -46,7 +46,7 @@ export default function (element, bpmnFactory, commandStack, translate) {
     taskProps.push(
       entryFactory.link(translate, {
         id: 'plsqlCodeEditor',
-        buttonLabel: translate('Open Editor'),
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getPlsqlCode = function () {
             return helper.getExtensionProperty(element, 'plsqlCode').plsqlCode;
@@ -57,7 +57,13 @@ export default function (element, bpmnFactory, commandStack, translate) {
             });
             new MultiCommandHandler(commandStack).preExecute(commands);
           };
-          openEditor('plsqlCode', getPlsqlCode, savePlsqlCode, 'plsql', 'plsqlProcess');
+          openEditor(
+            'plsqlCode',
+            getPlsqlCode,
+            savePlsqlCode,
+            'plsql',
+            'plsqlProcess'
+          );
         },
       })
     );

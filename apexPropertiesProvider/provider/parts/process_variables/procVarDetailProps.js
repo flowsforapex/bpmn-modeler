@@ -304,7 +304,7 @@ export function procVarExpressionProps(element, commandStack, translate) {
     procVarProps.push(
       entryFactory.link(translate, {
         id: 'varExpressionEditor',
-        buttonLabel: 'Open Editor',
+        buttonLabel: translate('Open editor'),
         handleClick: function (element, node, event) {
           var getVarExpression = function () {
             return getProperty(element, node, 'varExpression').varExpression;

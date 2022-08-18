@@ -468,7 +468,7 @@ export default function (
     userTaskProps.push(
       entryFactory.link(translate, {
         id: 'quickpick-items',
-        buttonLabel: translate('Generate Default'),
+        buttonLabel: translate('Generate defaults'),
         handleClick: function (element, node, event) {
           createUserTaskItems();
         },
