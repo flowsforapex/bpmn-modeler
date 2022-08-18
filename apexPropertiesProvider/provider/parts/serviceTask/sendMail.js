@@ -117,8 +117,8 @@ function initDefaults(element, bpmnFactory, commandStack) {
   ) {
     defaultsIdentifier = element;
     var commands = helper.setExtensionProperty(element, bpmnFactory, {
-      immediately: 'true',
-      useTemplate: 'false',
+      ...(typeof immediately === 'undefined' && { immediately: 'true' }),
+      ...(typeof useTemplate === 'undefined' && { useTemplate: 'false' }),
     });
     new MultiCommandHandler(commandStack).preExecute(commands);
   }
