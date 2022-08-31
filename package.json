@@ -34,7 +34,7 @@
     "bpmnlint": "^7.4.0",
     "bpmnlint-loader": "^0.1.5",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
-    "camunda-bpmn-moddle": "^6.1.1",
+    "camunda-bpmn-moddle": "^7.0.0",
     "css-loader": "^5.2.7",
     "diagram-js": "^7.8.2",
     "file-loader": "^6.2.0",
