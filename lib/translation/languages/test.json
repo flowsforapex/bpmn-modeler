@@ -114,7 +114,6 @@
   "Timer Start Event (non-interrupting)": "x",
   "Transaction": "x",
   "User Task": "x",
-
   "correcting missing bpmnElement on {plane} to {rootElement}": "x",
   "element {element} referenced by {referenced}#{property} not yet drawn": "x",
   "failed to import {element}": "x",
@@ -124,26 +123,22 @@
   "no bpmnElement referenced in {element}": "x",
   "no diagram to display": "x",
   "no process or collaboration to display": "x",
-
   "already rendered {element}": "x",
   "diagram not part of bpmn:Definitions": "x",
   "element required": "x",
   "more than {count} child lanes": "x",
   "no parent for {element} in {parent}": "x",
   "no shape type specified": "x",
-
   "Undo": "x",
   "Redo": "x",
   "Zoom In": "x",
   "Zoom Out": "x",
-
   "APEX": "x",
   "PL/SQL": "x",
   "URL": "x",
   "Mail": "x",
   "Variables": "x",
   "Variable Expressions": "x",
-
   "General": "x",
   "Id": "x",
   "Name": "x",
@@ -158,13 +153,10 @@
   "APEX Page": "x",
   "Execute PL/SQL": "x",
   "Send Mail": "x",
-
   "Process Id": "x",
   "Process Name": "x",
   "Process Documentation": "x",
-
   "Category Value": "x",
-
   "Call APEX Page": "x",
   "Application": "x",
   "Application ID": "x",
@@ -184,7 +176,6 @@
   "subflow_id": "x",
   "step_key": "x",
   "business_ref": "x",
-
   "Engine": "x",
   "No": "x",
   "Yes": "x",
@@ -197,7 +188,6 @@
   "Yes (deprecated)": "x",
   "Cancel": "x",
   "Save": "x",
-
   "Content": "x",
   "Send Email Immediately": "x",
   "From": "x",
@@ -222,7 +212,6 @@
   "HTML version of the email": "x",
   "Attachment": "x",
   "SQL query to get attachment": "x",
-
   "Process Variables": "x",
   "Before Task": "x",
   "BeforeTask": "x",
@@ -236,19 +225,14 @@
   "BeforeSplit": "x",
   "After Merge": "x",
   "AfterMerge": "x",
-
   "Variable Details": "x",
-  
   "Data Type": "x",
   "Varchar2": "x",
   "Number": "x",
   "Date": "x",
   "Clob": "x",
-  
   "Date in format YYYY-MM-DD HH24:MI:SS": "x",
-  
   "Variable Expression": "x",
-  
   "Expression Type": "x",
   "Static": "x",
   "Process Variable": "x",
@@ -257,7 +241,6 @@
   "SQL query (colon delimited list)": "x",
   "Expression": "x",
   "Function Body": "x",
-  
   "Static value": "x",
   "Name of the Process Variable": "x",
   "Name of the APEX Page Item": "x",
@@ -265,16 +248,13 @@
   "SQL query returning a colon delimited list": "x",
   "PL/SQL Expression returning a value": "x",
   "PL/SQL Function Body returning a value": "x",
-  
   "Global Message referenced": "x",
   "Global Message Name": "x",
-  
   "Timer Definition Type": "x",
   "Duration": "x",
   "Cycle": "x",
   "Timer Definition": "x",
   "Must provide a value": "x",
-  
   "Date (Oracle)": "x",
   "Duration (Oracle)": "x",
   "Cycle (Oracle)": "x",
@@ -290,26 +270,19 @@
   "Time until the timer fires first": "x",
   "Time until the timer fires again": "x",
   "Max Runs": "x",
-  
   "Variable Name": "x",
   "Variable Events": "x",
   "Specify more than one variable change event as a comma separated list.": "x",
-  
   "Global Signal referenced": "x",
   "Global Signal Name": "x",
-  
   "Global Escalation referenced": "x",
   "Global Escalation Name": "x",
   "Global Escalation Code": "x",
-  
   "Link Name": "x",
-  
   "Wait for Completion": "x",
   "Activity Ref": "x",
-  
   "Global Error referenced": "x",
   "Code": "x",
-
   "Process is missing end event": "x",
   "Sub process is missing end event": "x",
   "Start event is missing event definition": "x",
@@ -334,14 +307,10 @@
   "Element has disallowed type <bpmn:MessageStartEvent>": "x",
   "Element has disallowed type <bpmnConditionalStartEvent>": "x",
   "Element has disallowed type <bpmn:SignalStartEvent>": "x",
-
   "{errors} Errors, {warnings} Warnings": "x",
-
   "Generate defaults": "x",
   "Email content": "x",
-
   "Use Flows meta data": "x",
-
   "APEX Approval": "x",
   "Task Definition": "x",
   "Task Configuration": "x",
@@ -362,7 +331,6 @@
   "3-Medium": "x",
   "4-Low": "x",
   "5-Lowest": "x",
-
   "Execution": "x",
   "Is Callable": "x",
   "Select if this diagram should be called in a Call Activity": "x",
@@ -370,7 +338,6 @@
   "Default Application": "x",
   "Default Page": "x",
   "Default Username": "x",
-
   "In/Out Mapping": "x",
   "In/Out Variables": "x",
   "In Variables": "x",
@@ -378,7 +345,6 @@
   "Out Variables": "x",
   "Out": "x",
   "Description": "x",
-
   "Called Subprocess Diagram": "x",
   "Called Diagram": "x",
   "Name of the diagram": "x",
@@ -387,10 +353,8 @@
   "Named version": "x",
   "Used diagram version": "x",
   "Version Name": "x",
-
   "Load defined variables": "x",
   "Copy business reference": "x",
-
   "Condition": "x",
   "Sequence": "x",
   "Condition Type": "x",

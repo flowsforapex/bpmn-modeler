@@ -114,7 +114,6 @@
   "Timer Start Event (non-interrupting)": "Evénement de début de type minuteur (non interruptif)",
   "Transaction": "Transaction",
   "User Task": "Tâche utilisateur",
-
   "correcting missing bpmnElement on {plane} to {rootElement}": "correction bpmnElement manquant sur {plane} à {rootElement}",
   "element {element} referenced by {referenced}#{property} not yet drawn": "l'élément {element} indiqué par {referenced}#{property} n'est pas encore dessiné",
   "failed to import {element}": "erreur à l'import de {element}",
@@ -124,26 +123,22 @@
   "no bpmnElement referenced in {element}": "pas de bpmnElement référencé dans {element}",
   "no diagram to display": "aucun diagramme à afficher",
   "no process or collaboration to display": "aucun processus ou collaboration à afficher",
-
   "already rendered {element}": "{element} déjà rendu",
   "diagram not part of bpmn:Definitions": "le diagramme ne fait pas partie de bpmn:Definitions",
   "element required": "élément requis",
   "more than {count} child lanes": "plus de {count} couloirs enfants",
   "no parent for {element} in {parent}": "pas de parent pour {element} dans {parent}",
   "no shape type specified": "pas de type de forme spécifié",
-
   "Undo": "Annuler",
   "Redo": "Rétablir",
   "Zoom In": "Agrandir",
   "Zoom Out": "Réduire",
-
   "APEX": "APEX",
   "PL/SQL": "PL/SQL",
   "URL": "URL",
   "Mail": "Courriel",
   "Variables": "Variables",
   "Variable Expressions": "",
-
   "General": "Général",
   "Id": "Id",
   "Name": "Nom",
@@ -158,13 +153,10 @@
   "APEX Page": "Page APEX",
   "Execute PL/SQL": "Exécuter du code PL/SQL",
   "Send Mail": "Envoyer un courrier électronique",
-
   "Process Id": "Id du processus",
   "Process Name": "Nom du processus",
   "Process Documentation": "Documentation du processus",
-
   "Category Value": "Valeur de la catégorie",
-
   "Call APEX Page": "Appel d'une page APEX",
   "Application": "Application",
   "Application ID": "ID de l'application",
@@ -184,7 +176,6 @@
   "subflow_id": "subflow_id",
   "step_key": "step_key",
   "business_ref": "business_ref",
-
   "Engine": "Moteur",
   "No": "Non",
   "Yes": "Oui",
@@ -197,7 +188,6 @@
   "Yes (deprecated)": "Oui (déprécié)",
   "Cancel": "Annuler",
   "Save": "Enregistrer",
-
   "Content": "Contenu",
   "Send Email Immediately": "Envoyer le courriel immédiatement",
   "From": "De",
@@ -222,7 +212,6 @@
   "HTML version of the email": "Version HTML du courriel",
   "Attachment": "Pièce jointe",
   "SQL query to get attachment": "Requête SQL pour obtenir les pièces jointes",
-
   "Process Variables": "Variables de processus",
   "Before Task": "Avant la tâche",
   "BeforeTask": "Avant la tâche",
@@ -236,19 +225,14 @@
   "BeforeSplit": "Avant la divison",
   "After Merge": "Après la réunion",
   "AfterMerge": "Après la réunion",
-
   "Variable Details": "Détails de la variable",
-  
   "Data Type": "Type de données",
   "Varchar2": "Varchar2",
   "Number": "Number",
   "Date": "Date",
   "Clob": "Clob",
-  
   "Date in format YYYY-MM-DD HH24:MI:SS": "Format de date YYYY-MM-DD HH24:MI:SS",
-  
   "Variable Expression": "Expression de variable",
-  
   "Expression Type": "Type d'expression",
   "Static": "Statique",
   "Process Variable": "Variable de processus",
@@ -257,7 +241,6 @@
   "SQL query (colon delimited list)": "Requête SQL (liste séparée par des deux-points)",
   "Expression": "Expression",
   "Function Body": "Corps de fonction",
-  
   "Static value": "Valeur statique",
   "Name of the Process Variable": "Nom de la variable de processus",
   "Name of the APEX Page Item": "Nom de l'item de page APEX",
@@ -265,16 +248,13 @@
   "SQL query returning a colon delimited list": "Requête SQL retournant une liste séparée par des deux-points",
   "PL/SQL Expression returning a value": "Expression PL/SQL retournant une valeur",
   "PL/SQL Function Body returning a value": "Corps de fonction PL/SQL retournant une valeur",
-  
   "Global Message referenced": "Message global de référence",
   "Global Message Name": "Nom du message global",
-  
   "Timer Definition Type": "Type de définition de minuteur",
   "Duration": "Durée",
   "Cycle": "Cycle",
   "Timer Definition": "Définition du minuteur",
   "Must provide a value": "Une valeur doit être fournie",
-  
   "Date (Oracle)": "Date (Oracle)",
   "Duration (Oracle)": "Durée (Oracle)",
   "Cycle (Oracle)": "Cycle (Oracle)",
@@ -290,26 +270,19 @@
   "Time until the timer fires first": "Durée avant le premier déclenchement du minuteur",
   "Time until the timer fires again": "Durée avant les déclenchements suivants du minuteur",
   "Max Runs": "Nombre maximal d'exécution",
-  
   "Variable Name": "Nom de la variable",
   "Variable Events": "Événements de variable",
   "Specify more than one variable change event as a comma separated list.": "Spécifiez plus d'un évènement de changement sous la forme d'une liste séparée par des virgules",
-  
   "Global Signal referenced": "Signal global de reference",
   "Global Signal Name": "Nom du signal global",
-  
   "Global Escalation referenced": "Escalade global de référence",
   "Global Escalation Name": "Nom de l'escalade globale",
   "Global Escalation Code": "Code de l'escalade globale",
-  
   "Link Name": "Nom du lien",
-  
   "Wait for Completion": "Attendre la fin de l'opération",
   "Activity Ref": "Référence de l'activité",
-  
   "Global Error referenced": "Erreur globale référencée",
   "Code": "Code",
-
   "Process is missing end event": "Un évènement de fin manque au processus.",
   "Sub process is missing end event": "Un événement de fin manque au sous-processus.",
   "Start event is missing event definition": "La définition de l'évènement de début est manquante.",
@@ -334,14 +307,10 @@
   "Element has disallowed type <bpmn:MessageStartEvent>": "L'élément a un type non autorisé (<bpmn:MessageStartEvent>).",
   "Element has disallowed type <bpmnConditionalStartEvent>": "L'élément a un type non autorisé (<bpmnConditionalStartEvent>).",
   "Element has disallowed type <bpmn:SignalStartEvent>": "L'élément a un type non autorisé (<bpmn:SignalStartEvent>).",
-
   "{errors} Errors, {warnings} Warnings": "{errors} Erreurs, {warnings} Avertissements",
-
   "Generate defaults": "",
   "Email content": "",
-
   "Use Flows meta data": "",
-
   "APEX Approval": "",
   "Task Definition": "",
   "Task Configuration": "",
@@ -362,7 +331,6 @@
   "3-Medium": "",
   "4-Low": "",
   "5-Lowest": "",
-
   "Execution": "",
   "Is Callable": "",
   "Select if this diagram should be called in a Call Activity": "",
@@ -370,7 +338,6 @@
   "Default Application": "",
   "Default Page": "",
   "Default Username": "",
-
   "In/Out Mapping": "",
   "In/Out Variables": "",
   "In Variables": "",
@@ -378,7 +345,6 @@
   "Out Variables": "",
   "Out": "",
   "Description": "",
-
   "Called Subprocess Diagram": "",
   "Called Diagram": "",
   "Name of the diagram": "",
@@ -387,10 +353,8 @@
   "Named version": "",
   "Used diagram version": "",
   "Version Name": "",
-
   "Load defined variables": "",
   "Copy business reference": "",
-
   "Condition": "",
   "Sequence": "",
   "Condition Type": "",
