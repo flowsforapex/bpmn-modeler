@@ -15,7 +15,7 @@
   "Enter the PL/SQL code to be executed.": "Auszuführenden PL/SQL Code eingeben.",
   "Bind Page Item Values": "Seiten-Elementwert binden",
   "Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.": "Automatische Parameter-Bindung von APEX Seitenelement aktivieren<br>Setzen sie diesen Wert auf Ja, wenn nur APEX Seitenelemente referenziert werden.",
-  "Open Editor": "Editor öffnen",
+  "Open editor": "Editor öffnen",
   "Yes (deprecated)": "Ja (veraltet)",
   "Cancel": "Abbrechen",
   "Save": "Speichern",
