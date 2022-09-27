@@ -140,7 +140,7 @@ export function procVarLists(
         varSequence: preSubPropertiesHelper.getNextSequence(element),
         varName: 'BUSINESS_REF',
         varDataType: 'VARCHAR2',
-        varExpression: '&F4A$BUSINESS_REF.',
+        varExpression: 'BUSINESS_REF',
         varExpressionType: 'processVariable',
       })
     );
