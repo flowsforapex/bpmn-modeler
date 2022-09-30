@@ -596,21 +596,13 @@ export function taskConfiguration(
 
     // priority
     userTaskProps.push(
-      entryFactory.selectBox(translate, {
+      entryFactory.textField(translate, {
         id: 'priority',
         label: translate('Priority'),
         description: translate(
           'Overwrite default value set in task definition'
         ),
         modelProperty: 'priority',
-        selectOptions: [
-          { name: '', value: '' },
-          { name: translate('1-Urgent'), value: '1' },
-          { name: translate('2-High'), value: '2' },
-          { name: translate('3-Medium'), value: '3' },
-          { name: translate('4-Low'), value: '4' },
-          { name: translate('5-Lowest'), value: '5' },
-        ],
         set: function (element, values) {
           return helper.setExtensionProperty(element, bpmnFactory, values);
         },
