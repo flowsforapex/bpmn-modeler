@@ -7,7 +7,7 @@ import propertiesProviderModule from './apexPropertiesProvider/provider';
 import customPaletteProviderModule from './custom/palette';
 import propertiesPanelModule from './custom/properties-panel';
 import styleModule from './lib/styleModule';
-import translationModule from './lib/translation/TranslationModule';
+import translationModule from './lib/translation';
 import xmlModule from './lib/xmlModule';
 
 var bpmnModeler = {
