@@ -46,6 +46,9 @@ import {
 import externalUrlProps from './parts/userTask/externalUrlProps';
 */
 
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+import apexPageProps from './parts/userTask/ApexPageProps';
+
 const LOW_PRIORITY = 500;
 
 /*
@@ -394,6 +397,16 @@ function createInOutMappingTabGroups(
 }
 */
 
+function createApexPageGroup(element, injector, translate) {
+  const apexPageGroup = {
+    id: 'apexPage',
+    label: translate('Apex Page'),
+    entries: apexPageProps(element, injector),
+  };
+
+  return apexPageGroup;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -401,6 +414,12 @@ export default function apexPropertiesProvider(
 ) {
   this.getGroups = function (element) {
     return function (groups) {
+      // add the apexPage group
+      if (is(element, 'bpmn:UserTask')) {
+        groups.push(createApexPageGroup(element, injector, translate));
+        // groups.push(createParametersGroup(element, injector, translate));
+      }
+
       return groups;
     };
   };
