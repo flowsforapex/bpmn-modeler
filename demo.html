@@ -75,13 +75,14 @@
         bpmnlint: bpmnModeler.linting.apexLinting
       },
       additionalModules: [
-        bpmnModeler.customModules.propertiesPanelModule,
-        bpmnModeler.customModules.propertiesProviderModule,
+        // bpmnModeler.customModules.propertiesPanelModule,
+        // bpmnModeler.customModules.propertiesProviderModule,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
         bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.AddExporter
+        bpmnModeler.customModules.AddExporter,
+        // bpmnModeler.customModules.ConnectorsExtensionModule,
       ],
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
@@ -94,7 +95,10 @@
       exporter: {
         name: 'Flows for APEX',
         version: '22.2.0',
-      }
+      },
+      // connectorsExtension: {
+      //   elementTemplateChooser: false
+      // },
     });
 
     async function init() {
