@@ -28,6 +28,7 @@
   "homepage": "https://github.com/mt-ag/bpmn-modeler#readme",
   "dependencies": {
     "@bpmn-io/add-exporter": "^0.2.0",
+    "@bpmn-io/properties-panel": "^0.23.0",
     "bpmn-js": "^10.2.1",
     "bpmn-js-bpmnlint": "^0.18.3",
     "bpmn-js-connectors-extension": "^0.4.2",
@@ -48,16 +49,22 @@
     "style-loader": "^2.0.0"
   },
   "devDependencies": {
+    "acorn": "^8.8.1",
+    "camunda-bpmn-js-behaviors": "^0.3.0",
     "copy-webpack-plugin": "^6.3.1",
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^3.4.1",
+    "less": "^4.1.3",
+    "less-loader": "^11.1.0",
     "npm-run-all": "^4.1.5",
+    "preact": "^10.11.2",
     "prettier": "^2.7.1",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-dev-server": "^4.11.1",
+    "zeebe-bpmn-moddle": "^0.15.0"
   }
 }

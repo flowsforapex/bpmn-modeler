@@ -5,11 +5,12 @@
   <meta charset="UTF-8" />
   <title>Flows for APEX - Modeler</title>
 
-  <link rel="stylesheet" href="flows4apex.modeler.css" type="text/css">
-  <link rel="stylesheet" href="flows4apex.modeler.font.css" type="text/css">
-  <link rel="stylesheet" href="flows4apex.modeler.properties-panel.css" type="text/css">
-  <link rel="stylesheet" href="bpmn-js-bpmnlint.css" type="text/css">
-  <link type="text/css" rel="stylesheet" href=" https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css">
+  <link rel="stylesheet" href="assets/bpmn-js/diagram-js.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js/bpmn-js.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js/bpmn-font/css/bpmn-embedded.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js-properties-panel/properties-panel.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js-bpmnlint/bpmn-js-bpmnlint.css" type="text/css"/>
+  <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css" type="text/css"/>
 
   <style >
   .canvas {
@@ -75,8 +76,10 @@
         bpmnlint: bpmnModeler.linting.apexLinting
       },
       additionalModules: [
+        bpmnModeler.customModules.BpmnPropertiesPanelModule,
+        bpmnModeler.customModules.BpmnPropertiesProviderModule,
         // bpmnModeler.customModules.propertiesPanelModule,
-        // bpmnModeler.customModules.propertiesProviderModule,
+        bpmnModeler.customModules.propertiesProviderModule,
         bpmnModeler.customModules.lintModule,
         bpmnModeler.customModules.customPaletteProviderModule,
         bpmnModeler.customModules.translationModule,
@@ -87,11 +90,11 @@
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
       },
-      bpmnRenderer: {
-        defaultFillColor: "var(--default-fill-color)",
-        defaultStrokeColor: "var(--default-stroke-color)",
-        defaultLabelColor: "var(--default-stroke-color)",
-      },
+      // bpmnRenderer: {
+      //   defaultFillColor: "var(--default-fill-color)",
+      //   defaultStrokeColor: "var(--default-stroke-color)",
+      //   defaultLabelColor: "var(--default-stroke-color)",
+      // },
       exporter: {
         name: 'Flows for APEX',
         version: '22.2.0',

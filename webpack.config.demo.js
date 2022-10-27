@@ -22,31 +22,22 @@ module.exports = {
           to: "./index.html",
         },
         {
-          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
+          from: path.resolve(__dirname, "node_modules/bpmn-js/dist/assets"),
+          to: "assets/bpmn-js",
         },
         {
           from: path.resolve(
             __dirname,
-            "assets/css/flows4apex.modeler.font.css"
+            "node_modules/bpmn-js-properties-panel/dist/assets"
           ),
-        },
-        {
-          from: path.resolve(
-            __dirname,
-            "assets/css/flows4apex.modeler.properties-panel.css"
-          ),
-        },
-        {
-          from: path.resolve(
-            __dirname,
-            "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css"
-          ),
+          to: "assets/bpmn-js-properties-panel",
         },
         {
           from: path.resolve(
             __dirname,
             "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css"
           ),
+          to: "assets/bpmn-js-bpmnlint",
         },
       ],
     }),
