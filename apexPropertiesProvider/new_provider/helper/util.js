@@ -22,21 +22,6 @@ export function getExtension(element, type) {
   })[0];
 }
 
-/*
-// get list-type extension element child
-export function getExtensionElements(element, type) {
-  const extensionElement = getExtensionElement(element, type);
-  return extensionElement && extensionElement.get('values');
-}
-*/
-
-// get extension element nested child by type
-export function getSubExtensionElements(element, parentType, listAttr, entryAttr) {
-  const parameters = getExtension(element, parentType);
-
-  return parameters && parameters[listAttr] && parameters[listAttr].get(entryAttr);
-}
-
 export function createElement(elementType, properties, parent, factory) {
   const element = factory.create(elementType, properties);
 
@@ -45,10 +30,6 @@ export function createElement(elementType, properties, parent, factory) {
   }
 
   return element;
-}
-
-export function createExtension(type, properties, parent, bpmnFactory) {
-  return createElement(type, properties, parent, bpmnFactory);
 }
 
 export function createExtensionElements(element, bpmnFactory) {
@@ -62,8 +43,16 @@ export function createExtensionElements(element, bpmnFactory) {
   );
 }
 
+export function createExtension(type, properties, parent, bpmnFactory) {
+  return createElement(type, properties, parent, bpmnFactory);
+}
+
 export function nextId(prefix) {
   const ids = new Ids([32, 32, 1]);
 
   return ids.nextPrefixed(prefix);
+}
+
+export function updateProperties(context, commandStack) {
+  commandStack.execute('element.updateModdleProperties', context);
 }

@@ -1,12 +1,17 @@
-import { getSubExtensionElements } from '../../helper/util';
-
 import ParameterProps from './PageItemProps';
 
-import { addSubFactory, removeSubFactory } from './Factories';
+import ListExtensionHelper from '../../helper/ListExtensionHelper';
+
+const listExtensionHelper = new ListExtensionHelper(
+  'apex:ApexPage',
+  'apex:PageItems',
+  'pageItems',
+  'apex:PageItem',
+  'pageItem'
+);
 
 export default function ParametersProps({ element, injector }) {
-  const parameters =
-    getSubExtensionElements(element, 'apex:ApexPage', 'pageItems', 'pageItem') || [];
+  const parameters = listExtensionHelper.getSubExtensionElements(element) || [];
 
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
@@ -23,7 +28,7 @@ export default function ParametersProps({ element, injector }) {
         parameter,
       }),
       autoFocusEntry: `${id}-name`,
-      remove: removeSubFactory('apex:ApexPage', 'pageItems', 'pageItem', {
+      remove: listExtensionHelper.removeSubFactory({
         commandStack,
         element,
         parameter,
@@ -33,13 +38,10 @@ export default function ParametersProps({ element, injector }) {
 
   return {
     items,
-    add: addSubFactory(
-      'apex:ApexPage',
-      'apex:PageItems',
-      'pageItems',
-      'apex:PageItem',
-      'pageItem',
-      { element, bpmnFactory, commandStack }
-    ),
+    add: listExtensionHelper.addSubFactory({
+      element,
+      bpmnFactory,
+      commandStack,
+    }),
   };
 }
