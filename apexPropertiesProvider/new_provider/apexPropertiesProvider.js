@@ -47,6 +47,7 @@ import externalUrlProps from './parts/userTask/externalUrlProps';
 */
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import apexPageProps from './parts/userTask/ApexPageProps';
 
 const LOW_PRIORITY = 500;
@@ -407,6 +408,16 @@ function createApexPageGroup(element, injector, translate) {
   return apexPageGroup;
 }
 
+function createPlsqlGroup(element, injector, translate) {
+  const plsqlGroup = {
+    id: 'executePlsql',
+    label: translate('PL/SQL'),
+    entries: executePlsqlProps(element, injector),
+  };
+
+  return plsqlGroup;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -417,7 +428,11 @@ export default function apexPropertiesProvider(
       // add the apexPage group
       if (is(element, 'bpmn:UserTask')) {
         groups.push(createApexPageGroup(element, injector, translate));
-        // groups.push(createParametersGroup(element, injector, translate));
+      }
+
+      // add the plsql group
+      if (is(element, 'bpmn:ScriptTask')) {
+        groups.push(createPlsqlGroup(element, injector, translate));
       }
 
       return groups;
