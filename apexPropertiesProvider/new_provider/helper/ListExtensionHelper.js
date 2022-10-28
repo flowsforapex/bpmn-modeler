@@ -88,11 +88,20 @@ export default class ListExtensionHelper {
 
       const businessObject = getBusinessObject(element);
 
-      const extensionElements = businessObject.get('extensionElements');
+      let extensionElements = businessObject.get('extensionElements');
 
       // (1) ensure extension elements
       if (!extensionElements) {
-        createExtensionElements(element, bpmnFactory);
+        extensionElements = createExtensionElements(element, bpmnFactory);
+
+        updateProperties(
+          {
+            element,
+            moddleElement: businessObject,
+            properties: { extensionElements },
+          },
+          commandStack
+        );
       }
 
       // (2) ensure parent extension
