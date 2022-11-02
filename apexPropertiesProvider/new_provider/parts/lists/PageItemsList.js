@@ -1,17 +1,7 @@
 import ParameterProps from './PageItemProps';
 
-import ListExtensionHelper from '../../helper/ListExtensionHelper';
-
-const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
-);
-
-export default function ParametersProps({ element, injector }) {
-  const parameters = listExtensionHelper.getSubExtensionElements(element) || [];
+export default function ParametersProps({ element, injector }, helper) {
+  const parameters = helper.getSubExtensionElements(element) || [];
 
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
@@ -28,7 +18,7 @@ export default function ParametersProps({ element, injector }) {
         parameter,
       }),
       autoFocusEntry: `${id}-name`,
-      remove: listExtensionHelper.removeSubFactory({
+      remove: helper.removeSubFactory({
         commandStack,
         element,
         parameter,
@@ -38,7 +28,7 @@ export default function ParametersProps({ element, injector }) {
 
   return {
     items,
-    add: listExtensionHelper.addSubFactory({
+    add: helper.addSubFactory({
       element,
       bpmnFactory,
       commandStack,
