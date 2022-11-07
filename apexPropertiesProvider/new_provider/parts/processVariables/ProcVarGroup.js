@@ -1,20 +1,9 @@
 import { ListGroup } from '@bpmn-io/properties-panel';
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 
-import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import ProcVarList from './ProcVarList';
-
-const extensionHelper = new ExtensionHelper('apex:ApexPage');
-
-const listExtensionHelper = new ListExtensionHelper(
-  'apex:BeforeTask',
-  null,
-  'procVars',
-  'apex:ProcessVariable',
-  null
-);
 
 export default function (element, injector) {
   if (
@@ -84,9 +73,8 @@ export default function (element, injector) {
           ),
         },
       ];
-    }
-    // closing gateway
-    else if (element.incoming.length > 1 && element.outgoing.length === 1) {
+      // closing gateway
+    } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
       return [
         {
           id: 'afterMerge',
@@ -105,6 +93,7 @@ export default function (element, injector) {
           ),
         },
       ];
+      // opening and closing gateway
     } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
       return [
         {
@@ -142,4 +131,5 @@ export default function (element, injector) {
       ];
     }
   }
+  return [];
 }
