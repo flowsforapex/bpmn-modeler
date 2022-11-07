@@ -7,7 +7,7 @@ export default function ParametersProps({ element, injector }, helper, hooks) {
   const commandStack = injector.get('commandStack');
 
   const items = parameters.map((parameter, index) => {
-    const id = `${element.id}-parameter-${index}`;
+    const id = `${element.id}-pageItem-${index}`;
 
     return {
       id,

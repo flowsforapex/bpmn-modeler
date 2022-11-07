@@ -1,7 +1,20 @@
 /**
+ * resize icon
+ */
+.properties-panel-parent:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: w-resize;
+}
+
+/**
  * open dialog button
  */
-.bio-properties-panel-group-header-button {
+ .bio-properties-panel-group-header-button {
   margin: 2px 32px 6px 12px;
 }
 

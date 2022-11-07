@@ -50,6 +50,8 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import apexPageProps from './parts/userTask/ApexPageProps';
 
+var domQuery = require('min-dom').query;
+
 const LOW_PRIORITY = 500;
 
 /*
@@ -423,6 +425,39 @@ export default function apexPropertiesProvider(
   injector,
   translate
 ) {
+  const canvas = domQuery('#canvas');
+  const parentNode = domQuery('#properties');
+
+  var mouseX;
+  const BORDER_WIDTH = 5;
+
+  document.addEventListener('mousedown', function (event) {
+    if (event.offsetX < BORDER_WIDTH) {
+      mouseX = event.x;
+      document.addEventListener('mousemove', resize, false);
+    }
+  });
+
+  document.addEventListener('mouseup', function () {
+    document.removeEventListener('mousemove', resize, false);
+  });
+
+  function resize(event) {
+    var dx = mouseX - event.x;
+    mouseX = event.x;
+    var panelWidth = parentNode.scrollWidth + dx;
+    var maxWidth =
+      (parseInt(getComputedStyle(canvas, '').width) / 100) *
+      parseInt(getComputedStyle(parentNode).maxWidth);
+    if (
+      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth) &&
+      panelWidth < maxWidth
+    ) {
+      parentNode.style.width = `${panelWidth}px`;
+      parentNode.firstChild.style.width = `${panelWidth}px`;
+    }
+  }
+
   this.getGroups = function (element) {
     return function (groups) {
       // add the apexPage group

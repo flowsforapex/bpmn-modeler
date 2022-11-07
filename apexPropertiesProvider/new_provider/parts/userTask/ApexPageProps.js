@@ -176,7 +176,7 @@ function ApplicationId(props) {
       currValue == null || applications.map(e => e.value).includes(currValue);
 
     return [
-      ...(existing ? [{ label: '', value: undefined }] : [{ label: `${currValue}*`, value: currValue }]),
+      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
       ...applications.map((application) => {
         return {
           label: application.label,
@@ -249,10 +249,6 @@ function PageId(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // useEffect(() => {
-  //   getPages().then(pages => setPages(pages));
-  // }, [setPages]);
-
   const getOptions = () => {
     const currValue = extensionHelper.getExtensionProperty(element, 'pageId');
 
@@ -260,7 +256,7 @@ function PageId(props) {
       currValue == null || pages.map(e => e.value).includes(currValue);
 
     return [
-      ...(existing ? [{ label: '', value: undefined }] : [{ label: `${currValue}*`, value: currValue }]),
+      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
       ...pages.map((page) => {
         return {
           label: page.label,
@@ -336,7 +332,6 @@ function QuickpickItems(props) {
 
   return new HeaderButton({
     id: id,
-    element: element,
     children: translate('Generate default items'),
     onClick: function () {
       listExtensionHelper.addSubElement(

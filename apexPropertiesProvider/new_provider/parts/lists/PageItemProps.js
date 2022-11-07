@@ -52,7 +52,7 @@ function ItemName(props) {
       currValue == null || items.map(e => e.value).includes(currValue);
 
     return [
-      ...(existing ? [{ label: '', value: undefined }] : [{ label: `${currValue}*`, value: currValue }]),
+      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
       ...items.map((item) => {
         return {
           label: item.label,
@@ -78,7 +78,7 @@ function ItemName(props) {
     return SelectEntry({
       element: parameter,
       id: `${idPrefix}-itemName`,
-      label: translate('Item Name'),
+      label: translate('Item'),
       getValue,
       setValue,
       debounce,

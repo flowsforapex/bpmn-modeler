@@ -22,8 +22,8 @@ module.exports = {
           to: "./index.html",
         },
         {
-          from: path.resolve(__dirname, "assets/css/monaco-editor.css"),
-          to: "assets/css/monaco-editor.css",
+          from: path.resolve(__dirname, "assets/css/style.css"),
+          to: "assets/css/style.css",
         },
         {
           from: path.resolve(__dirname, "node_modules/bpmn-js/dist/assets"),
