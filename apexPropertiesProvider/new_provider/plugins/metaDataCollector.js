@@ -47,7 +47,7 @@ export function getPages(applicationId) {
       { label: 'PageC', value: '2' },
     ]);
   }
-  return Promise.resolve([{ label: 'null', value: 'null' }]);
+  return Promise.resolve();
 }
 
 export function getItems(applicationId, pageId) {
@@ -67,7 +67,13 @@ export function getItems(applicationId, pageId) {
       )
       .then(pData => pData);
   }
-  return Promise.resolve();
+  if (applicationId === '1' && pageId === '1') {
+    return Promise.resolve([
+      { label: 'Item001', value: '1' },
+      { label: 'Item002', value: '2' },
+    ]);
+  }
+  return Promise.resolve([]);
 }
 
 export function getApplicationsMail() {

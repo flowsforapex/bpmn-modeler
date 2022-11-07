@@ -1,6 +1,6 @@
 import ParameterProps from './PageItemProps';
 
-export default function ParametersProps({ element, injector }, helper) {
+export default function ParametersProps({ element, injector }, helper, hooks) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
   const bpmnFactory = injector.get('bpmnFactory');
@@ -16,6 +16,7 @@ export default function ParametersProps({ element, injector }, helper) {
         idPrefix: id,
         element,
         parameter,
+        hooks,
       }),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({

@@ -17,7 +17,11 @@ import PageItemsList from '../lists/PageItemsList';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
-import { getApplications, getPages } from '../../plugins/metaDataCollector';
+import {
+  getApplications,
+  getItems,
+  getPages
+} from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
@@ -32,6 +36,7 @@ const listExtensionHelper = new ListExtensionHelper(
 export default function (element, injector) {
   const [applications, setApplications] = useState([]);
   const [pages, setPages] = useState([]);
+  const [items, setItems] = useState([]);
 
   return [
     {
@@ -48,6 +53,8 @@ export default function (element, injector) {
         setApplications,
         pages,
         setPages,
+        items,
+        setItems,
       },
       component: ApplicationId,
       isEdited: isSelectEntryEdited,
@@ -66,6 +73,8 @@ export default function (element, injector) {
         setApplications,
         pages,
         setPages,
+        items,
+        setItems,
       },
       component: PageId,
       isEdited: isSelectEntryEdited,
@@ -86,7 +95,10 @@ export default function (element, injector) {
       element,
       label: 'Page Items',
       component: ListGroup,
-      ...PageItemsList({ element, injector }, listExtensionHelper),
+      ...PageItemsList({ element, injector }, listExtensionHelper, {
+        items,
+        setItems,
+      }),
     },
   ];
 }
@@ -154,14 +166,25 @@ function ApplicationId(props) {
     getApplications().then(applications => setApplications(applications));
   }, [setApplications]);
 
-  const getOptions = () => [
-    ...applications.map((application) => {
-      return {
-        label: application.label,
-        value: application.value,
-      };
-    }),
-  ];
+  const getOptions = () => {
+    const currValue = extensionHelper.getExtensionProperty(
+      element,
+      'applicationId'
+    );
+
+    const existing =
+      currValue == null || applications.map(e => e.value).includes(currValue);
+
+    return [
+      ...(existing ? [{ label: '', value: undefined }] : [{ label: `${currValue}*`, value: currValue }]),
+      ...applications.map((application) => {
+        return {
+          label: application.label,
+          value: application.value,
+        };
+      }),
+    ];
+  };
 
   const getValue = () =>
     extensionHelper.getExtensionProperty(element, 'applicationId');
@@ -219,7 +242,7 @@ function ApplicationIdText(props) {
 function PageId(props) {
   const { element, id } = props;
 
-  const { pages, setPages } = props.hooks;
+  const { pages, setPages, items, setItems } = props.hooks;
 
   const modeling = useService('modeling');
   const translate = useService('translate');
@@ -230,32 +253,50 @@ function PageId(props) {
   //   getPages().then(pages => setPages(pages));
   // }, [setPages]);
 
-  const getOptions = () => [
-    ...pages.map((page) => {
-      return {
-        label: page.label,
-        value: page.value,
-      };
-    }),
-  ];
+  const getOptions = () => {
+    const currValue = extensionHelper.getExtensionProperty(element, 'pageId');
+
+    const existing =
+      currValue == null || pages.map(e => e.value).includes(currValue);
+
+    return [
+      ...(existing ? [{ label: '', value: undefined }] : [{ label: `${currValue}*`, value: currValue }]),
+      ...pages.map((page) => {
+        return {
+          label: page.label,
+          value: page.value,
+        };
+      }),
+    ];
+  };
 
   const getValue = () =>
     extensionHelper.getExtensionProperty(element, 'pageId');
 
-  const setValue = value =>
+  const setValue = (value) => {
+    const applicationId = extensionHelper.getExtensionProperty(
+      element,
+      'applicationId'
+    );
+
     extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
       pageId: value,
     });
 
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Page'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions,
-  });
+    getItems(applicationId, value).then(items => setItems(items));
+  };
+
+  if (element.businessObject.manualInput === 'false') {
+    return new SelectEntry({
+      id: id,
+      element: element,
+      label: translate('Page'),
+      getValue: getValue,
+      setValue: setValue,
+      debounce: debounce,
+      getOptions: getOptions,
+    });
+  }
 }
 
 function PageIdText(props) {
@@ -274,14 +315,16 @@ function PageIdText(props) {
       pageId: value,
     });
 
-  return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: translate('Page ID'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
+  if (element.businessObject.manualInput === 'true') {
+    return new TextFieldEntry({
+      id: id,
+      element: element,
+      label: translate('Page ID'),
+      getValue: getValue,
+      setValue: setValue,
+      debounce: debounce,
+    });
+  }
 }
 
 function QuickpickItems(props) {
@@ -294,7 +337,7 @@ function QuickpickItems(props) {
   return new HeaderButton({
     id: id,
     element: element,
-    children: translate('Generate defaults'),
+    children: translate('Generate default items'),
     onClick: function () {
       listExtensionHelper.addSubElement(
         { element, bpmnFactory, commandStack },
