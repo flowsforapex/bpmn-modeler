@@ -13,7 +13,7 @@ import { updateProperties } from '../../helper/util';
 import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
-import PageItemsList from '../lists/PageItemsList';
+import PageItemsList from '../pageItems/PageItemsList';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 

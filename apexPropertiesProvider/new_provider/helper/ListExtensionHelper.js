@@ -4,9 +4,7 @@ import {
   createElement,
   createExtension,
   createExtensionElements,
-  getExtension,
-  nextId,
-  updateProperties
+  getExtension, updateProperties
 } from './util';
 
 import { without } from 'min-dash';
@@ -22,17 +20,53 @@ export default class ListExtensionHelper {
 
   // get extension element nested child by type
   getSubExtensionElements(element) {
-    const parameters = getExtension(element, this.type);
+    const { type, listAttr, entryAttr } = this;
+
+    const extension = getExtension(element, type);
+
+    if (entryAttr === null) {
+      return extension && extension[listAttr];
+    }
 
     return (
-      parameters &&
-      parameters[this.listAttr] &&
-      parameters[this.listAttr].get(this.entryAttr)
+      extension && extension[listAttr] && extension[listAttr].get(entryAttr)
     );
   }
 
   removeSubFactory({ commandStack, element, parameter }) {
     const { type, listAttr, entryAttr } = this;
+
+    if (entryAttr === null) {
+      return function (event) {
+        event.stopPropagation();
+
+        const extension = getExtension(element, type);
+
+        if (!extension) {
+          return;
+        }
+
+        const children = extension[listAttr];
+
+        if (!children) {
+          return;
+        }
+
+        const newChildren = without(children, parameter);
+
+        // remove entry from list
+        updateProperties(
+          {
+            element,
+            moddleElement: extension,
+            properties: {
+              [listAttr]: newChildren,
+            },
+          },
+          commandStack
+        );
+      };
+    }
 
     return function (event) {
       event.stopPropagation();
@@ -80,8 +114,70 @@ export default class ListExtensionHelper {
     };
   }
 
-  addSubFactory({ element, bpmnFactory, commandStack }) {
+  addSubFactory({ element, bpmnFactory, commandStack }, newProps) {
     const { type, listType, listAttr, entryType, entryAttr } = this;
+
+    if (listType === null && entryAttr === null) {
+      return function (event) {
+        event.stopPropagation();
+
+        const businessObject = getBusinessObject(element);
+
+        let extensionElements = businessObject.get('extensionElements');
+
+        // (1) ensure extension elements
+        if (!extensionElements) {
+          extensionElements = createExtensionElements(element, bpmnFactory);
+
+          updateProperties(
+            {
+              element,
+              moddleElement: businessObject,
+              properties: { extensionElements },
+            },
+            commandStack
+          );
+        }
+
+        // (2) ensure parent extension
+        let extension = getExtension(element, type);
+
+        if (!extension) {
+          extension = createExtension(type, {}, extensionElements, bpmnFactory);
+
+          updateProperties(
+            {
+              element,
+              moddleElement: extensionElements,
+              properties: {
+                values: [...extensionElements.get('values'), extension],
+              },
+            },
+            commandStack
+          );
+        }
+
+        // (3) create entry
+        const newEntry = createElement(
+          entryType,
+          newProps,
+          extension,
+          bpmnFactory
+        );
+
+        // (4) add entry to list
+        updateProperties(
+          {
+            element,
+            moddleElement: extension,
+            properties: {
+              [listAttr]: [...extension.get(listAttr), newEntry],
+            },
+          },
+          commandStack
+        );
+      };
+    }
 
     return function (event) {
       event.stopPropagation();
@@ -122,7 +218,7 @@ export default class ListExtensionHelper {
         );
       }
 
-      // (2) ensure list extension
+      // (3) ensure list extension
       let listContainer = extension[listAttr];
 
       if (!listContainer) {
@@ -140,18 +236,15 @@ export default class ListExtensionHelper {
         );
       }
 
-      // (3) create entry
+      // (4) create entry
       const newEntry = createElement(
         entryType,
-        {
-          itemName: nextId('PageItem_'),
-          itemValue: '',
-        },
+        newProps,
         listContainer,
         bpmnFactory
       );
 
-      // (4) add entry to list
+      // (5) add entry to list
       updateProperties(
         {
           element,
@@ -165,7 +258,8 @@ export default class ListExtensionHelper {
     };
   }
 
-  addSubElement({ element, bpmnFactory, commandStack }, props) {
+  // direct method needed for quickpicks
+  addSubElement({ element, bpmnFactory, commandStack }, newProps) {
     const { type, listType, listAttr, entryType, entryAttr } = this;
 
     const businessObject = getBusinessObject(element);
@@ -204,7 +298,7 @@ export default class ListExtensionHelper {
       );
     }
 
-    // (2) ensure list extension
+    // (3) ensure list extension
     let listContainer = extension[listAttr];
 
     if (!listContainer) {
@@ -225,7 +319,7 @@ export default class ListExtensionHelper {
     // (3) create entry
     const newEntry = createElement(
       entryType,
-      props,
+      newProps,
       listContainer,
       bpmnFactory
     );

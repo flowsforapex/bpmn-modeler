@@ -47,6 +47,7 @@ import externalUrlProps from './parts/userTask/externalUrlProps';
 */
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import procVarGroup from './parts/processVariables/ProcVarGroup';
 import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import apexPageProps from './parts/userTask/ApexPageProps';
 
@@ -400,24 +401,34 @@ function createInOutMappingTabGroups(
 }
 */
 
-function createApexPageGroup(element, injector, translate) {
-  const apexPageGroup = {
+function createApexPageSection(element, injector, translate) {
+  const apexPageSection = {
     id: 'apexPage',
     label: translate('Apex Page'),
     entries: apexPageProps(element, injector),
   };
 
-  return apexPageGroup;
+  return apexPageSection;
 }
 
-function createPlsqlGroup(element, injector, translate) {
-  const plsqlGroup = {
+function createPlsqlSection(element, injector, translate) {
+  const plsqlSection = {
     id: 'executePlsql',
     label: translate('PL/SQL'),
     entries: executePlsqlProps(element, injector),
   };
 
-  return plsqlGroup;
+  return plsqlSection;
+}
+
+function createProcVarSection(element, injector, translate) {
+  const procVarSection = {
+    id: 'procVars',
+    label: translate('Process Variables'),
+    entries: procVarGroup(element, injector),
+  };
+
+  return procVarSection;
 }
 
 export default function apexPropertiesProvider(
@@ -460,15 +471,19 @@ export default function apexPropertiesProvider(
 
   this.getGroups = function (element) {
     return function (groups) {
-      // add the apexPage group
+      // add the apexPage section
       if (is(element, 'bpmn:UserTask')) {
-        groups.push(createApexPageGroup(element, injector, translate));
+        groups.push(createApexPageSection(element, injector, translate));
       }
 
-      // add the plsql group
+      // add the plsql section
       if (is(element, 'bpmn:ScriptTask')) {
-        groups.push(createPlsqlGroup(element, injector, translate));
+        groups.push(createPlsqlSection(element, injector, translate));
       }
+
+      // add the procVar section
+      var procVarSection = createProcVarSection(element, injector, translate);
+      if (typeof procVarSection.entries !== 'undefined') { groups.push(procVarSection); }
 
       return groups;
     };

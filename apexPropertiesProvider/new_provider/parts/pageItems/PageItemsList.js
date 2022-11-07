@@ -1,5 +1,7 @@
 import ParameterProps from './PageItemProps';
 
+import { nextId } from '../../helper/util';
+
 export default function ParametersProps({ element, injector }, helper, hooks) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
@@ -29,10 +31,16 @@ export default function ParametersProps({ element, injector }, helper, hooks) {
 
   return {
     items,
-    add: helper.addSubFactory({
-      element,
-      bpmnFactory,
-      commandStack,
-    }),
+    add: helper.addSubFactory(
+      {
+        element,
+        bpmnFactory,
+        commandStack,
+      },
+      {
+        itemName: nextId('PageItem_'),
+        itemValue: '',
+      }
+    ),
   };
 }
