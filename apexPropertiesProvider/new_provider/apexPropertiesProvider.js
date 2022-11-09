@@ -47,6 +47,7 @@ import externalUrlProps from './parts/userTask/externalUrlProps';
 */
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import customTimerProps from './custom/CustomTimerProps';
 import procVarGroup from './parts/processVariables/ProcVarGroup';
 import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import apexPageProps from './parts/userTask/ApexPageProps';
@@ -431,6 +432,16 @@ function createProcVarSection(element, injector, translate) {
   return procVarSection;
 }
 
+function createTimerSection(element, injector, translate) {
+  const customTimerSection = {
+    id: 'customTimer',
+    label: translate('Timer'),
+    entries: customTimerProps(element, injector),
+  };
+
+  return customTimerSection;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -471,21 +482,29 @@ export default function apexPropertiesProvider(
 
   this.getGroups = function (element) {
     return function (groups) {
+      const newGroups = [];
+
       // add the apexPage section
       if (is(element, 'bpmn:UserTask')) {
-        groups.push(createApexPageSection(element, injector, translate));
+        newGroups.push(createApexPageSection(element, injector, translate));
       }
 
       // add the plsql section
       if (is(element, 'bpmn:ScriptTask')) {
-        groups.push(createPlsqlSection(element, injector, translate));
+        newGroups.push(createPlsqlSection(element, injector, translate));
       }
 
       // add the procVar section
-      var procVarSection = createProcVarSection(element, injector, translate);
-      if (typeof procVarSection.entries !== 'undefined' && procVarSection.entries.length > 0) {
-        groups.push(procVarSection);
-      }
+      newGroups.push(createProcVarSection(element, injector, translate));
+
+      // add the custom timer section
+      newGroups.push(createTimerSection(element, injector, translate));
+
+      newGroups.forEach((g) => {
+        if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
+      });
+      
+      // groups = groups.filter(g => g.id != 'timer');
 
       return groups;
     };
