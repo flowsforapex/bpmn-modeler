@@ -1,7 +1,5 @@
 import ParameterProps from './ProcVarProps';
 
-import { nextId } from '../../helper/util';
-
 export default function ParametersProps({ element, injector }, helper) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
@@ -13,7 +11,7 @@ export default function ParametersProps({ element, injector }, helper) {
 
     return {
       id,
-      label: parameter.get('varName') || '',
+      label: `${parameter.get('varSequence')} - ${parameter.get('varName')}` || '',
       entries: ParameterProps({
         idPrefix: id,
         element,
@@ -37,7 +35,9 @@ export default function ParametersProps({ element, injector }, helper) {
         commandStack,
       },
       {
-        varName: nextId('ProcVar_'),
+        // varName: nextId('ProcVar_'),
+        varName: helper.getNextName(element),
+        varSequence: helper.getNextSequence(element)
       }
     ),
   };

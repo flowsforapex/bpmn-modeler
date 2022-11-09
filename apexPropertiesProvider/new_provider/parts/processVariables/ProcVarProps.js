@@ -1,9 +1,7 @@
 import {
-  HeaderButton,
-  isSelectEntryEdited,
+  HeaderButton, isNumberFieldEntryEdited, isSelectEntryEdited,
   isTextAreaEntryEdited,
-  isTextFieldEntryEdited,
-  SelectEntry,
+  isTextFieldEntryEdited, NumberFieldEntry, SelectEntry,
   TextAreaEntry,
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
@@ -18,6 +16,13 @@ export default function ParameterProps(props) {
   const { idPrefix, parameter } = props;
 
   return [
+    {
+      id: `${idPrefix}-varSequence`,
+      component: VarSequence,
+      idPrefix,
+      parameter,
+      isEdited: isNumberFieldEntryEdited,
+    },
     {
       id: `${idPrefix}-varName`,
       component: VarName,
@@ -57,6 +62,38 @@ export default function ParameterProps(props) {
       component: PlsqlCodeEditor,
     },
   ];
+}
+
+function VarSequence(props) {
+  const { idPrefix, element, parameter } = props;
+
+  const commandStack = useService('commandStack');
+  const translate = useService('translate');
+  const debounce = useService('debounceInput');
+
+  const setValue = (value) => {
+    updateProperties(
+      {
+        element,
+        moddleElement: parameter,
+        properties: {
+          varSequence: value,
+        },
+      },
+      commandStack
+    );
+  };
+
+  const getValue = parameter => parameter.varSequence;
+
+  return NumberFieldEntry({
+    element: parameter,
+    id: `${idPrefix}-varSequence`,
+    label: translate('Sequence'),
+    getValue,
+    setValue,
+    debounce,
+  });
 }
 
 function VarName(props) {

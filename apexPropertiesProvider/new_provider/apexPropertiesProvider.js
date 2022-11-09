@@ -483,7 +483,9 @@ export default function apexPropertiesProvider(
 
       // add the procVar section
       var procVarSection = createProcVarSection(element, injector, translate);
-      if (typeof procVarSection.entries !== 'undefined') { groups.push(procVarSection); }
+      if (typeof procVarSection.entries !== 'undefined' && procVarSection.entries.length > 0) {
+        groups.push(procVarSection);
+      }
 
       return groups;
     };
