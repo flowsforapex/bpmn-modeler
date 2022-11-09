@@ -24,7 +24,7 @@ export default class ListExtensionHelper {
   }
 
   getNextSequence(element) {
-    return (this.getSubExtensionElements(element) ? this.getSubExtensionElements(element).length : 0);
+    return String((this.getSubExtensionElements(element) ? this.getSubExtensionElements(element).length : 0));
   }
 
   // get extension element nested child by type

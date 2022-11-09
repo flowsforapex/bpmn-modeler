@@ -77,7 +77,7 @@ function VarSequence(props) {
         element,
         moddleElement: parameter,
         properties: {
-          varSequence: value,
+          varSequence: String(value),
         },
       },
       commandStack
