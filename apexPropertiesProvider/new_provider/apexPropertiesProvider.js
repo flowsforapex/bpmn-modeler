@@ -47,10 +47,11 @@ import externalUrlProps from './parts/userTask/externalUrlProps';
 */
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
-import customTimerProps from './custom/CustomTimerProps';
 import procVarGroup from './parts/processVariables/ProcVarGroup';
 import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import apexPageProps from './parts/userTask/ApexPageProps';
+
+import customTimerProps, { isTimerSupported } from './custom/CustomTimerProps';
 
 var domQuery = require('min-dom').query;
 
@@ -498,7 +499,7 @@ export default function apexPropertiesProvider(
       newGroups.push(createProcVarSection(element, injector, translate));
 
       // add the custom timer section
-      newGroups.push(createTimerSection(element, injector, translate));
+      if (isTimerSupported(element)) newGroups.push(createTimerSection(element, injector, translate));
 
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);

@@ -44,9 +44,10 @@ export default class ExtensionHelper {
       updatedBusinessObject = extensionElements;
 
       extensionElement = createExtension(
+        this.type,
+        values,
         extensionElements,
-        bpmnFactory,
-        values
+        bpmnFactory
       );
 
       update = {
