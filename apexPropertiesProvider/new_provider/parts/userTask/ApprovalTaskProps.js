@@ -1,42 +1,28 @@
 import {
-  HeaderButton,
   isSelectEntryEdited,
-  isTextFieldEntryEdited,
-  ListGroup,
-  SelectEntry,
+  isTextFieldEntryEdited, SelectEntry,
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
-import ExtensionHelper from '../../helper/ExtensionHelper';
-import ListExtensionHelper from '../../helper/ListExtensionHelper';
+import { updateProperties } from '../../helper/util';
 
-import PageItemsList from '../pageItems/PageItemsList';
+import ExtensionHelper from '../../helper/ExtensionHelper';
+
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
 import {
-  getApplications,
-  getItems,
-  getPages
+  getApplications
 } from '../../plugins/metaDataCollector';
 
-const extensionHelper = new ExtensionHelper('apex:ApexPage');
-
-const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
-);
+const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
 export default function (element, injector) {
   const [applications, setApplications] = useState([]);
-  const [pages, setPages] = useState([]);
-  const [items, setItems] = useState([]);
+  const [tasks, setTasks] = useState([]);
 
-  if (element.businessObject.type === 'apexPage') { // TODO undefined possible without unfinite loop ?
+  if (element.businessObject.type === 'apexApproval') {
     return [
       {
         id: 'inputSelection',
@@ -50,10 +36,8 @@ export default function (element, injector) {
         hooks: {
           applications,
           setApplications,
-          pages,
-          setPages,
-          items,
-          setItems,
+          tasks,
+          setTasks,
         },
         component: ApplicationId,
         isEdited: isSelectEntryEdited,
@@ -65,39 +49,22 @@ export default function (element, injector) {
         isEdited: isTextFieldEntryEdited,
       },
       {
-        id: 'pageId',
+        id: 'taskStaticId',
         element,
         hooks: {
           applications,
           setApplications,
-          pages,
-          setPages,
-          items,
-          setItems,
+          tasks,
+          setTasks,
         },
-        component: PageId,
+        component: TaskStaticId,
         isEdited: isSelectEntryEdited,
       },
       {
-        id: 'pageIdText',
+        id: 'taskStaticIdText',
         element,
-        component: PageIdText,
+        component: TaskStaticIdText,
         isEdited: isTextFieldEntryEdited,
-      },
-      {
-        id: 'quickpick-items',
-        element,
-        component: QuickpickItems,
-      },
-      {
-        id: 'pageItems',
-        element,
-        label: 'Page Items',
-        component: ListGroup,
-        ...PageItemsList({ element, injector }, listExtensionHelper, {
-          items,
-          setItems,
-        }),
       },
     ];
   }
@@ -116,9 +83,16 @@ function InputSelection(props) {
     var value = element.businessObject.manualInput;
 
     if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        manualInput: value,
-      });
+      updateProperties(
+        {
+          element,
+          moddleElement: element.businessObject,
+          properties: {
+            manualInput: 'false',
+          },
+        },
+        commandStack
+      );
     }
 
     return element.businessObject.manualInput;
@@ -149,7 +123,7 @@ function InputSelection(props) {
 function ApplicationId(props) {
   const { element, id } = props;
 
-  const { applications, setApplications, pages, setPages } = props.hooks;
+  const { applications, setApplications, tasks, setTasks } = props.hooks;
 
   const modeling = useService('modeling');
   const translate = useService('translate');
@@ -188,7 +162,7 @@ function ApplicationId(props) {
       applicationId: value,
     });
 
-    getPages(value).then(pages => setPages(pages));
+    getTasks(value).then(tasks => setTasks(tasks));
   };
 
   if (element.businessObject.manualInput === 'false') {
@@ -233,10 +207,10 @@ function ApplicationIdText(props) {
   }
 }
 
-function PageId(props) {
+function TaskStaticId(props) {
   const { element, id } = props;
 
-  const { pages, setPages, items, setItems } = props.hooks;
+  const { tasks, setTasks } = props.hooks;
 
   const modeling = useService('modeling');
   const translate = useService('translate');
@@ -244,43 +218,36 @@ function PageId(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(element, 'pageId');
+    const currValue = extensionHelper.getExtensionProperty(element, 'taskStaticId');
 
     const existing =
-      currValue == null || pages.map(e => e.value).includes(currValue);
+      currValue == null || tasks.map(e => e.value).includes(currValue);
 
     return [
       ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...pages.map((page) => {
+      ...tasks.map((task) => {
         return {
-          label: page.label,
-          value: page.value,
+          label: task.label,
+          value: task.value,
         };
       }),
     ];
   };
 
   const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'pageId');
+    extensionHelper.getExtensionProperty(element, 'taskStaticId');
 
   const setValue = (value) => {
-    const applicationId = extensionHelper.getExtensionProperty(
-      element,
-      'applicationId'
-    );
-
     extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      pageId: value,
+      taskStaticId: value,
     });
-
-    getItems(applicationId, value).then(items => setItems(items));
   };
 
   if (element.businessObject.manualInput === 'false') {
     return new SelectEntry({
       id: id,
       element: element,
-      label: translate('Page'),
+      label: translate('Task Definition'),
       getValue: getValue,
       setValue: setValue,
       debounce: debounce,
@@ -289,7 +256,7 @@ function PageId(props) {
   }
 }
 
-function PageIdText(props) {
+function TaskStaticIdText(props) {
   const { element, id } = props;
 
   const modeling = useService('modeling');
@@ -298,57 +265,21 @@ function PageIdText(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'pageId');
+    extensionHelper.getExtensionProperty(element, 'taskStaticId');
 
   const setValue = value =>
     extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      pageId: value,
+      taskStaticId: value,
     });
 
   if (element.businessObject.manualInput === 'true') {
     return new TextFieldEntry({
       id: id,
       element: element,
-      label: translate('Page ID'),
+      label: translate('Task Definition Static ID'),
       getValue: getValue,
       setValue: setValue,
       debounce: debounce,
     });
   }
-}
-
-function QuickpickItems(props) {
-  const { element, id } = props;
-
-  const translate = useService('translate');
-  const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
-
-  return new HeaderButton({
-    id: id,
-    children: translate('Generate default items'),
-    onClick: function () {
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'PROCESS_ID',
-          itemValue: '&F4A$PROCESS_ID.',
-        }
-      );
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'SUBFLOW_ID',
-          itemValue: '&F4A$SUBFLOW_ID.',
-        }
-      );
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'STEP_KEY',
-          itemValue: '&F4A$STEP_KEY.',
-        }
-      );
-    },
-  });
 }

@@ -14,8 +14,9 @@ export function getApplications() {
       .then(pData => pData);
   }
   return Promise.resolve([
-    { label: 'AppEins', value: '1' },
-    { label: 'AppZwei', value: '2' },
+    { label: '', value: null },
+    { label: 'App001', value: '1' },
+    { label: 'App002', value: '2' },
   ]);
 }
 
@@ -37,11 +38,13 @@ export function getPages(applicationId) {
   }
   if (applicationId === '1') {
     return Promise.resolve([
+      { label: '', value: null },
       { label: 'Page001', value: '1' },
       { label: 'Page002', value: '2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
+      { label: '', value: null },
       { label: 'PageA', value: '1' },
       { label: 'PageB', value: '2' },
       { label: 'PageC', value: '2' },

@@ -22,80 +22,83 @@ export default function (element, injector) {
   const timerEventDefinition = getTimerEventDefinition(element);
   const timerEventDefinitionType = getTimerDefinitionType(timerEventDefinition);
 
-  return [
-    {
-      id: 'timerDefinitionType',
-      element,
-      component: TimerDefinitionType,
-      isEdited: isSelectEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'timerDefinition',
-      element,
-      component: TimerDefinition,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'dateString',
-      element,
-      component: DateString,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'formatMask',
-      element,
-      component: FormatMask,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'intervalYM',
-      element,
-      component: IntervalYM,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'intervalDS',
-      element,
-      component: IntervalDS,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'startIntervalDS',
-      element,
-      component: StartIntervalDS,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'repeatIntervalDS',
-      element,
-      component: RepeatIntervalDS,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-    {
-      id: 'maxRuns',
-      element,
-      component: MaxRuns,
-      isEdited: isTextFieldEntryEdited,
-      timerEventDefinition,
-      timerEventDefinitionType
-    },
-  ];
+  if (isTimerSupported()) {
+    return [
+      {
+        id: 'timerDefinitionType',
+        element,
+        component: TimerDefinitionType,
+        isEdited: isSelectEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'timerDefinition',
+        element,
+        component: TimerDefinition,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'dateString',
+        element,
+        component: DateString,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'formatMask',
+        element,
+        component: FormatMask,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'intervalYM',
+        element,
+        component: IntervalYM,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'intervalDS',
+        element,
+        component: IntervalDS,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'startIntervalDS',
+        element,
+        component: StartIntervalDS,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'repeatIntervalDS',
+        element,
+        component: RepeatIntervalDS,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+      {
+        id: 'maxRuns',
+        element,
+        component: MaxRuns,
+        isEdited: isTextFieldEntryEdited,
+        timerEventDefinition,
+        timerEventDefinitionType
+      },
+    ];
+  }
+  return [];
 }
 
 function getTimerDefinitionType(timer) {
@@ -114,7 +117,7 @@ function getTimerDefinitionType(timer) {
   return type;
 }
 
-export function isTimerSupported(element) {
+function isTimerSupported(element) {
   return ModelingUtil.isAny(element, ['bpmn:StartEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:BoundaryEvent']) && !!getTimerEventDefinition(element);
 }
 
