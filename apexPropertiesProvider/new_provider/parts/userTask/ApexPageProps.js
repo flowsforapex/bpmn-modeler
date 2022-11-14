@@ -36,7 +36,7 @@ export default function (element, injector) {
   const [pages, setPages] = useState([]);
   const [items, setItems] = useState([]);
 
-  if (element.businessObject.type === 'apexPage') { // TODO undefined possible without unfinite loop ?
+  if (element.businessObject.type === 'apexPage' || typeof element.businessObject.type === 'undefined') {
     return [
       {
         id: 'inputSelection',
@@ -110,14 +110,13 @@ function InputSelection(props) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
-  const commandStack = useService('commandStack');
 
   const getValue = () => {
     var value = element.businessObject.manualInput;
 
     if (typeof value === 'undefined') {
       modeling.updateProperties(element, {
-        manualInput: value,
+        manualInput: 'false',
       });
     }
 

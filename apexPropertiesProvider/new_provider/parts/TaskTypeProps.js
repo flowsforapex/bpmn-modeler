@@ -38,14 +38,14 @@ function TaskType(props) {
       // { label: translate('External URL'), value: 'externalUrl' },
       { label: translate('APEX Approval'), value: 'apexApproval' },
     ],
-    'bpmn:serviceTask': [
+    'bpmn:ServiceTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
       { label: translate('Send Mail'), value: 'sendMail' },
     ],
-    'bpmn:scriptTask': [
+    'bpmn:ScriptTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' }
     ],
-    'bpmn:businessRuleTask': [
+    'bpmn:BusinessRuleTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
   };
