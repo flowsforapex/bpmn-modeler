@@ -22,7 +22,7 @@ export default function (element, injector) {
   const timerEventDefinition = getTimerEventDefinition(element);
   const timerEventDefinitionType = getTimerDefinitionType(timerEventDefinition);
 
-  if (isTimerSupported()) {
+  if (isTimerSupported(element)) {
     return [
       {
         id: 'timerDefinitionType',

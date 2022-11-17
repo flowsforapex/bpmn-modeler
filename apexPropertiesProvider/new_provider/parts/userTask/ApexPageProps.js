@@ -1,10 +1,10 @@
 import {
   HeaderButton,
   isSelectEntryEdited,
-  isTextFieldEntryEdited,
-  ListGroup,
+  isTextFieldEntryEdited, isToggleSwitchEntryEdited, ListGroup,
   SelectEntry,
-  TextFieldEntry
+  TextFieldEntry,
+  ToggleSwitchEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -42,7 +42,7 @@ export default function (element, injector) {
         id: 'inputSelection',
         element,
         component: InputSelection,
-        isEdited: isSelectEntryEdited,
+        isEdited: isToggleSwitchEntryEdited,
       },
       {
         id: 'applicationId',
@@ -120,28 +120,28 @@ function InputSelection(props) {
       });
     }
 
-    return element.businessObject.manualInput;
+    return element.businessObject.manualInput === 'false';
   };
 
   const setValue = (value) => {
     modeling.updateProperties(element, {
-      manualInput: value,
+      manualInput: value ? 'false' : 'true',
     });
   };
 
-  return new SelectEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
-    label: translate('Input'),
+    label: translate('Use APEX meta data'),
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate('Use APEX meta data'), value: 'false' },
-        { label: translate('Manual input'), value: 'true' },
-      ];
-    },
+    // getOptions: function () {
+    //   return [
+    //     { label: translate('Use APEX meta data'), value: 'false' },
+    //     { label: translate('Manual input'), value: 'true' },
+    //   ];
+    // },
   });
 }
 

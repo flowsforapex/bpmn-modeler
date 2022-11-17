@@ -76,8 +76,8 @@ export default function apexPropertiesProvider(
   injector,
   translate
 ) {
-  const canvas = domQuery('#canvas');
-  const parentNode = domQuery('#properties');
+  const canvas = domQuery('.canvas');
+  const parentNode = domQuery('.properties-panel-parent');
 
   var mouseX;
   const BORDER_WIDTH = 5;
@@ -136,7 +136,7 @@ export default function apexPropertiesProvider(
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
       
-      // groups = groups.filter(g => g.id != 'timer');
+      groups = groups.filter(g => g.id !== 'timer');
 
       return groups;
     };
