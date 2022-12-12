@@ -7,6 +7,8 @@ import apexApprovalProps from './parts/userTask/ApprovalTaskProps';
 import customTimerProps from './custom/CustomTimerProps';
 import taskTypeProps from './parts/TaskTypeProps';
 
+import assignmentProps from './parts/assignment/AssignmentProps';
+
 var domQuery = require('min-dom').query;
 
 const LOW_PRIORITY = 500;
@@ -71,6 +73,16 @@ function createTaskTypeSection(element, injector, translate) {
   return taskTypeSection;
 }
 
+function createAssignmentSection(element, injector, translate) {
+  const assignmentSection = {
+    id: 'assignment',
+    label: translate('Assignment'),
+    entries: assignmentProps(element, injector),
+  };
+
+  return assignmentSection;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -125,6 +137,8 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:ScriptTask')) {
         newGroups.push(createPlsqlSection(element, injector, translate));
       }
+
+      newGroups.push(createAssignmentSection(element, injector, translate));
 
       // add the procVar section
       newGroups.push(createProcVarSection(element, injector, translate));
