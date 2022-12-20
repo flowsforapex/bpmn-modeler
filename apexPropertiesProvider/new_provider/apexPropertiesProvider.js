@@ -9,6 +9,8 @@ import taskTypeProps from './parts/TaskTypeProps';
 
 import assignmentProps from './parts/assignment/AssignmentProps';
 
+import processProps from './parts/process/ProcessProps';
+
 var domQuery = require('min-dom').query;
 
 const LOW_PRIORITY = 500;
@@ -83,6 +85,16 @@ function createAssignmentSection(element, injector, translate) {
   return assignmentSection;
 }
 
+function createProcessSection(element, injector, translate) {
+  const processSection = {
+    id: 'process',
+    label: translate('Process'),
+    entries: processProps(element, injector),
+  };
+
+  return processSection;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -127,6 +139,10 @@ export default function apexPropertiesProvider(
 
       newGroups.push(createTaskTypeSection(element, injector, translate));
 
+      if (is(element, 'bpmn:UserTask')) {
+        newGroups.push(createAssignmentSection(element, injector, translate));
+      }
+
       // add the apexPage section
       if (is(element, 'bpmn:UserTask')) {
         newGroups.push(createApexPageSection(element, injector, translate));
@@ -138,13 +154,18 @@ export default function apexPropertiesProvider(
         newGroups.push(createPlsqlSection(element, injector, translate));
       }
 
-      newGroups.push(createAssignmentSection(element, injector, translate));
-
       // add the procVar section
       newGroups.push(createProcVarSection(element, injector, translate));
 
       // add the custom timer section
       newGroups.push(createCustomTimerSection(element, injector, translate));
+
+      // add the process section
+      if (is(element, 'bpmn:Process')) {
+        newGroups.push(createProcessSection(element, injector, translate));
+      }
+
+      /** *** filter *****/
 
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);

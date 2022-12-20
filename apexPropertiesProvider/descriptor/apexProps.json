@@ -15,6 +15,11 @@
           "name": "isCallable",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "isStartable",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
