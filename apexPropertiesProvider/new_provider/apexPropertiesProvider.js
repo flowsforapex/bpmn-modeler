@@ -11,6 +11,8 @@ import assignmentProps from './parts/assignment/AssignmentProps';
 
 import executionProps from './parts/process/ExecutionProps';
 
+import schedulingProps from './parts/scheduling/SchedulingProps';
+
 var domQuery = require('min-dom').query;
 
 const LOW_PRIORITY = 500;
@@ -95,6 +97,16 @@ function createExecutionSection(element, injector, translate) {
   return executionSection;
 }
 
+function createSchedulingSection(element, injector, translate) {
+  const schedulingSection = {
+    id: 'scheduling',
+    label: translate('Scheduling'),
+    entries: schedulingProps(element, injector),
+  };
+
+  return schedulingSection;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -163,6 +175,11 @@ export default function apexPropertiesProvider(
       // add the process section
       if (is(element, 'bpmn:Process')) {
         newGroups.push(createExecutionSection(element, injector, translate)); // check passing translate even needed here?
+      }
+
+      // add the scheduling section
+      if (is(element, 'bpmn:UserTask') || is(element, 'bpmn:Process')) {
+        newGroups.push(createSchedulingSection(element, injector, translate));
       }
 
       /** *** filter *****/
