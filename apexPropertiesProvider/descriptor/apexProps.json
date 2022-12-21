@@ -540,6 +540,48 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "PotentialStartingUsers",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "PotentialStartingGroups",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ExcludedStartingUsers",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
     }
   ]
 }

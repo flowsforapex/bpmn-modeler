@@ -9,7 +9,7 @@ import taskTypeProps from './parts/TaskTypeProps';
 
 import assignmentProps from './parts/assignment/AssignmentProps';
 
-import processProps from './parts/process/ProcessProps';
+import executionProps from './parts/process/ExecutionProps';
 
 var domQuery = require('min-dom').query;
 
@@ -85,14 +85,14 @@ function createAssignmentSection(element, injector, translate) {
   return assignmentSection;
 }
 
-function createProcessSection(element, injector, translate) {
-  const processSection = {
-    id: 'process',
-    label: translate('Process'),
-    entries: processProps(element, injector),
+function createExecutionSection(element, injector, translate) {
+  const executionSection = {
+    id: 'execution',
+    label: translate('Execution'),
+    entries: executionProps(element, injector),
   };
 
-  return processSection;
+  return executionSection;
 }
 
 export default function apexPropertiesProvider(
@@ -162,7 +162,7 @@ export default function apexPropertiesProvider(
 
       // add the process section
       if (is(element, 'bpmn:Process')) {
-        newGroups.push(createProcessSection(element, injector, translate));
+        newGroups.push(createExecutionSection(element, injector, translate)); // check passing translate even needed here?
       }
 
       /** *** filter *****/
