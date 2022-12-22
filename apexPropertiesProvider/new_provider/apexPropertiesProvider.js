@@ -197,7 +197,6 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:Lane')) {
         newGroups.push(createRoleSection(element, injector, translate));
       }
-      
 
       /** *** filter *****/
 

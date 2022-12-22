@@ -598,6 +598,28 @@
       ]
     },
     {
+      "name": "DueDate",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "valueType",
+          "type": "String"
+        },
+        {
+          "name": "formatMask",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "LaneAttributes",
       "extends": [ "bpmn:Lane" ],
       "properties": [
