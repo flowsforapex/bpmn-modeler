@@ -596,6 +596,22 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "LaneAttributes",
+      "extends": [ "bpmn:Lane" ],
+      "properties": [
+        {
+          "name": "isRole",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "role",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
     }
   ]
 }

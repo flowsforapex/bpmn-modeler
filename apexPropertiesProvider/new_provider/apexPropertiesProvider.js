@@ -11,6 +11,7 @@ import assignmentProps from './parts/assignment/AssignmentProps';
 
 import executionProps from './parts/process/ExecutionProps';
 
+import roleProps from './parts/lanes/RoleProps';
 import schedulingProps from './parts/scheduling/SchedulingProps';
 
 var domQuery = require('min-dom').query;
@@ -20,7 +21,7 @@ const LOW_PRIORITY = 500;
 function createApexPageSection(element, injector, translate) {
   const apexPageSection = {
     id: 'apexPage',
-    label: translate('Apex Page'),
+    label: translate('APEX Page'),
     entries: apexPageProps(element, injector),
   };
 
@@ -30,7 +31,7 @@ function createApexPageSection(element, injector, translate) {
 function createApexApprovalSection(element, injector, translate) {
   const apexApprovalSection = {
     id: 'apexApproval',
-    label: translate('Apex Approval'),
+    label: translate('APEX Approval'),
     entries: apexApprovalProps(element, injector),
   };
 
@@ -107,6 +108,16 @@ function createSchedulingSection(element, injector, translate) {
   return schedulingSection;
 }
 
+function createRoleSection(element, injector, translate) {
+  const roleSection = {
+    id: 'role',
+    label: translate('APEX Role'),
+    entries: roleProps(element, injector),
+  };
+
+  return roleSection;
+}
+
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -181,6 +192,12 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:UserTask') || is(element, 'bpmn:Process')) {
         newGroups.push(createSchedulingSection(element, injector, translate));
       }
+
+      // add the role section
+      if (is(element, 'bpmn:Lane')) {
+        newGroups.push(createRoleSection(element, injector, translate));
+      }
+      
 
       /** *** filter *****/
 

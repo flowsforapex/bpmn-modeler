@@ -1,5 +1,5 @@
 import {
-  CollapsibleEntry, HeaderButton,
+  Group, HeaderButton,
   isSelectEntryEdited, isTextAreaEntryEdited, SelectEntry, TextAreaEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
@@ -32,7 +32,7 @@ function Priority(props) {
 
   const translate = useService('translate');
 
-  return new CollapsibleEntry({
+  return new Group({
     id: id,
     element: element,
     label: translate('Priority'),
@@ -183,7 +183,7 @@ function DueDate(props) {
 
   const translate = useService('translate');
 
-  return new CollapsibleEntry({
+  return new Group({
     id: id,
     element: element,
     label: translate('Due Date'),
