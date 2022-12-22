@@ -177,6 +177,8 @@ export default function apexPropertiesProvider(
         newGroups.push(createPlsqlSection(element, injector, translate));
       }
 
+      // TODO fix: new properties break the saveXML function call
+
       // add the procVar section
       newGroups.push(createProcVarSection(element, injector, translate));
 
@@ -185,7 +187,7 @@ export default function apexPropertiesProvider(
 
       // add the process section
       if (is(element, 'bpmn:Process')) {
-        newGroups.push(createExecutionSection(element, injector, translate)); // check passing translate even needed here?
+        newGroups.push(createExecutionSection(element, injector, translate)); // TODO check passing translate even needed here?
       }
 
       // add the scheduling section
