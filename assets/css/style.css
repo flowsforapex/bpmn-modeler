@@ -18,6 +18,12 @@
   margin: 2px 32px 6px 12px;
 }
 
+.bio-properties-panel-quickpick {
+  cursor: pointer;
+  color: #52B415;
+  margin-inline-start: 12px;
+}
+
 /** 
  * monaco editor
  */
