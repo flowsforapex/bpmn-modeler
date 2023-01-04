@@ -248,13 +248,15 @@ function DueDateExpressionType(props) {
 
   const getOptions = () => [
       { label: '', value: undefined }, // TODO not needed if using default value above
-      { label: translate('Static Value (Timestamp)'), value: 'staticTimestamp' },
-      { label: translate('Static Value (Duration)'), value: 'staticDuration' },
-      { label: translate('Static Value (Scheduler Syntax)'), value: 'staticScheduler' },
+      { label: translate('Static'), value: 'static' },
+      { label: translate('Interval'), value: 'interval' },
+      { label: translate('Scheduler Expression'), value: 'oracleScheduler' },
       { label: translate('Process Variable'), value: 'processVariable' },
-      { label: translate('SQL query'), value: 'sqlQuery'},
-      { label: translate('Expression'), value: 'plsqlExpression' },
-      { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+      { label: translate('SQL query'), value: 'sqlQuerySingle' },
+      { label: translate('Expression'), value: 'plsqlRawExpression' },
+      { label: translate('Expression returning VC2 (legacy)'), value: 'plsqlExpression' },
+      { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
+      { label: translate('Function Body returning VC2 (legacy)'), value: 'plsqlFunctionBody' },
     ];
 
   return new SelectEntry({
@@ -284,7 +286,7 @@ function DueDateFormatMask(props) {
       formatMask: value,
     });
 
-  if (dueDateHelper.getExtensionProperty(element, 'expressionType') === 'staticTimestamp') {
+  if (dueDateHelper.getExtensionProperty(element, 'expressionType') === 'static') {
     return [
         new TextFieldEntry({
         id: id,
@@ -299,7 +301,7 @@ function DueDateFormatMask(props) {
           text: 'Oracle',
           handler: () => {
             dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'oracle',
+              formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
             });
           }
         },
@@ -307,7 +309,7 @@ function DueDateFormatMask(props) {
           text: 'ISO',
           handler: () => {
             dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'iso',
+              formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
             });
           }
         }
@@ -332,6 +334,24 @@ function DueDateExpression(props) {
       expression: value,
     });
 
+  const getDescription = () => {
+    const value = dueDateHelper.getExtensionProperty(element, 'expressionType');
+
+    switch (value) {
+      case 'static': return 'Timestamp with Timezone in ISO 8601 or Oracle format';
+      case 'interval': return 'Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format';
+      case 'oracleScheduler': return 'Oracle Scheduler Expression';
+      case 'processVariable': return 'Name of the Process Variable (type Timestamp with Timezone)';
+      case 'sqlQuerySingle': return 'SQL query returning Timestamp with Timezone';
+      case 'plsqlRawExpression': return 'PL/SQL Expression returning Timestamp with Timezone';
+      case 'plsqlExpression': return 'PL/SQL Expression returning VC2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
+      case 'plsqlRawFunctionBody': return 'PL/SQL Function Body returning Timestamp with Timezone';
+      case 'plsqlFunctionBody': return 'PL/SQL Function Body returning VC2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
+      default: return '';
+    }
+
+  };  
+
   return new TextAreaEntry({
     id: id,
     element: element,
@@ -339,6 +359,7 @@ function DueDateExpression(props) {
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
+    description: getDescription()
   });
 }
 
@@ -360,8 +381,10 @@ function DueDateExpressionEditor(props) {
 
   if (
     [
-      'sqlQuery',
+      'sqlQuerySingle',
+      'plsqlRawExpression',
       'plsqlExpression',
+      'plsqlRawFunctionBody',
       'plsqlFunctionBody',
     ].includes(expressionType)
   ) {
