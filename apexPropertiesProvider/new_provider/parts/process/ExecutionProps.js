@@ -56,17 +56,19 @@ function IsCallable(props) {
   const translate = useService('translate');
   const debounce = useService('debounceInput');
 
-  const getValue = () => {
-    var value = element.businessObject.isCallable;
+  const getValue = () => 
+    // TODO default value not working in APEX atm
+    
+    // var value = element.businessObject.isCallable;
 
-    if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        isCallable: 'false',
-      });
-    }
+    // if (typeof value === 'undefined') {
+    //   modeling.updateProperties(element, {
+    //     isCallable: 'false',
+    //   });
+    // }
 
-    return (element.businessObject.isCallable === 'true');
-  };
+     (element.businessObject.isCallable === 'true')
+  ;
 
   const setValue = (value) => {
     modeling.updateProperties(element, {
@@ -93,19 +95,20 @@ function IsStartable(props) {
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => {
-    var value = element.businessObject.isStartable;
+  const getValue = () => 
+    // TODO default value not working in APEX atm
+    
+    // var value = element.businessObject.isStartable;
 
-    if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        isStartable: 'false',
-      });
-    }
+    // if (typeof value === 'undefined') {
+    //   modeling.updateProperties(element, {
+    //     isStartable: 'false',
+    //   });
+    // }
 
-    return (element.businessObject.isStartable === 'true');
-  };
+     (element.businessObject.isStartable === 'true')
+  ;
 
   const setValue = (value) => {
     modeling.updateProperties(element, {

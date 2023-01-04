@@ -177,8 +177,6 @@ export default function apexPropertiesProvider(
         newGroups.push(createPlsqlSection(element, injector, translate));
       }
 
-      // TODO fix: new properties break the saveXML function call
-
       // add the procVar section
       newGroups.push(createProcVarSection(element, injector, translate));
 
