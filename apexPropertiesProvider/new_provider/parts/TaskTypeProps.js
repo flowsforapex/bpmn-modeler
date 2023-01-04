@@ -1,21 +1,15 @@
 import { SelectEntry } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
-
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
-
-export default function (element, injector) {
-  if (ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
-    return [
-      {
-        id: 'taskType',
-        element,
-        component: TaskType,
-        // isEdited: isSelectEntryEdited,
-      },
-    ];
-  }
-  return [];
+export default function (element) {
+  return [
+    {
+      id: 'taskType',
+      element,
+      component: TaskType,
+      // isEdited: isSelectEntryEdited,
+    },
+  ];
 }
 
 function TaskType(props) {

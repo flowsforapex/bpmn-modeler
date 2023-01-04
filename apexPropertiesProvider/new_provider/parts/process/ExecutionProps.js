@@ -12,7 +12,7 @@ const potentialStartingUsersHelper = new ExtensionHelper('apex:PotentialStarting
 const potentialStartingGroupsHelper = new ExtensionHelper('apex:PotentialStartingGroups');
 const excludedStartingUsersHelper = new ExtensionHelper('apex:ExcludedStartingUsers');
 
-export default function (element, injector) {
+export default function (element) {
   const entries = [
     {
       id: 'isCallable',

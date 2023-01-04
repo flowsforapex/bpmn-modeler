@@ -1,17 +1,14 @@
 import { ListGroup } from '@bpmn-io/properties-panel';
-import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import ProcVarList from './ProcVarList';
 
+var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+
 export default function (element, injector) {
   if (
-    is(element, 'bpmn:Task') ||
-    is(element, 'bpmn:UserTask') ||
-    is(element, 'bpmn:ScriptTask') ||
-    is(element, 'bpmn:ServiceTask') ||
-    is(element, 'bpmn:ManualTask')
+    ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
   ) {
     return [
       {
@@ -48,10 +45,7 @@ export default function (element, injector) {
       },
     ];
   } else if (
-    is(element, 'bpmn:ExclusiveGateway') ||
-    is(element, 'bpmn:ParallelGateway') ||
-    is(element, 'bpmn:InclusiveGateway') ||
-    is(element, 'bpmn:EventBasedGateway')
+    ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
   ) {
     // opening gateway
     if (element.incoming.length === 1 && element.outgoing.length > 1) {

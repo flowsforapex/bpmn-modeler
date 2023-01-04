@@ -13,7 +13,7 @@ import { quickpicks } from '../../helper/Quickpick';
 const priorityHelper = new ExtensionHelper('apex:Priority');
 const dueDateHelper = new ExtensionHelper('apex:DueDate');
 
-export default function (element, injector) {
+export default function (element) {
   return [
     {
       id: 'priority',

@@ -18,7 +18,7 @@ import {
 
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
-export default function (element, injector) {
+export default function (element) {
   const [applications, setApplications] = useState([]);
   const [tasks, setTasks] = useState([]);
 

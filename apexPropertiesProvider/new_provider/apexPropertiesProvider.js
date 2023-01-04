@@ -14,6 +14,8 @@ import executionProps from './parts/process/ExecutionProps';
 import roleProps from './parts/lanes/RoleProps';
 import schedulingProps from './parts/scheduling/SchedulingProps';
 
+var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+
 var domQuery = require('min-dom').query;
 
 const LOW_PRIORITY = 500;
@@ -28,21 +30,21 @@ function createApexPageSection(element, injector, translate) {
   return apexPageSection;
 }
 
-function createApexApprovalSection(element, injector, translate) {
+function createApexApprovalSection(element, translate) {
   const apexApprovalSection = {
     id: 'apexApproval',
     label: translate('APEX Approval'),
-    entries: apexApprovalProps(element, injector),
+    entries: apexApprovalProps(element),
   };
 
   return apexApprovalSection;
 }
 
-function createPlsqlSection(element, injector, translate) {
+function createPlsqlSection(element, translate) {
   const plsqlSection = {
     id: 'executePlsql',
     label: translate('PL/SQL'),
-    entries: executePlsqlProps(element, injector),
+    entries: executePlsqlProps(element),
   };
 
   return plsqlSection;
@@ -58,71 +60,67 @@ function createProcVarSection(element, injector, translate) {
   return procVarSection;
 }
 
-function createCustomTimerSection(element, injector, translate) {
+function createCustomTimerSection(element, translate) {
   const customTimerSection = {
     id: 'customTimer',
     label: translate('Timer'),
-    entries: customTimerProps(element, injector),
+    entries: customTimerProps(element),
   };
 
   return customTimerSection;
 }
 
-function createTaskTypeSection(element, injector, translate) {
+function createTaskTypeSection(element, translate) {
   const taskTypeSection = {
     id: 'taskType',
     label: translate('Task Type'),
-    entries: taskTypeProps(element, injector),
+    entries: taskTypeProps(element),
   };
 
   return taskTypeSection;
 }
 
-function createAssignmentSection(element, injector, translate) {
+function createAssignmentSection(element, translate) {
   const assignmentSection = {
     id: 'assignment',
     label: translate('Assignment'),
-    entries: assignmentProps(element, injector),
+    entries: assignmentProps(element),
   };
 
   return assignmentSection;
 }
 
-function createExecutionSection(element, injector, translate) {
+function createExecutionSection(element, translate) {
   const executionSection = {
     id: 'execution',
     label: translate('Execution'),
-    entries: executionProps(element, injector),
+    entries: executionProps(element),
   };
 
   return executionSection;
 }
 
-function createSchedulingSection(element, injector, translate) {
+function createSchedulingSection(element, translate) {
   const schedulingSection = {
     id: 'scheduling',
     label: translate('Scheduling'),
-    entries: schedulingProps(element, injector),
+    entries: schedulingProps(element),
   };
 
   return schedulingSection;
 }
 
-function createRoleSection(element, injector, translate) {
+function createRoleSection(element, translate) {
   const roleSection = {
     id: 'role',
     label: translate('APEX Role'),
-    entries: roleProps(element, injector),
+    entries: roleProps(element),
   };
 
   return roleSection;
 }
 
-export default function apexPropertiesProvider(
-  propertiesPanel,
-  injector,
-  translate
-) {
+function makePropertiesPanelResizable() {
   const canvas = domQuery('.canvas');
   const parentNode = domQuery('.properties-panel-parent');
 
@@ -155,51 +153,60 @@ export default function apexPropertiesProvider(
       parentNode.firstChild.style.width = `${panelWidth}px`;
     }
   }
+}
+
+export default function apexPropertiesProvider(
+  propertiesPanel,
+  injector,
+  translate
+) {
+  makePropertiesPanelResizable();
 
   this.getGroups = function (element) {
     return function (groups) {
       const newGroups = [];
 
-      newGroups.push(createTaskTypeSection(element, injector, translate));
-
-      if (is(element, 'bpmn:UserTask')) {
-        newGroups.push(createAssignmentSection(element, injector, translate));
+      if (ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
+        newGroups.push(createTaskTypeSection(element, translate));
       }
 
       // add the apexPage section
       if (is(element, 'bpmn:UserTask')) {
         newGroups.push(createApexPageSection(element, injector, translate));
-        newGroups.push(createApexApprovalSection(element, injector, translate));
+        newGroups.push(createApexApprovalSection(element, translate));
       }
 
       // add the plsql section
       if (is(element, 'bpmn:ScriptTask')) {
-        newGroups.push(createPlsqlSection(element, injector, translate));
+        newGroups.push(createPlsqlSection(element, translate));
       }
 
-      // add the procVar section
+      // add the procVar section (filtering done inside)
       newGroups.push(createProcVarSection(element, injector, translate));
 
-      // add the custom timer section
-      newGroups.push(createCustomTimerSection(element, injector, translate));
+      if (is(element, 'bpmn:UserTask')) {
+        newGroups.push(createAssignmentSection(element, translate));
+      }
 
       // add the process section
       if (is(element, 'bpmn:Process')) {
-        newGroups.push(createExecutionSection(element, injector, translate)); // TODO check passing translate even needed here?
+        newGroups.push(createExecutionSection(element, translate));
       }
 
       // add the scheduling section
       if (is(element, 'bpmn:UserTask') || is(element, 'bpmn:Process')) {
-        newGroups.push(createSchedulingSection(element, injector, translate));
+        newGroups.push(createSchedulingSection(element, translate));
       }
 
       // add the role section
       if (is(element, 'bpmn:Lane')) {
-        newGroups.push(createRoleSection(element, injector, translate));
+        newGroups.push(createRoleSection(element, translate));
       }
 
-      /** *** filter *****/
+      // add the custom timer section
+      newGroups.push(createCustomTimerSection(element, translate));
 
+      // add all non-empty groups
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
