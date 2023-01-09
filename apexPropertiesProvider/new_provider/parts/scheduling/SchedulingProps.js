@@ -158,7 +158,7 @@ function PriorityExpression(props) {
 function PriorityExpressionEditorContainer(props) {
   const translate = useService('translate');
 
-  return getContainer('PriorityExpression', translate);
+  return getContainer('priorityExpression', translate);
 }
 
 function PriorityExpressionEditor(props) {
