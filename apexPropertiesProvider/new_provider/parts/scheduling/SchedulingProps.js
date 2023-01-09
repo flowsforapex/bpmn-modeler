@@ -77,10 +77,14 @@ function PriorityExpressionType(props) {
   const getValue = () =>
     priorityHelper.getExtensionProperty(element, 'expressionType');
 
-  const setValue = value =>
-    priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+  const setValue = (value) => {
+    const update = {
       expressionType: value,
-    });
+      ...(!value && {expression: null}),
+    };
+    
+    priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, update);
+  };
 
   return new SelectEntry({
     id: id,
@@ -91,10 +95,10 @@ function PriorityExpressionType(props) {
     debounce: debounce,
     getOptions: function () {
       return [
+        { label: '', value: null },
         { label: translate('Static'), value: 'static' },
         { label: translate('Process Variable'), value: 'processVariable' },
         { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-        { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
         { label: translate('Expression'), value: 'plsqlExpression' },
         { label: translate('Function Body'), value: 'plsqlFunctionBody' },
       ];
@@ -118,14 +122,37 @@ function PriorityExpression(props) {
       expression: value,
     });
 
-  return new TextAreaEntry({
-    id: id,
-    element: element,
-    label: translate('Expression'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
+  const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');  
+
+  if (expressionType === 'static') {
+    return new SelectEntry({
+      id: id,
+      element: element,
+      label: translate('Expression'),
+      getValue: getValue,
+      setValue: setValue,
+      debounce: debounce,
+      getOptions: function () {
+        return [
+          { label: '', value: null },
+          { label: translate('1-Urgent'), value: '1' },
+          { label: translate('2-High'), value: '2' },
+          { label: translate('3-Medium'), value: '3' },
+          { label: translate('4-Low'), value: '4' },
+          { label: translate('5-Lowest'), value: '5' },
+        ];
+      },
+    });
+  } else if (expressionType != null) {
+    return new TextAreaEntry({
+        id: id,
+        element: element,
+        label: translate('Expression'),
+        getValue: getValue,
+        setValue: setValue,
+        debounce: debounce,
+      }); 
+  }
 }
 
 function PriorityExpressionEditorContainer(props) {
@@ -229,25 +256,21 @@ function DueDateExpressionType(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => // TODO clarify if default values needed (always existing in xml)
-    // var value = dueDateHelper.getExtensionProperty(element, 'expressionType');
+  const getValue = () =>
+    dueDateHelper.getExtensionProperty(element, 'expressionType');    
 
-    // if (typeof value === 'undefined' || value === null) {
-    //   dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-    //     expressionType: 'static',
-    //   });
-    // }
-
-     dueDateHelper.getExtensionProperty(element, 'expressionType')
-  ;    
-
-  const setValue = value =>
-    dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+  const setValue = (value) => {
+    const update = {
       expressionType: value,
-    });
+      ...(value !== 'static' && {formatMask: null}),
+      ...(!value && {expression: null}),
+    };
+    
+    dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, update);
+  };
 
   const getOptions = () => [
-      { label: '', value: undefined }, // TODO not needed if using default value above
+      { label: '', value: null },
       { label: translate('Static'), value: 'static' },
       { label: translate('Interval'), value: 'interval' },
       { label: translate('Scheduler Expression'), value: 'oracleScheduler' },
@@ -286,7 +309,9 @@ function DueDateFormatMask(props) {
       formatMask: value,
     });
 
-  if (dueDateHelper.getExtensionProperty(element, 'expressionType') === 'static') {
+    const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType'); 
+
+  if (expressionType === 'static') {
     return [
         new TextFieldEntry({
         id: id,
@@ -340,27 +365,31 @@ function DueDateExpression(props) {
     switch (value) {
       case 'static': return 'Timestamp with Timezone in ISO 8601 or Oracle format';
       case 'interval': return 'Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format';
-      case 'oracleScheduler': return 'Oracle Scheduler Expression';
-      case 'processVariable': return 'Name of the Process Variable (type Timestamp with Timezone)';
+      case 'oracleScheduler': return 'Oracle Schedule expression';
+      case 'processVariable': return 'Name of the Process Variable (of type Timestamp with Timezone)';
       case 'sqlQuerySingle': return 'SQL query returning Timestamp with Timezone';
       case 'plsqlRawExpression': return 'PL/SQL Expression returning Timestamp with Timezone';
-      case 'plsqlExpression': return 'PL/SQL Expression returning VC2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
+      case 'plsqlExpression': return 'PL/SQL Expression returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
       case 'plsqlRawFunctionBody': return 'PL/SQL Function Body returning Timestamp with Timezone';
-      case 'plsqlFunctionBody': return 'PL/SQL Function Body returning VC2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
+      case 'plsqlFunctionBody': return 'PL/SQL Function Body returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
       default: return '';
     }
 
-  };  
+  };
 
-  return new TextAreaEntry({
-    id: id,
-    element: element,
-    label: translate('Expression'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    description: getDescription()
-  });
+  const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType'); 
+
+  if (expressionType != null) {
+    return new TextAreaEntry({
+      id: id,
+      element: element,
+      label: translate('Expression'),
+      getValue: getValue,
+      setValue: setValue,
+      debounce: debounce,
+      description: getDescription()
+    });
+  }
 }
 
 function DueDateExpressionEditorContainer(props) {
