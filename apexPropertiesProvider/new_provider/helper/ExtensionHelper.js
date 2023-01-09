@@ -54,9 +54,35 @@ export default class ExtensionHelper {
         values: extensionElements.get('values').concat(extensionElement),
       };
     } else {
-      updatedBusinessObject = extensionElement;
+      const removedProperties = [];
 
-      update = values;
+      // set empty properties to undefined (will be removed)
+      for (const v in values) {
+        if (!values[v]) {
+          values[v] = undefined;
+          removedProperties.push(v);
+        }
+      }
+
+      // if extention element has no other properties
+      if (!Object.keys(extensionElement).some(k => k !== '$type' && !removedProperties.includes(k))) {
+        // if extension elements have no other children
+        if (!extensionElements.get('values').some(k => k !== extensionElement)) {
+          // remove extension elements
+          updatedBusinessObject = businessObject;
+          update = { extensionElements: null};
+        } else {
+          // remove extension
+          updatedBusinessObject = extensionElements;
+          update = {
+            values: extensionElements.get('values').filter(v => v !== extensionElement),
+          };
+        }
+      } else {
+        // update (or remove) properties
+        updatedBusinessObject = extensionElement;
+        update = values;
+      }
     }
 
     return modeling.updateModdleProperties(

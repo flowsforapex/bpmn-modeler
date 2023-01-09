@@ -13,7 +13,7 @@ import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 const extensionHelper = new ExtensionHelper('apex:ExecutePlsql');
 
-export default function (element, injector) {
+export default function (element) {
   return [
     {
       id: 'plsqlCode',

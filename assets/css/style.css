@@ -1,7 +1,17 @@
+/** 
+ * custom colors
+ */
+.bjs-container {
+  --default-fill-color: white;
+  --default-stroke-color: black;
+}
+
+/***** properties panel *****/
+
 /**
  * resize icon
  */
-.properties-panel-parent:after {
+ .properties-panel-parent:after {
   content: " ";
   position: absolute;
   left: 0;
@@ -10,14 +20,27 @@
   height: 100%;
   cursor: w-resize;
 }
-
 /**
  * open dialog button
  */
- .bio-properties-panel-group-header-button {
+.bio-properties-panel-group-header-button {
+  height: 30px;
+  min-width: 60px;
   margin: 2px 32px 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background-color: #52B415;
+  color: white;
+  cursor: pointer;
 }
-
+/**
+ * quickpicks
+ */
+.bio-properties-panel-quickpick {
+  cursor: pointer;
+  color: #52B415;
+  margin-inline-start: 12px;
+}
 /** 
  * monaco editor
  */
@@ -85,4 +108,73 @@ button.dialog.fa {
   width: 100%;
   height: 100%;
   border: 1px solid #888;
+}
+
+/***** dark mode *****/
+
+/**
+ * custom colors
+ */
+ .FLOWS-DARK .bjs-container {
+  --default-fill-color: #2b3035;
+  --default-stroke-color: white;
+}
+.FLOWS-DARK .djs-popup {
+  --popup-body-background-color:  #2b3035;
+  --popup-background-color: #2b3035;
+  color: white;
+}
+.FLOWS-DARK .djs-context-pad .entry {
+  --context-pad-entry-background-color: #2b3035;
+  --context-pad-entry-hover-background-color: #1e2328;
+  color: white;
+}
+.FLOWS-DARK .djs-palette {
+  --palette-background-color: #2b3035;
+  --palette-entry-color: white;
+}
+.FLOWS-DARK .djs-direct-editing-parent {
+  background-color: #2b3035 !important;
+  color: white !important;
+}
+.FLOWS-DARK .bjs-powered-by {
+  color: white !important;
+}
+.FLOWS-DARK .bjsl-button-inactive {
+  background-color: #4c4e50 !important;
+}
+/**
+ * custom properties panel colors
+ */
+ .FLOWS-DARK .bio-properties-panel-container,
+ .FLOWS-DARK .bio-properties-panel-header,
+ .FLOWS-DARK .bio-properties-panel-group
+ {
+   background-color: #32383d;
+   color: white;
+ }
+.FLOWS-DARK .bio-properties-panel {
+  --input-background-color: #282c30;
+  --input-focus-background-color: #282c30;
+  --input-error-background-color: #282c30;
+}
+.FLOWS-DARK .bio-properties-panel-input,
+.FLOWS-DARK .bio-properties-panel-description {
+  color: white;
+}
+.FLOWS-DARK svg.new-parent {
+  background-color: #2b3035 !important;
+}
+/*
+ * custom monaco editor colors
+ */
+.FLOWS-DARK .modal-content {
+  background-color: #32383d;
+}
+.FLOWS-DARK button.dialog {
+  color: white;
+  background-color: #282c30;
+}
+.FLOWS-DARK button.dialog:hover {
+  color: #52B415;
 }

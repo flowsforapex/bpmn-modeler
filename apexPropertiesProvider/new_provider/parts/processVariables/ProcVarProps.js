@@ -143,6 +143,7 @@ function VarDataType(props) {
     { label: translate('Varchar2'), value: 'VARCHAR2' },
     { label: translate('Number'), value: 'NUMBER' },
     { label: translate('Date'), value: 'DATE' },
+    { label: translate('Timestamp'), value: 'TIMESTAMP' },
     { label: translate('Clob'), value: 'CLOB' },
   ];
 
@@ -192,6 +193,7 @@ function VarExpressionType(props) {
         ];
       case 'NUMBER':
       case 'DATE':
+      case 'TIMESTAMP':
         return [
           { label: translate('Static'), value: 'static' },
           { label: translate('Process Variable'), value: 'processVariable' },
