@@ -8,6 +8,12 @@
 
 /***** properties panel *****/
 
+.bio-properties-panel-toggle-switch-entry > .bio-properties-panel-description {
+  margin-left: 0px !important;
+}
+.bio-properties-panel-toggle-switch-entry + .bio-properties-panel-toggle-switch-entry {
+  margin-top: 0px !important;
+}
 /**
  * resize icon
  */

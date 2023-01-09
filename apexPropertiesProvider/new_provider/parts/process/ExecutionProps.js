@@ -76,7 +76,7 @@ function IsCallable(props) {
     });
   };
 
-  const entry = new ToggleSwitchEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
     label: translate('Is Callable'),
@@ -85,8 +85,6 @@ function IsCallable(props) {
     setValue: setValue,
     debounce: debounce,
   });
-
-  return entry;
 }
 
 function IsStartable(props) {
@@ -116,7 +114,7 @@ function IsStartable(props) {
     });
   };
 
-  const entry = new ToggleSwitchEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
     label: translate('Is Startable'),
@@ -125,8 +123,6 @@ function IsStartable(props) {
     setValue: setValue,
     debounce: debounce,
   });
-
-  return entry;
 }
 
 /** *** PotentialStarting Users *** **/

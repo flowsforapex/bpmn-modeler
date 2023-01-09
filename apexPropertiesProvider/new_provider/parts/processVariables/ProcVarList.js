@@ -37,7 +37,9 @@ export default function ParametersProps({ element, injector }, helper) {
       {
         // varName: nextId('ProcVar_'),
         varName: helper.getNextName(element),
-        varSequence: helper.getNextSequence(element)
+        varSequence: helper.getNextSequence(element),
+        varDataType: 'VARCHAR2',
+        varExpressionType: 'static',
       }
     ),
   };

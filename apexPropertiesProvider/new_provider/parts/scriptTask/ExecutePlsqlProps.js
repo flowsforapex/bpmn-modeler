@@ -1,9 +1,6 @@
 import {
-  HeaderButton,
-  isSelectEntryEdited,
-  isTextAreaEntryEdited,
-  SelectEntry,
-  TextAreaEntry
+  HeaderButton, isTextAreaEntryEdited, isToggleSwitchEntryEdited, TextAreaEntry,
+  ToggleSwitchEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -35,13 +32,13 @@ export default function (element) {
       id: 'engine',
       element,
       component: Engine,
-      isEdited: isSelectEntryEdited,
+      isEdited: isToggleSwitchEntryEdited,
     },
     {
       id: 'autoBinds',
       element,
       component: AutoBinds,
-      isEdited: isSelectEntryEdited,
+      isEdited: isToggleSwitchEntryEdited,
     },
   ];
 }
@@ -119,26 +116,20 @@ function Engine(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'engine');
+    (extensionHelper.getExtensionProperty(element, 'engine') === 'true');
 
   const setValue = value =>
     extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      engine: value,
+      engine: value ? 'true' : 'false',
     });
 
-  return new SelectEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
-    label: translate('Use APEX_EXEC'),
+    label: translate('Use APEX_EXEC (depr.)'),
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate('No'), value: 'false' },
-        { label: translate('Yes (deprecated)'), value: 'true' },
-      ];
-    },
   });
 }
 
@@ -151,28 +142,22 @@ function AutoBinds(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'autoBinds');
+    (extensionHelper.getExtensionProperty(element, 'autoBinds') === 'true');
 
   const setValue = value =>
     extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      autoBinds: value,
+      autoBinds: value ? 'true' : 'false',
     });
 
-  return new SelectEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
-    label: translate('Bind Page Item Values'),
+    label: translate('Bind Page Item Values (depr.)'),
     description: translate(
-      'Enable automatic parameter binding of APEX Page Items.<br />Set to Yes if you only reference APEX Page Items.'
+      'Enable automatic parameter binding of APEX Page Items. Set to Yes if you only reference APEX Page Items.'
     ),
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate('No'), value: 'false' },
-        { label: translate('Yes (deprecated)'), value: 'true' },
-      ];
-    },
   });
 }

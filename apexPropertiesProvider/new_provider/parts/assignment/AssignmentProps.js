@@ -95,6 +95,7 @@ function PotentialUsersExpressionType(props) {
     debounce: debounce,
     getOptions: function () {
       return [
+        { label: translate(''), value: null },
         { label: translate('Static'), value: 'static' },
         { label: translate('Process Variable'), value: 'processVariable' },
         { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
@@ -246,6 +247,7 @@ function PotentialGroupsExpressionType(props) {
     debounce: debounce,
     getOptions: function () {
       return [
+        { label: translate(''), value: null },
         { label: translate('Static'), value: 'static' },
         { label: translate('Process Variable'), value: 'processVariable' },
         { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
@@ -397,6 +399,7 @@ function ExcludedUsersExpressionType(props) {
     debounce: debounce,
     getOptions: function () {
       return [
+        { label: translate(''), value: null },
         { label: translate('Static'), value: 'static' },
         { label: translate('Process Variable'), value: 'processVariable' },
         { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
