@@ -1,11 +1,10 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, SelectEntry,
-  TextFieldEntry
+  isTextFieldEntryEdited, isToggleSwitchEntryEdited, SelectEntry,
+  TextFieldEntry, ToggleSwitchEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
-import { updateProperties } from '../../helper/util';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
@@ -27,7 +26,7 @@ export default function (element) {
         id: 'inputSelection',
         element,
         component: InputSelection,
-        isEdited: isSelectEntryEdited,
+        isEdited: isToggleSwitchEntryEdited,
       },
       {
         id: 'applicationId',
@@ -82,40 +81,27 @@ function InputSelection(props) {
     var value = element.businessObject.manualInput;
 
     if (typeof value === 'undefined') {
-      updateProperties(
-        {
-          element,
-          moddleElement: element.businessObject,
-          properties: {
-            manualInput: 'false',
-          },
-        },
-        commandStack
-      );
+      modeling.updateProperties(element, {
+        manualInput: 'false',
+      });
     }
 
-    return element.businessObject.manualInput;
+    return element.businessObject.manualInput === 'false';
   };
 
   const setValue = (value) => {
     modeling.updateProperties(element, {
-      manualInput: value,
+      manualInput: value ? 'false' : 'true',
     });
   };
 
-  return new SelectEntry({
+  return new ToggleSwitchEntry({
     id: id,
     element: element,
-    label: translate('Input'),
+    label: translate('Use APEX meta data'),
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate('Use APEX meta data'), value: 'false' },
-        { label: translate('Manual input'), value: 'true' },
-      ];
-    },
   });
 }
 

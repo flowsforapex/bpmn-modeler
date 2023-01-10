@@ -136,12 +136,6 @@ function InputSelection(props) {
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
-    // getOptions: function () {
-    //   return [
-    //     { label: translate('Use APEX meta data'), value: 'false' },
-    //     { label: translate('Manual input'), value: 'true' },
-    //   ];
-    // },
   });
 }
 
