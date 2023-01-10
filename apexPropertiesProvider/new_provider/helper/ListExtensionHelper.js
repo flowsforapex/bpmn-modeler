@@ -10,17 +10,18 @@ import {
 import { without } from 'min-dash';
 
 export default class ListExtensionHelper {
-  constructor(type, listType, listAttr, entryType, entryAttr) {
+  constructor(type, listType, listAttr, entryType, entryAttr, entryName) {
     this.type = type;
     this.listType = listType;
     this.listAttr = listAttr;
     this.entryType = entryType;
     this.entryAttr = entryAttr;
+    this.entryName = entryName;
   }
 
   getNextName(element) {
-    const name = this.type.split(':')[1];
-    return name + (this.getSubExtensionElements(element) ? this.getSubExtensionElements(element).length : 0);
+    const name = this.entryName || this.type.split(':')[1];
+    return name + (this.getSubExtensionElements(element) ? (`_${this.getSubExtensionElements(element).length}`) : (`_${0}`));
   }
 
   getNextSequence(element) {

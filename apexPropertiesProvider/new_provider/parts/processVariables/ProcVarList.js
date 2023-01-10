@@ -1,6 +1,6 @@
 import ProcVarProps from './ProcVarProps';
 
-export default function ParametersProps({ element, injector }, helper) {
+export default function ParametersProps(element, injector, helper) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
   const bpmnFactory = injector.get('bpmnFactory');

@@ -13,67 +13,106 @@ import { getDefinedVariables } from '../../plugins/metaDataCollector';
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 export default function (element, injector, translate) {
+  var type1 = null;
+  var type2 = null;
+
+  const entries = [];
+
   if (
     ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
   ) {
-    const listExtensionHelper1 = new ListExtensionHelper(
-      'apex:BeforeTask',
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null
-    );
 
-    const listExtensionHelper2 = new ListExtensionHelper(
-      'apex:AfterTask',
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null
-    );
+    type1 = {
+      type: 'apex:BeforeTask',
+      id: 'beforeTask',
+      label: 'Before Task'
+    };
 
-    return [
-      {
-        id: 'beforeTask',
-        element,
-        label: translate('Before Task'),
-        component: ListGroup,
-        ...ProcVarList(
-          { element, injector },
-          listExtensionHelper1
-        ),
-      },
-      {
-        id: 'afterTask',
-        element,
-        label: translate('After Task'),
-        component: ListGroup,
-        ...ProcVarList(
-          { element, injector },
-          listExtensionHelper2
-        ),
-      },
-    ];
+    type2 = {
+      type: 'apex:AfterTask',
+      id: 'afterTask',
+      label: 'After Task'
+    };
+    
   } else if (
     ModelingUtil.is(element, 'bpmn:CallActivity')
   ) {
-    const listExtensionHelper1 = new ListExtensionHelper(
-      'apex:InVariables',
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null
-    );
 
-    const listExtensionHelper2 = new ListExtensionHelper(
-      'apex:OutVariables',
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null
-    );
+    type1 = {
+      type: 'apex:InVariables',
+      id: 'inVariables',
+      label: 'In Variables',
+      name: 'In'
+    };
 
-    return [
+    type2 = {
+      type: 'apex:OutVariables',
+      id: 'outVariables',
+      label: 'Out Variables',
+      name: 'Out'
+    };
+
+  } else if (
+    ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
+  ) {
+    // opening gateway
+    if (element.incoming.length === 1 && element.outgoing.length > 1) {
+
+      type1 = {
+        type: 'apex:BeforeSplit',
+        id: 'beforeSplit',
+        label: 'Before Split'
+      };
+
+      // closing gateway
+    } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
+
+      type1 = {
+        type: 'apex:AfterMerge',
+        id: 'afterMerge',
+        label: 'After Merge'
+      };
+
+      // opening and closing gateway
+    } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+
+      type1 = {
+        type: 'apex:BeforeSplit',
+        id: 'beforeSplit',
+        label: 'Before Split'
+      };
+  
+      type2 = {
+        type: 'apex:AfterMerge',
+        id: 'afterMerge',
+        label: 'After Merge'
+      };
+      
+    }
+  }
+
+  const listExtensionHelper1 = type1 ? new ListExtensionHelper(
+    type1.type,
+    null,
+    'procVars',
+    'apex:ProcessVariable',
+    null,
+    type1.name
+  ) : null;
+
+  const listExtensionHelper2 = type2 ? new ListExtensionHelper(
+    type2.type,
+    null,
+    'procVars',
+    'apex:ProcessVariable',
+    null,
+    type2.name
+  ) : null;
+
+  if (
+    ModelingUtil.is(element, 'bpmn:CallActivity')
+  ) {
+    entries.push(
       {
         id: 'quickpickDefinedVariables',
         element,
@@ -81,115 +120,44 @@ export default function (element, injector, translate) {
         helper1: listExtensionHelper1,
         helper2: listExtensionHelper2
       },
+    );
+    entries.push(
       {
         id: 'quickpickBusinessRef',
         element,
         component: QuickpickBusinessRef,
         helper: listExtensionHelper1
       },
-      {
-        id: 'inVariables',
-        element,
-        label: translate('In Variables'),
-        component: ListGroup,
-        ...ProcVarList(
-          { element, injector },
-          listExtensionHelper1
-        ),
-      },
-      {
-        id: 'outVariables',
-        element,
-        label: translate('Out Variables'),
-        component: ListGroup,
-        ...ProcVarList(
-          { element, injector },
-          listExtensionHelper2
-        ),
-      },
-    ];
-  } else if (
-    ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
-  ) {
-    // opening gateway
-    if (element.incoming.length === 1 && element.outgoing.length > 1) {
-      return [
-        {
-          id: 'beforeSplit',
-          element,
-          label: translate('Before Split'),
-          component: ListGroup,
-          ...ProcVarList(
-            { element, injector },
-            new ListExtensionHelper(
-              'apex:BeforeSplit',
-              null,
-              'procVars',
-              'apex:ProcessVariable',
-              null
-            )
-          ),
-        },
-      ];
-      // closing gateway
-    } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
-      return [
-        {
-          id: 'afterMerge',
-          element,
-          label: translate('After Merge'),
-          component: ListGroup,
-          ...ProcVarList(
-            { element, injector },
-            new ListExtensionHelper(
-              'apex:AfterMerge',
-              null,
-              'procVars',
-              'apex:ProcessVariable',
-              null
-            )
-          ),
-        },
-      ];
-      // opening and closing gateway
-    } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
-      return [
-        {
-          id: 'beforeSplit',
-          element,
-          label: translate('Before Split'),
-          component: ListGroup,
-          ...ProcVarList(
-            { element, injector },
-            new ListExtensionHelper(
-              'apex:BeforeSplit',
-              null,
-              'procVars',
-              'apex:ProcessVariable',
-              null
-            )
-          ),
-        },
-        {
-          id: 'afterMerge',
-          element,
-          label: translate('After Merge'),
-          component: ListGroup,
-          ...ProcVarList(
-            { element, injector },
-            new ListExtensionHelper(
-              'apex:AfterMerge',
-              null,
-              'procVars',
-              'apex:ProcessVariable',
-              null
-            )
-          ),
-        },
-      ];
-    }
+    );
   }
-  return [];
+
+  if (type1) {
+    entries.push({
+      id: type1.id,
+      element,
+      label: translate(type1.label),
+      component: ListGroup,
+      ...ProcVarList(
+        element, injector,
+        listExtensionHelper1
+      ), 
+    });
+  }
+
+  if (type2) {
+    entries.push({
+      id: type2.id,
+      element,
+      label: translate(type2.label),
+      component: ListGroup,
+      ...ProcVarList(
+        element, injector,
+        listExtensionHelper2
+      ), 
+    });
+  }
+
+  return entries;
 }
 
 function QuickpickDefinedVariables(props) {
