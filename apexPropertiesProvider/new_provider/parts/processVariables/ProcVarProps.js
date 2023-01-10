@@ -12,7 +12,7 @@ import { useService } from 'bpmn-js-properties-panel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
-export default function ParameterProps(props) {
+export default function ProcVarProps(props) {
   const { idPrefix, parameter } = props;
 
   return [

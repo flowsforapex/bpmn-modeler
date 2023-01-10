@@ -175,3 +175,51 @@ export function getTasks(applicationId) {
   }
   return Promise.resolve();
 }
+
+export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion) {
+  if (typeof apex !== 'undefined') {
+    // ajaxIdentifier
+    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    // ajax process
+    return apex.server
+      .plugin(
+        ajaxIdentifier,
+        {
+          x01: 'GET_VARIABLE_MAPPING',
+          x02: bo.calledDiagram,
+          x03: bo.calledDiagramVersionSelection,
+          x04: bo.calledDiagramVersion,
+        },
+        {}
+      )
+      .then(pData => pData);
+  }
+  return Promise.resolve(
+    {
+      InVariables: [
+        {
+          varName: 'In1',
+          varDataType: 'VARCHAR2',
+          varDescription: 'Desc1'
+        },
+        {
+          varName: 'In2',
+          varDataType: 'NUMBER',
+          varDescription: 'Desc2'
+        },
+      ],
+      OutVariables: [
+        {
+          varName: 'Out1',
+          varDataType: 'DATE',
+          varDescription: 'Desc3'
+        },
+        {
+          varName: 'Out2',
+          varDataType: 'TIMESTAMP',
+          varDescription: 'Desc4'
+        },
+      ]
+    }
+  );
+}

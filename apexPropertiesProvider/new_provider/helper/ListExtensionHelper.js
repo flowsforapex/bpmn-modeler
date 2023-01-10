@@ -275,74 +275,130 @@ export default class ListExtensionHelper {
 
     let extensionElements = businessObject.get('extensionElements');
 
-    // (1) ensure extension elements
-    if (!extensionElements) {
-      extensionElements = createExtensionElements(element, bpmnFactory);
+    if (listType === null && entryAttr === null) {
+      
+      // (1) ensure extension elements
+      if (!extensionElements) {
+        extensionElements = createExtensionElements(element, bpmnFactory);
 
-      updateProperties(
-        {
-          element,
-          moddleElement: businessObject,
-          properties: { extensionElements },
-        },
-        commandStack
-      );
-    }
-
-    // (2) ensure parent extension
-    let extension = getExtension(element, type);
-
-    if (!extension) {
-      extension = createExtension(type, {}, extensionElements, bpmnFactory);
-
-      updateProperties(
-        {
-          element,
-          moddleElement: extensionElements,
-          properties: {
-            values: [...extensionElements.get('values'), extension],
+        updateProperties(
+          {
+            element,
+            moddleElement: businessObject,
+            properties: { extensionElements },
           },
-        },
-        commandStack
+          commandStack
+        );
+      }
+
+      // (2) ensure parent extension
+      let extension = getExtension(element, type);
+
+      if (!extension) {
+        extension = createExtension(type, {}, extensionElements, bpmnFactory);
+
+        updateProperties(
+          {
+            element,
+            moddleElement: extensionElements,
+            properties: {
+              values: [...extensionElements.get('values'), extension],
+            },
+          },
+          commandStack
+        );
+      }
+
+      // (3) create entry
+      const newEntry = createElement(
+        entryType,
+        newProps,
+        extension,
+        bpmnFactory
       );
-    }
 
-    // (3) ensure list extension
-    let listContainer = extension[listAttr];
-
-    if (!listContainer) {
-      listContainer = createExtension(listType, {}, extension, bpmnFactory);
-
+      // (4) add entry to list
       updateProperties(
         {
           element,
           moddleElement: extension,
           properties: {
-            [listAttr]: listContainer,
+            [listAttr]: [...extension.get(listAttr), newEntry],
+          },
+        },
+        commandStack
+      );
+    } else {
+
+      // (1) ensure extension elements
+      if (!extensionElements) {
+        extensionElements = createExtensionElements(element, bpmnFactory);
+
+        updateProperties(
+          {
+            element,
+            moddleElement: businessObject,
+            properties: { extensionElements },
+          },
+          commandStack
+        );
+      }
+
+      // (2) ensure parent extension
+      let extension = getExtension(element, type);
+
+      if (!extension) {
+        extension = createExtension(type, {}, extensionElements, bpmnFactory);
+
+        updateProperties(
+          {
+            element,
+            moddleElement: extensionElements,
+            properties: {
+              values: [...extensionElements.get('values'), extension],
+            },
+          },
+          commandStack
+        );
+      }
+
+      // (3) ensure list extension
+      let listContainer = extension[listAttr];
+
+      if (!listContainer) {
+        listContainer = createExtension(listType, {}, extension, bpmnFactory);
+
+        updateProperties(
+          {
+            element,
+            moddleElement: extension,
+            properties: {
+              [listAttr]: listContainer,
+            },
+          },
+          commandStack
+        );
+      }
+
+      // (3) create entry
+      const newEntry = createElement(
+        entryType,
+        newProps,
+        listContainer,
+        bpmnFactory
+      );
+
+      // (4) add entry to list
+      updateProperties(
+        {
+          element,
+          moddleElement: listContainer,
+          properties: {
+            [entryAttr]: [...listContainer.get(entryAttr), newEntry],
           },
         },
         commandStack
       );
     }
-
-    // (3) create entry
-    const newEntry = createElement(
-      entryType,
-      newProps,
-      listContainer,
-      bpmnFactory
-    );
-
-    // (4) add entry to list
-    updateProperties(
-      {
-        element,
-        moddleElement: listContainer,
-        properties: {
-          [entryAttr]: [...listContainer.get(entryAttr), newEntry],
-        },
-      },
-      commandStack
-    );
   }
 }

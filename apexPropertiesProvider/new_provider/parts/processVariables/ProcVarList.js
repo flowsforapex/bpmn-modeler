@@ -1,4 +1,4 @@
-import ParameterProps from './ProcVarProps';
+import ProcVarProps from './ProcVarProps';
 
 export default function ParametersProps({ element, injector }, helper) {
   const parameters = helper.getSubExtensionElements(element) || [];
@@ -12,7 +12,7 @@ export default function ParametersProps({ element, injector }, helper) {
     return {
       id,
       label: `${parameter.get('varSequence')} - ${parameter.get('varName')}` || '',
-      entries: ParameterProps({
+      entries: ProcVarProps({
         idPrefix: id,
         element,
         parameter,
