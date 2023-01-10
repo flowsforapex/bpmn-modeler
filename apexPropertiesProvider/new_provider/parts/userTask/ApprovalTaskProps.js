@@ -9,7 +9,6 @@ import { updateProperties } from '../../helper/util';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
 import {

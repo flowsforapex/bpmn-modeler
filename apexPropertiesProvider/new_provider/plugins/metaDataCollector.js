@@ -15,8 +15,8 @@ export function getApplications() {
   }
   return Promise.resolve([
     { label: '', value: null },
-    { label: 'App001', value: '1' },
-    { label: 'App002', value: '2' },
+    { label: 'App1', value: '1' },
+    { label: 'App2', value: '2' },
   ]);
 }
 
@@ -39,15 +39,15 @@ export function getPages(applicationId) {
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'Page001', value: '1' },
-      { label: 'Page002', value: '2' },
+      { label: 'A1P1', value: '1' },
+      { label: 'P1P2', value: '2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'PageA', value: '1' },
-      { label: 'PageB', value: '2' },
-      { label: 'PageC', value: '2' },
+      { label: 'A2P1', value: '1' },
+      { label: 'A2P2', value: '2' },
+      { label: 'A2P3', value: '3' },
     ]);
   }
   return Promise.resolve();
@@ -72,8 +72,9 @@ export function getItems(applicationId, pageId) {
   }
   if (applicationId === '1' && pageId === '1') {
     return Promise.resolve([
-      { label: 'Item001', value: '1' },
-      { label: 'Item002', value: '2' },
+      { label: '', value: null },
+      { label: 'A1P1I1', value: '1' },
+      { label: 'A1P1I2', value: '2' },
     ]);
   }
   return Promise.resolve([]);
@@ -131,7 +132,11 @@ export function getDiagrams() {
       )
       .then(pData => pData);
   }
-  return Promise.resolve();
+  return Promise.resolve([
+    { label: '', value: null },
+    { label: 'Diagram1', value: '1' },
+    { label: 'Diagram2', value: '2' },
+  ]);
 }
 
 export function getUsernames() {

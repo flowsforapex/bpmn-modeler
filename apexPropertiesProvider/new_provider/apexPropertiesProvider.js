@@ -14,6 +14,8 @@ import executionProps from './parts/process/ExecutionProps';
 import roleProps from './parts/lanes/RoleProps';
 import schedulingProps from './parts/scheduling/SchedulingProps';
 
+import callActivityProps from './parts/callActivity/CallActivityProps';
+
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 var domQuery = require('min-dom').query;
@@ -120,6 +122,16 @@ function createRoleSection(element, translate) {
   return roleSection;
 }
 
+function createCallActivitySection(element, translate) {
+  const callActivitySection = {
+    id: 'callActivity',
+    label: translate('Called Diagram'),
+    entries: callActivityProps(element),
+  };
+
+  return callActivitySection;
+}
+
 function makePropertiesPanelResizable() {
   const canvas = domQuery('.canvas');
   const parentNode = domQuery('.properties-panel-parent');
@@ -201,6 +213,11 @@ export default function apexPropertiesProvider(
       // add the role section
       if (is(element, 'bpmn:Lane')) {
         newGroups.push(createRoleSection(element, translate));
+      }
+
+      // add the call activity section
+      if (is(element, 'bpmn:CallActivity')) {
+        newGroups.push(createCallActivitySection(element, translate));
       }
 
       // add the custom timer section
