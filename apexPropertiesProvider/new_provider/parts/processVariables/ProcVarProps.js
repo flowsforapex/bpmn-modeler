@@ -6,23 +6,34 @@ import {
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
 
+import { helptext } from '../../helper/HelpText';
+
 import { updateProperties } from '../../helper/util';
 
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
-export default function ProcVarProps(props) {
-  const { idPrefix, parameter } = props;
+var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-  return [
-    {
-      id: `${idPrefix}-varSequence`,
-      component: VarSequence,
-      idPrefix,
-      parameter,
-      isEdited: isNumberFieldEntryEdited,
-    },
+export default function ProcVarProps(props) {
+  const { idPrefix, parameter, element } = props;
+
+  const entries = [];
+
+  if (!ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
+    entries.push(
+      {
+        id: `${idPrefix}-varSequence`,
+        component: VarSequence,
+        idPrefix,
+        parameter,
+        isEdited: isNumberFieldEntryEdited,
+      }
+    );
+  }
+
+  entries.push(
     {
       id: `${idPrefix}-varName`,
       component: VarName,
@@ -36,32 +47,60 @@ export default function ProcVarProps(props) {
       idPrefix,
       parameter,
       isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-varExpressionType`,
-      component: VarExpressionType,
-      idPrefix,
-      parameter,
-      isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-varExpression`,
-      component: VarExpression,
-      idPrefix,
-      parameter,
-      isEdited: isTextAreaEntryEdited,
-    },
-    {
-      id: 'plsqlCodeEditorContainer',
-      parameter,
-      component: PlsqlCodeEditorContainer,
-    },
-    {
-      id: 'plsqlCodeEditor',
-      parameter,
-      component: PlsqlCodeEditor,
-    },
-  ];
+    }
+  );
+
+  if (ModelingUtil.is(element, 'bpmn:CallActivity')) {
+    entries.push(
+      {
+        id: `${idPrefix}-varDescription`,
+        component: VarDescription,
+        idPrefix,
+        parameter,
+      }
+    );
+  }
+
+  if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
+    entries.push(
+      {
+        id: `${idPrefix}-varDescriptionInput`,
+        component: VarDescriptionInput,
+        idPrefix,
+        parameter,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  } else {
+    entries.push(
+      {
+        id: `${idPrefix}-varExpressionType`,
+        component: VarExpressionType,
+        idPrefix,
+        parameter,
+        isEdited: isSelectEntryEdited,
+      },
+      {
+        id: `${idPrefix}-varExpression`,
+        component: VarExpression,
+        idPrefix,
+        parameter,
+        isEdited: isTextAreaEntryEdited,
+      },
+      {
+        id: 'plsqlCodeEditorContainer',
+        parameter,
+        component: PlsqlCodeEditorContainer,
+      },
+      {
+        id: 'plsqlCodeEditor',
+        parameter,
+        component: PlsqlCodeEditor,
+      }
+    );
+  }
+    
+  return entries;
 }
 
 function VarSequence(props) {
@@ -173,6 +212,46 @@ function VarDataType(props) {
     debounce,
     getOptions: getOptions,
     description: description,
+  });
+}
+
+function VarDescription(props) {
+  const { idPrefix, element, parameter } = props;
+
+  return helptext({
+    text: parameter.varDescription,
+  });
+}
+
+function VarDescriptionInput(props) {
+  const { idPrefix, element, parameter } = props;
+
+  const commandStack = useService('commandStack');
+  const translate = useService('translate');
+  const debounce = useService('debounceInput');
+
+  const setValue = (value) => {
+    updateProperties(
+      {
+        element,
+        moddleElement: parameter,
+        properties: {
+          varDescription: value,
+        },
+      },
+      commandStack
+    );
+  };
+
+  const getValue = parameter => parameter.varDescription;
+
+  return TextFieldEntry({
+    element: parameter,
+    id: `${idPrefix}-varDescription`,
+    label: translate('Description'),
+    getValue,
+    setValue,
+    debounce,
   });
 }
 

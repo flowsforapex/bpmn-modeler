@@ -53,6 +53,24 @@ export default function (element, injector, translate) {
     };
 
   } else if (
+    ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']) && element.businessObject.isCallable === 'true'
+  ) {
+
+    type1 = {
+      type: 'apex:InVariables',
+      id: 'inVariables',
+      label: 'In Variables',
+      name: 'In'
+    };
+
+    type2 = {
+      type: 'apex:OutVariables',
+      id: 'outVariables',
+      label: 'Out Variables',
+      name: 'Out'
+    };
+
+  } else if (
     ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
   ) {
     // opening gateway

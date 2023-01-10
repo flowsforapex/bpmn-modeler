@@ -195,16 +195,16 @@ export default function apexPropertiesProvider(
         newGroups.push(createPlsqlSection(element, translate));
       }
 
+      // add the process section
+      if (is(element, 'bpmn:Process')) {
+        newGroups.push(createExecutionSection(element, translate));
+      }
+
       // add the procVar section (filtering done inside)
       newGroups.push(createProcVarSection(element, injector, translate));
 
       if (is(element, 'bpmn:UserTask')) {
         newGroups.push(createAssignmentSection(element, translate));
-      }
-
-      // add the process section
-      if (is(element, 'bpmn:Process')) {
-        newGroups.push(createExecutionSection(element, translate));
       }
 
       // add the scheduling section

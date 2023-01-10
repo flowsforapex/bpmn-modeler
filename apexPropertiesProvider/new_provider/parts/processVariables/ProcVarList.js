@@ -1,5 +1,7 @@
 import ProcVarProps from './ProcVarProps';
 
+var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+
 export default function ParametersProps(element, injector, helper) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
@@ -26,6 +28,8 @@ export default function ParametersProps(element, injector, helper) {
     };
   });
 
+  const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
+
   return {
     items,
     add: helper.addSubFactory(
@@ -35,11 +39,10 @@ export default function ParametersProps(element, injector, helper) {
         commandStack,
       },
       {
-        // varName: nextId('ProcVar_'),
+        ...(!isDefinition && {varSequence: helper.getNextSequence(element)}),
         varName: helper.getNextName(element),
-        varSequence: helper.getNextSequence(element),
         varDataType: 'VARCHAR2',
-        varExpressionType: 'static',
+        ...(!isDefinition && {varExpressionType: 'static'}),
       }
     ),
   };
