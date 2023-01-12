@@ -6,8 +6,8 @@ import {
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
-import ExtensionHelper from '../helper/ExtensionHelper';
-import { updateProperties } from '../helper/util';
+import ExtensionHelper from '../../helper/ExtensionHelper';
+import { updateProperties } from '../../helper/util';
 
 var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');

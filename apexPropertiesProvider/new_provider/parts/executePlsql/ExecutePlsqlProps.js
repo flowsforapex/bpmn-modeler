@@ -1,5 +1,5 @@
 import {
-  HeaderButton, isTextAreaEntryEdited, isToggleSwitchEntryEdited, TextAreaEntry,
+  isTextAreaEntryEdited, isToggleSwitchEntryEdited, TextAreaEntry,
   ToggleSwitchEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
@@ -7,6 +7,8 @@ import { useService } from 'bpmn-js-properties-panel';
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
+
+import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 
 const extensionHelper = new ExtensionHelper('apex:ExecutePlsql');
 
@@ -25,11 +27,6 @@ export default function (args) {
       id: 'plsqlCodeEditorContainer',
       element,
       component: PlsqlCodeEditorContainer,
-    },
-    {
-      id: 'plsqlCodeEditor',
-      element,
-      component: PlsqlCodeEditor,
     },
     {
       id: 'engine',
@@ -62,35 +59,8 @@ function PlsqlCode(props) {
       plsqlCode: value,
     });
 
-  const entry = new TextAreaEntry({
-    id: id,
-    element: element,
-    label: translate('PL/SQL Code'),
-    description: translate('Enter the PL/SQL code to be executed.'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-
-  return entry;
-}
-
-function PlsqlCodeEditorContainer(props) {
-  const translate = useService('translate');
-
-  return getContainer('plsqlCode', translate);
-}
-
-function PlsqlCodeEditor(props) {
-  const { element, id } = props;
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const bpmnFactory = useService('bpmnFactory');
-
-  return new HeaderButton({
-    id: id,
-    children: translate('Open editor'),
-    onClick: function () {
+  const label =
+    OpenDialogLabel(translate('PL/SQL Code'), () => {
       var getPlsqlCode = function () {
         return extensionHelper.getExtensionProperty(element, 'plsqlCode');
       };
@@ -106,8 +76,25 @@ function PlsqlCodeEditor(props) {
         'plsql',
         'plsqlProcess'
       );
-    },
+    });
+
+  const entry = new TextAreaEntry({
+    id: id,
+    element: element,
+    label: label,
+    description: translate('Enter the PL/SQL code to be executed.'),
+    getValue: getValue,
+    setValue: setValue,
+    debounce: debounce,
   });
+
+  return entry;
+}
+
+function PlsqlCodeEditorContainer() {
+  const translate = useService('translate');
+
+  return getContainer('plsqlCode', translate);
 }
 
 function Engine(props) {
@@ -129,7 +116,7 @@ function Engine(props) {
   return new ToggleSwitchEntry({
     id: id,
     element: element,
-    label: translate('Use APEX_EXEC (depr.)'),
+    label: translate('Use APEX_EXEC'),
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,

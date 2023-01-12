@@ -39,6 +39,13 @@
   color: white;
   cursor: pointer;
 }
+.open-dialog-label {
+  display: flex;
+  justify-content: space-between;
+}
+.open-dialog-label .fa.fa-box-arrow-in-ne {
+  cursor: pointer;
+}
 /**
  * quickpicks
  */

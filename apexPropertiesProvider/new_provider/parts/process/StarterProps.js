@@ -1,12 +1,13 @@
 import {
-  CollapsibleEntry, HeaderButton,
-  isSelectEntryEdited, isTextAreaEntryEdited, SelectEntry, TextAreaEntry
+  CollapsibleEntry, isSelectEntryEdited, isTextAreaEntryEdited, SelectEntry, TextAreaEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
+
+import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 
 const potentialStartingUsersHelper = new ExtensionHelper('apex:PotentialStartingUsers');
 const potentialStartingGroupsHelper = new ExtensionHelper('apex:PotentialStartingGroups');
@@ -67,12 +68,7 @@ function PotentialStartingUsers(props) {
         id: 'potentialStartingUsersExpressionEditorContainer',
         element,
         component: PotentialStartingUsersExpressionEditorContainer,
-      },
-      {
-        id: 'potentialStartingUsersExpressionEditor',
-        element,
-        component: PotentialStartingUsersExpressionEditor,
-      },
+      }
     ]
   });
 }
@@ -122,17 +118,53 @@ function PotentialStartingUsersExpression(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getValue = () =>
-  potentialStartingUsersHelper.getExtensionProperty(element, 'expression');
+    potentialStartingUsersHelper.getExtensionProperty(element, 'expression');
 
   const setValue = value =>
-  potentialStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-    expression: value,
+    potentialStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+      expression: value,
     });
+
+  const expressionType = potentialStartingUsersHelper.getExtensionProperty(element, 'expressionType');
+
+  const language =
+    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+  let label;
+
+  if (
+    [
+      'sqlQuerySingle',
+      'sqlQueryList',
+      'plsqlExpression',
+      'plsqlFunctionBody',
+    ].includes(expressionType)
+  ) {
+    label = OpenDialogLabel(translate('Expression'), () => {
+      var getExpression = function () {
+        return potentialStartingUsersHelper.getExtensionProperty(element, 'expression');
+      };
+      var saveExpression = function (text) {
+        potentialStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          expression: text,
+        });
+      };
+      openEditor(
+        'potentialStartingUsersExpression',
+        getExpression,
+        saveExpression,
+        language,
+        expressionType
+      );
+    });
+  } else {
+    label = translate('Expression');
+  }
 
   const entry = new TextAreaEntry({
     id: id,
     element: element,
-    label: translate('Expression'),
+    label: label,
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
@@ -145,49 +177,6 @@ function PotentialStartingUsersExpressionEditorContainer(props) {
   const translate = useService('translate');
 
   return getContainer('potentialStartingUsersExpression', translate);
-}
-
-function PotentialStartingUsersExpressionEditor(props) {
-  const { element, id } = props;
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const expressionType = potentialStartingUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    return new HeaderButton({
-      id: id,
-      children: translate('Open editor'),
-      onClick: function () {
-        var getExpression = function () {
-          return potentialStartingUsersHelper.getExtensionProperty(element, 'expression');
-        };
-        var saveExpression = function (text) {
-          potentialStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            expression: text,
-          });
-        };
-        openEditor(
-          'potentialStartingUsersExpression',
-          getExpression,
-          saveExpression,
-          language,
-          expressionType
-        );
-      },
-    });
-  }
 }
 
 /** *** PotentialStarting Groups *** **/
@@ -218,11 +207,6 @@ function PotentialStartingGroups(props) {
         id: 'potentialStartingGroupsExpressionEditorContainer',
         element,
         component: PotentialStartingGroupsExpressionEditorContainer,
-      },
-      {
-        id: 'potentialStartingGroupsExpressionEditor',
-        element,
-        component: PotentialStartingGroupsExpressionEditor,
       },
     ]
   });
@@ -273,17 +257,53 @@ function PotentialStartingGroupsExpression(props) {
   const bpmnFactory = useService('bpmnFactory');
 
   const getValue = () =>
-  potentialStartingGroupsHelper.getExtensionProperty(element, 'expression');
+    potentialStartingGroupsHelper.getExtensionProperty(element, 'expression');
 
   const setValue = value =>
-  potentialStartingGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-    expression: value,
+    potentialStartingGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+      expression: value,
     });
+
+  const expressionType = potentialStartingGroupsHelper.getExtensionProperty(element, 'expressionType');
+
+  const language =
+    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+  let label;
+
+  if (
+    [
+      'sqlQuerySingle',
+      'sqlQueryList',
+      'plsqlExpression',
+      'plsqlFunctionBody',
+    ].includes(expressionType)
+  ) {
+    label = OpenDialogLabel(translate('Expression'), () => {
+      var getExpression = function () {
+        return potentialStartingGroupsHelper.getExtensionProperty(element, 'expression');
+      };
+      var saveExpression = function (text) {
+        potentialStartingGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          expression: text,
+        });
+      };
+      openEditor(
+        'potentialStartingGroupsExpression',
+        getExpression,
+        saveExpression,
+        language,
+        expressionType
+      );
+    });
+  } else {
+    label = translate('Expression');
+  }
 
   const entry = new TextAreaEntry({
     id: id,
     element: element,
-    label: translate('Expression'),
+    label: label,
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
@@ -296,49 +316,6 @@ function PotentialStartingGroupsExpressionEditorContainer(props) {
   const translate = useService('translate');
 
   return getContainer('potentialStartingGroupsExpression', translate);
-}
-
-function PotentialStartingGroupsExpressionEditor(props) {
-  const { element, id } = props;
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const expressionType = potentialStartingGroupsHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    return new HeaderButton({
-      id: id,
-      children: translate('Open editor'),
-      onClick: function () {
-        var getExpression = function () {
-          return potentialStartingGroupsHelper.getExtensionProperty(element, 'expression');
-        };
-        var saveExpression = function (text) {
-          potentialStartingGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            expression: text,
-          });
-        };
-        openEditor(
-          'potentialStartingGroupsExpression',
-          getExpression,
-          saveExpression,
-          language,
-          expressionType
-        );
-      },
-    });
-  }
 }
 
 /** *** ExcludedStarting Users *** **/
@@ -369,11 +346,6 @@ function ExcludedStartingUsers(props) {
         id: 'excludedStartingUsersExpressionEditorContainer',
         element,
         component: ExcludedStartingUsersExpressionEditorContainer,
-      },
-      {
-        id: 'excludedStartingUsersExpressionEditor',
-        element,
-        component: ExcludedStartingUsersExpressionEditor,
       },
     ]
   });
@@ -431,10 +403,47 @@ function ExcludedStartingUsersExpression(props) {
       expression: value,
     });
 
+  const expressionType = excludedStartingUsersHelper.getExtensionProperty(element, 'expressionType');
+
+  const language =
+    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+
+  let label;
+
+  if (
+    [
+      'sqlQuerySingle',
+      'sqlQueryList',
+      'plsqlExpression',
+      'plsqlFunctionBody',
+    ].includes(expressionType)
+  ) {
+    label = OpenDialogLabel(translate('Expression'), () => {
+      var getExpression = function () {
+        return excludedStartingUsersHelper.getExtensionProperty(element, 'expression');
+      };
+      var saveExpression = function (text) {
+        excludedStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          expression: text,
+        });
+      };
+      openEditor(
+        'excludedStartingUsersExpression',
+        getExpression,
+        saveExpression,
+        language,
+        expressionType
+      );
+    });
+  } else {
+    label = translate('Expression');
+  }
+
   const entry = new TextAreaEntry({
     id: id,
     element: element,
-    label: translate('Expression'),
+    label: label,
     getValue: getValue,
     setValue: setValue,
     debounce: debounce,
@@ -447,47 +456,4 @@ function ExcludedStartingUsersExpressionEditorContainer(props) {
   const translate = useService('translate');
 
   return getContainer('excludedStartingUsersExpression', translate);
-}
-
-function ExcludedStartingUsersExpressionEditor(props) {
-  const { element, id } = props;
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const expressionType = excludedStartingUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    return new HeaderButton({
-      id: id,
-      children: translate('Open editor'),
-      onClick: function () {
-        var getExpression = function () {
-          return excludedStartingUsersHelper.getExtensionProperty(element, 'expression');
-        };
-        var saveExpression = function (text) {
-          excludedStartingUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            expression: text,
-          });
-        };
-        openEditor(
-          'excludedStartingUsersExpression',
-          getExpression,
-          saveExpression,
-          language,
-          expressionType
-        );
-      },
-    });
-  }
 }

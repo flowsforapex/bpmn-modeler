@@ -1,5 +1,5 @@
 import {
-  HeaderButton, isNumberFieldEntryEdited, isSelectEntryEdited,
+  isNumberFieldEntryEdited, isSelectEntryEdited,
   isTextAreaEntryEdited,
   isTextFieldEntryEdited, NumberFieldEntry, SelectEntry,
   TextAreaEntry,
@@ -13,6 +13,8 @@ import { updateProperties } from '../../helper/util';
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
+
+import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -91,11 +93,6 @@ export default function ProcVarProps(props) {
         id: 'plsqlCodeEditorContainer',
         parameter,
         component: PlsqlCodeEditorContainer,
-      },
-      {
-        id: 'plsqlCodeEditor',
-        parameter,
-        component: PlsqlCodeEditor,
       }
     );
   }
@@ -360,10 +357,53 @@ function VarExpression(props) {
 
   const description = EXPRESSION_DESCRIPTION[parameter.varExpressionType];
 
+  const expressionType = parameter.varExpressionType;
+
+  const language =
+    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+  let label;
+
+  if (
+    [
+      'sqlQuerySingle',
+      'sqlQueryList',
+      'plsqlExpression',
+      'plsqlFunctionBody',
+    ].includes(expressionType)
+  ) {
+    label = OpenDialogLabel(translate('Expression'), () => {
+      var getVarExpression = function () {
+        return parameter.varExpression;
+      };
+      var saveVarExpression = function (text) {
+        updateProperties(
+          {
+            element,
+            moddleElement: parameter,
+            properties: {
+              varExpression: text,
+            },
+          },
+          commandStack
+        );
+      };
+      openEditor(
+        'varExpression',
+        getVarExpression,
+        saveVarExpression,
+        language,
+        expressionType
+      );
+    });
+  } else {
+    label = translate('Expression');
+  }
+
   return TextAreaEntry({
     element: parameter,
     id: `${idPrefix}-varExpression`,
-    label: translate('Expression'),
+    label: label,
     getValue,
     setValue,
     debounce,
@@ -375,53 +415,4 @@ function PlsqlCodeEditorContainer() {
   const translate = useService('translate');
 
   return getContainer('varExpression', translate);
-}
-
-function PlsqlCodeEditor(props) {
-  const { idPrefix, element, parameter } = props;
-  const translate = useService('translate');
-  const commandStack = useService('commandStack');
-
-  const expressionType = parameter.varExpressionType;
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    return new HeaderButton({
-      id: `${idPrefix}-varExpressionEditor`,
-      children: translate('Open editor'),
-      onClick: function () {
-        var getVarExpression = function () {
-          return parameter.varExpression;
-        };
-        var saveVarExpression = function (text) {
-          updateProperties(
-            {
-              element,
-              moddleElement: parameter,
-              properties: {
-                varExpression: text,
-              },
-            },
-            commandStack
-          );
-        };
-        openEditor(
-          'varExpression',
-          getVarExpression,
-          saveVarExpression,
-          language,
-          expressionType
-        );
-      },
-    });
-  }
 }

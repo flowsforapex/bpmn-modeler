@@ -2,7 +2,7 @@ import { useService } from 'bpmn-js-properties-panel';
 
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
-export function quickpicks(list) {
+export function Quickpicks(list) {
   const translate = useService('translate');
 
   const quickpicks = [];

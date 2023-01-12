@@ -9,7 +9,7 @@ import ProcVarList from './ProcVarList';
 
 import { getDefinedVariables } from '../../plugins/metaDataCollector';
 
-import { quickpicks } from '../../helper/Quickpick';
+import { Quickpicks } from '../../helper/Quickpick';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -190,7 +190,7 @@ function QuickpickDefinedVariables(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
-  return quickpicks([
+  return Quickpicks([
     {
       text: 'Load defined variables',
       handler: () => {
@@ -241,7 +241,7 @@ function QuickpickBusinessRef(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
-  return quickpicks([
+  return Quickpicks([
     {
       text: 'Copy business reference',
       handler: () => {

@@ -1,11 +1,11 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import ExecutePlsqlProps from './parts/executePlsql/ExecutePlsqlProps';
 import ProcVarGroup from './parts/processVariables/ProcVarGroup';
-import ExecutePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
 import ApexPageProps from './parts/userTask/ApexPageProps';
 import ApexApprovalProps from './parts/userTask/ApprovalTaskProps';
 
-import CustomTimerProps from './custom/CustomTimerProps';
 import TaskTypeProps from './parts/task/TaskTypeProps';
+import CustomTimerProps from './parts/timer/CustomTimerProps';
 
 import AssignmentProps from './parts/userTask/AssignmentProps';
 
@@ -82,65 +82,66 @@ export default function apexPropertiesProvider(
     return function (groups) {
       const newGroups = [];
 
-      // add the task type section
-      if (ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
-        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+      // task
+      if (is(element, 'bpmn:Task')) {
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
       }
 
-      // add the apexPage section
+      // userTask
       if (is(element, 'bpmn:UserTask')) {
+        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', 'APEX Page', ApexPageProps));
         newGroups.push(createSection({element, translate}, 'apexApproval', 'APEX Approval', ApexApprovalProps));
-      }
-
-      // add the plsql section
-      if (is(element, 'bpmn:ScriptTask')) {
-        newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-      }
-
-      // add the execution section
-      if (is(element, 'bpmn:Process')) {
-        newGroups.push(createSection({element, translate}, 'execution', 'Execution', ExecutionProps));
-      }
-
-      // add the procVar section (filtering done inside)
-      let procVarLabel;
-
-      if (ModelingUtil.is(element, 'bpmn:CallActivity')) procVarLabel = 'In/Out Mapping';
-      else if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) procVarLabel = 'In/Out Variables';
-      else procVarLabel = 'Process Variables';
-
-      newGroups.push(createSection({element, injector, translate}, 'procVars', procVarLabel, ProcVarGroup));
-
-      // add the starter section
-      if (is(element, 'bpmn:Process')) {
-        newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
-      }
-
-      // add the assignment section
-      if (is(element, 'bpmn:UserTask')) {
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', 'Assignment', AssignmentProps));
-      }
-
-      // add the scheduling section
-      if (is(element, 'bpmn:UserTask') || is(element, 'bpmn:Process')) {
         newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
       }
 
-      // add the role section
-      if (is(element, 'bpmn:Lane')) {
-        newGroups.push(createSection({element, translate}, 'role', 'APEX Role', RoleProps));
+      // scriptTask
+      if (is(element, 'bpmn:ScriptTask')) {
+        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
       }
 
-      // add the call activity section
+      // serviceTask
+      if (is(element, 'bpmn:ServiceTask')) {
+        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        // TODO
+      }
+
+      // businessRuleTask
+      if (is(element, 'bpmn:BusinessRuleTask')) {
+        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+      }
+
+      // callActivity
       if (is(element, 'bpmn:CallActivity')) {
         newGroups.push(createSection({element, translate}, 'callActivity', 'Called Diagram', CallActivityProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Mapping', ProcVarGroup));
+      }
+
+      // process
+      if (is(element, 'bpmn:Process')) {
+        newGroups.push(createSection({element, translate}, 'execution', 'Execution', ExecutionProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Variables', ProcVarGroup));
+        newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
+        newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
+      }
+
+      // lane
+      if (is(element, 'bpmn:Lane')) {
+        newGroups.push(createSection({element, translate}, 'role', 'APEX Role', RoleProps));
       }
 
       // add the custom timer section
       newGroups.push(createSection({element, translate}, 'customTimer', 'Timer', CustomTimerProps));
 
-      // add all non-empty groups
+      // filter: add all non-empty groups
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
