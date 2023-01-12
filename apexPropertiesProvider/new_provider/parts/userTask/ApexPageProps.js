@@ -1,7 +1,7 @@
 import {
   HeaderButton,
   isSelectEntryEdited,
-  isTextFieldEntryEdited, isToggleSwitchEntryEdited, ListGroup,
+  isTextFieldEntryEdited, ListGroup,
   SelectEntry,
   TextFieldEntry,
   ToggleSwitchEntry
@@ -44,7 +44,7 @@ export default function (args) {
         id: 'inputSelection',
         element,
         component: InputSelection,
-        isEdited: isToggleSwitchEntryEdited,
+        // isEdited: isToggleSwitchEntryEdited,
       },
       {
         id: 'applicationId',

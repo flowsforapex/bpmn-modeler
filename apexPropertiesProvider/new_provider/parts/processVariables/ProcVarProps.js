@@ -6,7 +6,7 @@ import {
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
 
-import { helptext } from '../../helper/HelpText';
+import { Helptext } from '../../helper/HelpText';
 
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -192,7 +192,7 @@ function VarDataType(props) {
 function VarDescription(props) {
   const { idPrefix, element, parameter } = props;
 
-  return helptext({
+  return Helptext({
     text: parameter.varDescription,
   });
 }

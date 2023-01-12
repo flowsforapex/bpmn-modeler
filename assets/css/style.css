@@ -49,10 +49,10 @@
 /**
  * quickpicks
  */
-.bio-properties-panel-quickpicks {
+.bio-properties-panel-quickpick, .bio-properties-panel-quickpicks {
   margin: 2px 32px 6px 12px;
 }
-.bio-properties-panel-quickpick {
+.bio-properties-panel-quickpick-link {
   cursor: pointer;
   color: #52B415;
   margin-inline-end: 12px;

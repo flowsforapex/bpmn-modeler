@@ -7,15 +7,15 @@ import {
 
 import { useService } from 'bpmn-js-properties-panel';
 
-export default function ParameterProps(props) {
-  const { idPrefix, parameter, hooks } = props;
+export default function PageItemProps(props) {
+  const { idPrefix, pageItem, hooks } = props;
 
   return [
     {
       id: `${idPrefix}-itemName`,
       component: ItemName,
       idPrefix,
-      parameter,
+      pageItem,
       hooks,
       isEdited: isSelectEntryEdited,
     },
@@ -23,30 +23,30 @@ export default function ParameterProps(props) {
       id: `${idPrefix}-itemNameText`,
       component: ItemNameText,
       idPrefix,
-      parameter,
+      pageItem,
       isEdited: isTextFieldEntryEdited,
     },
     {
       id: `${idPrefix}-itemValue`,
       component: ItemValue,
       idPrefix,
-      parameter,
+      pageItem,
       isEdited: isTextFieldEntryEdited,
     },
   ];
 }
 
 function ItemName(props) {
-  const { idPrefix, element, parameter } = props;
+  const { idPrefix, element, pageItem } = props;
 
   const { items, setItems } = props.hooks;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
-  const getOptions = (parameter) => {
-    const currValue = parameter.itemName;
+  const getOptions = (pageItem) => {
+    const currValue = pageItem.itemName;
 
     const existing =
       currValue == null || items.map(e => e.value).includes(currValue);
@@ -63,20 +63,16 @@ function ItemName(props) {
   };
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
-      element,
-      moddleElement: parameter,
-      properties: {
-        itemName: value,
-      },
+    modeling.updateModdleProperties(element, pageItem, {
+      itemName: value,
     });
   };
 
-  const getValue = parameter => parameter.itemName;
+  const getValue = pageItem => pageItem.itemName;
 
   if (element.businessObject.manualInput === 'false') {
     return SelectEntry({
-      element: parameter,
+      element: pageItem,
       id: `${idPrefix}-itemName`,
       label: translate('Item'),
       getValue,
@@ -88,27 +84,23 @@ function ItemName(props) {
 }
 
 function ItemNameText(props) {
-  const { idPrefix, element, parameter } = props;
+  const { idPrefix, element, pageItem } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
-      element,
-      moddleElement: parameter,
-      properties: {
-        itemName: value,
-      },
+    modeling.updateModdleProperties(element, pageItem, {
+      itemName: value,
     });
   };
 
-  const getValue = parameter => parameter.itemName;
+  const getValue = pageItem => pageItem.itemName;
 
   if (element.businessObject.manualInput === 'true') {
     return TextFieldEntry({
-      element: parameter,
+      element: pageItem,
       id: `${idPrefix}-itemName`,
       label: translate('Item Name'),
       getValue,
@@ -119,26 +111,22 @@ function ItemNameText(props) {
 }
 
 function ItemValue(props) {
-  const { idPrefix, element, parameter } = props;
+  const { idPrefix, element, pageItem } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    commandStack.execute('element.updateModdleProperties', {
-      element,
-      moddleElement: parameter,
-      properties: {
-        itemValue: value,
-      },
+    modeling.updateModdleProperties(element, pageItem, {
+      itemValue: value,
     });
   };
 
-  const getValue = parameter => parameter.itemValue;
+  const getValue = pageItem => pageItem.itemValue;
 
   return TextFieldEntry({
-    element: parameter,
+    element: pageItem,
     id: `${idPrefix}-itemValue`,
     label: translate('Item Value'),
     getValue,

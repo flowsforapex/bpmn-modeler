@@ -173,6 +173,20 @@ export function getTasks(applicationId) {
       )
       .then(pData => pData);
   }
+  if (applicationId === '1') {
+    return Promise.resolve([
+      { label: '', value: null },
+      { label: 'A1T1', value: '1' },
+      { label: 'A1T2', value: '2' },
+    ]);
+  } else if (applicationId === '2') {
+    return Promise.resolve([
+      { label: '', value: null },
+      { label: 'A2T1', value: '1' },
+      { label: 'A2T2', value: '2' },
+      { label: 'A2T3', value: '3' },
+    ]);
+  }
   return Promise.resolve();
 }
 
@@ -186,9 +200,9 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
         ajaxIdentifier,
         {
           x01: 'GET_VARIABLE_MAPPING',
-          x02: bo.calledDiagram,
-          x03: bo.calledDiagramVersionSelection,
-          x04: bo.calledDiagramVersion,
+          x02: calledDiagram,
+          x03: calledDiagramVersionSelection,
+          x04: calledDiagramVersion,
         },
         {}
       )
@@ -221,5 +235,38 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
         },
       ]
     }
+  );
+}
+
+export function getJSONParameters(applicationId, taskStaticId) {
+  if (typeof apex !== 'undefined') {
+    // ajaxIdentifier
+    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    // ajax process
+    return apex.server
+      .plugin(
+        ajaxIdentifier,
+        {
+          x01: 'GET_JSON_PARAMETERS',
+          x02: applicationId,
+          x03: taskStaticId,
+        },
+        {}
+      )
+      .then(pData => pData);
+  }
+  return Promise.resolve(
+    [
+      {
+        parStaticId: 'par1',
+        parDataType: 'String',
+        parValue: '1'
+      },
+      {
+        parStaticId: 'par2',
+        parDataType: 'String',
+        parValue: '2'
+      }
+    ]
   );
 }
