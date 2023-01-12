@@ -8,12 +8,14 @@ export default function ParametersProps(element, injector, helper) {
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
 
+  const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
+
   const items = parameters.map((parameter, index) => {
     const id = `${element.id}-procVar-${index}`;
 
     return {
       id,
-      label: `${parameter.get('varSequence')} - ${parameter.get('varName')}` || '',
+      label: isDefinition ? parameter.get('varName') : `${parameter.get('varSequence')} - ${parameter.get('varName')}` || '',
       entries: ProcVarProps({
         idPrefix: id,
         element,
@@ -27,8 +29,6 @@ export default function ParametersProps(element, injector, helper) {
       }),
     };
   });
-
-  const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
 
   return {
     items,

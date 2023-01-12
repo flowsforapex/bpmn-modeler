@@ -53,7 +53,11 @@ function createPlsqlSection(element, translate) {
 }
 
 function createProcVarSection(element, injector, translate) {
-  const label = ModelingUtil.is(element, 'bpmn:CallActivity') ? 'In/Out Mapping' : 'Process Variables';
+  let label;
+
+  if (ModelingUtil.is(element, 'bpmn:CallActivity')) label = 'In/Out Mapping';
+  else if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) label = 'In/Out Variables';
+  else label = 'Process Variables';
 
   const procVarSection = {
     id: 'procVars',
