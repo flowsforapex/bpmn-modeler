@@ -5,16 +5,17 @@ import apexPageProps from './parts/userTask/ApexPageProps';
 import apexApprovalProps from './parts/userTask/ApprovalTaskProps';
 
 import customTimerProps from './custom/CustomTimerProps';
-import taskTypeProps from './parts/TaskTypeProps';
+import taskTypeProps from './parts/task/TaskTypeProps';
 
-import assignmentProps from './parts/assignment/AssignmentProps';
+import assignmentProps from './parts/userTask/AssignmentProps';
 
 import executionProps from './parts/process/ExecutionProps';
 
-import roleProps from './parts/lanes/RoleProps';
+import roleProps from './parts/lane/RoleProps';
 import schedulingProps from './parts/scheduling/SchedulingProps';
 
 import callActivityProps from './parts/callActivity/CallActivityProps';
+import starterProps from './parts/process/StarterProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -108,6 +109,16 @@ function createExecutionSection(element, translate) {
   return executionSection;
 }
 
+function createStarterSection(element, translate) {
+  const starterSection = {
+    id: 'starter',
+    label: translate('Potential Starters'),
+    entries: starterProps(element),
+  };
+
+  return starterSection;
+}
+
 function createSchedulingSection(element, translate) {
   const schedulingSection = {
     id: 'scheduling',
@@ -199,13 +210,18 @@ export default function apexPropertiesProvider(
         newGroups.push(createPlsqlSection(element, translate));
       }
 
-      // add the process section
+      // add the execution section
       if (is(element, 'bpmn:Process')) {
         newGroups.push(createExecutionSection(element, translate));
       }
 
       // add the procVar section (filtering done inside)
       newGroups.push(createProcVarSection(element, injector, translate));
+
+      // add the starter section
+      if (is(element, 'bpmn:Process')) {
+        newGroups.push(createStarterSection(element, translate));
+      }
 
       if (is(element, 'bpmn:UserTask')) {
         newGroups.push(createAssignmentSection(element, translate));

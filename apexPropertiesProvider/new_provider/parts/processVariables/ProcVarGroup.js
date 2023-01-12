@@ -1,5 +1,4 @@
 import {
-  HeaderButton,
   ListGroup
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
@@ -9,6 +8,8 @@ import ListExtensionHelper from '../../helper/ListExtensionHelper';
 import ProcVarList from './ProcVarList';
 
 import { getDefinedVariables } from '../../plugins/metaDataCollector';
+
+import { quickpicks } from '../../helper/Quickpick';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -185,47 +186,48 @@ function QuickpickDefinedVariables(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
-  return new HeaderButton({
-    id: id,
-    children: translate('Load defined variables'),
-    onClick: function () {
-      const {calledDiagram, calledDiagramVersionSelection, calledDiagramVersion} = element.businessObject;
+  return quickpicks([
+    {
+      text: 'Load defined variables',
+      handler: () => {
+        const {calledDiagram, calledDiagramVersionSelection, calledDiagramVersion} = element.businessObject;
 
-      getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion)
-      .then((data) => {
-        if (data.InVariables) {
-          data.InVariables.forEach((v) => {
-            helper1.addSubElement(
-              { element, bpmnFactory, commandStack },
-              {
-                varSequence: helper1.getNextSequence(element),
-                varName: v.varName,
-                varDataType: v.varDataType,
-                varExpressionType: 'static',
-                varExpression: '',
-                varDescription: v.varDescription,
-              }
-            );
-          });
-        }
-        if (data.OutVariables) {
-          data.OutVariables.forEach((v) => {
-            helper2.addSubElement(
-              { element, bpmnFactory, commandStack },
-              {
-                varSequence: helper2.getNextSequence(element),
-                varName: v.varName,
-                varDataType: v.varDataType,
-                varExpressionType: 'static',
-                varExpression: '',
-                varDescription: v.varDescription,
-              }
-            );
-          });
-        }
-      });
-    },
-  });
+        getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion)
+        .then((data) => {
+          if (data.InVariables) {
+            data.InVariables.forEach((v) => {
+              helper1.addSubElement(
+                { element, bpmnFactory, commandStack },
+                {
+                  varSequence: helper1.getNextSequence(element),
+                  varName: v.varName,
+                  varDataType: v.varDataType,
+                  varExpressionType: 'static',
+                  varExpression: '',
+                  varDescription: v.varDescription,
+                }
+              );
+            });
+          }
+          if (data.OutVariables) {
+            data.OutVariables.forEach((v) => {
+              helper2.addSubElement(
+                { element, bpmnFactory, commandStack },
+                {
+                  varSequence: helper2.getNextSequence(element),
+                  varName: v.varName,
+                  varDataType: v.varDataType,
+                  varExpressionType: 'static',
+                  varExpression: '',
+                  varDescription: v.varDescription,
+                }
+              );
+            });
+          }
+        });
+      }
+    }
+  ]);
 }
 
 function QuickpickBusinessRef(props) {
@@ -235,20 +237,21 @@ function QuickpickBusinessRef(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
-  return new HeaderButton({
-    id: id,
-    children: translate('Copy business reference'),
-    onClick: function () {
-      helper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          varSequence: helper.getNextSequence(element),
-          varName: 'BUSINESS_REF',
-          varDataType: 'VARCHAR2',
-          varExpressionType: 'processVariable',
-          varExpression: 'BUSINESS_REF',
-        }
-      );
-    },
-  });
+  return quickpicks([
+    {
+      text: 'Copy business reference',
+      handler: () => {
+        helper.addSubElement(
+          { element, bpmnFactory, commandStack },
+          {
+            varSequence: helper.getNextSequence(element),
+            varName: 'BUSINESS_REF',
+            varDataType: 'VARCHAR2',
+            varExpressionType: 'processVariable',
+            varExpression: 'BUSINESS_REF',
+          }
+        );
+      }
+    }
+  ]);
 }

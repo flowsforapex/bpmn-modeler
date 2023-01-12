@@ -10,6 +10,8 @@ import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 import { quickpicks } from '../../helper/Quickpick';
 
+var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+
 const priorityHelper = new ExtensionHelper('apex:Priority');
 const dueDateHelper = new ExtensionHelper('apex:DueDate');
 
@@ -122,37 +124,60 @@ function PriorityExpression(props) {
       expression: value,
     });
 
-  const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');  
+  const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
 
   if (expressionType === 'static') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Expression'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: function () {
-        return [
-          { label: '', value: null },
-          { label: translate('1-Urgent'), value: '1' },
-          { label: translate('2-High'), value: '2' },
-          { label: translate('3-Medium'), value: '3' },
-          { label: translate('4-Low'), value: '4' },
-          { label: translate('5-Lowest'), value: '5' },
-        ];
-      },
-    });
-  } else if (expressionType != null) {
-    return new TextAreaEntry({
+    entries.push(
+      new SelectEntry({
         id: id,
         element: element,
         label: translate('Expression'),
         getValue: getValue,
         setValue: setValue,
         debounce: debounce,
-      }); 
+        getOptions: function () {
+          return [
+            { label: '', value: null },
+            { label: translate('1-Urgent'), value: '1' },
+            { label: translate('2-High'), value: '2' },
+            { label: translate('3-Medium'), value: '3' },
+            { label: translate('4-Low'), value: '4' },
+            { label: translate('5-Lowest'), value: '5' },
+          ];
+        },
+      })
+    );
+  } else if (expressionType != null) {
+    entries.push(
+      TextAreaEntry({
+        id: id,
+        element: element,
+        label: translate('Expression'),
+        getValue: getValue,
+        setValue: setValue,
+        debounce: debounce,
+      })
+    );
+
+    if (ModelingUtil.is(element, 'bpmn:UserTask')) {
+      entries.push(
+        quickpicks([
+          {
+            text: 'Process Priority',
+            handler: () => {
+              priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+                expression: 'PROCESS_PRIORITY',
+              });
+            }
+          }
+        ])
+      );
+    }
   }
+
+  return entries;
 }
 
 function PriorityExpressionEditorContainer(props) {
