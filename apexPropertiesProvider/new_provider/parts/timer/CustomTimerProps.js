@@ -7,7 +7,6 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 import ExtensionHelper from '../../helper/ExtensionHelper';
-import { updateProperties } from '../../helper/util';
 
 var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -139,7 +138,7 @@ function TimerDefinitionType(props) {
   const translate = useService('translate');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   const getValue = () => timerEventDefinitionType || '';
 
@@ -167,11 +166,7 @@ function TimerDefinitionType(props) {
       newProps[value] = formalExpression;
     }
 
-    updateProperties({
-      element,
-      moddleElement: timerEventDefinition,
-      properties: newProps
-    }, commandStack);
+    modeling.updateModdleProperties(element, timerEventDefinition, newProps);
   };
   
   const getOptions = () => {
@@ -217,18 +212,14 @@ function TimerDefinition(props) {
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   const getValue = () => timerEventFormalExpression && timerEventFormalExpression.get('body');
 
   const setValue = (value) => {
-    updateProperties({
-      element,
-      moddleElement: timerEventFormalExpression,
-      properties: {
-        body: value
-      }
-    }, commandStack);
+    modeling.updateModdleProperties(element, timerEventFormalExpression, {
+      body: value,
+    });
   };
 
   if (['timeDate', 'timeDuration', 'timeCycle'].includes(timerEventDefinitionType)) {

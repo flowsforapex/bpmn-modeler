@@ -8,8 +8,6 @@ import {
 
 import { helptext } from '../../helper/HelpText';
 
-import { updateProperties } from '../../helper/util';
-
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
@@ -103,21 +101,14 @@ export default function ProcVarProps(props) {
 function VarSequence(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varSequence: String(value),
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varSequence: String(value),
+    });
   };
 
   const getValue = parameter => parameter.varSequence;
@@ -135,21 +126,14 @@ function VarSequence(props) {
 function VarName(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varName: value,
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varName: value,
+    });
   };
 
   const getValue = parameter => parameter.varName;
@@ -167,9 +151,9 @@ function VarName(props) {
 function VarDataType(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const DATA_TYPE_DESCRIPTION = {
     DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
@@ -184,16 +168,9 @@ function VarDataType(props) {
   ];
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varDataType: value,
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varDataType: value,
+    });
   };
 
   const getValue = parameter => parameter.varDataType;
@@ -223,21 +200,14 @@ function VarDescription(props) {
 function VarDescriptionInput(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varDescription: value,
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varDescription: value,
+    });
   };
 
   const getValue = parameter => parameter.varDescription;
@@ -255,9 +225,9 @@ function VarDescriptionInput(props) {
 function VarExpressionType(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const getOptions = () => {
     const { varDataType } = parameter;
@@ -299,16 +269,9 @@ function VarExpressionType(props) {
   };
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varExpressionType: value,
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varExpressionType: value,
+    });
   };
 
   const getValue = parameter => parameter.varExpressionType;
@@ -327,21 +290,14 @@ function VarExpressionType(props) {
 function VarExpression(props) {
   const { idPrefix, element, parameter } = props;
 
-  const commandStack = useService('commandStack');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
+  const modeling = useService('modeling');
 
   const setValue = (value) => {
-    updateProperties(
-      {
-        element,
-        moddleElement: parameter,
-        properties: {
-          varExpression: value,
-        },
-      },
-      commandStack
-    );
+    modeling.updateModdleProperties(element, parameter, {
+      varExpression: value,
+    });
   };
 
   const getValue = parameter => parameter.varExpression;
@@ -377,16 +333,9 @@ function VarExpression(props) {
         return parameter.varExpression;
       };
       var saveVarExpression = function (text) {
-        updateProperties(
-          {
-            element,
-            moddleElement: parameter,
-            properties: {
-              varExpression: text,
-            },
-          },
-          commandStack
-        );
+        modeling.updateModdleProperties(element, parameter, {
+          varExpression: text,
+        });
       };
       openEditor(
         'varExpression',
