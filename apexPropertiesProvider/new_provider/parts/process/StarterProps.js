@@ -12,7 +12,10 @@ const potentialStartingUsersHelper = new ExtensionHelper('apex:PotentialStarting
 const potentialStartingGroupsHelper = new ExtensionHelper('apex:PotentialStartingGroups');
 const excludedStartingUsersHelper = new ExtensionHelper('apex:ExcludedStartingUsers');
 
-export default function (element) {
+export default function (args) {
+
+  const {element} = args;
+  
   if (element.businessObject.isStartable === 'true') {
     return [
       {

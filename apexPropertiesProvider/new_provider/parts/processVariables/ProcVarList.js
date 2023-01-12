@@ -2,7 +2,10 @@ import ProcVarProps from './ProcVarProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-export default function ParametersProps(element, injector, helper) {
+export default function ParametersProps(args) {
+
+  const {element, injector, helper} = args;
+
   const parameters = helper.getSubExtensionElements(element) || [];
 
   const bpmnFactory = injector.get('bpmnFactory');

@@ -16,9 +16,11 @@ import {
 
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
-export default function (element) {
+export default function (args) {
   const [applications, setApplications] = useState([]);
   const [tasks, setTasks] = useState([]);
+
+  const {element} = args;
 
   if (element.businessObject.type === 'apexApproval') {
     return [

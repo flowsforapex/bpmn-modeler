@@ -12,7 +12,10 @@ const potentialUsersHelper = new ExtensionHelper('apex:PotentialUsers');
 const potentialGroupsHelper = new ExtensionHelper('apex:PotentialGroups');
 const excludedUsersHelper = new ExtensionHelper('apex:ExcludedUsers');
 
-export default function (element) {
+export default function (args) {
+
+  const {element} = args;
+
   return [
     {
       id: 'potentialUsers',

@@ -31,10 +31,12 @@ const listExtensionHelper = new ListExtensionHelper(
   'pageItem'
 );
 
-export default function (element, injector) {
+export default function (args) {
   const [applications, setApplications] = useState([]);
   const [pages, setPages] = useState([]);
   const [items, setItems] = useState([]);
+
+  const {element, injector} = args;
 
   if (element.businessObject.type === 'apexPage' || typeof element.businessObject.type === 'undefined') {
     return [

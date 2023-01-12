@@ -12,8 +12,10 @@ import {
   getDiagrams
 } from '../../plugins/metaDataCollector';
 
-export default function (element) {
+export default function (args) {
   const [diagrams, setDiagrams] = useState([]);
+
+  const {element} = args;
 
   return [
     {

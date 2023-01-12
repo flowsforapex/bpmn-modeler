@@ -1,21 +1,21 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
-import procVarGroup from './parts/processVariables/ProcVarGroup';
-import executePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
-import apexPageProps from './parts/userTask/ApexPageProps';
-import apexApprovalProps from './parts/userTask/ApprovalTaskProps';
+import ProcVarGroup from './parts/processVariables/ProcVarGroup';
+import ExecutePlsqlProps from './parts/scriptTask/ExecutePlsqlProps';
+import ApexPageProps from './parts/userTask/ApexPageProps';
+import ApexApprovalProps from './parts/userTask/ApprovalTaskProps';
 
-import customTimerProps from './custom/CustomTimerProps';
-import taskTypeProps from './parts/task/TaskTypeProps';
+import CustomTimerProps from './custom/CustomTimerProps';
+import TaskTypeProps from './parts/task/TaskTypeProps';
 
-import assignmentProps from './parts/userTask/AssignmentProps';
+import AssignmentProps from './parts/userTask/AssignmentProps';
 
-import executionProps from './parts/process/ExecutionProps';
+import ExecutionProps from './parts/process/ExecutionProps';
 
-import roleProps from './parts/lane/RoleProps';
-import schedulingProps from './parts/scheduling/SchedulingProps';
+import RoleProps from './parts/lane/RoleProps';
+import SchedulingProps from './parts/scheduling/SchedulingProps';
 
-import callActivityProps from './parts/callActivity/CallActivityProps';
-import starterProps from './parts/process/StarterProps';
+import CallActivityProps from './parts/callActivity/CallActivityProps';
+import StarterProps from './parts/process/StarterProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -23,130 +23,15 @@ var domQuery = require('min-dom').query;
 
 const LOW_PRIORITY = 500;
 
-function createApexPageSection(element, injector, translate) {
-  const apexPageSection = {
-    id: 'apexPage',
-    label: translate('APEX Page'),
-    entries: apexPageProps(element, injector),
+function createSection(args, id, label, props) {
+
+  const section = {
+    id: id,
+    label: args.translate(label),
+    entries: props(args)
   };
 
-  return apexPageSection;
-}
-
-function createApexApprovalSection(element, translate) {
-  const apexApprovalSection = {
-    id: 'apexApproval',
-    label: translate('APEX Approval'),
-    entries: apexApprovalProps(element),
-  };
-
-  return apexApprovalSection;
-}
-
-function createPlsqlSection(element, translate) {
-  const plsqlSection = {
-    id: 'executePlsql',
-    label: translate('PL/SQL'),
-    entries: executePlsqlProps(element),
-  };
-
-  return plsqlSection;
-}
-
-function createProcVarSection(element, injector, translate) {
-  let label;
-
-  if (ModelingUtil.is(element, 'bpmn:CallActivity')) label = 'In/Out Mapping';
-  else if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) label = 'In/Out Variables';
-  else label = 'Process Variables';
-
-  const procVarSection = {
-    id: 'procVars',
-    label: translate(label),
-    entries: procVarGroup(element, injector, translate),
-  };
-
-  return procVarSection;
-}
-
-function createCustomTimerSection(element, translate) {
-  const customTimerSection = {
-    id: 'customTimer',
-    label: translate('Timer'),
-    entries: customTimerProps(element),
-  };
-
-  return customTimerSection;
-}
-
-function createTaskTypeSection(element, translate) {
-  const taskTypeSection = {
-    id: 'taskType',
-    label: translate('Task Type'),
-    entries: taskTypeProps(element),
-  };
-
-  return taskTypeSection;
-}
-
-function createAssignmentSection(element, translate) {
-  const assignmentSection = {
-    id: 'assignment',
-    label: translate('Assignment'),
-    entries: assignmentProps(element),
-  };
-
-  return assignmentSection;
-}
-
-function createExecutionSection(element, translate) {
-  const executionSection = {
-    id: 'execution',
-    label: translate('Execution'),
-    entries: executionProps(element),
-  };
-
-  return executionSection;
-}
-
-function createStarterSection(element, translate) {
-  const starterSection = {
-    id: 'starter',
-    label: translate('Potential Starters'),
-    entries: starterProps(element),
-  };
-
-  return starterSection;
-}
-
-function createSchedulingSection(element, translate) {
-  const schedulingSection = {
-    id: 'scheduling',
-    label: translate('Scheduling'),
-    entries: schedulingProps(element),
-  };
-
-  return schedulingSection;
-}
-
-function createRoleSection(element, translate) {
-  const roleSection = {
-    id: 'role',
-    label: translate('APEX Role'),
-    entries: roleProps(element),
-  };
-
-  return roleSection;
-}
-
-function createCallActivitySection(element, translate) {
-  const callActivitySection = {
-    id: 'callActivity',
-    label: translate('Called Diagram'),
-    entries: callActivityProps(element),
-  };
-
-  return callActivitySection;
+  return section;
 }
 
 function makePropertiesPanelResizable() {
@@ -169,13 +54,15 @@ function makePropertiesPanelResizable() {
 
   function resize(event) {
     var dx = mouseX - event.x;
-    mouseX = event.x;
     var panelWidth = parentNode.scrollWidth + dx;
     var maxWidth =
-      (parseInt(getComputedStyle(canvas, '').width) / 100) *
-      parseInt(getComputedStyle(parentNode).maxWidth);
+      (parseInt(getComputedStyle(canvas, '').width, 10) / 100) *
+      parseInt(getComputedStyle(parentNode).maxWidth, 10);
+    
+    mouseX = event.x;
+    
     if (
-      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth) &&
+      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth, 10) &&
       panelWidth < maxWidth
     ) {
       parentNode.style.width = `${panelWidth}px`;
@@ -195,55 +82,63 @@ export default function apexPropertiesProvider(
     return function (groups) {
       const newGroups = [];
 
+      // add the task type section
       if (ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
-        newGroups.push(createTaskTypeSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
       }
 
       // add the apexPage section
       if (is(element, 'bpmn:UserTask')) {
-        newGroups.push(createApexPageSection(element, injector, translate));
-        newGroups.push(createApexApprovalSection(element, translate));
+        newGroups.push(createSection({element, injector, translate}, 'apexPage', 'APEX Page', ApexPageProps));
+        newGroups.push(createSection({element, translate}, 'apexApproval', 'APEX Approval', ApexApprovalProps));
       }
 
       // add the plsql section
       if (is(element, 'bpmn:ScriptTask')) {
-        newGroups.push(createPlsqlSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
       }
 
       // add the execution section
       if (is(element, 'bpmn:Process')) {
-        newGroups.push(createExecutionSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'execution', 'Execution', ExecutionProps));
       }
 
       // add the procVar section (filtering done inside)
-      newGroups.push(createProcVarSection(element, injector, translate));
+      let procVarLabel;
+
+      if (ModelingUtil.is(element, 'bpmn:CallActivity')) procVarLabel = 'In/Out Mapping';
+      else if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) procVarLabel = 'In/Out Variables';
+      else procVarLabel = 'Process Variables';
+
+      newGroups.push(createSection({element, injector, translate}, 'procVars', procVarLabel, ProcVarGroup));
 
       // add the starter section
       if (is(element, 'bpmn:Process')) {
-        newGroups.push(createStarterSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
       }
 
+      // add the assignment section
       if (is(element, 'bpmn:UserTask')) {
-        newGroups.push(createAssignmentSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'assignment', 'Assignment', AssignmentProps));
       }
 
       // add the scheduling section
       if (is(element, 'bpmn:UserTask') || is(element, 'bpmn:Process')) {
-        newGroups.push(createSchedulingSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
       }
 
       // add the role section
       if (is(element, 'bpmn:Lane')) {
-        newGroups.push(createRoleSection(element, translate));
+        newGroups.push(createSection({element, translate}, 'role', 'APEX Role', RoleProps));
       }
 
       // add the call activity section
       if (is(element, 'bpmn:CallActivity')) {
-        newGroups.push(createCallActivitySection(element, translate));
+        newGroups.push(createSection({element, translate}, 'callActivity', 'Called Diagram', CallActivityProps));
       }
 
       // add the custom timer section
-      newGroups.push(createCustomTimerSection(element, translate));
+      newGroups.push(createSection({element, translate}, 'customTimer', 'Timer', CustomTimerProps));
 
       // add all non-empty groups
       newGroups.forEach((g) => {

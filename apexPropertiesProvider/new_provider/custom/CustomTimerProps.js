@@ -18,7 +18,10 @@ var dateHelper = new ExtensionHelper('apex:OracleDate');
 var durationHelper = new ExtensionHelper('apex:OracleDuration');
 var cycleHelper = new ExtensionHelper('apex:OracleCycle');
 
-export default function (element) {
+export default function (args) {
+
+  const {element} = args;
+  
   const timerEventDefinition = getTimerEventDefinition(element);
   const timerEventDefinitionType = getTimerDefinitionType(timerEventDefinition);
 

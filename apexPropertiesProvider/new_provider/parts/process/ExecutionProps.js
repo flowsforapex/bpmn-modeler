@@ -3,7 +3,10 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
-export default function (element) {
+export default function (args) {
+
+  const {element} = args;
+  
   return [
     {
       id: 'isCallable',

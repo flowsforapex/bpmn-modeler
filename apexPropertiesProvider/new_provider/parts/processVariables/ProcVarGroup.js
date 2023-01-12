@@ -13,9 +13,11 @@ import { quickpicks } from '../../helper/Quickpick';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-export default function (element, injector, translate) {
+export default function (args) {
   var type1 = null;
   var type2 = null;
+
+  const {element, injector, translate} = args;
 
   const entries = [];
 
@@ -156,10 +158,11 @@ export default function (element, injector, translate) {
       element,
       label: translate(type1.label),
       component: ListGroup,
-      ...ProcVarList(
-        element, injector,
-        listExtensionHelper1
-      ), 
+      ...ProcVarList({
+        element,
+        injector,
+        helper: listExtensionHelper1
+      }), 
     });
   }
 
@@ -169,10 +172,11 @@ export default function (element, injector, translate) {
       element,
       label: translate(type2.label),
       component: ListGroup,
-      ...ProcVarList(
-        element, injector,
-        listExtensionHelper2
-      ), 
+      ...ProcVarList({
+        element,
+        injector,
+        helper: listExtensionHelper2
+      }), 
     });
   }
 

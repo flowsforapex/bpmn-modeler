@@ -15,7 +15,10 @@ var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 const priorityHelper = new ExtensionHelper('apex:Priority');
 const dueDateHelper = new ExtensionHelper('apex:DueDate');
 
-export default function (element) {
+export default function (args) {
+
+  const {element} = args;
+  
   return [
     {
       id: 'priority',
