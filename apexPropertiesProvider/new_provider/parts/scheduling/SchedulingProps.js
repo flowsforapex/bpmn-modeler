@@ -153,6 +153,7 @@ function PriorityExpression(props) {
   } else if (expressionType != null) {
     
     let label;
+    let description;
 
     if (
       [
@@ -179,23 +180,12 @@ function PriorityExpression(props) {
             expressionType
           );
         });
-     } else {
-        label = translate('Expression');
-      }
-
-    entries.push(
-      TextAreaEntry({
-        id: id,
-        element: element,
-        label: label,
-        getValue: getValue,
-        setValue: setValue,
-        debounce: debounce,
-      })
-    );
+    } else {
+      label = translate('Expression');
+    }
 
     if (ModelingUtil.is(element, 'bpmn:UserTask')) {
-      entries.push(
+      description = 
         Quickpick(
           {
             text: translate('Process Priority'),
@@ -205,9 +195,20 @@ function PriorityExpression(props) {
               });
             }
           }
-        )
-      );
+        );
     }
+
+    entries.push(
+      TextAreaEntry({
+        id: id,
+        element: element,
+        label: label,
+        description: description,
+        getValue: getValue,
+        setValue: setValue,
+        debounce: debounce,
+      })
+    );
   }
 
   return entries;
@@ -319,36 +320,39 @@ function DueDateFormatMask(props) {
       formatMask: value,
     });
 
-    const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType'); 
+  const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType'); 
 
   if (expressionType === 'static') {
+
+    const description = Quickpicks([
+      {
+        text: translate('Oracle'),
+        handler: () => {
+          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
+          });
+        }
+      },
+      {
+        text: translate('ISO'),
+        handler: () => {
+          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
+          });
+        }
+      }
+    ]);
+
     return [
         new TextFieldEntry({
         id: id,
         element: element,
         label: translate('Format Mask'),
+        description: description,
         getValue: getValue,
         setValue: setValue,
         debounce: debounce,
       }),
-      Quickpicks([
-        {
-          text: translate('Oracle'),
-          handler: () => {
-            dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
-            });
-          }
-        },
-        {
-          text: translate('ISO'),
-          handler: () => {
-            dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
-            });
-          }
-        }
-      ])
     ];
   }
 }

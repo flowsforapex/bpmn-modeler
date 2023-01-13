@@ -15,7 +15,7 @@ import { Quickpick } from '../../helper/Quickpick';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
 import {
-  getApplications, getTasks
+  getApplications, getJSONParameters, getTasks
 } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
@@ -89,6 +89,11 @@ export default function (args) {
         element,
         component: BusinessRef,
         isEdited: isTextFieldEntryEdited,
+      },
+      {
+        id: 'parameters-quickpick',
+        element,
+        component: ParametersQuickpick
       },
       {
         id: 'parameters',
@@ -364,6 +369,16 @@ function BusinessRef(props) {
     });
   };
 
+  const qp = Quickpick(
+    {
+      text: translate('business_ref'),
+      handler: () => {
+        extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          businessRef: '&F4A$BUSINESS_REF.',
+        });
+      }
+    });
+
   return [
     new TextFieldEntry({
       id: id,
@@ -372,17 +387,38 @@ function BusinessRef(props) {
       getValue: getValue,
       setValue: setValue,
       debounce: debounce,
+      description: qp
     }),
-    Quickpick(
-      {
-        text: translate('business_ref'),
-        handler: () => {
-          extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            businessRef: '&F4A$BUSINESS_REF.',
-          });
-        }
-      })
   ];
+}
+
+function ParametersQuickpick(props) {
+  const { element, id } = props;
+
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+  const commandStack = useService('commandStack');
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const taskStaticId = extensionHelper.getExtensionProperty(element, 'taskStaticId');
+  
+  return Quickpick({
+    text: translate('Load Parameters'),
+    handler: () => {
+      getJSONParameters(applicationId, taskStaticId).then((data) => {
+        data.forEach((i) => {
+          listExtensionHelper.addSubElement(
+            { element, bpmnFactory, commandStack },
+            {
+              parStaticId: i.STATIC_ID,
+              parDataType: i.DATA_TYPE,
+              parValue: i.VALUE,
+            }
+          );
+        });
+      });
+    }
+  });
 }
 
 function ResultVariable(props) {

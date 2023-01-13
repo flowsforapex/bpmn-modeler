@@ -187,7 +187,7 @@ export function getTasks(applicationId) {
       { label: 'A2T3', value: '3' },
     ]);
   }
-  return Promise.resolve();
+  return Promise.resolve([]);
 }
 
 export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion) {
@@ -255,18 +255,21 @@ export function getJSONParameters(applicationId, taskStaticId) {
       )
       .then(pData => pData);
   }
-  return Promise.resolve(
-    [
-      {
-        parStaticId: 'par1',
-        parDataType: 'String',
-        parValue: '1'
-      },
-      {
-        parStaticId: 'par2',
-        parDataType: 'String',
-        parValue: '2'
-      }
-    ]
-  );
+  if (applicationId === '1' && taskStaticId === '1') {
+    return Promise.resolve(
+      [
+        {
+          parStaticId: 'par1',
+          parDataType: 'String',
+          parValue: '1'
+        },
+        {
+          parStaticId: 'par2',
+          parDataType: 'String',
+          parValue: '2'
+        }
+      ]
+    );
+  }
+  return Promise.resolve([]);
 }

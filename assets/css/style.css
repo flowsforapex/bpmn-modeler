@@ -46,13 +46,19 @@
 .open-dialog-label .fa.fa-box-arrow-in-ne {
   cursor: pointer;
 }
-/**
- * quickpicks
- */
-.bio-properties-panel-quickpick, .bio-properties-panel-quickpicks {
-  margin: 2px 32px 6px 12px;
+/* quickpicks in descriptions */
+.bio-properties-panel-description .bio-properties-panel-quickpick-link {
+  cursor: pointer;
+  /* color: #52B415; */
+  margin-inline-end: 12px;
+  font-size: var(--text-size-base);
+  /* text-decoration: none; */
 }
-.bio-properties-panel-quickpick-link {
+/* button-like quickpicks */
+.bio-properties-panel-group-entries > .bio-properties-panel-quickpick {
+  margin: 6px 32px 0px 12px;
+}
+.bio-properties-panel-group-entries > .bio-properties-panel-quickpick > .bio-properties-panel-quickpick-link {
   cursor: pointer;
   color: #52B415;
   margin-inline-end: 12px;
@@ -64,18 +70,16 @@
   margin: 2px 32px 6px 12px;
   font-style: italic;
 }
-/**
- * groups
- */
-.bio-properties-panel-group-entries .bio-properties-panel-group:first-child,
-.bio-properties-panel-entry + .bio-properties-panel-group,
-.bio-properties-panel-quickpick + .bio-properties-panel-group {
+/* Add border to first group in nested groups */
+.bio-properties-panel-group-entries .bio-properties-panel-group:first-child
+{
   border-top: 1px solid var(--group-bottom-border-color);
 }
 /* Remove double border at the end of nested groups */
 .bio-properties-panel-scroll-container > .bio-properties-panel-group:has( > .bio-properties-panel-group-entries.open > .bio-properties-panel-group:last-child) {
   border-bottom: none;
 }
+/* Highlight top level group headers */
 .bio-properties-panel-scroll-container > .bio-properties-panel-group > .bio-properties-panel-group-header > .bio-properties-panel-group-header-title {
   font-weight: 600;
 }
