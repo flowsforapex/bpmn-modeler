@@ -38,6 +38,8 @@ export default function (args) {
   return [];
 }
 
+/** *** Potential Starting Users *** **/
+
 function PotentialStartingUsers(props) {
   const { element, id } = props;
 
@@ -123,6 +125,8 @@ function PotentialStartingUsers(props) {
   });
 }
 
+/** *** Potential Starting Groups *** **/
+
 function PotentialStartingGroups(props) {
   const { element, id } = props;
 
@@ -207,6 +211,8 @@ function PotentialStartingGroups(props) {
     entries: entries
   });
 }
+
+/** *** Escluded Starting Users *** **/
 
 function ExcludedStartingUsers(props) {
   const { element, id } = props;
