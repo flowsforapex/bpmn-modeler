@@ -83,7 +83,7 @@ export default function apexPropertiesProvider(
       const newGroups = [];
 
       // task
-      if (is(element, 'bpmn:Task')) {
+      if (is(element, 'bpmn:Task') && !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
       }
 

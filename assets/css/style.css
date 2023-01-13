@@ -64,6 +64,21 @@
   margin: 2px 32px 6px 12px;
   font-style: italic;
 }
+/**
+ * groups
+ */
+.bio-properties-panel-group-entries .bio-properties-panel-group:first-child,
+.bio-properties-panel-entry + .bio-properties-panel-group,
+.bio-properties-panel-quickpick + .bio-properties-panel-group {
+  border-top: 1px solid var(--group-bottom-border-color);
+}
+/* Remove double border at the end of nested groups */
+.bio-properties-panel-scroll-container > .bio-properties-panel-group:has( > .bio-properties-panel-group-entries.open > .bio-properties-panel-group:last-child) {
+  border-bottom: none;
+}
+.bio-properties-panel-scroll-container > .bio-properties-panel-group > .bio-properties-panel-group-header > .bio-properties-panel-group-header-title {
+  font-weight: 600;
+}
 /** 
  * monaco editor
  */
