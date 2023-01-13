@@ -1,13 +1,11 @@
 import {
-  CollapsibleEntry, isSelectEntryEdited, isTextAreaEntryEdited, SelectEntry, TextAreaEntry
+  CollapsibleEntry, isSelectEntryEdited, isTextAreaEntryEdited
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-import { getContainer, openEditor } from '../../plugins/monacoEditor';
-
-import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
+import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor } from '../../helper/templates';
 
 const potentialUsersHelper = new ExtensionHelper('apex:PotentialUsers');
 const potentialGroupsHelper = new ExtensionHelper('apex:PotentialGroups');
@@ -43,137 +41,84 @@ function PotentialUsers(props) {
 
   const translate = useService('translate');
 
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
+    { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
+    { label: translate('Expression'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+  ];
+  
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlExpression',
+    'plsqlFunctionBody',
+  ];
+
+  const expressionType = potentialUsersHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'potentialUsersExpressionType',
+      element,
+      label: translate('Expression Type'),
+      helper: potentialUsersHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
+  if (expressionType != null) {
+
+    if (editorTypes.includes(expressionType)) {
+
+      const language =
+      expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+      entries.push(
+        {
+          id: 'potentialUsersExpression',
+          element,
+          label: translate('Expression'),
+          helper: potentialUsersHelper,
+          property: 'expression',
+          language: language,
+          type: expressionType,
+          component: DefaultTextAreaEntryWithEditor,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+
+    } else {
+
+      entries.push(
+        {
+          id: 'potentialUsersExpression',
+          element,
+          label: translate('Expression'),
+          helper: potentialUsersHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    }
+  }
+
   return new CollapsibleEntry({
     id: id,
     element: element,
     label: translate('Potential Users'),
-    entries: [
-      {
-        id: 'potentialUsersExpressionType',
-        element,
-        component: PotentialUsersExpressionType,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'potentialUsersExpression',
-        element,
-        component: PotentialUsersExpression,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'potentialUsersExpressionEditorContainer',
-        element,
-        component: PotentialUsersExpressionEditorContainer,
-      },
-    ]
+    entries: entries
   });
-}
-
-function PotentialUsersExpressionType(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    potentialUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const setValue = value =>
-    potentialUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expressionType: value,
-    });
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Expression Type'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate(''), value: null },
-        { label: translate('Static'), value: 'static' },
-        { label: translate('Process Variable'), value: 'processVariable' },
-        { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-        { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-        { label: translate('Expression'), value: 'plsqlExpression' },
-        { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-      ];
-    },
-  });
-}
-
-function PotentialUsersExpression(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    potentialUsersHelper.getExtensionProperty(element, 'expression');
-
-  const setValue = value =>
-    potentialUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expression: value,
-    });
-
-  const expressionType = potentialUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  let label;
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    label = OpenDialogLabel(translate('Expression'), () => {
-      var getExpression = function () {
-        return potentialUsersHelper.getExtensionProperty(element, 'expression');
-      };
-      var saveExpression = function (text) {
-        potentialUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-          expression: text,
-        });
-      };
-      openEditor(
-        'potentialUsersExpression',
-        getExpression,
-        saveExpression,
-        language,
-        expressionType
-      );
-    });
-  } else {
-    label = translate('Expression');
-  }
-
-  const entry = new TextAreaEntry({
-    id: id,
-    element: element,
-    label: label,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-
-  return entry;
-}
-
-function PotentialUsersExpressionEditorContainer(props) {
-  const translate = useService('translate');
-
-  return getContainer('potentialUsersExpression', translate);
 }
 
 /** *** Potential Groups *** **/
@@ -183,137 +128,84 @@ function PotentialGroups(props) {
 
   const translate = useService('translate');
 
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
+    { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
+    { label: translate('Expression'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+  ];
+  
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlExpression',
+    'plsqlFunctionBody',
+  ];
+
+  const expressionType = potentialGroupsHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'potentialGroupsExpressionType',
+      element,
+      label: translate('Expression Type'),
+      helper: potentialGroupsHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
+  if (expressionType != null) {
+
+    if (editorTypes.includes(expressionType)) {
+
+      const language =
+      expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+      entries.push(
+        {
+          id: 'potentialGroupsExpression',
+          element,
+          label: translate('Expression'),
+          helper: potentialGroupsHelper,
+          property: 'expression',
+          language: language,
+          type: expressionType,
+          component: DefaultTextAreaEntryWithEditor,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    } else {
+
+      entries.push(
+        {
+          id: 'potentialGroupsExpression',
+          element,
+          label: translate('Expression'),
+          helper: potentialGroupsHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    }
+  }
+
   return new CollapsibleEntry({
     id: id,
     element: element,
     label: translate('Potential Groups'),
-    entries: [
-      {
-        id: 'potentialGroupsExpressionType',
-        element,
-        component: PotentialGroupsExpressionType,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'potentialGroupsExpression',
-        element,
-        component: PotentialGroupsExpression,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'potentialGroupsExpressionEditorContainer',
-        element,
-        component: PotentialGroupsExpressionEditorContainer,
-      },
-    ]
+    entries: entries
   });
-}
-
-function PotentialGroupsExpressionType(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    potentialGroupsHelper.getExtensionProperty(element, 'expressionType');
-
-  const setValue = value =>
-    potentialGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expressionType: value,
-    });
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Expression Type'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: '', value: null },
-        { label: translate('Static'), value: 'static' },
-        { label: translate('Process Variable'), value: 'processVariable' },
-        { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-        { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-        { label: translate('Expression'), value: 'plsqlExpression' },
-        { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-      ];
-    },
-  });
-}
-
-function PotentialGroupsExpression(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    potentialGroupsHelper.getExtensionProperty(element, 'expression');
-
-  const setValue = value =>
-    potentialGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expression: value,
-    });
-
-  const expressionType = potentialGroupsHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  let label;
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    label = OpenDialogLabel(translate('Expression'), () => {
-      var getExpression = function () {
-        return potentialGroupsHelper.getExtensionProperty(element, 'expression');
-      };
-      var saveExpression = function (text) {
-        potentialGroupsHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-          expression: text,
-        });
-      };
-      openEditor(
-        'potentialGroupsExpression',
-        getExpression,
-        saveExpression,
-        language,
-        expressionType
-      );
-    });
-  } else {
-    label = translate('Expression');
-  }
-
-  const entry = new TextAreaEntry({
-    id: id,
-    element: element,
-    label: label,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-
-  return entry;
-}
-
-function PotentialGroupsExpressionEditorContainer(props) {
-  const translate = useService('translate');
-
-  return getContainer('potentialGroupsExpression', translate);
 }
 
 /** *** Excluded Users *** **/
@@ -323,135 +215,82 @@ function ExcludedUsers(props) {
 
   const translate = useService('translate');
 
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
+    { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
+    { label: translate('Expression'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+  ];
+  
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlExpression',
+    'plsqlFunctionBody',
+  ];
+
+  const expressionType = excludedUsersHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'excludedUsersExpressionType',
+      element,
+      label: translate('Expression Type'),
+      helper: excludedUsersHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
+  if (expressionType != null) {
+
+    if (editorTypes.includes(expressionType)) {
+
+      const language =
+      expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+      entries.push(
+        {
+          id: 'excludedUsersExpression',
+          element,
+          label: translate('Expression'),
+          helper: excludedUsersHelper,
+          property: 'expression',
+          language: language,
+          type: expressionType,
+          component: DefaultTextAreaEntryWithEditor,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    } else {
+
+      entries.push(
+        {
+          id: 'excludedUsersExpression',
+          element,
+          label: translate('Expression'),
+          helper: excludedUsersHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    }
+  }
+
   return new CollapsibleEntry({
     id: id,
     element: element,
     label: translate('Excluded Users'),
-    entries: [
-      {
-        id: 'excludedUsersExpressionType',
-        element,
-        component: ExcludedUsersExpressionType,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'excludedUsersExpression',
-        element,
-        component: ExcludedUsersExpression,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'excludedUsersExpressionEditorContainer',
-        element,
-        component: ExcludedUsersExpressionEditorContainer,
-      }
-    ]
+    entries: entries
   });
-}
-
-function ExcludedUsersExpressionType(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    excludedUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const setValue = value =>
-    excludedUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expressionType: value,
-    });
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Expression Type'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: '', value: null },
-        { label: translate('Static'), value: 'static' },
-        { label: translate('Process Variable'), value: 'processVariable' },
-        { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-        { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-        { label: translate('Expression'), value: 'plsqlExpression' },
-        { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-      ];
-    },
-  });
-}
-
-function ExcludedUsersExpression(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    excludedUsersHelper.getExtensionProperty(element, 'expression');
-
-  const setValue = value =>
-    excludedUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expression: value,
-    });
-
-  const expressionType = excludedUsersHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  let label;
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    label = OpenDialogLabel(translate('Expression'), () => {
-      var getExpression = function () {
-        return excludedUsersHelper.getExtensionProperty(element, 'expression');
-      };
-      var saveExpression = function (text) {
-        excludedUsersHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-          expression: text,
-        });
-      };
-      openEditor(
-        'excludedUsersExpression',
-        getExpression,
-        saveExpression,
-        language,
-        expressionType
-      );
-    });
-  } else {
-    label = translate('Expression');
-  }
-
-  const entry = new TextAreaEntry({
-    id: id,
-    element: element,
-    label: label,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-
-  return entry;
-}
-
-function ExcludedUsersExpressionEditorContainer(props) {
-  const translate = useService('translate');
-
-  return getContainer('excludedUsersExpression', translate);
 }

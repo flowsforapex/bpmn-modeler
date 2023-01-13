@@ -1,13 +1,10 @@
-import {
-  Group, isSelectEntryEdited, isTextAreaEntryEdited, SelectEntry, TextAreaEntry, TextFieldEntry
-} from '@bpmn-io/properties-panel';
+import { CollapsibleEntry, isSelectEntryEdited, isTextAreaEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-import { getContainer, openEditor } from '../../plugins/monacoEditor';
+import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
-import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 import { Quickpick, Quickpicks } from '../../helper/Quickpick';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -39,185 +36,124 @@ function Priority(props) {
   const { element, id } = props;
 
   const translate = useService('translate');
-
-  return new Group({
-    id: id,
-    element: element,
-    label: translate('Priority'),
-    entries: [
-      {
-        id: 'priorityExpressionType',
-        element,
-        component: PriorityExpressionType,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'priorityExpression',
-        element,
-        component: PriorityExpression,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'priorityExpressionEditorContainer',
-        element,
-        component: PriorityExpressionEditorContainer,
-      },
-    ]
-  });
-}
-
-function PriorityExpressionType(props) {
-  const { element, id } = props;
-
   const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () =>
-    priorityHelper.getExtensionProperty(element, 'expressionType');
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
+    { label: translate('Expression'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+  ];
 
-  const setValue = (value) => {
-    const update = {
-      expressionType: value,
-      ...(!value && {expression: null}),
-    };
-    
-    priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, update);
-  };
+  const staticPriorityOptions = [
+    { label: '', value: null },
+    { label: translate('1-Urgent'), value: '1' },
+    { label: translate('2-High'), value: '2' },
+    { label: translate('3-Medium'), value: '3' },
+    { label: translate('4-Low'), value: '4' },
+    { label: translate('5-Lowest'), value: '5' },
+  ];
 
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Expression Type'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: '', value: null },
-        { label: translate('Static'), value: 'static' },
-        { label: translate('Process Variable'), value: 'processVariable' },
-        { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-        { label: translate('Expression'), value: 'plsqlExpression' },
-        { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-      ];
-    },
-  });
-}
-
-function PriorityExpression(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    priorityHelper.getExtensionProperty(element, 'expression');
-
-  const setValue = value =>
-    priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      expression: value,
-    });
-
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlExpression',
+    'plsqlFunctionBody',
+  ];
+  
   const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
 
   const entries = [];
 
+  entries.push(
+    {
+      id: 'expressionType',
+      element,
+      label: translate('Expression Type'),
+      helper: priorityHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
   if (expressionType === 'static') {
     entries.push(
-      new SelectEntry({
-        id: id,
-        element: element,
+      {
+        id: 'expression',
+        element,
         label: translate('Expression'),
-        getValue: getValue,
-        setValue: setValue,
-        debounce: debounce,
-        getOptions: function () {
-          return [
-            { label: '', value: null },
-            { label: translate('1-Urgent'), value: '1' },
-            { label: translate('2-High'), value: '2' },
-            { label: translate('3-Medium'), value: '3' },
-            { label: translate('4-Low'), value: '4' },
-            { label: translate('5-Lowest'), value: '5' },
-          ];
-        },
-      })
+        helper: priorityHelper,
+        property: 'expression',
+        options: staticPriorityOptions,
+        component: DefaultSelectEntry,
+        isEdited: isSelectEntryEdited,
+      }
     );
   } else if (expressionType != null) {
-    
-    let label;
-    let description;
 
-    if (
-      [
-        'sqlQuerySingle',
-        'sqlQueryList',
-        'plsqlExpression',
-        'plsqlFunctionBody',
-      ].includes(expressionType)
-    ) {
-        label = OpenDialogLabel(translate('Expression'), () => {
-          var getExpression = function () {
-            return priorityHelper.getExtensionProperty(element, 'expression');
-          };
-          var saveExpression = function (text) {
-            priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              expression: text,
-            });
-          };
-          openEditor(
-            'priorityExpression',
-            getExpression,
-            saveExpression,
-            language,
-            expressionType
-          );
-        });
-    } else {
-      label = translate('Expression');
-    }
+    if (editorTypes.includes(expressionType)) {
 
-    if (ModelingUtil.is(element, 'bpmn:UserTask')) {
-      description = 
-        Quickpick(
+      const language =
+        expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+        entries.push(
           {
-            text: translate('Process Priority'),
-            handler: () => {
-              priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-                expression: 'PROCESS_PRIORITY',
-              });
-            }
-          }
+            id: 'expression',
+            element,
+            label: translate('Expression'),
+            helper: priorityHelper,
+            property: 'expression',
+            language: language,
+            type: expressionType,
+            component: DefaultTextAreaEntryWithEditor,
+            isEdited: isTextAreaEntryEdited,
+          },
         );
-    }
+    } else {
 
-    entries.push(
-      TextAreaEntry({
-        id: id,
-        element: element,
-        label: label,
-        description: description,
-        getValue: getValue,
-        setValue: setValue,
-        debounce: debounce,
-      })
-    );
+      let description;
+
+      if (ModelingUtil.is(element, 'bpmn:UserTask')) {
+        description = 
+          Quickpick(
+            {
+              text: translate('Process Priority'),
+              handler: () => {
+                priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+                  expression: 'PROCESS_PRIORITY',
+                });
+              }
+            }
+          );
+      }
+
+      entries.push(
+        {
+          id: 'expression',
+          element,
+          label: translate('Expression'),
+          description: description,
+          helper: priorityHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+
+    }
   }
 
-  return entries;
-}
-
-function PriorityExpressionEditorContainer(props) {
-  const translate = useService('translate');
-
-  return getContainer('priorityExpression', translate);
+  return new CollapsibleEntry({
+    id: id,
+    element: element,
+    label: translate('Priority'),
+    entries: entries,
+  });
 }
 
 /** *** Due Date *** **/
@@ -226,39 +162,147 @@ function DueDate(props) {
   const { element, id } = props;
 
   const translate = useService('translate');
+  const modeling = useService('modeling');
+  const bpmnFactory = useService('bpmnFactory');
 
-  return new Group({
-    id: id,
-    element: element,
-    label: translate('Due On'),
-    entries: [
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Interval'), value: 'interval' },
+    { label: translate('Scheduler Expression'), value: 'oracleScheduler' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query'), value: 'sqlQuerySingle' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Expression returning VC2 (legacy)'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
+    { label: translate('Function Body returning VC2 (legacy)'), value: 'plsqlFunctionBody' },
+  ];
+
+  const expressionDescriptions = {
+    static: translate('Timestamp with Timezone in ISO 8601 or Oracle format'),
+    interval: translate('Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format'),
+    oracleScheduler: translate('Oracle Schedule expression'),
+    processVariable: translate('Name of the Process Variable (of type Timestamp with Timezone)'),
+    sqlQuerySingle: translate('SQL query returning Timestamp with Timezone'),
+    plsqlRawExpression: translate('PL/SQL Expression returning Timestamp with Timezone'),
+    plsqlExpression: translate('PL/SQL Expression returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR'),
+    plsqlRawFunctionBody: translate('PL/SQL Function Body returning Timestamp with Timezone'),
+    plsqlFunctionBody: translate('PL/SQL Function Body returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR')
+  };
+
+  const editorTypes = [
+    'sqlQuerySingle',
+    'plsqlRawExpression',
+    'plsqlExpression',
+    'plsqlRawFunctionBody',
+    'plsqlFunctionBody',
+  ];
+
+  const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'dueDateExpressionType',
+      element,
+      label: 'Expression Type',
+      helper: dueDateHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    },
+  );
+
+  if (expressionType === 'static') {
+    const description = Quickpicks([
       {
-        id: 'dueDateExpressionType',
-        element,
-        component: DueDateExpressionType,
-        isEdited: isSelectEntryEdited,
+        text: translate('Oracle'),
+        handler: () => {
+          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
+          });
+        }
       },
+      {
+        text: translate('ISO'),
+        handler: () => {
+          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
+          });
+        }
+      }
+    ]);
+
+    entries.push(
       {
         id: 'dueDateFormatMask',
         element,
-        component: DueDateFormatMask,
+        label: translate('Format Mask'),
+        description: description,
+        helper: dueDateHelper,
+        property: 'formatMask',
+        component: DefaultTextFieldEntry,
         isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'dueDateExpression',
-        element,
-        component: DueDateExpression,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'dueDateExpressionEditorContainer',
-        element,
-        component: DueDateExpressionEditorContainer,
-      },
-    ]
+      }
+    );
+  }
+  
+  if (expressionType != null) {
+
+    const getDescription = () => {
+      const value = dueDateHelper.getExtensionProperty(element, 'expressionType');
+  
+      return expressionDescriptions[value];
+    };
+
+    if (editorTypes.includes(expressionType)) {
+
+      const language =
+      expressionType === 'sqlQuerySingle' ? 'sql' : 'plsql';
+
+        entries.push(
+          {
+            id: 'expression',
+            element,
+            label: translate('Expression'),
+            description: getDescription(),
+            helper: dueDateHelper,
+            property: 'expression',
+            language: language,
+            type: expressionType,
+            component: DefaultTextAreaEntryWithEditor,
+            isEdited: isTextAreaEntryEdited,
+          },
+        );
+
+    } else {
+
+      entries.push(
+        {
+          id: 'expression',
+          element,
+          label: translate('Expression'),
+          description: getDescription(),
+          helper: dueDateHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    }
+  }
+
+  return new CollapsibleEntry({
+    id: id,
+    element: element,
+    label: translate('Due On'),
+    entries: entries
   });
 }
 
+/*
 function DueDateExpressionType(props) {
   const { element, id } = props;
 
@@ -446,3 +490,4 @@ function DueDateExpressionEditorContainer(props) {
 
   return getContainer('dueDateExpression', translate);
 }
+*/

@@ -1,7 +1,6 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup, SelectEntry,
-  TextFieldEntry, ToggleSwitchEntry
+  isTextFieldEntryEdited, ListGroup, SelectEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -11,6 +10,8 @@ import ListExtensionHelper from '../../helper/ListExtensionHelper';
 import ParametersList from '../parameters/ParametersList';
 
 import { Quickpick } from '../../helper/Quickpick';
+
+import { DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -34,60 +35,106 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const translate = injector.get('translate');
+
+  const entries = [];
+
   if (element.businessObject.type === 'apexApproval') {
-    return [
+
+    const manualInput = element.businessObject.manualInput === 'true';
+
+    entries.push(
       {
         id: 'inputSelection',
         element,
-        component: InputSelection,
+        label: translate('Use APEX meta data'),
+        property: 'manualInput',
+        defaultValue: 'false',
+        invert: true,
+        component: DefaultToggleSwitchEntry,
         // isEdited: isToggleSwitchEntryEdited,
-      },
-      {
-        id: 'applicationId',
-        element,
-        hooks: {
-          applications,
-          setApplications,
-          tasks,
-          setTasks,
+      }
+    );
+
+    if (manualInput) {
+      entries.push(
+        {
+          id: 'applicationIdText',
+          element,
+          label: translate('Application ID'),
+          helper: extensionHelper,
+          property: 'applicationId',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
         },
-        component: ApplicationId,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'applicationIdText',
-        element,
-        component: ApplicationIdText,
-        isEdited: isTextFieldEntryEdited,
-      },
-      {
-        id: 'taskStaticId',
-        element,
-        hooks: {
-          applications,
-          setApplications,
-          tasks,
-          setTasks,
+        {
+          id: 'taskStaticIdText',
+          element,
+          label: translate('Task Static ID'),
+          helper: extensionHelper,
+          property: 'taskStaticId',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
+        }
+      );
+    } else {
+      entries.push(
+        {
+          id: 'applicationId',
+          element,
+          hooks: {
+            applications,
+            setApplications,
+            tasks,
+            setTasks,
+          },
+          component: ApplicationId,
+          isEdited: isSelectEntryEdited,
         },
-        component: TaskStaticId,
-        isEdited: isSelectEntryEdited,
-      },
+        {
+          id: 'taskStaticId',
+          element,
+          hooks: {
+            applications,
+            setApplications,
+            tasks,
+            setTasks,
+          },
+          component: TaskStaticId,
+          isEdited: isSelectEntryEdited,
+        },
+      );
+    }
+
+    const businessRefQuickpick = Quickpick(
       {
-        id: 'taskStaticIdText',
-        element,
-        component: TaskStaticIdText,
-        isEdited: isTextFieldEntryEdited,
-      },
+        text: translate('business_ref'),
+        handler: () => {
+          extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            businessRef: '&F4A$BUSINESS_REF.',
+          });
+        }
+      });
+    
+    entries.push(
       {
         id: 'subject',
         element,
-        component: Subject,
+        label: translate('Subject'),
+        description: translate('Overwrite default value set in task definition'),
+        helper: extensionHelper,
+        property: 'subject',
+        component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
       {
         id: 'businessRef',
         element,
-        component: BusinessRef,
+        label: translate('Business Reference'),
+        description: businessRefQuickpick,
+        helper: extensionHelper,
+        property: 'businessRef',
+        component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
       {
@@ -105,59 +152,36 @@ export default function (args) {
       {
         id: 'resultVariable',
         element,
-        component: ResultVariable,
+        label: translate('Result Variable'),
+        description: translate('Name of the variable to return the approval result into'),
+        helper: extensionHelper,
+        property: 'resultVariable',
+        component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
       {
         id: 'initiator',
         element,
-        component: Initiator,
+        label: translate('Initiator'),
+        description: translate('Initiator of this approval task'),
+        helper: extensionHelper,
+        property: 'initiator',
+        component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
       {
         id: 'priority',
         element,
-        component: Priority,
+        label: translate('Priority'),
+        description: translate('Overwrite default value set in task definition'),
+        helper: extensionHelper,
+        property: 'priority',
+        component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
-    ];
+    );
   }
   return [];
-}
-
-function InputSelection(props) {
-  const { element, id } = props;
-
-  const translate = useService('translate');
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-
-  const getValue = () => {
-    var value = element.businessObject.manualInput;
-
-    if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        manualInput: 'false',
-      });
-    }
-
-    return element.businessObject.manualInput === 'false';
-  };
-
-  const setValue = (value) => {
-    modeling.updateProperties(element, {
-      manualInput: value ? 'false' : 'true',
-    });
-  };
-
-  return new ToggleSwitchEntry({
-    id: id,
-    element: element,
-    label: translate('Use APEX meta data'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
 }
 
 function ApplicationId(props) {
@@ -218,35 +242,6 @@ function ApplicationId(props) {
   }
 }
 
-function ApplicationIdText(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      applicationId: value,
-    });
-  };
-
-  if (element.businessObject.manualInput === 'true') {
-    return new TextFieldEntry({
-      id: id,
-      element: element,
-      label: translate('Application ID'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-    });
-  }
-}
-
 function TaskStaticId(props) {
   const { element, id } = props;
 
@@ -296,102 +291,6 @@ function TaskStaticId(props) {
   }
 }
 
-function TaskStaticIdText(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'taskStaticId');
-
-  const setValue = value =>
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      taskStaticId: value,
-    });
-
-  if (element.businessObject.manualInput === 'true') {
-    return new TextFieldEntry({
-      id: id,
-      element: element,
-      label: translate('Task Definition Static ID'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-    });
-  }
-}
-
-function Subject(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'subject');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      subject: value,
-    });
-  };
-
-  return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: translate('Subject'),
-    description: translate('Overwrite default value set in task definition'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-}
-
-function BusinessRef(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'businessRef');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      businessRef: value,
-    });
-  };
-
-  const qp = Quickpick(
-    {
-      text: translate('business_ref'),
-      handler: () => {
-        extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-          businessRef: '&F4A$BUSINESS_REF.',
-        });
-      }
-    });
-
-  return [
-    new TextFieldEntry({
-      id: id,
-      element: element,
-      label: translate('Business Reference'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      description: qp
-    }),
-  ];
-}
-
 function ParametersQuickpick(props) {
   const { element, id } = props;
 
@@ -418,89 +317,5 @@ function ParametersQuickpick(props) {
         });
       });
     }
-  });
-}
-
-function ResultVariable(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'resultVariable');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      resultVariable: value,
-    });
-  };
-
-  return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: translate('Result Variable'),
-    description: translate('Name of the variable to return the approval result into'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-}
-
-function Initiator(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'initiator');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      initiator: value,
-    });
-  };
-
-  return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: translate('Initiator'),
-    description: translate('Initiator of this approval task'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
-}
-
-function Priority(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'priority');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      priority: value,
-    });
-  };
-
-  return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: translate('Priority'),
-    description: translate('Overwrite default value set in task definition'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
   });
 }

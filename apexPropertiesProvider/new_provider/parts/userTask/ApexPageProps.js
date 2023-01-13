@@ -1,9 +1,7 @@
 import {
   isSelectEntryEdited,
   isTextFieldEntryEdited, ListGroup,
-  SelectEntry,
-  TextFieldEntry,
-  ToggleSwitchEntry
+  SelectEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -13,6 +11,8 @@ import ListExtensionHelper from '../../helper/ListExtensionHelper';
 import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
+
+import { DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -39,54 +39,82 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const translate = injector.get('translate');
+
+  const entries = [];
+
   if (element.businessObject.type === 'apexPage' || typeof element.businessObject.type === 'undefined') {
-    return [
+
+    const manualInput = element.businessObject.manualInput === 'true';
+
+    entries.push(
       {
         id: 'inputSelection',
         element,
-        component: InputSelection,
+        label: translate('Use APEX meta data'),
+        property: 'manualInput',
+        defaultValue: 'false',
+        invert: true,
+        component: DefaultToggleSwitchEntry,
         // isEdited: isToggleSwitchEntryEdited,
-      },
-      {
-        id: 'applicationId',
-        element,
-        hooks: {
-          applications,
-          setApplications,
-          pages,
-          setPages,
-          items,
-          setItems,
+      }
+    );
+    
+    if (manualInput) {
+      entries.push(
+        {
+          id: 'applicationIdText',
+          element,
+          label: translate('Application ID'),
+          helper: extensionHelper,
+          property: 'applicationId',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
         },
-        component: ApplicationId,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'applicationIdText',
-        element,
-        component: ApplicationIdText,
-        isEdited: isTextFieldEntryEdited,
-      },
-      {
-        id: 'pageId',
-        element,
-        hooks: {
-          applications,
-          setApplications,
-          pages,
-          setPages,
-          items,
-          setItems,
+        {
+          id: 'pageIdText',
+          element,
+          label: translate('Page ID'),
+          helper: extensionHelper,
+          property: 'pageId',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
         },
-        component: PageId,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'pageIdText',
-        element,
-        component: PageIdText,
-        isEdited: isTextFieldEntryEdited,
-      },
+      );
+    } else {
+      entries.push(
+        {
+          id: 'applicationId',
+          element,
+          hooks: {
+            applications,
+            setApplications,
+            pages,
+            setPages,
+            items,
+            setItems,
+          },
+          component: ApplicationId,
+          isEdited: isSelectEntryEdited,
+        },
+        {
+          id: 'pageId',
+          element,
+          hooks: {
+            applications,
+            setApplications,
+            pages,
+            setPages,
+            items,
+            setItems,
+          },
+          component: PageId,
+          isEdited: isSelectEntryEdited,
+        },
+      );
+    }
+    
+    entries.push(
       {
         id: 'quickpick-items',
         element,
@@ -101,45 +129,10 @@ export default function (args) {
           items,
           setItems,
         }),
-      },
-    ];
+      }
+    );
   }
-  return [];
-}
-
-function InputSelection(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-
-  const getValue = () => {
-    var value = element.businessObject.manualInput;
-
-    if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        manualInput: 'false',
-      });
-    }
-
-    return element.businessObject.manualInput === 'false';
-  };
-
-  const setValue = (value) => {
-    modeling.updateProperties(element, {
-      manualInput: value ? 'false' : 'true',
-    });
-  };
-
-  return new ToggleSwitchEntry({
-    id: id,
-    element: element,
-    label: translate('Use APEX meta data'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
+  return entries;
 }
 
 function ApplicationId(props) {
@@ -200,35 +193,6 @@ function ApplicationId(props) {
   }
 }
 
-function ApplicationIdText(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      applicationId: value,
-    });
-  };
-
-  if (element.businessObject.manualInput === 'true') {
-    return new TextFieldEntry({
-      id: id,
-      element: element,
-      label: translate('Application ID'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-    });
-  }
-}
-
 function PageId(props) {
   const { element, id } = props;
 
@@ -281,34 +245,6 @@ function PageId(props) {
       setValue: setValue,
       debounce: debounce,
       getOptions: getOptions,
-    });
-  }
-}
-
-function PageIdText(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'pageId');
-
-  const setValue = value =>
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      pageId: value,
-    });
-
-  if (element.businessObject.manualInput === 'true') {
-    return new TextFieldEntry({
-      id: id,
-      element: element,
-      label: translate('Page ID'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
     });
   }
 }

@@ -1,11 +1,10 @@
 import {
   isSelectEntryEdited,
-  isTextAreaEntryEdited, isTextFieldEntryEdited, SelectEntry, ToggleSwitchEntry
+  isTextAreaEntryEdited, isTextFieldEntryEdited, SelectEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
-
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { getApplications, getTemplates } from '../../plugins/metaDataCollector';
@@ -18,7 +17,9 @@ export default function (args) {
   const [applications, setApplications] = useState([]);
   const [templates, setTemplates] = useState([]);
 
-  const {element} = args;
+  const {element, injector} = args;
+
+  const translate = injector.get('translate');
 
   const entries = [];
   
@@ -31,7 +32,7 @@ export default function (args) {
       {
         id: 'immediately',
         element,
-        label: 'Send Email Immediately',
+        label: translate('Send Email Immediately'),
         helper: extensionHelper,
         property: 'immediately',
         defaultValue: 'true',
@@ -41,8 +42,8 @@ export default function (args) {
       {
         id: 'emailFrom',
         element,
-        label: 'From',
-        description: 'Email of the sender',
+        label: translate('From'),
+        description: translate('Email of the sender'),
         helper: extensionHelper,
         property: 'emailFrom',
         component: DefaultTextFieldEntry,
@@ -51,8 +52,8 @@ export default function (args) {
       {
         id: 'emailTo',
         element,
-        label: 'To',
-        description: 'Email of the recipient(s)',
+        label: translate('To'),
+        description: translate('Email of the recipient(s)'),
         helper: extensionHelper,
         property: 'emailTo',
         component: DefaultTextFieldEntry,
@@ -61,8 +62,8 @@ export default function (args) {
       {
         id: 'emailCC',
         element,
-        label: 'CC',
-        description: 'Carbon copy recipient(s)',
+        label: translate('CC'),
+        description: translate('Carbon copy recipient(s)'),
         helper: extensionHelper,
         property: 'emailCC',
         component: DefaultTextFieldEntry,
@@ -71,8 +72,8 @@ export default function (args) {
       {
         id: 'emailBCC',
         element,
-        label: 'BCC',
-        description: 'Blind carbon copy recipient(s)',
+        label: translate('BCC'),
+        description: translate('Blind carbon copy recipient(s)'),
         helper: extensionHelper,
         property: 'emailBCC',
         component: DefaultTextFieldEntry,
@@ -81,8 +82,8 @@ export default function (args) {
       {
         id: 'emailReplyTo',
         element,
-        label: 'Reply To',
-        description: 'Email where the reply should be send to',
+        label: translate('Reply To'),
+        description: translate('Email where the reply should be send to'),
         helper: extensionHelper,
         property: 'emailReplyTo',
         component: DefaultTextFieldEntry,
@@ -91,7 +92,7 @@ export default function (args) {
       {
         id: 'useTemplate',
         element,
-        label: 'Use Template',
+        label: translate('Use Template'),
         helper: extensionHelper,
         property: 'useTemplate',
         defaultValue: 'false',
@@ -105,7 +106,7 @@ export default function (args) {
         {
           id: 'inputSelection',
           element,
-          label: 'Use APEX meta data',
+          label: translate('Use APEX meta data'),
           property: 'manualInput',
           defaultValue: 'false',
           invert: true,
@@ -119,7 +120,7 @@ export default function (args) {
           {
             id: 'applicationIdText',
             element,
-            label: 'Application ID',
+            label: translate('Application ID'),
             helper: extensionHelper,
             property: 'applicationId',
             component: DefaultTextFieldEntry,
@@ -128,7 +129,7 @@ export default function (args) {
           {
             id: 'templateIdText',
             element,
-            label: 'Template ID',
+            label: translate('Template ID'),
             helper: extensionHelper,
             property: 'templateId',
             component: DefaultTextFieldEntry,
@@ -168,8 +169,8 @@ export default function (args) {
         {
           id: 'placeholder',
           element,
-          label: 'Placeholder',
-          description: 'Provide values for email template',
+          label: translate('Placeholder'),
+          description: translate('Provide values for email template'),
           helper: extensionHelper,
           property: 'placeholder',
           language: 'json',
@@ -182,7 +183,7 @@ export default function (args) {
         {
           id: 'subject',
           element,
-          label: 'Subject',
+          label: translate('Subject'),
           helper: extensionHelper,
           property: 'subject',
           component: DefaultTextFieldEntry,
@@ -191,8 +192,8 @@ export default function (args) {
         {
           id: 'bodyText',
           element,
-          label: 'Body Text',
-          description: 'Email content',
+          label: translate('Body Text'),
+          description: translate('Email content'),
           helper: extensionHelper,
           property: 'bodyText',
           language: 'plaintext',
@@ -202,8 +203,8 @@ export default function (args) {
         {
           id: 'bodyHTML',
           element,
-          label: 'Body HTML',
-          description: 'HTML version of the email',
+          label: translate('Body HTML'),
+          description: translate('HTML version of the email'),
           helper: extensionHelper,
           property: 'bodyHTML',
           language: 'html',
@@ -217,8 +218,8 @@ export default function (args) {
       {
         id: 'attachment',
         element,
-        label: 'Attachment',
-        description: 'SQL query to get attachment',
+        label: translate('Attachment'),
+        description: translate('SQL query to get attachment'),
         helper: extensionHelper,
         property: 'attachment',
         language: 'sql',
@@ -228,41 +229,6 @@ export default function (args) {
     );
   }
   return entries;
-}
-
-function InputSelection(props) {
-  const { element, id } = props;
-
-  const translate = useService('translate');
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-
-  const getValue = () => {
-    var value = element.businessObject.manualInput;
-
-    if (typeof value === 'undefined') {
-      modeling.updateProperties(element, {
-        manualInput: 'false',
-      });
-    }
-
-    return element.businessObject.manualInput === 'false';
-  };
-
-  const setValue = (value) => {
-    modeling.updateProperties(element, {
-      manualInput: value ? 'false' : 'true',
-    });
-  };
-
-  return new ToggleSwitchEntry({
-    id: id,
-    element: element,
-    label: translate('Use APEX meta data'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-  });
 }
 
 function ApplicationId(props) {
