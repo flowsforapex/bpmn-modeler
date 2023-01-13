@@ -91,8 +91,6 @@ export default function (args) {
             setApplications,
             pages,
             setPages,
-            items,
-            setItems,
           },
           component: ApplicationId,
           isEdited: isSelectEntryEdited,
@@ -101,8 +99,6 @@ export default function (args) {
           id: 'pageId',
           element,
           hooks: {
-            applications,
-            setApplications,
             pages,
             setPages,
             items,

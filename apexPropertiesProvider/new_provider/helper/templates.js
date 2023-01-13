@@ -39,14 +39,33 @@ export function DefaultTextFieldEntry(props) {
 }
 
 export function DefaultSelectEntry(props) {
-  const { id, element, label, description, helper, property, options } = props;
+  const { id, element, label, description, helper, property, defaultValue, options } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property) : element.businessObject[property]);
+  const getValue = () => {
+    var value;
+
+    if (defaultValue) {
+      value = (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+
+      if (!value) {
+        if (helper) {
+          helper.setExtensionProperty(element, modeling, bpmnFactory, {
+            [property]: defaultValue,
+          });
+        } else {
+          modeling.updateProperties(element, {
+            [property]: defaultValue,
+          });
+        }
+      }
+    }
+
+    return (helper ? helper.getExtensionProperty(element, property) : element.businessObject[property]);
+  };
 
   const setValue = (value) => {
     if (helper) {

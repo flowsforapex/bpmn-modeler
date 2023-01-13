@@ -124,7 +124,7 @@ export default function apexPropertiesProvider(
 
       // callActivity
       if (is(element, 'bpmn:CallActivity')) {
-        newGroups.push(createSection({element, translate}, 'callActivity', 'Called Diagram', CallActivityProps));
+        newGroups.push(createSection({element, injector, translate}, 'callActivity', 'Called Diagram', CallActivityProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Mapping', ProcVarGroup));
       }
 
