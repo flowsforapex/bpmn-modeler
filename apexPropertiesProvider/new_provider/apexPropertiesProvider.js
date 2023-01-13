@@ -17,6 +17,8 @@ import SchedulingProps from './parts/scheduling/SchedulingProps';
 import CallActivityProps from './parts/callActivity/CallActivityProps';
 import StarterProps from './parts/process/StarterProps';
 
+import SendMailProps from './parts/serviceTask/SendMailProps';
+
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 var domQuery = require('min-dom').query;
@@ -108,6 +110,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:ServiceTask')) {
         newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, translate}, 'sendMail', 'Mail', SendMailProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
         // TODO
       }

@@ -114,7 +114,21 @@ export function getTemplates(applicationId) {
       )
       .then(pData => pData);
   }
-  return Promise.resolve();
+  if (applicationId === '1') {
+    return Promise.resolve([
+      { label: '', value: null },
+      { label: 'A1T1', value: '1' },
+      { label: 'A1T2', value: '2' },
+    ]);
+  } else if (applicationId === '2') {
+    return Promise.resolve([
+      { label: '', value: null },
+      { label: 'A2T1', value: '1' },
+      { label: 'A2T2', value: '2' },
+      { label: 'A2T3', value: '3' },
+    ]);
+  }
+  return Promise.resolve([]);
 }
 
 export function getDiagrams() {

@@ -16,31 +16,34 @@ export default function (args) {
 
   const {element} = args;
   
-  return [
-    {
-      id: 'plsqlCode',
-      element,
-      component: PlsqlCode,
-      isEdited: isTextAreaEntryEdited,
-    },
-    {
-      id: 'plsqlCodeEditorContainer',
-      element,
-      component: PlsqlCodeEditorContainer,
-    },
-    {
-      id: 'engine',
-      element,
-      component: Engine,
-      isEdited: isToggleSwitchEntryEdited,
-    },
-    {
-      id: 'autoBinds',
-      element,
-      component: AutoBinds,
-      isEdited: isToggleSwitchEntryEdited,
-    },
-  ];
+  if (element.businessObject.type === 'executePlsql' || typeof element.businessObject.type === 'undefined') {
+    return [
+      {
+        id: 'plsqlCode',
+        element,
+        component: PlsqlCode,
+        isEdited: isTextAreaEntryEdited,
+      },
+      {
+        id: 'plsqlCodeEditorContainer',
+        element,
+        component: PlsqlCodeEditorContainer,
+      },
+      {
+        id: 'engine',
+        element,
+        component: Engine,
+        isEdited: isToggleSwitchEntryEdited,
+      },
+      {
+        id: 'autoBinds',
+        element,
+        component: AutoBinds,
+        isEdited: isToggleSwitchEntryEdited,
+      },
+    ];
+  }
+  return [];
 }
 
 function PlsqlCode(props) {
