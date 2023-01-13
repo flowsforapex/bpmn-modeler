@@ -1,5 +1,4 @@
 import {
-  HeaderButton,
   isSelectEntryEdited,
   isTextFieldEntryEdited, ListGroup,
   SelectEntry,
@@ -12,6 +11,8 @@ import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import PageItemsList from '../pageItems/PageItemsList';
+
+import { Quickpick } from '../../helper/Quickpick';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -319,31 +320,32 @@ function QuickpickItems(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
-  return new HeaderButton({
-    id: id,
-    children: translate('Generate default items'),
-    onClick: function () {
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'PROCESS_ID',
-          itemValue: '&F4A$PROCESS_ID.',
-        }
-      );
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'SUBFLOW_ID',
-          itemValue: '&F4A$SUBFLOW_ID.',
-        }
-      );
-      listExtensionHelper.addSubElement(
-        { element, bpmnFactory, commandStack },
-        {
-          itemName: 'STEP_KEY',
-          itemValue: '&F4A$STEP_KEY.',
-        }
-      );
-    },
-  });
+  return Quickpick(
+    {
+      text: translate('Generate default items'),
+      handler: () => {
+        listExtensionHelper.addSubElement(
+          { element, bpmnFactory, commandStack },
+          {
+            itemName: 'PROCESS_ID',
+            itemValue: '&F4A$PROCESS_ID.',
+          }
+        );
+        listExtensionHelper.addSubElement(
+          { element, bpmnFactory, commandStack },
+          {
+            itemName: 'SUBFLOW_ID',
+            itemValue: '&F4A$SUBFLOW_ID.',
+          }
+        );
+        listExtensionHelper.addSubElement(
+          { element, bpmnFactory, commandStack },
+          {
+            itemName: 'STEP_KEY',
+            itemValue: '&F4A$STEP_KEY.',
+          }
+        );
+      }
+    }
+  );
 }

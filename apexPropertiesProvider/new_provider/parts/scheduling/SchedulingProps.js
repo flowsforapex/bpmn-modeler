@@ -8,7 +8,7 @@ import ExtensionHelper from '../../helper/ExtensionHelper';
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
-import { Quickpicks } from '../../helper/Quickpick';
+import { Quickpick, Quickpicks } from '../../helper/Quickpick';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -196,16 +196,16 @@ function PriorityExpression(props) {
 
     if (ModelingUtil.is(element, 'bpmn:UserTask')) {
       entries.push(
-        Quickpicks([
+        Quickpick(
           {
-            text: 'Process Priority',
+            text: translate('Process Priority'),
             handler: () => {
               priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
                 expression: 'PROCESS_PRIORITY',
               });
             }
           }
-        ])
+        )
       );
     }
   }
@@ -333,7 +333,7 @@ function DueDateFormatMask(props) {
       }),
       Quickpicks([
         {
-          text: 'Oracle',
+          text: translate('Oracle'),
           handler: () => {
             dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
               formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
@@ -341,7 +341,7 @@ function DueDateFormatMask(props) {
           }
         },
         {
-          text: 'ISO',
+          text: translate('ISO'),
           handler: () => {
             dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
               formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
@@ -373,15 +373,15 @@ function DueDateExpression(props) {
     const value = dueDateHelper.getExtensionProperty(element, 'expressionType');
 
     switch (value) {
-      case 'static': return 'Timestamp with Timezone in ISO 8601 or Oracle format';
-      case 'interval': return 'Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format';
-      case 'oracleScheduler': return 'Oracle Schedule expression';
-      case 'processVariable': return 'Name of the Process Variable (of type Timestamp with Timezone)';
-      case 'sqlQuerySingle': return 'SQL query returning Timestamp with Timezone';
-      case 'plsqlRawExpression': return 'PL/SQL Expression returning Timestamp with Timezone';
-      case 'plsqlExpression': return 'PL/SQL Expression returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
-      case 'plsqlRawFunctionBody': return 'PL/SQL Function Body returning Timestamp with Timezone';
-      case 'plsqlFunctionBody': return 'PL/SQL Function Body returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR';
+      case 'static': return translate('Timestamp with Timezone in ISO 8601 or Oracle format');
+      case 'interval': return translate('Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format');
+      case 'oracleScheduler': return translate('Oracle Schedule expression');
+      case 'processVariable': return translate('Name of the Process Variable (of type Timestamp with Timezone)');
+      case 'sqlQuerySingle': return translate('SQL query returning Timestamp with Timezone');
+      case 'plsqlRawExpression': return translate('PL/SQL Expression returning Timestamp with Timezone');
+      case 'plsqlExpression': return translate('PL/SQL Expression returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR');
+      case 'plsqlRawFunctionBody': return translate('PL/SQL Function Body returning Timestamp with Timezone');
+      case 'plsqlFunctionBody': return translate('PL/SQL Function Body returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR');
       default: return '';
     }
 

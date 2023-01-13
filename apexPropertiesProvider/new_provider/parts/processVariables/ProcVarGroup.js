@@ -192,7 +192,7 @@ function QuickpickDefinedVariables(props) {
 
   return Quickpick(
     {
-      text: 'Load defined variables',
+      text: translate('Load defined variables'),
       handler: () => {
         const {calledDiagram, calledDiagramVersionSelection, calledDiagramVersion} = element.businessObject;
 
@@ -243,7 +243,7 @@ function QuickpickBusinessRef(props) {
 
   return Quickpick(
     {
-      text: 'Copy business reference',
+      text: translate('Copy business reference'),
       handler: () => {
         helper.addSubElement(
           { element, bpmnFactory, commandStack },

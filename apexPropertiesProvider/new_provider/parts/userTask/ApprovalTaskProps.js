@@ -123,10 +123,9 @@ export default function (args) {
 function InputSelection(props) {
   const { element, id } = props;
 
-  const modeling = useService('modeling');
   const translate = useService('translate');
+  const modeling = useService('modeling');
   const debounce = useService('debounceInput');
-  const commandStack = useService('commandStack');
 
   const getValue = () => {
     var value = element.businessObject.manualInput;
@@ -376,7 +375,7 @@ function BusinessRef(props) {
     }),
     Quickpick(
       {
-        text: 'business_ref',
+        text: translate('business_ref'),
         handler: () => {
           extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
             businessRef: '&F4A$BUSINESS_REF.',
