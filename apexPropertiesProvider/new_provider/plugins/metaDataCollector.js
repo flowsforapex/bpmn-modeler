@@ -168,7 +168,12 @@ export function getUsernames() {
       )
       .then(pData => pData);
   }
-  return Promise.resolve();
+  return Promise.resolve([
+    { label: '', value: null },
+    { label: 'user1', value: '1' },
+    { label: 'user2', value: '2' },
+    { label: 'user3', value: '3' }
+  ]);
 }
 
 export function getTasks(applicationId) {

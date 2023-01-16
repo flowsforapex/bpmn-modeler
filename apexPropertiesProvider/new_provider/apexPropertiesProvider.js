@@ -18,6 +18,7 @@ import CallActivityProps from './parts/callActivity/CallActivityProps';
 import StarterProps from './parts/process/StarterProps';
 
 import TerminateEventProps from './parts/events/TerminateEventProps';
+import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionProps';
 import SequenceFlowProps from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
@@ -135,6 +136,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'execution', 'Execution', ExecutionProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Variables', ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
+        newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', 'Background Task Session', BackgroundTaskSessionProps));
         newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
       }
 
