@@ -17,6 +17,7 @@ import SchedulingProps from './parts/scheduling/SchedulingProps';
 import CallActivityProps from './parts/callActivity/CallActivityProps';
 import StarterProps from './parts/process/StarterProps';
 
+import SequenceFlowProps from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -139,6 +140,11 @@ export default function apexPropertiesProvider(
       // lane
       if (is(element, 'bpmn:Lane')) {
         newGroups.push(createSection({element, injector, translate}, 'role', 'APEX Role', RoleProps));
+      }
+
+      // add the routing expression section
+      if (is(element, 'bpmn:SequenceFlow')) {
+        newGroups.push(createSection({element, injector, translate}, 'condition', 'Condition', SequenceFlowProps));
       }
 
       // add the custom timer section

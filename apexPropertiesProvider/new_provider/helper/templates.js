@@ -102,10 +102,6 @@ export function DefaultSelectEntryAsync(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // useEffect(() => {
-  //   getApplications().then(applications => setApplications(applications));
-  // }, [setApplications]);
-
   const getOptions = () => {
     const currValue = (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
 
@@ -214,13 +210,19 @@ export function DefaultTextAreaEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () =>
-    helper.getExtensionProperty(element, property);
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
 
-  const setValue = value =>
-    helper.setExtensionProperty(element, modeling, bpmnFactory, {
-      [property]: value,
-    });
+  const setValue = (value) => {
+    if (helper) {
+      helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        [property]: value,
+      });
+    } else {
+      modeling.updateProperties(element, {
+        [property]: value,
+      });
+    }
+  };
 
   return new TextAreaEntry({
     id: id,
@@ -241,13 +243,19 @@ export function DefaultTextAreaEntryWithEditor(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () =>
-    helper.getExtensionProperty(element, property);
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
 
-  const setValue = value =>
-    helper.setExtensionProperty(element, modeling, bpmnFactory, {
-      [property]: value,
-    });
+  const setValue = (value) => {
+    if (helper) {
+      helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        [property]: value,
+      });
+    } else {
+      modeling.updateProperties(element, {
+        [property]: value,
+      });
+    }
+  };
 
   const labelWithIcon =
     OpenDialogLabel(label, () => {
