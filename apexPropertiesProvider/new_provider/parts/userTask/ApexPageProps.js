@@ -46,6 +46,15 @@ export default function (args) {
 
   const entries = [];
 
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+
+  useEffect(() => {
+    getApplications().then(applications => setApplications(applications));
+    getPages(applicationId).then(pages => setPages(pages));
+    getItems(applicationId, pageId).then(items => setItems(items));
+  }, [applications, pages, items]);
+
   if (!['apexApproval'].includes(businessObject.type)) {
 
     const manualInput = businessObject.manualInput === 'true';
@@ -85,10 +94,6 @@ export default function (args) {
         },
       );
     } else {
-      useEffect(() => {
-        getApplications().then(applications => setApplications(applications));
-      }, [setApplications]);
-
       entries.push(
         {
           id: 'applicationId',

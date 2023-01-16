@@ -32,6 +32,10 @@ export default function (args) {
   const manualInput = businessObject.manualInput === 'true';
   const selection = businessObject.calledDiagramVersionSelection;
 
+  useEffect(() => {
+    getDiagrams().then(diagrams => setDiagrams(diagrams));
+  }, [diagrams]);
+
   entries.push(
     {
       id: 'inputSelection',
@@ -58,10 +62,6 @@ export default function (args) {
       }
     );
   } else {
-    useEffect(() => {
-      getDiagrams().then(diagrams => setDiagrams(diagrams));
-    }, [setDiagrams]);
-
     entries.push(
       {
         id: 'calledDiagram',

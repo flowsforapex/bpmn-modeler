@@ -42,6 +42,13 @@ export default function (args) {
 
   const entries = [];
 
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+  useEffect(() => {
+    getApplications().then(applications => setApplications(applications));
+    getTasks(applicationId).then(tasks => setTasks(tasks));
+  }, [applications, tasks]);
+
   if (businessObject.type === 'apexApproval') {
 
     const manualInput = businessObject.manualInput === 'true';
@@ -81,10 +88,6 @@ export default function (args) {
         }
       );
     } else {
-      useEffect(() => {
-        getApplications().then(applications => setApplications(applications));
-      }, [setApplications]);
-
       entries.push(
         {
           id: 'applicationId',

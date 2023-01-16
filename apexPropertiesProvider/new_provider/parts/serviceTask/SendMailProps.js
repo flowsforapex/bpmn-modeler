@@ -25,6 +25,13 @@ export default function (args) {
   const translate = injector.get('translate');
 
   const entries = [];
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+  useEffect(() => {
+    getApplications().then(applications => setApplications(applications));
+    getTemplates(applicationId).then(templates => setTemplates(templates));
+  }, [applications, templates]);
   
   if (businessObject.type === 'sendMail') {
     
@@ -140,10 +147,6 @@ export default function (args) {
           }
         );
       } else {
-        useEffect(() => {
-          getApplications().then(applications => setApplications(applications));
-        }, [setApplications]);
-        
         entries.push(
           {
             id: 'applicationId',

@@ -3,7 +3,6 @@ import {
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
 
-
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
@@ -27,6 +26,14 @@ export default function (args) {
   const entries = [];
 
   const manualInput = businessObject.manualInput === 'true';
+
+  const {applicationId} = businessObject;
+
+  useEffect(() => {
+    getApplications().then(applications => setApplications(applications));
+    getPages(applicationId).then(pages => setPages(pages));
+    getUsernames().then(usernames => setUsernames(usernames));
+  }, [applications, pages, usernames]);
 
   entries.push(
     {
@@ -69,14 +76,6 @@ export default function (args) {
       }
     );
   } else {
-    useEffect(() => {
-      getApplications().then(applications => setApplications(applications));
-    }, [setApplications]);
-
-    useEffect(() => {
-      getUsernames().then(usernames => setUsernames(usernames));
-    }, [setUsernames]);
-
     entries.push(
       {
         id: 'applicationId',

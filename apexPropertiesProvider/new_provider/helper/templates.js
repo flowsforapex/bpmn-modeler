@@ -114,9 +114,9 @@ export function DefaultSelectEntryAsync(props) {
     const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
     const existing =
-      currValue == null || state.map(e => e.value).includes(currValue);
+      currValue == null || (state && state.map(e => e.value).includes(currValue));
 
-    return [
+    return state && [
       ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
       ...state.map((s) => {
         return {
