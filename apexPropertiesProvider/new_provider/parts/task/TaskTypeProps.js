@@ -1,26 +1,11 @@
-import { SelectEntry } from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
+
+import { DefaultSelectEntry } from '../../helper/templates';
 
 export default function (args) {
 
-  const {element} = args;
-  
-  return [
-    {
-      id: 'taskType',
-      element,
-      component: TaskType,
-      // isEdited: isSelectEntryEdited,
-    },
-  ];
-}
+  const {element, injector} = args;
 
-function TaskType(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
+  const translate = injector.get('translate');
 
   const defaultValues = {
     'bpmn:UserTask': 'apexPage',
@@ -46,36 +31,17 @@ function TaskType(props) {
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
   };
-
-  const getValue = () => {
-    var value = element.businessObject.type;
-
-    var defaultValue = defaultValues[element.type];
-
-    if (typeof value === 'undefined' && typeof defaultValue !== 'undefined') {
-      modeling.updateProperties(element, {
-        type: defaultValue,
-      });
-    }
-
-    return element.businessObject.type;
-  };
-
-  const setValue = (value) => {
-    modeling.updateProperties(element, {
-      type: value,
-    });
-  };
-
-  const getOptions = () => selectOptions[element.type];
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Task Type'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions
-  });
+  
+  return [
+    {
+      id: 'taskType',
+      element,
+      label: translate('Task Type'),
+      property: 'type',
+      defaultValue: defaultValues[element.type],
+      options: selectOptions[element.type],
+      component: DefaultSelectEntry,
+      // isEdited: isSelectEntryEdited,
+    },
+  ];
 }

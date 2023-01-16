@@ -1,8 +1,7 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, SelectEntry
+  isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
 
 import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
@@ -84,6 +83,11 @@ export default function (args) {
       property: 'calledDiagramVersionSelection',
       defaultValue: 'latestVersion',
       options: versionSelectionOptions,
+      cleanup: (value) => {
+        return {
+                ...(value === 'latestVersion' && {calledDiagramVersion: null})
+              }; 
+        },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -103,49 +107,4 @@ export default function (args) {
   }
 
   return entries;
-}
-
-function CalledDiagramVersionSelection(props) {
-  const { element, id } = props;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-
-  const getValue = () => {
-    var value = element.businessObject.calledDiagramVersionSelection;
-
-    if (!value) {
-      modeling.updateProperties(element, {
-        calledDiagramVersionSelection: 'latestVersion',
-      });
-    }
-
-    return element.businessObject.calledDiagramVersionSelection;
-  };
-
-  const setValue = (value) => {
-    const update = {
-      calledDiagramVersionSelection: value,
-      ...(value === 'latestVersion' && {calledDiagramVersion: null}) // TODO add as action to template ?
-    };
-
-    modeling.updateProperties(element, update);
-  };
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Versioning'),
-    description: translate('Used diagram version'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: function () {
-      return [
-        { label: translate('Latest version'), value: 'latestVersion' },
-        { label: translate('Named version'), value: 'namedVersion' },
-      ];
-    },
-  });
 }

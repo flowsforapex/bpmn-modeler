@@ -39,7 +39,7 @@ export function DefaultTextFieldEntry(props) {
 }
 
 export function DefaultSelectEntry(props) {
-  const { id, element, label, description, helper, property, defaultValue, options } = props;
+  const { id, element, label, description, helper, property, defaultValue, options, cleanup } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -71,10 +71,12 @@ export function DefaultSelectEntry(props) {
     if (helper) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         [property]: value,
+        ...(cleanup && cleanup(value))
       });
     } else {
       modeling.updateProperties(element, {
         [property]: value,
+        ...(cleanup && cleanup(value))
       });
     }
   };

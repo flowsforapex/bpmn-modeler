@@ -91,7 +91,7 @@ export default function apexPropertiesProvider(
 
       // userTask
       if (is(element, 'bpmn:UserTask')) {
-        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', 'APEX Page', ApexPageProps));
         newGroups.push(createSection({element, injector, translate}, 'apexApproval', 'APEX Approval', ApexApprovalProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
@@ -101,14 +101,14 @@ export default function apexPropertiesProvider(
 
       // scriptTask
       if (is(element, 'bpmn:ScriptTask')) {
-        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
       }
 
       // serviceTask
       if (is(element, 'bpmn:ServiceTask')) {
-        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', 'Mail', SendMailProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
@@ -117,7 +117,7 @@ export default function apexPropertiesProvider(
 
       // businessRuleTask
       if (is(element, 'bpmn:BusinessRuleTask')) {
-        newGroups.push(createSection({element, translate}, 'taskType', 'Task Type', TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
       }

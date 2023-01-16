@@ -39,8 +39,6 @@ export default function (args) {
 
   const entries = [];
 
-  console.log(element.businessObject.type);
-
   if (element.businessObject.type === 'apexApproval') {
 
     const manualInput = element.businessObject.manualInput === 'true';
