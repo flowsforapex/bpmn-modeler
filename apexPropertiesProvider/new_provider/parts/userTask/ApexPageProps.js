@@ -46,7 +46,7 @@ export default function (args) {
 
   const entries = [];
 
-  if (businessObject.type === 'apexPage' || typeof businessObject.type === 'undefined') {
+  if (!['apexApproval'].includes(businessObject.type)) {
 
     const manualInput = businessObject.manualInput === 'true';
 

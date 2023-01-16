@@ -57,7 +57,7 @@ export function DefaultSelectEntry(props) {
     if (defaultValue) {
       value = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
-      if (!value) {
+      if (!value || !options.some(v => v.value === value)) {
         if (helper) {
           helper.setExtensionProperty(element, modeling, bpmnFactory, {
             [property]: defaultValue,

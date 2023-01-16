@@ -26,7 +26,7 @@ export default function (args) {
 
   const entries = [];
   
-  if (businessObject === 'sendMail') {
+  if (businessObject.type === 'sendMail') {
     
     const manualInput = businessObject.manualInput === 'true';
     const useTemplate = (extensionHelper.getExtensionProperty(element, 'useTemplate') === 'true');

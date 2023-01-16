@@ -4,6 +4,8 @@ import {
 
 import { getBusinessObject } from '../../helper/util';
 
+import { is } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry } from '../../helper/templates';
@@ -18,7 +20,10 @@ export default function (args) {
 
   const translate = injector.get('translate');
   
-  if (businessObject.type === 'executePlsql' || typeof businessObject.type === 'undefined') {
+  if (
+    is(element, 'bpmn:ScriptTask') ||
+    (is(element, 'bpmn:ServiceTask') && !['sendMail'].includes(businessObject.type))
+   ) {
     return [
       {
         id: 'plsqlCode',

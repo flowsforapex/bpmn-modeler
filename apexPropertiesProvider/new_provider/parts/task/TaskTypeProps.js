@@ -40,6 +40,11 @@ export default function (args) {
       property: 'type',
       defaultValue: defaultValues[element.type],
       options: selectOptions[element.type],
+      cleanup: (value) => {
+        return {
+                ...(!selectOptions[element.type].some(v => v.value === value) && {type: null})
+              }; 
+        },
       component: DefaultSelectEntry,
       // isEdited: isSelectEntryEdited,
     },
