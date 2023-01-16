@@ -4,6 +4,8 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
@@ -38,13 +40,15 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
 
   const entries = [];
 
-  if (element.businessObject.type === 'apexPage' || typeof element.businessObject.type === 'undefined') {
+  if (businessObject.type === 'apexPage' || typeof businessObject.type === 'undefined') {
 
-    const manualInput = element.businessObject.manualInput === 'true';
+    const manualInput = businessObject.manualInput === 'true';
 
     entries.push(
       {

@@ -2,6 +2,8 @@ import { isSelectEntryEdited, isTextAreaEntryEdited, NumberFieldEntry, SelectEnt
 
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
@@ -46,12 +48,14 @@ export default function (args) {
 export function Sequence(props) {
   const { id, element } = props;
 
+  const businessObject = getBusinessObject(element);
+
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const translate = useService('translate');
 
   const getNextSequence = (element) => {
-    var { sourceRef } = element.businessObject;
+    var { sourceRef } = businessObject;
     var maxSequence =
       Math.max(...sourceRef.outgoing.map(o => o.sequence || 0)) || 0;
   
@@ -59,7 +63,7 @@ export function Sequence(props) {
   };
 
   const getValue = () => {
-    const value = element.businessObject.sequence;
+    const value = businessObject.sequence;
 
     if (!value) {
       modeling.updateProperties(element, {
@@ -67,7 +71,7 @@ export function Sequence(props) {
       });
     }
   
-    return element.businessObject.sequence;
+    return businessObject.sequence;
   };
 
   const setValue = (value) => {
@@ -94,7 +98,9 @@ export function Language(props) {
   const bpmnFactory = useService('bpmnFactory');
   const translate = useService('translate');
 
-  const { conditionExpression } = element.businessObject;
+  const businessObject = getBusinessObject(element);
+
+  const { conditionExpression } = businessObject;
 
   const getValue = () => conditionExpression && conditionExpression.get('language');
 
@@ -105,19 +111,19 @@ export function Language(props) {
         body: null,
         language: value
       });
-      formalExpression.$parent = element.businessObject;
+      formalExpression.$parent = businessObject;
 
-      modeling.updateModdleProperties(element, element.businessObject, {
+      modeling.updateModdleProperties(element, businessObject, {
         conditionExpression: formalExpression,
       });
     } else if (value) {
       conditionExpression.set('language', value);
 
-      modeling.updateModdleProperties(element, element.businessObject, {
+      modeling.updateModdleProperties(element, businessObject, {
         conditionExpression: conditionExpression,
       });
     } else {
-      modeling.updateModdleProperties(element, element.businessObject, {
+      modeling.updateModdleProperties(element, businessObject, {
         conditionExpression: null,
       });
     }
@@ -146,7 +152,10 @@ export function Condition(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const { conditionExpression } = element.businessObject;
+  const businessObject = getBusinessObject(element);
+
+  const { conditionExpression } = businessObject;
+
   const language = conditionExpression && conditionExpression.get('language');
 
   const getValue = () => conditionExpression && conditionExpression.get('body');
@@ -157,15 +166,15 @@ export function Condition(props) {
       const formalExpression = bpmnFactory.create('bpmn:FormalExpression', {
         body: value,
       });
-      formalExpression.$parent = element.businessObject;
+      formalExpression.$parent = businessObject;
 
-      modeling.updateModdleProperties(element, element.businessObject, {
+      modeling.updateModdleProperties(element, businessObject, {
         conditionExpression: formalExpression,
       });
     } else {
       conditionExpression.set('body', value);
 
-      modeling.updateModdleProperties(element, element.businessObject, {
+      modeling.updateModdleProperties(element, businessObject, {
         conditionExpression: conditionExpression,
       });
     }
@@ -173,14 +182,14 @@ export function Condition(props) {
 
   const labelWithIcon =
     OpenDialogLabel('Condition', () => {
-      const { conditionExpression } = element.businessObject;
+      const { conditionExpression } = businessObject;
       var getProperty = function () {
         return conditionExpression && conditionExpression.get('body');
       };
       var saveProperty = function (text) {
         conditionExpression.set('body', text);
 
-        modeling.updateModdleProperties(element, element.businessObject, {
+        modeling.updateModdleProperties(element, businessObject, {
           conditionExpression: conditionExpression,
         });
       };

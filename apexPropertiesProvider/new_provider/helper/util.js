@@ -1,6 +1,6 @@
 import Ids from 'ids';
 
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject as getBO, is } from 'bpmn-js/lib/util/ModelUtil';
 
 // get extension element
 export function getExtensionElements(element) {
@@ -55,4 +55,8 @@ export function nextId(prefix) {
 
 export function updateProperties(context, commandStack) {
   commandStack.execute('element.updateModdleProperties', context);
+}
+
+export function getBusinessObject(element) {
+  return is(element, 'bpmn:Participant') ? getBO(element).processRef : getBO(element);
 }

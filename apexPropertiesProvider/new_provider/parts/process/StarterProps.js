@@ -3,6 +3,8 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor } from '../../helper/templates';
@@ -14,8 +16,10 @@ const excludedStartingUsersHelper = new ExtensionHelper('apex:ExcludedStartingUs
 export default function (args) {
 
   const {element} = args;
+
+  const businessObject = getBusinessObject(element);
   
-  if (element.businessObject.isStartable === 'true') {
+  if (businessObject.isStartable === 'true') {
     return [
       {
         id: 'potentialStartingUsers',

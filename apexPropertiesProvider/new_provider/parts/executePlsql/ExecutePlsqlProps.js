@@ -2,6 +2,8 @@ import {
   isTextAreaEntryEdited, isToggleSwitchEntryEdited
 } from '@bpmn-io/properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry } from '../../helper/templates';
@@ -12,9 +14,11 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
   
-  if (element.businessObject.type === 'executePlsql' || typeof element.businessObject.type === 'undefined') {
+  if (businessObject.type === 'executePlsql' || typeof businessObject.type === 'undefined') {
     return [
       {
         id: 'plsqlCode',

@@ -1,11 +1,7 @@
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
-
-
 import {
   createElement,
   createExtension,
-  createExtensionElements,
-  getExtension, updateProperties
+  createExtensionElements, getBusinessObject, getExtension, updateProperties
 } from './util';
 
 import { without } from 'min-dash';

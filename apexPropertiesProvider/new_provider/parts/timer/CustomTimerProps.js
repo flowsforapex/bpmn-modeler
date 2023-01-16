@@ -8,6 +8,8 @@ import {
 import { useService } from 'bpmn-js-properties-panel';
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
+import { getBusinessObject } from '../../helper/util';
+
 var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 var minDash = require('min-dash');
@@ -124,7 +126,7 @@ function isTimerSupported(element) {
 }
 
 function getTimerEventDefinition(element) {
-  const businessObject = ModelUtil.getBusinessObject(element);
+  const businessObject = getBusinessObject(element);
   const eventDefinitions = businessObject.get('eventDefinitions') || [];
   
   return minDash.find(eventDefinitions, function (definition) {
@@ -134,6 +136,8 @@ function getTimerEventDefinition(element) {
 
 function TimerDefinitionType(props) {
   const { element, id, timerEventDefinition, timerEventDefinitionType } = props;
+
+  const businessObject = getBusinessObject(element);
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
@@ -174,7 +178,7 @@ function TimerDefinitionType(props) {
       element.type === 'bpmn:StartEvent' ||
       element.type === 'bpmn:IntermediateCatchEvent' ||
       (element.type === 'bpmn:BoundaryEvent' &&
-        element.businessObject.cancelActivity)
+      businessObject.cancelActivity)
     ) {
       return [
         { value: 'oracleDate', label: translate('Date (Oracle)') },

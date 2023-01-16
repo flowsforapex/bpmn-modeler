@@ -1,11 +1,10 @@
-import { getBusinessObject } from 'bpmn-js/lib/util/ModelUtil';
-
-import {
+import { getBusinessObject,
   createExtension,
   createExtensionElements,
   getExtension,
   getExtensionElements
 } from './util';
+
 
 export default class ExtensionHelper {
   constructor(type) {

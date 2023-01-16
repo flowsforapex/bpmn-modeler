@@ -15,6 +15,7 @@ import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntr
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
+import { getBusinessObject } from '../../helper/util';
 import {
   getApplications, getJSONParameters, getTasks
 } from '../../plugins/metaDataCollector';
@@ -35,13 +36,15 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
 
   const entries = [];
 
-  if (element.businessObject.type === 'apexApproval') {
+  if (businessObject.type === 'apexApproval') {
 
-    const manualInput = element.businessObject.manualInput === 'true';
+    const manualInput = businessObject.manualInput === 'true';
 
     entries.push(
       {

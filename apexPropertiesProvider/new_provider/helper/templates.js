@@ -2,6 +2,8 @@ import { SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwitchEntry } from '@
 
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from './util';
+
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
@@ -12,8 +14,10 @@ export function DefaultTextFieldEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
+  const businessObject = getBusinessObject(element);
+
   const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property) : element.businessObject[property]);
+    (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
@@ -21,7 +25,7 @@ export function DefaultTextFieldEntry(props) {
         [property]: value,
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
       });
     }
@@ -45,11 +49,13 @@ export function DefaultSelectEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
+  const businessObject = getBusinessObject(element);
+
   const getValue = () => {
     var value;
 
     if (defaultValue) {
-      value = (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+      value = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
       if (!value) {
         if (helper) {
@@ -57,14 +63,14 @@ export function DefaultSelectEntry(props) {
             [property]: defaultValue,
           });
         } else {
-          modeling.updateProperties(element, {
+          modeling.updateModdleProperties(element, businessObject, {
             [property]: defaultValue,
           });
         }
       }
     }
 
-    return (helper ? helper.getExtensionProperty(element, property) : element.businessObject[property]);
+    return (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
   };
 
   const setValue = (value) => {
@@ -74,7 +80,7 @@ export function DefaultSelectEntry(props) {
         ...(cleanup && cleanup(value))
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
         ...(cleanup && cleanup(value))
       });
@@ -102,8 +108,10 @@ export function DefaultSelectEntryAsync(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
+  const businessObject = getBusinessObject(element);
+
   const getOptions = () => {
-    const currValue = (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+    const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
     const existing =
       currValue == null || state.map(e => e.value).includes(currValue);
@@ -120,7 +128,7 @@ export function DefaultSelectEntryAsync(props) {
   };
 
   const getValue = () =>
-    (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+    (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
@@ -128,7 +136,7 @@ export function DefaultSelectEntryAsync(props) {
         [property]: value,
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
       });
     }
@@ -157,11 +165,13 @@ export function DefaultToggleSwitchEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
+  const businessObject = getBusinessObject(element);
+
   const getValue = () => {
     var value;
     
     if (defaultValue) {
-      value = helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property];
+      value = helper ? (helper.getExtensionProperty(element, property)) : businessObject[property];
 
       if (!value) {
         if (helper) {
@@ -169,24 +179,26 @@ export function DefaultToggleSwitchEntry(props) {
             [property]: defaultValue,
           });
         } else {
-          modeling.updateProperties(element, {
+          modeling.updateModdleProperties(element, businessObject, {
             [property]: defaultValue,
           });
         }
       }
     }
 
-    return helper ? (helper.getExtensionProperty(element, property) === (invert ? 'false' : 'true')) : (element.businessObject[property] === (invert ? 'false' : 'true'));
+    return helper ? (helper.getExtensionProperty(element, property) === (invert ? 'false' : 'true')) : (businessObject[property] === (invert ? 'false' : 'true'));
   };
     
 
   const setValue = (value) => {
     if (helper) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        // eslint-disable-next-line no-nested-ternary
         [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
+        // eslint-disable-next-line no-nested-ternary
         [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
       });
     }
@@ -210,7 +222,9 @@ export function DefaultTextAreaEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+  const businessObject = getBusinessObject(element);
+
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
@@ -218,7 +232,7 @@ export function DefaultTextAreaEntry(props) {
         [property]: value,
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
       });
     }
@@ -243,7 +257,9 @@ export function DefaultTextAreaEntryWithEditor(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+  const businessObject = getBusinessObject(element);
+
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
@@ -251,7 +267,7 @@ export function DefaultTextAreaEntryWithEditor(props) {
         [property]: value,
       });
     } else {
-      modeling.updateProperties(element, {
+      modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
       });
     }

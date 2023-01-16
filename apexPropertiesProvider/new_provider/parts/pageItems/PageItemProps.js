@@ -5,6 +5,8 @@ import {
   TextFieldEntry
 } from '@bpmn-io/properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import { useService } from 'bpmn-js-properties-panel';
 
 export default function PageItemProps(props) {
@@ -41,6 +43,8 @@ function ItemName(props) {
 
   const { items, setItems } = props.hooks;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = useService('translate');
   const debounce = useService('debounceInput');
   const modeling = useService('modeling');
@@ -70,7 +74,7 @@ function ItemName(props) {
 
   const getValue = pageItem => pageItem.itemName;
 
-  if (element.businessObject.manualInput === 'false') {
+  if (businessObject.manualInput === 'false') {
     return SelectEntry({
       element: pageItem,
       id: `${idPrefix}-itemName`,
@@ -86,6 +90,8 @@ function ItemName(props) {
 function ItemNameText(props) {
   const { idPrefix, element, pageItem } = props;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = useService('translate');
   const debounce = useService('debounceInput');
   const modeling = useService('modeling');
@@ -98,7 +104,7 @@ function ItemNameText(props) {
 
   const getValue = pageItem => pageItem.itemName;
 
-  if (element.businessObject.manualInput === 'true') {
+  if (businessObject.manualInput === 'true') {
     return TextFieldEntry({
       element: pageItem,
       id: `${idPrefix}-itemName`,

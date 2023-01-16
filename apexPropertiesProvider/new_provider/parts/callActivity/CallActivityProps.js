@@ -3,6 +3,8 @@ import {
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
@@ -16,6 +18,8 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
 
   const versionSelectionOptions = [
@@ -25,8 +29,8 @@ export default function (args) {
 
   const entries = [];
 
-  const manualInput = element.businessObject.manualInput === 'true';
-  const selection = element.businessObject.calledDiagramVersionSelection;
+  const manualInput = businessObject.manualInput === 'true';
+  const selection = businessObject.calledDiagramVersionSelection;
 
   entries.push(
     {

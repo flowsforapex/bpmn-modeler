@@ -3,6 +3,8 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import ProcVarList from './ProcVarList';
@@ -18,6 +20,8 @@ export default function (args) {
   var type2 = null;
 
   const {element, injector, translate} = args;
+
+  const businessObject = getBusinessObject(element);
 
   const entries = [];
 
@@ -56,7 +60,7 @@ export default function (args) {
     };
 
   } else if (
-    ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']) && element.businessObject.isCallable === 'true'
+    ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']) && businessObject.isCallable === 'true'
   ) {
 
     type1 = {
@@ -190,11 +194,13 @@ function QuickpickDefinedVariables(props) {
   const bpmnFactory = useService('bpmnFactory');
   const commandStack = useService('commandStack');
 
+  const businessObject = getBusinessObject(element);
+
   return Quickpick(
     {
       text: translate('Load defined variables'),
       handler: () => {
-        const {calledDiagram, calledDiagramVersionSelection, calledDiagramVersion} = element.businessObject;
+        const {calledDiagram, calledDiagramVersionSelection, calledDiagramVersion} = businessObject;
 
         getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion)
         .then((data) => {

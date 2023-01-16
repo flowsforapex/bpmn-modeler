@@ -10,6 +10,8 @@ import { getApplications, getTemplates } from '../../plugins/metaDataCollector';
 
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
+import { getBusinessObject } from '../../helper/util';
+
 const extensionHelper = new ExtensionHelper('apex:SendMail');
 
 export default function (args) {
@@ -18,13 +20,15 @@ export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
 
   const entries = [];
   
-  if (element.businessObject.type === 'sendMail') {
+  if (businessObject === 'sendMail') {
     
-    const manualInput = element.businessObject.manualInput === 'true';
+    const manualInput = businessObject.manualInput === 'true';
     const useTemplate = (extensionHelper.getExtensionProperty(element, 'useTemplate') === 'true');
 
     entries.push(

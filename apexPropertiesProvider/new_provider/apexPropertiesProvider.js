@@ -129,8 +129,8 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Mapping', ProcVarGroup));
       }
 
-      // process
-      if (is(element, 'bpmn:Process')) {
+      // process // TODO validate participant properties
+      if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
         newGroups.push(createSection({element, injector, translate}, 'execution', 'Execution', ExecutionProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Variables', ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
