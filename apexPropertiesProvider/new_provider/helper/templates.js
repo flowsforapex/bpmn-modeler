@@ -91,6 +91,67 @@ export function DefaultSelectEntry(props) {
   });
 }
 
+export function DefaultSelectEntryAsync(props) {
+  const { id, element, label, description, helper, property } = props;
+
+  const { state, nextGetter, nextSetter } = props.hooks;
+
+  const modeling = useService('modeling');
+  const debounce = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+  // useEffect(() => {
+  //   getApplications().then(applications => setApplications(applications));
+  // }, [setApplications]);
+
+  const getOptions = () => {
+    const currValue = (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+
+    const existing =
+      currValue == null || state.map(e => e.value).includes(currValue);
+
+    return [
+      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
+      ...state.map((s) => {
+        return {
+          label: s.label,
+          value: s.value,
+        };
+      }),
+    ];
+  };
+
+  const getValue = () =>
+    (helper ? (helper.getExtensionProperty(element, property)) : element.businessObject[property]);
+
+  const setValue = (value) => {
+    if (helper) {
+      helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        [property]: value,
+      });
+    } else {
+      modeling.updateProperties(element, {
+        [property]: value,
+      });
+    }
+
+    if (nextGetter && nextSetter) {
+      nextGetter().then(s => nextSetter(s));
+    }
+  };
+
+  return new SelectEntry({
+    id: id,
+    element: element,
+    label: label,
+    description: description,
+    getValue: getValue,
+    setValue: setValue,
+    debounce: debounce,
+    getOptions: getOptions,
+  });
+}
+
 export function DefaultToggleSwitchEntry(props) {
   const { id, element, label, description, helper, property, defaultValue, invert } = props;
 

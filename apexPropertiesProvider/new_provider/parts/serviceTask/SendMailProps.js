@@ -1,15 +1,14 @@
 import {
   isSelectEntryEdited,
-  isTextAreaEntryEdited, isTextFieldEntryEdited, SelectEntry
+  isTextAreaEntryEdited, isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { getApplications, getTemplates } from '../../plugins/metaDataCollector';
 
-import { DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 const extensionHelper = new ExtensionHelper('apex:SendMail');
 
@@ -137,31 +136,44 @@ export default function (args) {
           }
         );
       } else {
+        useEffect(() => {
+          getApplications().then(applications => setApplications(applications));
+        }, [setApplications]);
+        
         entries.push(
           {
             id: 'applicationId',
             element,
+            label: translate('Application'),
+            helper: extensionHelper,
+            property: 'applicationId',
             hooks: {
-              applications,
-              setApplications,
-              templates,
-              setTemplates,
+              state: applications,
+              nextGetter: () => {
+                const applicationId = extensionHelper.getExtensionProperty(
+                  element,
+                  'applicationId'
+                );
+            
+                return getTemplates(applicationId);
+              },
+              nextSetter: setTemplates,
             },
-            component: ApplicationId,
+            component: DefaultSelectEntryAsync,
             isEdited: isSelectEntryEdited,
           },
           {
             id: 'templateId',
             element,
+            label: translate('Template'),
+            helper: extensionHelper,
+            property: 'templateId',
             hooks: {
-              applications,
-              setApplications,
-              templates,
-              setTemplates,
+              state: templates,
             },
-            component: TemplateId,
+            component: DefaultSelectEntryAsync,
             isEdited: isSelectEntryEdited,
-          },
+          }
         );
       }
         
@@ -229,107 +241,4 @@ export default function (args) {
     );
   }
   return entries;
-}
-
-function ApplicationId(props) {
-  const { element, id } = props;
-
-  const { applications, setApplications, templates, setTemplates } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, [setApplications]);
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(
-      element,
-      'applicationId'
-    );
-
-    const existing =
-      currValue == null || applications.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...applications.map((application) => {
-        return {
-          label: application.label,
-          value: application.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      applicationId: value,
-    });
-
-    getTemplates(value).then(templates => setTemplates(templates));
-  };
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Application'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions,
-  });
-}
-
-function TemplateId(props) {
-  const { element, id } = props;
-
-  const { templates, setTemplates } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(element, 'templateId');
-
-    const existing =
-      currValue == null || templates.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...templates.map((template) => {
-        return {
-          label: template.label,
-          value: template.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'templateId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      templateId: value,
-    });
-  };
-
-  return new SelectEntry({
-    id: id,
-    element: element,
-    label: translate('Template'),
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions,
-  });
 }

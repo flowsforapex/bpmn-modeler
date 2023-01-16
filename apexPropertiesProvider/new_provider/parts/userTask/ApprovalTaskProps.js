@@ -1,6 +1,6 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup, SelectEntry
+  isTextFieldEntryEdited, ListGroup
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -11,7 +11,7 @@ import ParametersList from '../parameters/ParametersList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -38,6 +38,8 @@ export default function (args) {
   const translate = injector.get('translate');
 
   const entries = [];
+
+  console.log(element.businessObject.type);
 
   if (element.businessObject.type === 'apexApproval') {
 
@@ -78,29 +80,42 @@ export default function (args) {
         }
       );
     } else {
+      useEffect(() => {
+        getApplications().then(applications => setApplications(applications));
+      }, [setApplications]);
+
       entries.push(
         {
           id: 'applicationId',
           element,
+          label: translate('Application'),
+          helper: extensionHelper,
+          property: 'applicationId',
           hooks: {
-            applications,
-            setApplications,
-            tasks,
-            setTasks,
+            state: applications,
+            nextGetter: () => {
+              const applicationId = extensionHelper.getExtensionProperty(
+                element,
+                'applicationId'
+              );
+          
+              return getTasks(applicationId);
+            },
+            nextSetter: setTasks,
           },
-          component: ApplicationId,
+          component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
         {
           id: 'taskStaticId',
           element,
+          label: translate('Task Definition'),
+          helper: extensionHelper,
+          property: 'taskStaticId',
           hooks: {
-            applications,
-            setApplications,
-            tasks,
-            setTasks,
+            state: tasks,
           },
-          component: TaskStaticId,
+          component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
       );
@@ -181,114 +196,7 @@ export default function (args) {
       },
     );
   }
-  return [];
-}
-
-function ApplicationId(props) {
-  const { element, id } = props;
-
-  const { applications, setApplications, tasks, setTasks } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, [setApplications]);
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(
-      element,
-      'applicationId'
-    );
-
-    const existing =
-      currValue == null || applications.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...applications.map((application) => {
-        return {
-          label: application.label,
-          value: application.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      applicationId: value,
-    });
-
-    getTasks(value).then(tasks => setTasks(tasks));
-  };
-
-  if (element.businessObject.manualInput === 'false') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Application'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: getOptions,
-    });
-  }
-}
-
-function TaskStaticId(props) {
-  const { element, id } = props;
-
-  const { tasks, setTasks } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(element, 'taskStaticId');
-
-    const existing =
-      currValue == null || tasks.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...tasks.map((task) => {
-        return {
-          label: task.label,
-          value: task.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'taskStaticId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      taskStaticId: value,
-    });
-  };
-
-  if (element.businessObject.manualInput === 'false') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Task Definition'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: getOptions,
-    });
-  }
+  return entries;
 }
 
 function ParametersQuickpick(props) {

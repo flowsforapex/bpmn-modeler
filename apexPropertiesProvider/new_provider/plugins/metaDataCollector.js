@@ -273,14 +273,14 @@ export function getJSONParameters(applicationId, taskStaticId) {
     return Promise.resolve(
       [
         {
-          parStaticId: 'par1',
-          parDataType: 'String',
-          parValue: '1'
+          STATIC_ID: 'par1',
+          DATA_TYPE: 'String',
+          VALUE: '1'
         },
         {
-          parStaticId: 'par2',
-          parDataType: 'String',
-          parValue: '2'
+          STATIC_ID: 'par2',
+          DATA_TYPE: 'String',
+          VALUE: '2'
         }
       ]
     );

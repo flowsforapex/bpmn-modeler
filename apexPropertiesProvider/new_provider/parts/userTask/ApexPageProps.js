@@ -1,7 +1,6 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup,
-  SelectEntry
+  isTextFieldEntryEdited, ListGroup
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -12,7 +11,7 @@ import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -82,29 +81,55 @@ export default function (args) {
         },
       );
     } else {
+      useEffect(() => {
+        getApplications().then(applications => setApplications(applications));
+      }, [setApplications]);
+
       entries.push(
         {
           id: 'applicationId',
           element,
+          label: translate('Application'),
+          helper: extensionHelper,
+          property: 'applicationId',
           hooks: {
-            applications,
-            setApplications,
-            pages,
-            setPages,
+            state: applications,
+            nextGetter: () => {
+              const applicationId = extensionHelper.getExtensionProperty(
+                element,
+                'applicationId'
+              );
+          
+              return getPages(applicationId);
+            },
+            nextSetter: setPages,
           },
-          component: ApplicationId,
+          component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
         {
           id: 'pageId',
           element,
+          label: translate('Page'),
+          helper: extensionHelper,
+          property: 'pageId',
           hooks: {
-            pages,
-            setPages,
-            items,
-            setItems,
+            state: pages,
+            nextGetter: () => {
+              const applicationId = extensionHelper.getExtensionProperty(
+                element,
+                'applicationId'
+              );
+              const pageId = extensionHelper.getExtensionProperty(
+                element,
+                'pageId'
+              );
+          
+              return getItems(applicationId, pageId);
+            },
+            nextSetter: setItems,
           },
-          component: PageId,
+          component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
       );
@@ -129,120 +154,6 @@ export default function (args) {
     );
   }
   return entries;
-}
-
-function ApplicationId(props) {
-  const { element, id } = props;
-
-  const { applications, setApplications, pages, setPages } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, [setApplications]);
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(
-      element,
-      'applicationId'
-    );
-
-    const existing =
-      currValue == null || applications.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...applications.map((application) => {
-        return {
-          label: application.label,
-          value: application.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  const setValue = (value) => {
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      applicationId: value,
-    });
-
-    getPages(value).then(pages => setPages(pages));
-  };
-
-  if (element.businessObject.manualInput === 'false') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Application'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: getOptions,
-    });
-  }
-}
-
-function PageId(props) {
-  const { element, id } = props;
-
-  const { pages, setPages, items, setItems } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  const getOptions = () => {
-    const currValue = extensionHelper.getExtensionProperty(element, 'pageId');
-
-    const existing =
-      currValue == null || pages.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...pages.map((page) => {
-        return {
-          label: page.label,
-          value: page.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    extensionHelper.getExtensionProperty(element, 'pageId');
-
-  const setValue = (value) => {
-    const applicationId = extensionHelper.getExtensionProperty(
-      element,
-      'applicationId'
-    );
-
-    extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      pageId: value,
-    });
-
-    getItems(applicationId, value).then(items => setItems(items));
-  };
-
-  if (element.businessObject.manualInput === 'false') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Page'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: getOptions,
-    });
-  }
 }
 
 function QuickpickItems(props) {

@@ -4,7 +4,7 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
-import { DefaultSelectEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
@@ -55,15 +55,21 @@ export default function (args) {
       }
     );
   } else {
+    useEffect(() => {
+      getDiagrams().then(diagrams => setDiagrams(diagrams));
+    }, [setDiagrams]);
+
     entries.push(
       {
         id: 'calledDiagram',
         element,
+        label: translate('Called Diagram'),
+        description: translate('Name of the diagram'),
+        property: 'calledDiagram',
         hooks: {
-          diagrams,
-          setDiagrams,
+          state: diagrams,
         },
-        component: CalledDiagram,
+        component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
     );
@@ -97,58 +103,6 @@ export default function (args) {
   }
 
   return entries;
-}
-
-function CalledDiagram(props) {
-  const { element, id } = props;
-
-  const { diagrams, setDiagrams } = props.hooks;
-
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-
-  useEffect(() => {
-    getDiagrams().then(diagrams => setDiagrams(diagrams));
-  }, [setDiagrams]);
-
-  const getOptions = () => {
-    const currValue = element.businessObject.calledDiagram;
-
-    const existing =
-      currValue == null || diagrams.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...diagrams.map((diagram) => {
-        return {
-          label: diagram.label,
-          value: diagram.value,
-        };
-      }),
-    ];
-  };
-
-  const getValue = () =>
-    element.businessObject.calledDiagram;
-
-  const setValue = value =>
-    modeling.updateProperties(element, {
-      calledDiagram: value,
-    });
-
-  if (element.businessObject.manualInput === 'false') {
-    return new SelectEntry({
-      id: id,
-      element: element,
-      label: translate('Called Diagram'),
-      description: translate('Name of the diagram'),
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
-      getOptions: getOptions,
-    });
-  }
 }
 
 function CalledDiagramVersionSelection(props) {
