@@ -28,7 +28,7 @@ export default function (args) {
         id: 'processStatus',
         element,
         component: ProcessStatus,
-        // isEdited: isNumberFieldEntryEdited,
+        terminateEventDefinition
       },
     ];
   }
@@ -36,13 +36,11 @@ export default function (args) {
 }
 
 export function ProcessStatus(props) {
-  const { id, element } = props;
+  const { id, element, terminateEventDefinition } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const translate = useService('translate');
-
-  const terminateEventDefinition = getTerminateEventDefinition(element);
 
   const getValue = () => {
     const value = terminateEventDefinition.get('processStatus');

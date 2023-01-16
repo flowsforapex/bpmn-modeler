@@ -114,6 +114,28 @@ export default function (args) {
       };
       
     }
+  } else if (
+    ModelingUtil.isAny(element, ['bpmn:StartEvent', 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:BoundaryEvent', 'bpmn:EndEvent'])
+  ) {
+
+    if (
+      getBusinessObject(element).eventDefinitions &&
+      getBusinessObject(element).eventDefinitions.some(
+        e => e.$type === 'bpmn:TimerEventDefinition'
+      )
+    ) {
+      type1 = {
+        type: 'apex:BeforeEvent',
+        id: 'beforeEvent',
+        label: 'Before Event'
+      };
+    }
+
+    type2 = {
+      type: 'apex:OnEvent',
+      id: 'onEvent',
+      label: 'On Event'
+    }; 
   }
 
   const listExtensionHelper1 = type1 ? new ListExtensionHelper(

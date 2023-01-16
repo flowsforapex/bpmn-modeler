@@ -89,7 +89,7 @@ export default function apexPropertiesProvider(
 
       // task
       if (is(element, 'bpmn:Task') && !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask'])) {
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
       }
 
       // userTask
@@ -97,7 +97,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', 'APEX Page', ApexPageProps));
         newGroups.push(createSection({element, injector, translate}, 'apexApproval', 'APEX Approval', ApexApprovalProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', 'Assignment', AssignmentProps));
         newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
       }
@@ -106,7 +106,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:ScriptTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
       }
 
       // serviceTask
@@ -114,7 +114,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', 'Mail', SendMailProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
         // TODO
       }
 
@@ -122,7 +122,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:BusinessRuleTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Process Variables', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
       }
 
       // callActivity
@@ -153,6 +153,12 @@ export default function apexPropertiesProvider(
       // add the custom timer section
       newGroups.push(createSection({element, translate}, 'customTimer', 'Timer', CustomTimerProps));
 
+      // add event proc var section
+      if (is(element, 'bpmn:Event')) {
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+      }
+
+      // add terminate event section
       if (is(element, 'bpmn:EndEvent')) {
         newGroups.push(createSection({element, translate}, 'customTerminate', 'Details', TerminateEventProps));
       }
