@@ -17,6 +17,7 @@ import SchedulingProps from './parts/scheduling/SchedulingProps';
 import CallActivityProps from './parts/callActivity/CallActivityProps';
 import StarterProps from './parts/process/StarterProps';
 
+import TerminateEventProps from './parts/events/TerminateEventProps';
 import SequenceFlowProps from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
@@ -150,6 +151,10 @@ export default function apexPropertiesProvider(
       // add the custom timer section
       newGroups.push(createSection({element, translate}, 'customTimer', 'Timer', CustomTimerProps));
 
+      if (is(element, 'bpmn:EndEvent')) {
+        newGroups.push(createSection({element, translate}, 'customTerminate', 'Details', TerminateEventProps));
+      }
+      
       // filter: add all non-empty groups
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);

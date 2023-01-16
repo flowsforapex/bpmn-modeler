@@ -117,10 +117,8 @@ export function Language(props) {
         conditionExpression: formalExpression,
       });
     } else if (value) {
-      conditionExpression.set('language', value);
-
-      modeling.updateModdleProperties(element, businessObject, {
-        conditionExpression: conditionExpression,
+      modeling.updateModdleProperties(element, conditionExpression, {
+        language: value,
       });
     } else {
       modeling.updateModdleProperties(element, businessObject, {
