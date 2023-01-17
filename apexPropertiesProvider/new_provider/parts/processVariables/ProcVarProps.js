@@ -1,308 +1,50 @@
 import {
   isNumberFieldEntryEdited, isSelectEntryEdited,
   isTextAreaEntryEdited,
-  isTextFieldEntryEdited, NumberFieldEntry, SelectEntry,
-  TextAreaEntry,
-  TextFieldEntry
+  isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
 
 import { Helptext } from '../../helper/HelpText';
 
-import { useService } from 'bpmn-js-properties-panel';
 
-import { getContainer, openEditor } from '../../plugins/monacoEditor';
-
-import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
+import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
+import { getBusinessObject } from '../../helper/util';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-export default function ProcVarProps(props) {
-  const { idPrefix, parameter, element } = props;
+export default function ProcVarProps(args) {
+  const { idPrefix, procVar, element, injector } = args;
+
+  const businessObject = getBusinessObject(element);
+
+  const translate = injector.get('translate');
 
   const entries = [];
 
-  if (!ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
-    entries.push(
-      {
-        id: `${idPrefix}-varSequence`,
-        component: VarSequence,
-        idPrefix,
-        parameter,
-        isEdited: isNumberFieldEntryEdited,
-      }
-    );
-  }
+  const { varExpressionType, varDataType } = procVar;
 
-  entries.push(
-    {
-      id: `${idPrefix}-varName`,
-      component: VarName,
-      idPrefix,
-      parameter,
-      isEdited: isTextFieldEntryEdited,
-    },
-    {
-      id: `${idPrefix}-varDataType`,
-      component: VarDataType,
-      idPrefix,
-      parameter,
-      isEdited: isSelectEntryEdited,
-    }
-  );
-
-  if (ModelingUtil.is(element, 'bpmn:CallActivity')) {
-    entries.push(
-      {
-        id: `${idPrefix}-varDescription`,
-        component: VarDescription,
-        idPrefix,
-        parameter,
-      }
-    );
-  }
-
-  if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
-    entries.push(
-      {
-        id: `${idPrefix}-varDescriptionInput`,
-        component: VarDescriptionInput,
-        idPrefix,
-        parameter,
-        isEdited: isTextFieldEntryEdited,
-      }
-    );
-  } else {
-    entries.push(
-      {
-        id: `${idPrefix}-varExpressionType`,
-        component: VarExpressionType,
-        idPrefix,
-        parameter,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: `${idPrefix}-varExpression`,
-        component: VarExpression,
-        idPrefix,
-        parameter,
-        isEdited: isTextAreaEntryEdited,
-      },
-      {
-        id: 'plsqlCodeEditorContainer',
-        parameter,
-        component: PlsqlCodeEditorContainer,
-      }
-    );
-  }
-    
-  return entries;
-}
-
-function VarSequence(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varSequence: String(value),
-    });
-  };
-
-  const getValue = parameter => parameter.varSequence;
-
-  return NumberFieldEntry({
-    element: parameter,
-    id: `${idPrefix}-varSequence`,
-    label: translate('Sequence'),
-    getValue,
-    setValue,
-    debounce,
-  });
-}
-
-function VarName(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varName: value,
-    });
-  };
-
-  const getValue = parameter => parameter.varName;
-
-  return TextFieldEntry({
-    element: parameter,
-    id: `${idPrefix}-varName`,
-    label: translate('Name'),
-    getValue,
-    setValue,
-    debounce,
-  });
-}
-
-function VarDataType(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const DATA_TYPE_DESCRIPTION = {
-    DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
-  };
-
-  const getOptions = () => [
+  const dataTypeOptions = [
     { label: translate('Varchar2'), value: 'VARCHAR2' },
     { label: translate('Number'), value: 'NUMBER' },
     { label: translate('Date'), value: 'DATE' },
     { label: translate('Timestamp'), value: 'TIMESTAMP' },
     { label: translate('Clob'), value: 'CLOB' },
   ];
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varDataType: value,
-    });
+  
+  const dataTypeDescription = {
+    DATE: translate('Date in format YYYY-MM-DD HH24:MI:SS'),
   };
 
-  const getValue = parameter => parameter.varDataType;
+  const expressionTypeOptions = [
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Static'), value: 'static' }] : []),
+    ...[{ label: translate('Process Variable'), value: 'processVariable' }],
+    ...(varDataType !== 'CLOB' ? [{ label: translate('SQL query (single value)'), value: 'sqlQuerySingle' }] : []),
+    ...(varDataType === 'VARCHAR2' ? [{ label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Expression'), value: 'plsqlExpression' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlFunctionBody' }] : []),
+  ];
 
-  const description = DATA_TYPE_DESCRIPTION[parameter.varDataType];
-
-  return SelectEntry({
-    element: parameter,
-    id: `${idPrefix}-varDataType`,
-    label: translate('Data Type'),
-    getValue,
-    setValue,
-    debounce,
-    getOptions: getOptions,
-    description: description,
-  });
-}
-
-function VarDescription(props) {
-  const { idPrefix, element, parameter } = props;
-
-  return Helptext({
-    text: parameter.varDescription,
-  });
-}
-
-function VarDescriptionInput(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varDescription: value,
-    });
-  };
-
-  const getValue = parameter => parameter.varDescription;
-
-  return TextFieldEntry({
-    element: parameter,
-    id: `${idPrefix}-varDescription`,
-    label: translate('Description'),
-    getValue,
-    setValue,
-    debounce,
-  });
-}
-
-function VarExpressionType(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const getOptions = () => {
-    const { varDataType } = parameter;
-
-    switch (varDataType) {
-      case 'CLOB':
-        return [
-          { label: translate('Process Variable'), value: 'processVariable' },
-        ];
-      case 'NUMBER':
-      case 'DATE':
-      case 'TIMESTAMP':
-        return [
-          { label: translate('Static'), value: 'static' },
-          { label: translate('Process Variable'), value: 'processVariable' },
-          {
-            label: translate('SQL query (single value)'),
-            value: 'sqlQuerySingle',
-          },
-          { label: translate('Expression'), value: 'plsqlExpression' },
-          { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-        ];
-      default:
-        return [
-          { label: translate('Static'), value: 'static' },
-          { label: translate('Process Variable'), value: 'processVariable' },
-          {
-            label: translate('SQL query (single value)'),
-            value: 'sqlQuerySingle',
-          },
-          {
-            label: translate('SQL query (colon delimited list)'),
-            value: 'sqlQueryList',
-          },
-          { label: translate('Expression'), value: 'plsqlExpression' },
-          { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-        ];
-    }
-  };
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varExpressionType: value,
-    });
-  };
-
-  const getValue = parameter => parameter.varExpressionType;
-
-  return SelectEntry({
-    element: parameter,
-    id: `${idPrefix}-varExpressionType`,
-    label: translate('Expression Type'),
-    getValue,
-    setValue,
-    debounce,
-    getOptions: getOptions,
-  });
-}
-
-function VarExpression(props) {
-  const { idPrefix, element, parameter } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, parameter, {
-      varExpression: value,
-    });
-  };
-
-  const getValue = parameter => parameter.varExpression;
-
-  const EXPRESSION_DESCRIPTION = {
+  const expressionDescription = {
     static: translate('Static value'),
     processVariable: translate('Name of the Process Variable'),
     sqlQuerySingle: translate('SQL query returning a single value'),
@@ -311,57 +53,142 @@ function VarExpression(props) {
     plsqlFunctionBody: translate('PL/SQL Function Body returning a value'),
   };
 
-  const description = EXPRESSION_DESCRIPTION[parameter.varExpressionType];
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlExpression',
+    'plsqlFunctionBody',
+  ];
 
-  const expressionType = parameter.varExpressionType;
-
-  const language =
-    expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
-
-  let label;
-
-  if (
-    [
-      'sqlQuerySingle',
-      'sqlQueryList',
-      'plsqlExpression',
-      'plsqlFunctionBody',
-    ].includes(expressionType)
-  ) {
-    label = OpenDialogLabel(translate('Expression'), () => {
-      var getVarExpression = function () {
-        return parameter.varExpression;
-      };
-      var saveVarExpression = function (text) {
-        modeling.updateModdleProperties(element, parameter, {
-          varExpression: text,
-        });
-      };
-      openEditor(
-        'varExpression',
-        getVarExpression,
-        saveVarExpression,
-        language,
-        expressionType
-      );
-    });
-  } else {
-    label = translate('Expression');
+  
+  if (!ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
+    entries.push(
+      {
+        id: `${idPrefix}-varSequence`,
+        idPrefix, // TODO check if needed (also in other lists)
+        element,
+        listElement: procVar,
+        label: translate('Sequence'),
+        property: 'varSequence',
+        component: DefaultNumberEntry,
+        isEdited: isNumberFieldEntryEdited,
+      }
+    );
   }
 
-  return TextAreaEntry({
-    element: parameter,
-    id: `${idPrefix}-varExpression`,
-    label: label,
-    getValue,
-    setValue,
-    debounce,
-    description: description,
-  });
+  entries.push(
+    {
+      id: `${idPrefix}-varName`,
+      idPrefix,
+      element,
+      listElement: procVar,
+      label: translate('Name'),
+      property: 'varName',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: `${idPrefix}-varDataType`,
+      idPrefix,
+      element,
+      listElement: procVar,
+      label: translate('Data Type'),
+      description: dataTypeDescription[varDataType], // TODO check
+      property: 'varDataType',
+      options: dataTypeOptions,
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
+  if (ModelingUtil.is(element, 'bpmn:CallActivity')) {
+    entries.push(
+      {
+        id: `${idPrefix}-varDescription`,
+        idPrefix,
+        element,
+        procVar,
+        component: VarDescription,
+      }
+    );
+  }
+
+  if (ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant'])) {
+    entries.push(
+      {
+        id: `${idPrefix}-varDescriptionInput`,
+        idPrefix,
+        element,
+        listElement: procVar,
+        label: translate('Description'),
+        property: 'varDescription',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  } else {
+    entries.push(
+      {
+        id: `${idPrefix}-varExpressionType`,
+        idPrefix,
+        element,
+        listElement: procVar,
+        label: translate('Expression Type'),
+        property: 'varExpressionType',
+        options: expressionTypeOptions,
+        component: DefaultSelectEntry,
+        isEdited: isSelectEntryEdited,
+      }
+    );
+
+    if (varExpressionType != null) {
+
+      if (editorTypes.includes(varExpressionType)) {
+
+        const language =
+          varExpressionType === 'sqlQuerySingle' || varExpressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+          entries.push(
+            {
+              id: `${idPrefix}-varExpression`,
+              idPrefix,
+              element,
+              listElement: procVar,
+              label: translate('Expression'),
+              description: expressionDescription[varExpressionType],
+              property: 'varExpression',
+              language: language,
+              type: varExpressionType,
+              component: DefaultTextAreaEntryWithEditor,
+              isEdited: isTextAreaEntryEdited,
+            },
+          );
+      } else {
+
+        entries.push(
+          {
+            id: `${idPrefix}-varExpression`,
+            idPrefix,
+            element,
+            listElement: procVar,
+            label: translate('Expression'),
+            description: expressionDescription[varExpressionType],
+            property: 'varExpression',
+            component: DefaultTextAreaEntry,
+            isEdited: isTextAreaEntryEdited,
+          },
+        );
+      }      
+    }
+  }
+    
+  return entries;
 }
 
-function PlsqlCodeEditorContainer() {
-  const translate = useService('translate');
+function VarDescription(props) {
+  const { idPrefix, element, procVar } = props;
 
-  return getContainer('varExpression', translate);
+  return Helptext({
+    text: procVar.varDescription,
+  });
 }

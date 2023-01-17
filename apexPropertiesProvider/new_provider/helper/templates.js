@@ -1,4 +1,4 @@
-import { SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwitchEntry } from '@bpmn-io/properties-panel';
+import { NumberFieldEntry, SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwitchEntry } from '@bpmn-io/properties-panel';
 
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -6,6 +6,42 @@ import { getBusinessObject } from './util';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
+
+export function DefaultNumberEntry(props) {
+  const { id, element, listElement, label, description, helper, property } = props;
+
+  const modeling = useService('modeling');
+  const debounce = useService('debounceInput');
+  const bpmnFactory = useService('bpmnFactory');
+
+   // business object passed in props for list elements
+   const businessObject = listElement || getBusinessObject(element);
+
+  const getValue = () =>
+    (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
+
+    const setValue = (value) => {
+      if (helper) {
+        helper.setExtensionProperty(element, modeling, bpmnFactory, {
+          [property]: String(value),
+        });
+      } else {
+        modeling.updateModdleProperties(element, businessObject, {
+          [property]: String(value),
+        });
+      }
+    };
+
+  return NumberFieldEntry({
+    id: id,
+    element: element,
+    label: label,
+    description: description,
+    getValue,
+    setValue,
+    debounce,
+  });
+}
 
 export function DefaultTextFieldEntry(props) {
   const { id, element, listElement, label, description, helper, property } = props;
@@ -156,13 +192,14 @@ export function DefaultSelectEntryAsync(props) {
 }
 
 export function DefaultToggleSwitchEntry(props) {
-  const { id, element, label, description, helper, property, defaultValue, invert } = props;
+  const { id, element, listElement, label, description, helper, property, defaultValue, invert } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => {
     var value;
@@ -213,13 +250,14 @@ export function DefaultToggleSwitchEntry(props) {
 }
 
 export function DefaultTextAreaEntry(props) {
-  const { id, element, label, description, helper, property } = props;
+  const { id, element, listElement, label, description, helper, property } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
@@ -247,14 +285,15 @@ export function DefaultTextAreaEntry(props) {
 }
 
 export function DefaultTextAreaEntryWithEditor(props) {
-  const { id, element, label, description, helper, property, language, type } = props;
+  const { id, element, listElement, label, description, helper, property, language, type } = props;
 
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
@@ -272,13 +311,17 @@ export function DefaultTextAreaEntryWithEditor(props) {
 
   const labelWithIcon =
     OpenDialogLabel(label, () => {
-      var getProperty = function () {
-        return helper.getExtensionProperty(element, property);
-      };
+      var getProperty = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
       var saveProperty = function (text) {
-        helper.setExtensionProperty(element, modeling, bpmnFactory, {
-          [property]: text,
-        });
+        if (helper) {
+          helper.setExtensionProperty(element, modeling, bpmnFactory, {
+            [property]: text,
+          });
+        } else {
+          modeling.updateModdleProperties(element, businessObject, {
+            [property]: text,
+          });
+        }
       };
       openEditor(
         property,

@@ -184,11 +184,13 @@ export default function (args) {
       element,
       label: translate(type1.label),
       component: ListGroup,
-      ...ProcVarList({
-        element,
-        injector,
-        helper: listExtensionHelper1
-      }), 
+      ...ProcVarList(
+        {
+          element,
+          injector,
+          helper: listExtensionHelper1
+        }
+      ), 
     });
   }
 
@@ -198,11 +200,13 @@ export default function (args) {
       element,
       label: translate(type2.label),
       component: ListGroup,
-      ...ProcVarList({
-        element,
-        injector,
-        helper: listExtensionHelper2
-      }), 
+      ...ProcVarList(
+        {
+          element,
+          injector,
+          helper: listExtensionHelper2
+        }
+      ), 
     });
   }
 

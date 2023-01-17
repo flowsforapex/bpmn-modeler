@@ -6,29 +6,30 @@ export default function ParametersProps(args) {
 
   const {element, injector, helper} = args;
 
-  const parameters = helper.getSubExtensionElements(element) || [];
-
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
+  
+  const procVars = helper.getSubExtensionElements(element) || [];
 
   const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
 
-  const items = parameters.map((parameter, index) => {
+  const items = procVars.map((procVar, index) => {
     const id = `${element.id}-procVar-${index}`;
 
     return {
       id,
-      label: isDefinition ? parameter.get('varName') : `${parameter.get('varSequence')} - ${parameter.get('varName')}` || '',
+      label: isDefinition ? procVar.get('varName') : `${procVar.get('varSequence')} - ${procVar.get('varName')}` || '',
       entries: ProcVarProps({
         idPrefix: id,
         element,
-        parameter,
+        injector,
+        procVar,
       }),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({
         commandStack,
         element,
-        parameter,
+        procVar,
       }),
     };
   });
