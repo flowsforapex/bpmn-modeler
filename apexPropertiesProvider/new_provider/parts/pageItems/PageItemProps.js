@@ -1,142 +1,64 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited,
-  SelectEntry,
-  TextFieldEntry
+  isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
 
-import { useService } from 'bpmn-js-properties-panel';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry } from '../../helper/templates';
 
-export default function PageItemProps(props) {
-  const { idPrefix, pageItem, hooks } = props;
+export default function PageItemProps(args) {
+  const { idPrefix, pageItem, state, element, injector } = args;
 
-  return [
-    {
-      id: `${idPrefix}-itemName`,
-      component: ItemName,
-      idPrefix,
-      pageItem,
-      hooks,
-      isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-itemNameText`,
-      component: ItemNameText,
-      idPrefix,
-      pageItem,
-      isEdited: isTextFieldEntryEdited,
-    },
+  const businessObject = getBusinessObject(element);
+
+  const translate = injector.get('translate');
+
+  const entries = [];
+
+  const manualInput = businessObject.manualInput === 'true';
+
+  if (manualInput) {
+    entries.push(
+      {
+        id: `${idPrefix}-itemNameText`,
+        idPrefix,
+        element,
+        listElement: pageItem,
+        label: translate('Item Name'),
+        property: 'itemName',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  } else {
+    entries.push(
+      {
+        id: `${idPrefix}-itemName`,
+        idPrefix,
+        element,
+        listElement: pageItem,
+        label: translate('Item'),
+        property: 'itemName',
+        state,
+        component: DefaultSelectEntryAsync,
+        isEdited: isSelectEntryEdited,
+      }
+    );
+  }
+
+  entries.push(
     {
       id: `${idPrefix}-itemValue`,
-      component: ItemValue,
       idPrefix,
-      pageItem,
+      element,
+      listElement: pageItem,
+      label: translate('Item Value'),
+      property: 'itemValue',
+      component: DefaultTextFieldEntry,
       isEdited: isTextFieldEntryEdited,
     },
-  ];
-}
+  );
 
-function ItemName(props) {
-  const { idPrefix, element, pageItem } = props;
-
-  const { items, setItems } = props.hooks;
-
-  const businessObject = getBusinessObject(element);
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const getOptions = (pageItem) => {
-    const currValue = pageItem.itemName;
-
-    const existing =
-      currValue == null || items.map(e => e.value).includes(currValue);
-
-    return [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...items.map((item) => {
-        return {
-          label: item.label,
-          value: item.value,
-        };
-      }),
-    ];
-  };
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, pageItem, {
-      itemName: value,
-    });
-  };
-
-  const getValue = pageItem => pageItem.itemName;
-
-  if (businessObject.manualInput === 'false') {
-    return SelectEntry({
-      element: pageItem,
-      id: `${idPrefix}-itemName`,
-      label: translate('Item'),
-      getValue,
-      setValue,
-      debounce,
-      getOptions: getOptions,
-    });
-  }
-}
-
-function ItemNameText(props) {
-  const { idPrefix, element, pageItem } = props;
-
-  const businessObject = getBusinessObject(element);
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, pageItem, {
-      itemName: value,
-    });
-  };
-
-  const getValue = pageItem => pageItem.itemName;
-
-  if (businessObject.manualInput === 'true') {
-    return TextFieldEntry({
-      element: pageItem,
-      id: `${idPrefix}-itemName`,
-      label: translate('Item Name'),
-      getValue,
-      setValue,
-      debounce,
-    });
-  }
-}
-
-function ItemValue(props) {
-  const { idPrefix, element, pageItem } = props;
-
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const modeling = useService('modeling');
-
-  const setValue = (value) => {
-    modeling.updateModdleProperties(element, pageItem, {
-      itemValue: value,
-    });
-  };
-
-  const getValue = pageItem => pageItem.itemValue;
-
-  return TextFieldEntry({
-    element: pageItem,
-    id: `${idPrefix}-itemValue`,
-    label: translate('Item Value'),
-    getValue,
-    setValue,
-    debounce,
-  });
+  return entries;
 }

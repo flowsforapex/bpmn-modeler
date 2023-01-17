@@ -8,13 +8,14 @@ import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
 export function DefaultTextFieldEntry(props) {
-  const { id, element, label, description, helper, property } = props;
+  const { id, element, listElement, label, description, helper, property } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () =>
     (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
@@ -43,13 +44,14 @@ export function DefaultTextFieldEntry(props) {
 }
 
 export function DefaultSelectEntry(props) {
-  const { id, element, label, description, helper, property, defaultValue, options, cleanup } = props;
+  const { id, element, listElement, label, description, helper, property, defaultValue, options, cleanup } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => {
     var value;
@@ -100,15 +102,14 @@ export function DefaultSelectEntry(props) {
 }
 
 export function DefaultSelectEntryAsync(props) {
-  const { id, element, label, description, helper, property } = props;
-
-  const { state, nextGetter, nextSetter } = props.hooks;
+  const { id, element, listElement, label, description, helper, property, state } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const businessObject = getBusinessObject(element);
+  // business object passed in props for list elements
+  const businessObject = listElement || getBusinessObject(element);
 
   const getOptions = () => {
     const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
@@ -140,10 +141,6 @@ export function DefaultSelectEntryAsync(props) {
         [property]: value,
       });
     }
-
-    // if (nextGetter && nextSetter) {
-    //   nextGetter().then(s => nextSetter(s));
-    // }
   };
 
   return new SelectEntry({

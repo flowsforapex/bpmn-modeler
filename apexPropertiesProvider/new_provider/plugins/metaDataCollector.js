@@ -42,7 +42,7 @@ export function getPages(applicationId) {
     return Promise.resolve([
       { label: '', value: null },
       { label: 'A1P1', value: '1' },
-      { label: 'P1P2', value: '2' },
+      { label: 'A1P2', value: '2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
@@ -76,8 +76,8 @@ export function getItems(applicationId, pageId) {
   if (applicationId === '1' && pageId === '1') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A1P1I1', value: '1' },
-      { label: 'A1P1I2', value: '2' },
+      { label: 'A1P1I1', value: 'A1P1I1' },
+      { label: 'A1P1I2', value: 'A1P1I2' },
     ]);
   }
   return Promise.resolve([]);

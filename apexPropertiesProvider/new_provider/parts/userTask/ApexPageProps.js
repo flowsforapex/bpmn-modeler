@@ -107,18 +107,7 @@ export default function (args) {
           label: translate('Application'),
           helper: extensionHelper,
           property: 'applicationId',
-          hooks: {
-            state: applications,
-            nextGetter: () => {
-              const applicationId = extensionHelper.getExtensionProperty(
-                element,
-                'applicationId'
-              );
-          
-              return getPages(applicationId);
-            },
-            nextSetter: setPages,
-          },
+          state: applications,
           component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
@@ -128,22 +117,7 @@ export default function (args) {
           label: translate('Page'),
           helper: extensionHelper,
           property: 'pageId',
-          hooks: {
-            state: pages,
-            nextGetter: () => {
-              const applicationId = extensionHelper.getExtensionProperty(
-                element,
-                'applicationId'
-              );
-              const pageId = extensionHelper.getExtensionProperty(
-                element,
-                'pageId'
-              );
-          
-              return getItems(applicationId, pageId);
-            },
-            nextSetter: setItems,
-          },
+          state: pages,
           component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
@@ -161,10 +135,14 @@ export default function (args) {
         element,
         label: 'Page Items',
         component: ListGroup,
-        ...PageItemsList({ element, injector }, listExtensionHelper, {
-          items,
-          setItems,
-        }),
+        ...PageItemsList(
+          {
+            element,
+            injector,
+            helper: listExtensionHelper,
+            state: items,
+          }
+        ),
       }
     );
   }

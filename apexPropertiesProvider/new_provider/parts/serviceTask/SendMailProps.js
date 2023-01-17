@@ -157,18 +157,7 @@ export default function (args) {
             label: translate('Application'),
             helper: extensionHelper,
             property: 'applicationId',
-            hooks: {
-              state: applications,
-              nextGetter: () => {
-                const applicationId = extensionHelper.getExtensionProperty(
-                  element,
-                  'applicationId'
-                );
-            
-                return getTemplates(applicationId);
-              },
-              nextSetter: setTemplates,
-            },
+            state: applications,
             component: DefaultSelectEntryAsync,
             isEdited: isSelectEntryEdited,
           },
@@ -178,9 +167,7 @@ export default function (args) {
             label: translate('Template'),
             helper: extensionHelper,
             property: 'templateId',
-            hooks: {
-              state: templates,
-            },
+            state: templates,
             component: DefaultSelectEntryAsync,
             isEdited: isSelectEntryEdited,
           }

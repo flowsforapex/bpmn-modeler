@@ -1,12 +1,12 @@
 import PageItemProps from './PageItemProps';
 
-import { nextId } from '../../helper/util';
-
-export default function PageItemsList({ element, injector }, helper, hooks) {
-  const pageItems = helper.getSubExtensionElements(element) || [];
+export default function PageItemsList(args) {
+  const {element, injector, helper, state} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
+
+  const pageItems = helper.getSubExtensionElements(element) || [];
 
   const items = pageItems.map((pageItem, index) => {
     const id = `${element.id}-pageItem-${index}`;
@@ -14,12 +14,15 @@ export default function PageItemsList({ element, injector }, helper, hooks) {
     return {
       id,
       label: pageItem.get('itemName') || '',
-      entries: PageItemProps({
-        idPrefix: id,
-        element,
-        pageItem,
-        hooks,
-      }),
+      entries: PageItemProps(
+        {
+          idPrefix: id,
+          element,
+          injector,
+          pageItem,
+          state
+        },
+      ),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({
         commandStack,
@@ -38,8 +41,8 @@ export default function PageItemsList({ element, injector }, helper, hooks) {
         commandStack,
       },
       {
-        itemName: nextId('PageItem_'),
-        itemValue: '',
+        itemName: null,
+        itemValue: null,
       }
     ),
   };

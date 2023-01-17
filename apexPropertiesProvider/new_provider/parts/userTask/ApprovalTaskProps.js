@@ -98,18 +98,7 @@ export default function (args) {
           label: translate('Application'),
           helper: extensionHelper,
           property: 'applicationId',
-          hooks: {
-            state: applications,
-            nextGetter: () => {
-              const applicationId = extensionHelper.getExtensionProperty(
-                element,
-                'applicationId'
-              );
-          
-              return getTasks(applicationId);
-            },
-            nextSetter: setTasks,
-          },
+          state: applications,
           component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },
@@ -119,9 +108,7 @@ export default function (args) {
           label: translate('Task Definition'),
           helper: extensionHelper,
           property: 'taskStaticId',
-          hooks: {
-            state: tasks,
-          },
+          state: tasks,
           component: DefaultSelectEntryAsync,
           isEdited: isSelectEntryEdited,
         },

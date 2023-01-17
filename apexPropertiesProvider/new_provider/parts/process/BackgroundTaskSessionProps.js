@@ -88,15 +88,7 @@ export default function (args) {
         element,
         label: translate('Default Application'),
         property: 'applicationId',
-        hooks: {
-          state: applications,
-          nextGetter: () => {
-            const {applicationId} = businessObject;
-        
-            return getPages(applicationId);
-          },
-          nextSetter: setPages,
-        },
+        state: applications,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
@@ -105,9 +97,7 @@ export default function (args) {
         element,
         label: translate('Default Page'),
         property: 'pageId',
-        hooks: {
-          state: pages,
-        },
+        state: pages,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
@@ -116,9 +106,7 @@ export default function (args) {
         element,
         label: translate('Default Username'),
         property: 'username',
-        hooks: {
-          state: usernames,
-        },
+        state: usernames,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },

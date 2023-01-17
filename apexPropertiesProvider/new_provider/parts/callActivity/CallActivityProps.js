@@ -69,9 +69,7 @@ export default function (args) {
         label: translate('Called Diagram'),
         description: translate('Name of the diagram'),
         property: 'calledDiagram',
-        hooks: {
-          state: diagrams,
-        },
+        state: diagrams,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
