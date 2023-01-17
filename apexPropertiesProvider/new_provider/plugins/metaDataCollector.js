@@ -1,4 +1,5 @@
 export function getApplications() {
+  console.log('getApplications');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -21,6 +22,7 @@ export function getApplications() {
 }
 
 export function getPages(applicationId) {
+  console.log('getPages');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -54,6 +56,7 @@ export function getPages(applicationId) {
 }
 
 export function getItems(applicationId, pageId) {
+  console.log('getItems');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -81,6 +84,7 @@ export function getItems(applicationId, pageId) {
 }
 
 export function getApplicationsMail() {
+  console.log('getApplicationsMail');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -99,6 +103,7 @@ export function getApplicationsMail() {
 }
 
 export function getTemplates(applicationId) {
+  console.log('getTemplates');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -132,6 +137,7 @@ export function getTemplates(applicationId) {
 }
 
 export function getDiagrams() {
+  console.log('getDiagrams');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -154,6 +160,7 @@ export function getDiagrams() {
 }
 
 export function getUsernames() {
+  console.log('getUsernames');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -177,6 +184,7 @@ export function getUsernames() {
 }
 
 export function getTasks(applicationId) {
+  console.log('getTasks');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -210,6 +218,7 @@ export function getTasks(applicationId) {
 }
 
 export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion) {
+  console.log('getDefinedVariables');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
@@ -258,6 +267,7 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
 }
 
 export function getJSONParameters(applicationId, taskStaticId) {
+  console.log('getJSONParameters');
   if (typeof apex !== 'undefined') {
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');

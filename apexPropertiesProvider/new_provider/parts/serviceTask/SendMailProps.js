@@ -30,8 +30,11 @@ export default function (args) {
 
   useEffect(() => {
     getApplications().then(applications => setApplications(applications));
+  }, []);
+
+  useEffect(() => {
     getTemplates(applicationId).then(templates => setTemplates(templates));
-  }, [applications, templates]);
+  }, [applicationId]);
   
   if (businessObject.type === 'sendMail') {
     

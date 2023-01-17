@@ -141,9 +141,9 @@ export function DefaultSelectEntryAsync(props) {
       });
     }
 
-    if (nextGetter && nextSetter) {
-      nextGetter().then(s => nextSetter(s));
-    }
+    // if (nextGetter && nextSetter) {
+    //   nextGetter().then(s => nextSetter(s));
+    // }
   };
 
   return new SelectEntry({

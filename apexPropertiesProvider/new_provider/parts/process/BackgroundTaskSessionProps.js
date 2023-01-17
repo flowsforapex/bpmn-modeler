@@ -31,9 +31,15 @@ export default function (args) {
 
   useEffect(() => {
     getApplications().then(applications => setApplications(applications));
+  }, []);
+
+  useEffect(() => {
     getPages(applicationId).then(pages => setPages(pages));
+  }, [applicationId]);
+
+  useEffect(() => {
     getUsernames().then(usernames => setUsernames(usernames));
-  }, [applications, pages, usernames]);
+  }, []);
 
   entries.push(
     {

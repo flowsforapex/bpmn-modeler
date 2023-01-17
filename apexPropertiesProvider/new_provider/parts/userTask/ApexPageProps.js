@@ -51,9 +51,15 @@ export default function (args) {
 
   useEffect(() => {
     getApplications().then(applications => setApplications(applications));
+  }, []);
+
+  useEffect(() => {
     getPages(applicationId).then(pages => setPages(pages));
+  }, [applicationId]);
+
+  useEffect(() => {
     getItems(applicationId, pageId).then(items => setItems(items));
-  }, [applications, pages, items]);
+  }, [applicationId, pageId]);
 
   if (!['apexApproval'].includes(businessObject.type)) {
 

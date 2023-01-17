@@ -34,7 +34,7 @@ export default function (args) {
 
   useEffect(() => {
     getDiagrams().then(diagrams => setDiagrams(diagrams));
-  }, [diagrams]);
+  }, []);
 
   entries.push(
     {

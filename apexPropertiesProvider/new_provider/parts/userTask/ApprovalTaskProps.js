@@ -46,8 +46,11 @@ export default function (args) {
 
   useEffect(() => {
     getApplications().then(applications => setApplications(applications));
+  }, []);
+
+  useEffect(() => {
     getTasks(applicationId).then(tasks => setTasks(tasks));
-  }, [applications, tasks]);
+  }, [applicationId]);
 
   if (businessObject.type === 'apexApproval') {
 
