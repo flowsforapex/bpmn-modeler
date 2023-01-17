@@ -16,6 +16,7 @@
         "indent": "off",
         "key-spacing": ["warn", { "beforeColon": false }],
         "linebreak-style": "off",
+        "no-nested-ternary": "off",
         "no-shadow": "off",
         "no-trailing-spaces": "off",
         "no-undef": "off",

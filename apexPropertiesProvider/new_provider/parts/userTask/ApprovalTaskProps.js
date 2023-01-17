@@ -156,7 +156,13 @@ export default function (args) {
         element,
         label: 'Parameters',
         component: ListGroup,
-        ...ParametersList({ element, injector }, listExtensionHelper, {}),
+        ...ParametersList(
+          {
+            element,
+            injector,
+            helper: listExtensionHelper,
+          }
+        ),
       },
       {
         id: 'resultVariable',

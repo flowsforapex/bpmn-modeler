@@ -1,24 +1,31 @@
 import ParameterProps from './ParametersProps';
 
 
-export default function ParametersProps({ element, injector }, helper, hooks) {
-  const parameters = helper.getSubExtensionElements(element) || [];
+export default function ParametersProps(args) {
+  const {element, injector, helper} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
   const commandStack = injector.get('commandStack');
+  
+  const parameters = helper.getSubExtensionElements(element) || [];
 
   const items = parameters.map((parameter, index) => {
     const id = `${element.id}-parameter-${index}`;
 
+    const label =
+      (parameter.get('parStaticId') && parameter.get('parValue')) ? `${parameter.get('parStaticId')}:${parameter.get('parValue')}` : parameter.get('parStaticId') ? parameter.get('parStaticId') : '';
+
     return {
       id,
-      label: `${parameter.get('parStaticId')}:${parameter.get('parValue')}`,
-      entries: ParameterProps({
-        idPrefix: id,
-        element,
-        parameter,
-        hooks,
-      }),
+      label: label,
+      entries: ParameterProps(
+        {
+          idPrefix: id,
+          element,
+          injector,
+          parameter
+        }
+      ),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({
         commandStack,
@@ -37,9 +44,9 @@ export default function ParametersProps({ element, injector }, helper, hooks) {
         commandStack,
       },
       {
-        parStaticId: '',
+        parStaticId: null,
         parDataType: 'String',
-        parValue: '',
+        parValue: null,
       }
     ),
   };
