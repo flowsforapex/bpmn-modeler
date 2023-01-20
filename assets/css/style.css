@@ -190,7 +190,8 @@ button.dialog.fa {
  */
  .FLOWS-DARK .bio-properties-panel-container,
  .FLOWS-DARK .bio-properties-panel-header,
- .FLOWS-DARK .bio-properties-panel-group
+ .FLOWS-DARK .bio-properties-panel-group,
+ .FLOWS-DARK .bio-properties-panel-group-header.sticky
  {
    background-color: #32383d;
    color: white;
@@ -199,6 +200,7 @@ button.dialog.fa {
   --input-background-color: #282c30;
   --input-focus-background-color: #282c30;
   --input-error-background-color: #282c30;
+  --placeholder-background-color: #282c30;
 }
 .FLOWS-DARK .bio-properties-panel-input,
 .FLOWS-DARK .bio-properties-panel-description {

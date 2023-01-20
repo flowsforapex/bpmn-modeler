@@ -85,7 +85,7 @@ function getGatewayFilters(element) {
 function getEventFilters(element) {
   var businessObject = getBusinessObject(element);
   // not timer event
-  if (businessObject.eventDefinitions.length === 0) {
+  if (!businessObject.eventDefinitions || businessObject.eventDefinitions.length === 0) {
     return ['apex:OnEvent'];
   }
   switch (businessObject.eventDefinitions[0].timerType) {

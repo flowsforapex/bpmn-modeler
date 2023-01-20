@@ -6,7 +6,7 @@ import {
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-import { getApplications, getTemplates } from '../../plugins/metaDataCollector';
+import { getApplicationsMail, getTemplates } from '../../plugins/metaDataCollector';
 
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
@@ -29,7 +29,7 @@ export default function (args) {
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
 
   useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
+    getApplicationsMail().then(applications => setApplications(applications));
   }, []);
 
   useEffect(() => {

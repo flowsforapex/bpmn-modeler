@@ -1,6 +1,6 @@
 export function getApplications() {
-  console.log('getApplications');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getApplications');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -13,17 +13,18 @@ export function getApplications() {
         {}
       )
       .then(pData => pData);
-  }
+  } 
+  console.log('getApplications');
   return Promise.resolve([
     { label: '', value: null },
     { label: 'App1', value: '1' },
     { label: 'App2', value: '2' },
-  ]);
+  ]); 
 }
 
 export function getPages(applicationId) {
-  console.log('getPages');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getPages');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -38,6 +39,7 @@ export function getPages(applicationId) {
       )
       .then(pData => pData);
   }
+  console.log('getPages');
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
@@ -52,12 +54,12 @@ export function getPages(applicationId) {
       { label: 'A2P3', value: '3' },
     ]);
   }
-  return Promise.resolve();
+  return Promise.resolve([]);
 }
 
 export function getItems(applicationId, pageId) {
-  console.log('getItems');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getItems');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -73,6 +75,7 @@ export function getItems(applicationId, pageId) {
       )
       .then(pData => pData);
   }
+  console.log('getItems');
   if (applicationId === '1' && pageId === '1') {
     return Promise.resolve([
       { label: '', value: null },
@@ -84,8 +87,8 @@ export function getItems(applicationId, pageId) {
 }
 
 export function getApplicationsMail() {
-  console.log('getApplicationsMail');
   if (typeof apex !== 'undefined') {
+    aüex.debug.info('getApplicationsMail');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -99,12 +102,17 @@ export function getApplicationsMail() {
       )
       .then(pData => pData);
   }
-  return Promise.resolve();
+  console.log('getApplicationsMail');
+  return Promise.resolve([
+    { label: '', value: null },
+    { label: 'App1', value: '1' },
+    { label: 'App2', value: '2' },
+  ]); 
 }
 
 export function getTemplates(applicationId) {
-  console.log('getTemplates');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getTemplates');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -119,6 +127,7 @@ export function getTemplates(applicationId) {
       )
       .then(pData => pData);
   }
+  console.log('getTemplates');
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
@@ -137,8 +146,8 @@ export function getTemplates(applicationId) {
 }
 
 export function getDiagrams() {
-  console.log('getDiagrams');
   if (typeof apex !== 'undefined') {
+    apex.debug.info.log('getDiagrams');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -152,6 +161,7 @@ export function getDiagrams() {
       )
       .then(pData => pData);
   }
+  console.log('getDiagrams');
   return Promise.resolve([
     { label: '', value: null },
     { label: 'Diagram1', value: '1' },
@@ -160,8 +170,8 @@ export function getDiagrams() {
 }
 
 export function getUsernames() {
-  console.log('getUsernames');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getUsernames');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -175,6 +185,7 @@ export function getUsernames() {
       )
       .then(pData => pData);
   }
+  console.log('getUsernames');
   return Promise.resolve([
     { label: '', value: null },
     { label: 'user1', value: '1' },
@@ -184,8 +195,8 @@ export function getUsernames() {
 }
 
 export function getTasks(applicationId) {
-  console.log('getTasks');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getTasks');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -200,6 +211,7 @@ export function getTasks(applicationId) {
       )
       .then(pData => pData);
   }
+  console.log('getTasks');
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
@@ -218,8 +230,8 @@ export function getTasks(applicationId) {
 }
 
 export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection, calledDiagramVersion) {
-  console.log('getDefinedVariables');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getDefinedVariables');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -236,6 +248,7 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
       )
       .then(pData => pData);
   }
+  console.log('getDefinedVariables');
   return Promise.resolve(
     {
       InVariables: [
@@ -267,8 +280,8 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
 }
 
 export function getJSONParameters(applicationId, taskStaticId) {
-  console.log('getJSONParameters');
   if (typeof apex !== 'undefined') {
+    apex.debug.info('getJSONParameters');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process
@@ -284,6 +297,7 @@ export function getJSONParameters(applicationId, taskStaticId) {
       )
       .then(pData => pData);
   }
+  console.log('getJSONParameters');
   if (applicationId === '1' && taskStaticId === '1') {
     return Promise.resolve(
       [
