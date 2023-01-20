@@ -10,17 +10,41 @@ import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
+const CONDITIONAL_SOURCES = [
+  'bpmn:ExclusiveGateway',
+  'bpmn:InclusiveGateway',
+  'bpmn:ComplexGateway',
+];
+
+function isConditionalSource(source) {
+  return ModelingUtil.isAny(source, CONDITIONAL_SOURCES);
+}
+
+function getNextSequence(element) {
+  var { sourceRef } = getBusinessObject(element);
+  var maxSequence =
+    Math.max(...sourceRef.outgoing.map(o => o.sequence || 0)) || 0;
+
+  return Math.max(maxSequence + 10, sourceRef.outgoing.length * 10);
+}
+
+export function setDefaultSequence(element, modeling) {
+  var businessObject = getBusinessObject(element);
+
+  if (ModelingUtil.is(element, 'bpmn:SequenceFlow') && isConditionalSource(element.source)) {
+    if (businessObject.sourceRef && !businessObject.sequence) {
+      modeling.updateProperties(element, {
+        sequence: getNextSequence(element),
+      });
+    }
+  }
+}
+
 export default function (args) {
 
   const {element} = args;
-
-  const CONDITIONAL_SOURCES = [
-    'bpmn:ExclusiveGateway',
-    'bpmn:InclusiveGateway',
-    'bpmn:ComplexGateway',
-  ];
   
-  if (ModelingUtil.isAny(element.source, CONDITIONAL_SOURCES)) {
+  if (isConditionalSource(element.source)) {
     return [
       {
         id: 'sequence',
@@ -45,7 +69,7 @@ export default function (args) {
   return [];
 }
 
-export function Sequence(props) {
+function Sequence(props) {
   const { id, element } = props;
 
   const businessObject = getBusinessObject(element);
@@ -90,7 +114,7 @@ export function Sequence(props) {
   });
 }
 
-export function Language(props) {
+function Language(props) {
   const { id, element } = props;
 
   const modeling = useService('modeling');
@@ -142,7 +166,7 @@ export function Language(props) {
   });
 }
 
-export function Condition(props) {
+function Condition(props) {
   const { id, element } = props;
 
   const modeling = useService('modeling');

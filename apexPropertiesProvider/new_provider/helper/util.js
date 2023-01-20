@@ -47,14 +47,37 @@ export function createExtension(type, properties, parent, bpmnFactory) {
   return createElement(type, properties, parent, bpmnFactory);
 }
 
+// clean up function used in validateXML
+export function removeExtension(element, businessObject, toRemove, modeling) {
+  const {extensionElements} = businessObject;
+
+  let updatedBusinessObject;
+  let update;
+  
+  // if extension elements have no other children
+  if (!extensionElements.get('values').some(k => k !== toRemove)) {
+      // remove extension elements
+      updatedBusinessObject = businessObject;
+      update = { extensionElements: null};
+  } else {
+    // remove extension
+    updatedBusinessObject = extensionElements;
+    update = {
+      values: extensionElements.get('values').filter(v => v !== toRemove),
+    };
+  }
+
+  modeling.updateModdleProperties(
+    element,
+    updatedBusinessObject,
+    update
+  );
+}
+
 export function nextId(prefix) {
   const ids = new Ids([32, 32, 1]);
 
   return ids.nextPrefixed(prefix);
-}
-
-export function updateProperties(context, commandStack) {
-  commandStack.execute('element.updateModdleProperties', context);
 }
 
 export function getBusinessObject(element) {

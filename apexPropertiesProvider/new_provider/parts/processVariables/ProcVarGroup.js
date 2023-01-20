@@ -218,7 +218,7 @@ function QuickpickDefinedVariables(props) {
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   const businessObject = getBusinessObject(element);
 
@@ -232,9 +232,11 @@ function QuickpickDefinedVariables(props) {
         .then((data) => {
           if (data.InVariables) {
             data.InVariables.forEach((v) => {
-              helper1.addSubElement(
-                { element, bpmnFactory, commandStack },
-                {
+              helper1.addSubElement({
+                element,
+                modeling,
+                bpmnFactory,
+                newProps: {
                   varSequence: helper1.getNextSequence(element),
                   varName: v.varName,
                   varDataType: v.varDataType,
@@ -242,14 +244,16 @@ function QuickpickDefinedVariables(props) {
                   varExpression: '',
                   varDescription: v.varDescription,
                 }
-              );
+              });
             });
           }
           if (data.OutVariables) {
             data.OutVariables.forEach((v) => {
-              helper2.addSubElement(
-                { element, bpmnFactory, commandStack },
-                {
+              helper2.addSubElement({
+                element,
+                modeling,
+                bpmnFactory,
+                newProps: {
                   varSequence: helper2.getNextSequence(element),
                   varName: v.varName,
                   varDataType: v.varDataType,
@@ -257,7 +261,7 @@ function QuickpickDefinedVariables(props) {
                   varExpression: '',
                   varDescription: v.varDescription,
                 }
-              );
+              });
             });
           }
         });
@@ -277,16 +281,18 @@ function QuickpickBusinessRef(props) {
     {
       text: translate('Copy business reference'),
       handler: () => {
-        helper.addSubElement(
-          { element, bpmnFactory, commandStack },
-          {
+        helper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
             varSequence: helper.getNextSequence(element),
             varName: 'BUSINESS_REF',
             varDataType: 'VARCHAR2',
             varExpressionType: 'processVariable',
             varExpression: 'BUSINESS_REF',
           }
-        );
+        });
       }
     }
   );

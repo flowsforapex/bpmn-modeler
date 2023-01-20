@@ -10,7 +10,7 @@ import { Quickpick, Quickpicks } from '../../helper/Quickpick';
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 const priorityHelper = new ExtensionHelper('apex:Priority');
-const dueDateHelper = new ExtensionHelper('apex:DueDate');
+const dueOnHelper = new ExtensionHelper('apex:DueOn');
 
 export default function (args) {
 
@@ -23,9 +23,9 @@ export default function (args) {
       component: Priority,
     },
     {
-      id: 'dueDate',
+      id: 'dueOn',
       element,
-      component: DueDate,
+      component: DueOn,
     }
   ];
 }
@@ -156,9 +156,9 @@ function Priority(props) {
   });
 }
 
-/** *** Due Date *** **/
+/** *** Due On *** **/
 
-function DueDate(props) {
+function DueOn(props) {
   const { element, id } = props;
 
   const translate = useService('translate');
@@ -173,9 +173,7 @@ function DueDate(props) {
     { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query'), value: 'sqlQuerySingle' },
     { label: translate('Expression'), value: 'plsqlRawExpression' },
-    { label: translate('Expression returning VC2 (legacy)'), value: 'plsqlExpression' },
     { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
-    { label: translate('Function Body returning VC2 (legacy)'), value: 'plsqlFunctionBody' },
   ];
 
   const expressionDescriptions = {
@@ -185,29 +183,25 @@ function DueDate(props) {
     processVariable: translate('Name of the Process Variable (of type Timestamp with Timezone)'),
     sqlQuerySingle: translate('SQL query returning Timestamp with Timezone'),
     plsqlRawExpression: translate('PL/SQL Expression returning Timestamp with Timezone'),
-    plsqlExpression: translate('PL/SQL Expression returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR'),
     plsqlRawFunctionBody: translate('PL/SQL Function Body returning Timestamp with Timezone'),
-    plsqlFunctionBody: translate('PL/SQL Function Body returning varchar2 containing a Timestamp with Timezone in format YYYY-MM-DD HH24:MI:SS TZR')
   };
 
   const editorTypes = [
     'sqlQuerySingle',
     'plsqlRawExpression',
-    'plsqlExpression',
     'plsqlRawFunctionBody',
-    'plsqlFunctionBody',
   ];
 
-  const expressionType = dueDateHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = dueOnHelper.getExtensionProperty(element, 'expressionType');
 
   const entries = [];
 
   entries.push(
     {
-      id: 'dueDateExpressionType',
+      id: 'dueOnExpressionType',
       element,
       label: 'Expression Type',
-      helper: dueDateHelper,
+      helper: dueOnHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
       cleanup: (value) => {
@@ -226,7 +220,7 @@ function DueDate(props) {
       {
         text: translate('Oracle'),
         handler: () => {
-          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
             formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
           });
         }
@@ -234,7 +228,7 @@ function DueDate(props) {
       {
         text: translate('ISO'),
         handler: () => {
-          dueDateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+          dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
             formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
           });
         }
@@ -243,11 +237,11 @@ function DueDate(props) {
 
     entries.push(
       {
-        id: 'dueDateFormatMask',
+        id: 'dueOnFormatMask',
         element,
         label: translate('Format Mask'),
         description: description,
-        helper: dueDateHelper,
+        helper: dueOnHelper,
         property: 'formatMask',
         component: DefaultTextFieldEntry,
         isEdited: isTextAreaEntryEdited,
@@ -258,7 +252,7 @@ function DueDate(props) {
   if (expressionType != null) {
 
     const getDescription = () => {
-      const value = dueDateHelper.getExtensionProperty(element, 'expressionType');
+      const value = dueOnHelper.getExtensionProperty(element, 'expressionType');
   
       return expressionDescriptions[value];
     };
@@ -274,7 +268,7 @@ function DueDate(props) {
             element,
             label: translate('Expression'),
             description: getDescription(),
-            helper: dueDateHelper,
+            helper: dueOnHelper,
             property: 'expression',
             language: language,
             type: expressionType,
@@ -291,7 +285,7 @@ function DueDate(props) {
           element,
           label: translate('Expression'),
           description: getDescription(),
-          helper: dueDateHelper,
+          helper: dueOnHelper,
           property: 'expression',
           component: DefaultTextAreaEntry,
           isEdited: isTextAreaEntryEdited,

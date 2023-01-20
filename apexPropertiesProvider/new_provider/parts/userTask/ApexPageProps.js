@@ -154,33 +154,39 @@ function QuickpickItems(props) {
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   return Quickpick(
     {
       text: translate('Generate default items'),
       handler: () => {
-        listExtensionHelper.addSubElement(
-          { element, bpmnFactory, commandStack },
-          {
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
             itemName: 'PROCESS_ID',
             itemValue: '&F4A$PROCESS_ID.',
           }
-        );
-        listExtensionHelper.addSubElement(
-          { element, bpmnFactory, commandStack },
-          {
+        });
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
             itemName: 'SUBFLOW_ID',
             itemValue: '&F4A$SUBFLOW_ID.',
           }
-        );
-        listExtensionHelper.addSubElement(
-          { element, bpmnFactory, commandStack },
-          {
+        });
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
             itemName: 'STEP_KEY',
             itemValue: '&F4A$STEP_KEY.',
           }
-        );
+        });
       }
     }
   );

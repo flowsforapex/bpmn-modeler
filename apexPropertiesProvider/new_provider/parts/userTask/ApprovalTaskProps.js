@@ -204,7 +204,7 @@ function ParametersQuickpick(props) {
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
   const taskStaticId = extensionHelper.getExtensionProperty(element, 'taskStaticId');
@@ -214,14 +214,16 @@ function ParametersQuickpick(props) {
     handler: () => {
       getJSONParameters(applicationId, taskStaticId).then((data) => {
         data.forEach((i) => {
-          listExtensionHelper.addSubElement(
-            { element, bpmnFactory, commandStack },
-            {
+          listExtensionHelper.addSubElement({
+            element,
+            modeling,
+            bpmnFactory,
+            newProps: {
               parStaticId: i.STATIC_ID,
               parDataType: i.DATA_TYPE,
               parValue: i.VALUE,
             }
-          );
+          });
         });
       });
     }

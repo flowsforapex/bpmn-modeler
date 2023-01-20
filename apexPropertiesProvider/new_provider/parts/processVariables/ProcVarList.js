@@ -7,7 +7,7 @@ export default function ParametersProps(args) {
   const {element, injector, helper} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
-  const commandStack = injector.get('commandStack');
+  const modeling = injector.get('modeling');
   
   const procVars = helper.getSubExtensionElements(element) || [];
 
@@ -27,9 +27,9 @@ export default function ParametersProps(args) {
       }),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({
-        commandStack,
         element,
-        procVar,
+        modeling,
+        listElement: procVar,
       }),
     };
   });
@@ -40,13 +40,13 @@ export default function ParametersProps(args) {
       {
         element,
         bpmnFactory,
-        commandStack,
-      },
-      {
-        ...(!isDefinition && {varSequence: helper.getNextSequence(element)}),
-        varName: helper.getNextName(element),
-        varDataType: 'VARCHAR2',
-        ...(!isDefinition && {varExpressionType: 'static'}),
+        modeling,
+        newProps: {
+          ...(!isDefinition && {varSequence: helper.getNextSequence(element)}),
+          varName: helper.getNextName(element),
+          varDataType: 'VARCHAR2',
+          ...(!isDefinition && {varExpressionType: 'static'}),
+        }
       }
     ),
   };

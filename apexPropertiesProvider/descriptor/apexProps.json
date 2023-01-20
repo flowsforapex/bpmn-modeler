@@ -598,7 +598,7 @@
       ]
     },
     {
-      "name": "DueDate",
+      "name": "DueOn",
       "superClass": [ "Element" ],
       "properties": [
         {

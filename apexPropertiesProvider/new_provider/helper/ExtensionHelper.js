@@ -1,7 +1,6 @@
-import { getBusinessObject,
+import {
   createExtension,
-  createExtensionElements,
-  getExtension,
+  createExtensionElements, getBusinessObject, getExtension,
   getExtensionElements
 } from './util';
 
@@ -63,7 +62,7 @@ export default class ExtensionHelper {
         }
       }
 
-      // if extention element has no other properties
+      // if extension element has no other properties
       if (!Object.keys(extensionElement).some(k => k !== '$type' && !removedProperties.includes(k))) {
         // if extension elements have no other children
         if (!extensionElements.get('values').some(k => k !== extensionElement)) {

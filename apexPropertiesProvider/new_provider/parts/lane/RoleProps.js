@@ -1,14 +1,19 @@
 import { isTextFieldEntryEdited, isToggleSwitchEntryEdited } from '@bpmn-io/properties-panel';
 
 import { DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { getBusinessObject } from '../../helper/util';
 
 export default function (args) {
 
   const {element, injector} = args;
 
+  const businessObject = getBusinessObject(element);
+
   const translate = injector.get('translate');
   
-  return [
+  const entries = [];
+
+  entries.push(
     {
       id: 'isRole',
       element,
@@ -17,14 +22,21 @@ export default function (args) {
       defaultValue: 'false',
       component: DefaultToggleSwitchEntry,
       isEdited: isToggleSwitchEntryEdited,
-    },
-    {
-      id: 'role',
-      element,
-      label: translate('Role'),
-      property: 'role',
-      component: DefaultTextFieldEntry,
-      isEdited: isTextFieldEntryEdited,
-    },
-  ];
+    }
+  );
+
+  if (businessObject.isRole) {
+    entries.push(
+      {
+        id: 'role',
+        element,
+        label: translate('Role'),
+        property: 'role',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  }
+  
+  return entries;
 }

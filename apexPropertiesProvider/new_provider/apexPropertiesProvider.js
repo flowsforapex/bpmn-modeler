@@ -19,8 +19,10 @@ import StarterProps from './parts/process/StarterProps';
 
 import TerminateEventProps from './parts/events/TerminateEventProps';
 import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionProps';
-import SequenceFlowProps from './parts/sequenceFlow/SequenceFlowProps';
+import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
+
+import { removeInvalidExtensionsElements } from './helper/validateXML';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -79,9 +81,24 @@ function makePropertiesPanelResizable() {
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
+  eventBus,
+  modeling,
+  elementRegistry,
   translate
 ) {
   makePropertiesPanelResizable();
+
+  eventBus.on('saveXML.start', function () {
+    removeInvalidExtensionsElements(elementRegistry, modeling);
+  });
+
+  eventBus.on('connection.added', function (event) {
+    setDefaultSequence(event.element, modeling);
+  });
+
+  eventBus.on('commandStack.connection.create.postExecute', function (event) {
+    setDefaultSequence(event.context.connection, modeling);
+  });
 
   this.getGroups = function (element) {
     return function (groups) {
@@ -177,4 +194,11 @@ export default function apexPropertiesProvider(
   propertiesPanel.registerProvider(LOW_PRIORITY, this);
 }
 
-apexPropertiesProvider.$inject = ['propertiesPanel', 'injector', 'translate'];
+apexPropertiesProvider.$inject = [
+  'propertiesPanel',
+  'injector',
+  'eventBus',
+  'modeling',
+  'elementRegistry',
+  'translate'
+];

@@ -1,7 +1,7 @@
 import {
   createElement,
   createExtension,
-  createExtensionElements, getBusinessObject, getExtension, updateProperties
+  createExtensionElements, getBusinessObject, getExtension
 } from './util';
 
 import { without } from 'min-dash';
@@ -40,9 +40,15 @@ export default class ListExtensionHelper {
     );
   }
 
-  removeSubFactory({ commandStack, element, parameter }) {
+  removeSubFactory(args) {
     const { type, listAttr, entryAttr } = this;
 
+    const { element, listElement, modeling } = args;
+
+    const businessObject = getBusinessObject(element);
+    const {extensionElements} = businessObject;
+
+    // top level lists (e.g. procVars)
     if (entryAttr === null) {
       return function (event) {
         event.stopPropagation();
@@ -59,22 +65,31 @@ export default class ListExtensionHelper {
           return;
         }
 
-        const newChildren = without(children, parameter);
+        const newChildren = without(children, listElement);        
 
-        // remove entry from list
-        updateProperties(
-          {
-            element,
-            moddleElement: extension,
-            properties: {
-              [listAttr]: newChildren,
-            },
-          },
-          commandStack
+        let updatedBusinessObject = extension;
+        let update = { [listAttr]: newChildren };
+
+        // if list container has no other entries
+        if (newChildren.length === 0) {
+          updatedBusinessObject = extensionElements;
+          update = { values: extensionElements.get('values').filter(v => v !== extension) };
+          // if extension elements have no other children
+          if (!extensionElements.get('values').some(k => k !== extension)) {
+            updatedBusinessObject = businessObject;
+            update = { extensionElements: null};
+          }
+        }
+
+        modeling.updateModdleProperties(
+          element,
+          updatedBusinessObject,
+          update
         );
       };
     }
 
+    // nested lists (e.g. pageItems)
     return function (event) {
       event.stopPropagation();
 
@@ -91,39 +106,44 @@ export default class ListExtensionHelper {
         return;
       }
 
-      const newChildren = without(children, parameter);
+      const newChildren = without(children, listElement);
 
-      // remove entry from list
-      updateProperties(
-        {
-          element,
-          moddleElement: extension[listAttr],
-          properties: {
-            [entryAttr]: newChildren,
-          },
-        },
-        commandStack
+      let updatedBusinessObject = extension[listAttr];
+      let update = { [entryAttr]: newChildren };
+
+      // if list container has no other entries
+      if (newChildren.length === 0) {
+        updatedBusinessObject = extension;
+        update = { [listAttr]: undefined };
+        // if extension element has no other properties
+        if (!Object.keys(extension).some(k => k !== '$type' && k !== listAttr)) {
+          updatedBusinessObject = extensionElements;
+          update = { values: extensionElements.get('values').filter(v => v !== extension) };
+
+           // if extension elements have no other children
+          if (!extensionElements.get('values').some(k => k !== extension)) {
+            updatedBusinessObject = businessObject;
+            update = { extensionElements: null};
+          }
+        }
+      }
+
+      modeling.updateModdleProperties(
+        element,
+        updatedBusinessObject,
+        update
       );
 
-      // remove list container if empty
-      if (newChildren.length === 0) {
-        updateProperties(
-          {
-            element,
-            moddleElement: extension,
-            properties: {
-              [listAttr]: null,
-            },
-          },
-          commandStack
-        );
-      }
+      console.log(updatedBusinessObject);
     };
   }
 
-  addSubFactory({ element, bpmnFactory, commandStack }, newProps) {
+  addSubFactory(args) {
     const { type, listType, listAttr, entryType, entryAttr } = this;
 
+    const { element, newProps, modeling, bpmnFactory } = args;
+
+    // top level lists (e.g. procVars)
     if (listType === null && entryAttr === null) {
       return function (event) {
         event.stopPropagation();
@@ -136,13 +156,10 @@ export default class ListExtensionHelper {
         if (!extensionElements) {
           extensionElements = createExtensionElements(element, bpmnFactory);
 
-          updateProperties(
-            {
-              element,
-              moddleElement: businessObject,
-              properties: { extensionElements },
-            },
-            commandStack
+          modeling.updateModdleProperties(
+            element,
+            businessObject,
+            { extensionElements }
           );
         }
 
@@ -152,15 +169,10 @@ export default class ListExtensionHelper {
         if (!extension) {
           extension = createExtension(type, {}, extensionElements, bpmnFactory);
 
-          updateProperties(
-            {
-              element,
-              moddleElement: extensionElements,
-              properties: {
-                values: [...extensionElements.get('values'), extension],
-              },
-            },
-            commandStack
+          modeling.updateModdleProperties(
+            element,
+            extensionElements,
+            { values: [...extensionElements.get('values'), extension] }
           );
         }
 
@@ -173,19 +185,15 @@ export default class ListExtensionHelper {
         );
 
         // (4) add entry to list
-        updateProperties(
-          {
-            element,
-            moddleElement: extension,
-            properties: {
-              [listAttr]: [...extension.get(listAttr), newEntry],
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extension,
+          { [listAttr]: [...extension.get(listAttr), newEntry] }
         );
       };
     }
 
+    // nested lists (e.g. pageItems)
     return function (event) {
       event.stopPropagation();
 
@@ -197,13 +205,10 @@ export default class ListExtensionHelper {
       if (!extensionElements) {
         extensionElements = createExtensionElements(element, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: businessObject,
-            properties: { extensionElements },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          businessObject,
+          { extensionElements }
         );
       }
 
@@ -213,15 +218,10 @@ export default class ListExtensionHelper {
       if (!extension) {
         extension = createExtension(type, {}, extensionElements, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: extensionElements,
-            properties: {
-              values: [...extensionElements.get('values'), extension],
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extensionElements,
+          { values: [...extensionElements.get('values'), extension] },
         );
       }
 
@@ -231,15 +231,10 @@ export default class ListExtensionHelper {
       if (!listContainer) {
         listContainer = createExtension(listType, {}, extension, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: extension,
-            properties: {
-              [listAttr]: listContainer,
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extension,
+          { [listAttr]: listContainer },
         );
       }
 
@@ -252,22 +247,19 @@ export default class ListExtensionHelper {
       );
 
       // (5) add entry to list
-      updateProperties(
-        {
-          element,
-          moddleElement: listContainer,
-          properties: {
-            [entryAttr]: [...listContainer.get(entryAttr), newEntry],
-          },
-        },
-        commandStack
+      modeling.updateModdleProperties(
+        element,
+        listContainer,
+        { [entryAttr]: [...listContainer.get(entryAttr), newEntry] },
       );
     };
   }
 
   // direct method needed for quickpicks
-  addSubElement({ element, bpmnFactory, commandStack }, newProps) {
+  addSubElement(args) {
     const { type, listType, listAttr, entryType, entryAttr } = this;
+
+    const { element, newProps, modeling, bpmnFactory } = args;
 
     const businessObject = getBusinessObject(element);
 
@@ -279,13 +271,10 @@ export default class ListExtensionHelper {
       if (!extensionElements) {
         extensionElements = createExtensionElements(element, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: businessObject,
-            properties: { extensionElements },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          businessObject,
+          { extensionElements },
         );
       }
 
@@ -295,15 +284,10 @@ export default class ListExtensionHelper {
       if (!extension) {
         extension = createExtension(type, {}, extensionElements, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: extensionElements,
-            properties: {
-              values: [...extensionElements.get('values'), extension],
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extensionElements,
+          { values: [...extensionElements.get('values'), extension] },
         );
       }
 
@@ -316,29 +300,23 @@ export default class ListExtensionHelper {
       );
 
       // (4) add entry to list
-      updateProperties(
-        {
-          element,
-          moddleElement: extension,
-          properties: {
-            [listAttr]: [...extension.get(listAttr), newEntry],
-          },
-        },
-        commandStack
+      modeling.updateModdleProperties(
+        element,
+        extension,
+        { [listAttr]: [...extension.get(listAttr), newEntry] },
       );
+
+    
     } else {
 
       // (1) ensure extension elements
       if (!extensionElements) {
         extensionElements = createExtensionElements(element, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: businessObject,
-            properties: { extensionElements },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          businessObject,
+          { extensionElements },
         );
       }
 
@@ -348,15 +326,10 @@ export default class ListExtensionHelper {
       if (!extension) {
         extension = createExtension(type, {}, extensionElements, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: extensionElements,
-            properties: {
-              values: [...extensionElements.get('values'), extension],
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extensionElements,
+          { values: [...extensionElements.get('values'), extension] },
         );
       }
 
@@ -366,15 +339,10 @@ export default class ListExtensionHelper {
       if (!listContainer) {
         listContainer = createExtension(listType, {}, extension, bpmnFactory);
 
-        updateProperties(
-          {
-            element,
-            moddleElement: extension,
-            properties: {
-              [listAttr]: listContainer,
-            },
-          },
-          commandStack
+        modeling.updateModdleProperties(
+          element,
+          extension,
+          { [listAttr]: listContainer },
         );
       }
 
@@ -387,15 +355,10 @@ export default class ListExtensionHelper {
       );
 
       // (4) add entry to list
-      updateProperties(
-        {
-          element,
-          moddleElement: listContainer,
-          properties: {
-            [entryAttr]: [...listContainer.get(entryAttr), newEntry],
-          },
-        },
-        commandStack
+      modeling.updateModdleProperties(
+        element,
+        listContainer,
+        { [entryAttr]: [...listContainer.get(entryAttr), newEntry] },
       );
     }
   }

@@ -4,7 +4,7 @@ export default function PageItemsList(args) {
   const {element, injector, helper, state} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
-  const commandStack = injector.get('commandStack');
+  const modeling = injector.get('modeling');
 
   const pageItems = helper.getSubExtensionElements(element) || [];
 
@@ -25,9 +25,9 @@ export default function PageItemsList(args) {
       ),
       autoFocusEntry: `${id}-name`,
       remove: helper.removeSubFactory({
-        commandStack,
         element,
-        pageItem,
+        modeling,
+        listElement: pageItem,
       }),
     };
   });
@@ -38,11 +38,11 @@ export default function PageItemsList(args) {
       {
         element,
         bpmnFactory,
-        commandStack,
-      },
-      {
-        itemName: null,
-        itemValue: null,
+        modeling,
+        newProps: {
+          itemName: null,
+          itemValue: null,
+        }
       }
     ),
   };
