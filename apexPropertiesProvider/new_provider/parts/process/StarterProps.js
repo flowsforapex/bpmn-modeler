@@ -78,6 +78,11 @@ function PotentialStartingUsers(props) {
       helper: potentialStartingUsersHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -165,6 +170,11 @@ function PotentialStartingGroups(props) {
       helper: potentialStartingGroupsHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -252,6 +262,11 @@ function ExcludedStartingUsers(props) {
       helper: excludedStartingUsersHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }

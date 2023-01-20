@@ -70,6 +70,11 @@ function PotentialUsers(props) {
       helper: potentialUsersHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -157,6 +162,11 @@ function PotentialGroups(props) {
       helper: potentialGroupsHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -244,6 +254,11 @@ function ExcludedUsers(props) {
       helper: excludedUsersHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }

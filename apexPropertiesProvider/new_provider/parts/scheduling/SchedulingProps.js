@@ -76,6 +76,11 @@ function Priority(props) {
       helper: priorityHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
