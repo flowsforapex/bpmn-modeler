@@ -17,8 +17,8 @@ export function getApplications() {
   console.log('getApplications');
   return Promise.resolve([
     { label: '', value: null },
-    { label: 'App1', value: '1' },
-    { label: 'App2', value: '2' },
+    { label: '1 - A1', value: '1' },
+    { label: '2 - A2', value: '2' },
   ]); 
 }
 
@@ -43,15 +43,15 @@ export function getPages(applicationId) {
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A1P1', value: '1' },
-      { label: 'A1P2', value: '2' },
+      { label: '1 - A1P1', value: '1' },
+      { label: '2 - A1P2', value: '2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A2P1', value: '1' },
-      { label: 'A2P2', value: '2' },
-      { label: 'A2P3', value: '3' },
+      { label: '1 - A2P1', value: '1' },
+      { label: '2 - A2P2', value: '2' },
+      { label: '3 - A2P3', value: '3' },
     ]);
   }
   return Promise.resolve([]);
@@ -105,8 +105,8 @@ export function getApplicationsMail() {
   console.log('getApplicationsMail');
   return Promise.resolve([
     { label: '', value: null },
-    { label: 'App1', value: '1' },
-    { label: 'App2', value: '2' },
+    { label: '1 - A1', value: '1' },
+    { label: '2 - A2', value: '2' },
   ]); 
 }
 
@@ -131,15 +131,15 @@ export function getTemplates(applicationId) {
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A1T1', value: '1' },
-      { label: 'A1T2', value: '2' },
+      { label: 'A1T1', value: 'A1T1' },
+      { label: 'A1T2', value: 'A1T2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A2T1', value: '1' },
-      { label: 'A2T2', value: '2' },
-      { label: 'A2T3', value: '3' },
+      { label: 'A2T1', value: 'A2T1' },
+      { label: 'A2T2', value: 'A2T2' },
+      { label: 'A2T3', value: 'A2T3' },
     ]);
   }
   return Promise.resolve([]);
@@ -164,8 +164,8 @@ export function getDiagrams() {
   console.log('getDiagrams');
   return Promise.resolve([
     { label: '', value: null },
-    { label: 'Diagram1', value: '1' },
-    { label: 'Diagram2', value: '2' },
+    { label: 'Diagram1', value: 'Diagram1' },
+    { label: 'Diagram2', value: 'Diagram2' },
   ]);
 }
 
@@ -188,9 +188,9 @@ export function getUsernames() {
   console.log('getUsernames');
   return Promise.resolve([
     { label: '', value: null },
-    { label: 'user1', value: '1' },
-    { label: 'user2', value: '2' },
-    { label: 'user3', value: '3' }
+    { label: 'user1', value: 'user1' },
+    { label: 'user2', value: 'user2' },
+    { label: 'user3', value: 'user3' }
   ]);
 }
 
@@ -215,15 +215,15 @@ export function getTasks(applicationId) {
   if (applicationId === '1') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A1T1', value: '1' },
-      { label: 'A1T2', value: '2' },
+      { label: 'A1T1', value: 'A1T1' },
+      { label: 'A1T2', value: 'A1T2' },
     ]);
   } else if (applicationId === '2') {
     return Promise.resolve([
       { label: '', value: null },
-      { label: 'A2T1', value: '1' },
-      { label: 'A2T2', value: '2' },
-      { label: 'A2T3', value: '3' },
+      { label: 'A2T1', value: 'A2T1' },
+      { label: 'A2T2', value: 'A2T2' },
+      { label: 'A2T3', value: 'A2T3' },
     ]);
   }
   return Promise.resolve([]);
