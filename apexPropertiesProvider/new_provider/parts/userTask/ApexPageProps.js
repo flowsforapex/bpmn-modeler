@@ -145,6 +145,29 @@ export default function (args) {
         ),
       }
     );
+
+    entries.push(
+        {
+          id: 'request',
+          element,
+          label: translate('Request'),
+          description: translate('Request Value for Page Call'),
+          helper: extensionHelper,
+          property: 'request',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
+        },
+        {
+          id: 'cache',
+          element,
+          label: translate('Clear Cache'),
+          description: translate('Clear Cache Value for Page Call'),
+          helper: extensionHelper,
+          property: 'cache',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
+        },
+      );
   }
   return entries;
 }

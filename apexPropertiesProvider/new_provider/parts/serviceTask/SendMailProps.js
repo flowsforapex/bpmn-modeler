@@ -2,15 +2,19 @@ import {
   isSelectEntryEdited,
   isTextAreaEntryEdited, isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+
+import { getBusinessObject } from '../../helper/util';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-import { getApplicationsMail, getTemplates } from '../../plugins/metaDataCollector';
+import { Quickpick } from '../../helper/Quickpick';
 
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
-import { getBusinessObject } from '../../helper/util';
+import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+
+import { getApplicationsMail, getJSONPlaceholders, getTemplates } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:SendMail');
 
@@ -186,6 +190,11 @@ export default function (args) {
           component: DefaultTextAreaEntryWithEditor,
           isEdited: isTextAreaEntryEdited,
         },
+        {
+          id: 'quickpick-placeholder',
+          element,
+          component: QuickpickPlaceholder,
+        },
       );
     } else {
       entries.push(
@@ -238,4 +247,29 @@ export default function (args) {
     );
   }
   return entries;
+}
+
+function QuickpickPlaceholder(props) {
+  const { element, id } = props;
+
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+  const modeling = useService('modeling');
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const templateId = extensionHelper.getExtensionProperty(element, 'templateId');
+
+  return Quickpick(
+    {
+      text: translate('Load JSON'),
+      handler: () => {
+        getJSONPlaceholders(applicationId, templateId)
+        .then((placeholder) => {
+          extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+            placeholder: JSON.stringify(placeholder, null, 1)
+          });
+        });
+      }
+    }
+  );
 }

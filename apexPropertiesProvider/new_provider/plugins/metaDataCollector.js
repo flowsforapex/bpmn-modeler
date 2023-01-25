@@ -316,3 +316,33 @@ export function getJSONParameters(applicationId, taskStaticId) {
   }
   return Promise.resolve([]);
 }
+
+export function getJSONPlaceholders(applicationId, templateId) {
+  if (typeof apex !== 'undefined') {
+    apex.debug.info('getJSONPlaceholders');
+    // ajaxIdentifier
+    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    // ajax process
+    return apex.server
+      .plugin(
+        ajaxIdentifier,
+        {
+          x01: 'GET_JSON_PLACEHOLDERS',
+          x02: applicationId,
+          x03: templateId,
+        },
+        {}
+      )
+      .then(pData => pData);
+  }
+  console.log('getJSONPlaceholders');
+  if (applicationId === '1' && templateId === 'A1T1') {
+    return Promise.resolve(
+      {
+        P1: null,
+        P2: null
+      }
+    );
+  }
+  return Promise.resolve({});
+}
