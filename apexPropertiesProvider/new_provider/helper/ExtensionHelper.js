@@ -34,7 +34,7 @@ export default class ExtensionHelper {
         extensionElements,
         bpmnFactory
       );
-
+      
       extensionElements.values.push(extensionElement);
 
       update = { extensionElements };

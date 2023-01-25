@@ -23,6 +23,7 @@ import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/Sequ
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
+import CustomExtensionProps from './parts/CustomExtensionProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -195,6 +196,9 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:EndEvent')) {
         newGroups.push(createSection({element, translate}, 'customTerminate', 'Details', TerminateEventProps));
       }
+
+      // add custom section
+      newGroups.push(createSection({element, injector, translate}, 'custom', 'Custom', CustomExtensionProps));
       
       // filter: add all non-empty groups
       newGroups.forEach((g) => {

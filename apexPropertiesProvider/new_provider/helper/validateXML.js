@@ -17,6 +17,8 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
     if (element.type !== 'label') {
       filter = getFilters(element);
 
+      filter.push('apex:CustomExtension');
+
       bo =
         (businessObject.eventDefinitions &&
           businessObject.eventDefinitions[0]) ||

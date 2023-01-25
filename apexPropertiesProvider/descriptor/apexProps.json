@@ -630,6 +630,17 @@
           "type": "String"
         }
       ]
+    },
+    {
+      "name": "CustomExtension",
+      "extends": ["bpmn:Process" ],
+      "properties": [
+        {
+          "name": "customExtension",
+          "type": "String",
+          "isBody": true
+        }
+      ]
     }
   ]
 }
