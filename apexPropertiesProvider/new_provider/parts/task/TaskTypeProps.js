@@ -11,7 +11,9 @@ export default function (args) {
     'bpmn:UserTask': 'apexPage',
     'bpmn:ServiceTask': 'executePlsql',
     'bpmn:ScriptTask': 'executePlsql',
-    'bpmn:BusinessRuleTask': 'executePlsql'
+    'bpmn:BusinessRuleTask': 'executePlsql',
+    'bpmn:SendTask': 'executePlsql',
+    'bpmn:ReceiveTask': 'executePlsql'
   };
 
   const selectOptions = {
@@ -28,6 +30,12 @@ export default function (args) {
       { label: translate('Execute PL/SQL'), value: 'executePlsql' }
     ],
     'bpmn:BusinessRuleTask': [
+      { label: translate('Execute PL/SQL'), value: 'executePlsql' },
+    ],
+    'bpmn:SendTask': [
+      { label: translate('Execute PL/SQL'), value: 'executePlsql' },
+    ],
+    'bpmn:ReceiveTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
   };

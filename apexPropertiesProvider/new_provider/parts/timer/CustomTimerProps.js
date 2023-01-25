@@ -283,35 +283,12 @@ function FormatMask(props) {
     }, timerEventDefinition);
   };
 
-  // TODO only for testing, see if jsx syntax is also possible (also for return Entry below)
-  // const getDescription = () => jsxRuntime.jsxs('div', {
-  //     children: [jsxRuntime.jsx('p', {
-  //       children: translate('A specific point in time defined as ISO 8601 combined date and time representation.')
-  //     }), jsxRuntime.jsxs('ul', {
-  //       children: [jsxRuntime.jsxs('li', {
-  //         children: [jsxRuntime.jsx('code', {
-  //           children: '2019-10-01T12:00:00Z'
-  //         }), ' - ', translate('UTC time')]
-  //       }), jsxRuntime.jsxs('li', {
-  //         children: [jsxRuntime.jsx('code', {
-  //           children: '2019-10-02T08:09:40+02:00'
-  //         }), ' - ', translate('UTC plus 2 hours zone offset')]
-  //       })]
-  //     }), jsxRuntime.jsx('a', {
-  //       href: 'https://docs.camunda.org/manual/latest/reference/bpmn20/events/timer-events/#time-date',
-  //       target: '_blank',
-  //       rel: 'noopener',
-  //       children: translate('Documentation: Timer events')
-  //     })]
-  //   });
-
   if (timerEventDefinitionType === 'oracleDate') {
     return new TextFieldEntry({
       id: id,
       element: element,
       label: translate('FormatMask'),
       description: translate('e.g. DD-MON-YYYY HH24:MI:SS'),
-      // description: getDescription(),
       getValue: getValue,
       setValue: setValue,
       debounce: debounce,

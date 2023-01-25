@@ -93,7 +93,7 @@ export default function ProcVarProps(args) {
       element,
       listElement: procVar,
       label: translate('Data Type'),
-      description: dataTypeDescription[varDataType], // TODO check
+      description: dataTypeDescription[varDataType],
       property: 'varDataType',
       options: dataTypeOptions,
       component: DefaultSelectEntry,

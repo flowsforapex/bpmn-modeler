@@ -148,6 +148,12 @@ function getTaskFilters(element) {
     // filter business rule tasks
   } else if (is(element, 'bpmn:BusinessRuleTask')) {
     filter.push('apex:ExecutePlsql');
+    // filter send tasks
+  } else if (is(element, 'bpmn:SendTask')) {
+    filter.push('apex:ExecutePlsql');
+    // filter receive tasks
+  } else if (is(element, 'bpmn:ReceiveTask')) {
+    filter.push('apex:ExecutePlsql');
   }
   return filter;
 }
