@@ -85,7 +85,8 @@ export default function apexPropertiesProvider(
   eventBus,
   modeling,
   elementRegistry,
-  translate
+  translate,
+  pluginMode
 ) {
   makePropertiesPanelResizable();
 
@@ -198,7 +199,9 @@ export default function apexPropertiesProvider(
       }
 
       // add custom section
-      newGroups.push(createSection({element, injector, translate}, 'custom', 'Custom', CustomExtensionProps));
+      if (pluginMode === 'development') {
+        newGroups.push(createSection({element, injector, translate}, 'custom', 'Custom', CustomExtensionProps));
+      }
       
       // filter: add all non-empty groups
       newGroups.forEach((g) => {
@@ -220,5 +223,6 @@ apexPropertiesProvider.$inject = [
   'eventBus',
   'modeling',
   'elementRegistry',
-  'translate'
+  'translate',
+  'config.pluginMode'
 ];
