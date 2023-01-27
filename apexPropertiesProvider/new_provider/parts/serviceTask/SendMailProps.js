@@ -113,6 +113,12 @@ export default function (args) {
         helper: extensionHelper,
         property: 'useTemplate',
         defaultValue: 'false',
+        cleanup: (value) => {
+          return {
+                  ...(value === true && {subject: null, bodyText: null, bodyHTML: null}),
+                  ...(value === false && {applicationId: null, templateId: null, placeholder: null})
+                }; 
+          },
         component: DefaultToggleSwitchEntry,
         // isEdited: isToggleSwitchEntryEdited,
       },
