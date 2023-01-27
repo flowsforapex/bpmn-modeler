@@ -39,6 +39,8 @@ export default function (args) {
   const businessObject = getBusinessObject(element);
 
   const translate = injector.get('translate');
+  const bpmnFactory = injector.get('bpmnFactory');
+  const modeling = injector.get('modeling');
 
   const entries = [];
 
@@ -115,7 +117,7 @@ export default function (args) {
       );
     }
 
-    const businessRefQuickpick = Quickpick(
+    const businessRefDescription = Quickpick(
       {
         text: translate('business_ref'),
         handler: () => {
@@ -123,7 +125,8 @@ export default function (args) {
             businessRef: '&F4A$BUSINESS_REF.',
           });
         }
-      });
+      }
+    );
     
     entries.push(
       {
@@ -140,14 +143,13 @@ export default function (args) {
         id: 'businessRef',
         element,
         label: translate('Business Reference'),
-        description: businessRefQuickpick,
+        description: businessRefDescription,
         helper: extensionHelper,
         property: 'businessRef',
         component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
       {
-        id: 'parameters-quickpick',
         element,
         component: ParametersQuickpick
       },
@@ -200,7 +202,7 @@ export default function (args) {
 }
 
 function ParametersQuickpick(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
@@ -209,23 +211,25 @@ function ParametersQuickpick(props) {
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
   const taskStaticId = extensionHelper.getExtensionProperty(element, 'taskStaticId');
   
-  return Quickpick({
-    text: translate('Load Parameters'),
-    handler: () => {
-      getJSONParameters(applicationId, taskStaticId).then((data) => {
-        data.forEach((i) => {
-          listExtensionHelper.addSubElement({
-            element,
-            modeling,
-            bpmnFactory,
-            newProps: {
-              parStaticId: i.STATIC_ID,
-              parDataType: i.DATA_TYPE,
-              parValue: i.VALUE,
-            }
+  return Quickpick(
+    {
+      text: translate('Load Parameters'),
+      handler: () => {
+        getJSONParameters(applicationId, taskStaticId).then((data) => {
+          data.forEach((i) => {
+            listExtensionHelper.addSubElement({
+              element,
+              modeling,
+              bpmnFactory,
+              newProps: {
+                parStaticId: i.STATIC_ID,
+                parDataType: i.DATA_TYPE,
+                parValue: i.VALUE,
+              }
+            });
           });
         });
-      });
+      }
     }
-  });
+  );
 }

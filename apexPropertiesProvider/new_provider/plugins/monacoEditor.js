@@ -3,9 +3,9 @@ import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 var domQuery = require('min-dom').query;
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
-export function getContainer(id, translate) {
+export function getContainer(translate) {
   const container = jsxRuntime.jsx('div', {
-    id: `modal-dialog-${id}`,
+    id: 'modal-dialog',
     class: 'modal',
     children: jsxRuntime.jsx('div', {
       id: 'modal-content',
@@ -56,45 +56,28 @@ export function getContainer(id, translate) {
       ],
     }),
   });
-
-  // `<div id="modal-dialog-${id}" class="modal">` +
-  //   '<div id="modal-content" class="modal-content">' +
-  //     '<div class="button-container start">' +
-  //       '<button id="undo-btn" class="dialog undo fa fa-undo"></button>' +
-  //       '<button id="redo-btn" class="dialog redo fa fa-repeat"></button>' +
-  //       '<button id="search-btn" class="dialog search fa fa-search"></button>' +
-  //       '<button id="parse-btn" class="dialog parse fa fa-check-circle-o"></button>' +
-  //       '<span id="error-text"></span>' +
-  //     '</div>' +
-  //     '<div id="editor-container"></div>' +
-  //     '<div class="button-container end">' +
-  //       `<button id="close-btn" class="dialog close">${translate('Cancel')}</button>` +
-  //       `<button id="save-btn" class="dialog save">${translate('Save')}</button>` +
-  //     '</div>' +
-  //   '</div>' +
-  // '</div>';
   return container;
 }
 
-export function openEditor(id, getText, saveText, language, type) {
-  var modal = domQuery(`#modal-dialog-${id}`);
-  var parent = modal.parentNode;
-  var container = domQuery('.dialog-container');
+export function openEditor(getText, saveText, language, type) {
+  const modal = domQuery('#modal-dialog');
+  const parent = modal.parentNode;
+  const container = domQuery('.dialog-container');
 
-  var undoBtn = domQuery(`#modal-dialog-${id} #undo-btn`);
-  var redoBtn = domQuery(`#modal-dialog-${id} #redo-btn`);
-  var searchBtn = domQuery(`#modal-dialog-${id} #search-btn`);
-  var parseBtn = domQuery(`#modal-dialog-${id} #parse-btn`);
-  var closeBtn = domQuery(`#modal-dialog-${id} #close-btn`);
-  var saveBtn = domQuery(`#modal-dialog-${id} #save-btn`);
+  const undoBtn = domQuery('#modal-dialog #undo-btn');
+  const redoBtn = domQuery('#modal-dialog #redo-btn');
+  const searchBtn = domQuery('#modal-dialog #search-btn');
+  const parseBtn = domQuery('#modal-dialog #parse-btn');
+  const closeBtn = domQuery('#modal-dialog #close-btn');
+  const saveBtn = domQuery('#modal-dialog #save-btn');
 
   var searchFlag = false;
 
-  var theme =
+  const theme =
     document.getElementsByClassName('flows4apex-modeler FLOWS-DARK').length > 0 ? 'vs-dark' : 'vs';
 
-  var monacoEditor = editor.create(
-    domQuery(`#modal-dialog-${id} #editor-container`),
+  const monacoEditor = editor.create(
+    domQuery('#modal-dialog #editor-container'),
     {
       value: [getText()].join('\n'),
       language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
@@ -122,7 +105,7 @@ export function openEditor(id, getText, saveText, language, type) {
     else monacoEditor.trigger('keyboard', 'closeFindWidget');
   };
 
-  domQuery(`#modal-dialog-${id} #error-text`).innerText = '';
+  domQuery('#modal-dialog #error-text').innerText = '';
 
   if (language === 'plsql' || language === 'sql') {
     parseBtn.onclick = function () {
@@ -141,19 +124,19 @@ export function openEditor(id, getText, saveText, language, type) {
           {}
         )
         .then((pData) => {
-          domQuery(`#modal-dialog-${id} #error-text`).innerText =
+          domQuery('#modal-dialog #error-text').innerText =
             pData.message.replace(/\n/g, ' ');
           switch (pData.success) {
             case 'true':
-              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+              domQuery('#modal-dialog #error-text').style.color =
                 '#52B415';
               break;
             case 'false':
-              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+              domQuery('#modal-dialog #error-text').style.color =
                 '#cc3333';
               break;
             default:
-              domQuery(`#modal-dialog-${id} #error-text`).style.color =
+              domQuery('#modal-dialog #error-text').style.color =
                 'inherit';
           }
         });

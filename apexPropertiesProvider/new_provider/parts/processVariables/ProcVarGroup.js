@@ -161,7 +161,6 @@ export default function (args) {
   ) {
     entries.push(
       {
-        id: 'quickpickDefinedVariables',
         element,
         component: QuickpickDefinedVariables,
         helper1: listExtensionHelper1,
@@ -170,7 +169,6 @@ export default function (args) {
     );
     entries.push(
       {
-        id: 'quickpickBusinessRef',
         element,
         component: QuickpickBusinessRef,
         helper: listExtensionHelper1
@@ -214,7 +212,7 @@ export default function (args) {
 }
 
 function QuickpickDefinedVariables(props) {
-  const { element, id, helper1, helper2 } = props;
+  const { element, helper1, helper2 } = props;
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
@@ -271,7 +269,7 @@ function QuickpickDefinedVariables(props) {
 }
 
 function QuickpickBusinessRef(props) {
-  const { element, id, helper } = props;
+  const { element, helper } = props;
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');

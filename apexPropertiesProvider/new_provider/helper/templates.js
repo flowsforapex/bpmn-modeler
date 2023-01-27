@@ -324,7 +324,6 @@ export function DefaultTextAreaEntryWithEditor(props) {
         }
       };
       openEditor(
-        property,
         getProperty,
         saveProperty,
         language,
@@ -333,7 +332,7 @@ export function DefaultTextAreaEntryWithEditor(props) {
     });
 
   return [
-    getContainer(property, translate),
+    getContainer(translate),
     new TextAreaEntry({
       id: id,
       element: element,

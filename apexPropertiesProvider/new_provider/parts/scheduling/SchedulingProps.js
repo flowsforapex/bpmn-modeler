@@ -124,14 +124,14 @@ function Priority(props) {
       const description =
         (ModelingUtil.is(element, 'bpmn:UserTask')) &&
         Quickpick(
-            {
-              text: translate('Process Priority'),
-              handler: () => {
-                priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-                  expression: 'PROCESS_PRIORITY',
-                });
-              }
+          {
+            text: translate('Process Priority'),
+            handler: () => {
+              priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+                expression: 'PROCESS_PRIORITY',
+              });
             }
+          }
         );
 
       entries.push(
@@ -218,24 +218,26 @@ function DueOn(props) {
   );
 
   if (expressionType === 'static') {
-    const description = Quickpicks([
-      {
-        text: translate('Oracle'),
-        handler: () => {
-          dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
-          });
+    const description = Quickpicks(
+      [
+        {
+          text: translate('Oracle'),
+          handler: () => {
+            dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+              formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
+            });
+          }
+        },
+        {
+          text: translate('ISO'),
+          handler: () => {
+            dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+              formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
+            });
+          }
         }
-      },
-      {
-        text: translate('ISO'),
-        handler: () => {
-          dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
-          });
-        }
-      }
-    ]);
+      ]
+    );
 
     entries.push(
       {

@@ -191,7 +191,6 @@ export default function (args) {
           isEdited: isTextAreaEntryEdited,
         },
         {
-          id: 'quickpick-placeholder',
           element,
           component: QuickpickPlaceholder,
         },
@@ -250,7 +249,7 @@ export default function (args) {
 }
 
 function QuickpickPlaceholder(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');

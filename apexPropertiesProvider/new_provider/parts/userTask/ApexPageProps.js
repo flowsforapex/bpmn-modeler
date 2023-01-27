@@ -126,7 +126,6 @@ export default function (args) {
     
     entries.push(
       {
-        id: 'quickpick-items',
         element,
         component: QuickpickItems,
       },
@@ -173,7 +172,7 @@ export default function (args) {
 }
 
 function QuickpickItems(props) {
-  const { element, id } = props;
+  const { element } = props;
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
