@@ -88,7 +88,7 @@ export function getItems(applicationId, pageId) {
 
 export function getApplicationsMail() {
   if (typeof apex !== 'undefined') {
-    aüex.debug.info('getApplicationsMail');
+    apex.debug.info('getApplicationsMail');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process

@@ -107,8 +107,6 @@ export default function apexPropertiesProvider(
     checkConditionalSource(event.context.connection, modeling);
   });
 
-  console.log(eventBus);
-
   this.getGroups = function (element) {
     return function (groups) {
       const newGroups = [];

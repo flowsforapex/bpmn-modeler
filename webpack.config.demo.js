@@ -22,8 +22,8 @@ module.exports = {
           to: "./index.html",
         },
         {
-          from: path.resolve(__dirname, "assets/css/style.css"),
-          to: "assets/css/style.css",
+          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
+          to: "assets/css/flows4apex.modeler.css",
         },
         {
           from: path.resolve(__dirname, "node_modules/bpmn-js/dist/assets"),
