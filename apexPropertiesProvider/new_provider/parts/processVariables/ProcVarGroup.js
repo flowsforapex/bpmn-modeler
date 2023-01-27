@@ -275,7 +275,7 @@ function QuickpickBusinessRef(props) {
 
   const translate = useService('translate');
   const bpmnFactory = useService('bpmnFactory');
-  const commandStack = useService('commandStack');
+  const modeling = useService('modeling');
 
   return Quickpick(
     {

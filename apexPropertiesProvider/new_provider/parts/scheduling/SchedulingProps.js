@@ -121,11 +121,9 @@ function Priority(props) {
         );
     } else {
 
-      let description;
-
-      if (ModelingUtil.is(element, 'bpmn:UserTask')) {
-        description = 
-          Quickpick(
+      const description =
+        (ModelingUtil.is(element, 'bpmn:UserTask')) &&
+        Quickpick(
             {
               text: translate('Process Priority'),
               handler: () => {
@@ -134,8 +132,7 @@ function Priority(props) {
                 });
               }
             }
-          );
-      }
+        );
 
       entries.push(
         {

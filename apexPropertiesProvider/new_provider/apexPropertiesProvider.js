@@ -180,6 +180,11 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'role', 'APEX Role', RoleProps));
       }
 
+      // gateways
+      if (is(element, 'bpmn:Gateway')) {
+        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+      }
+
       // add the routing expression section
       if (is(element, 'bpmn:SequenceFlow')) {
         newGroups.push(createSection({element, injector, translate}, 'condition', 'Condition', SequenceFlowProps));
