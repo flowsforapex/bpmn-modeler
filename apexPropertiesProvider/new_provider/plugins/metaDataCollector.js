@@ -147,7 +147,7 @@ export function getTemplates(applicationId) {
 
 export function getDiagrams() {
   if (typeof apex !== 'undefined') {
-    apex.debug.info.log('getDiagrams');
+    apex.debug.info('getDiagrams');
     // ajaxIdentifier
     var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
     // ajax process

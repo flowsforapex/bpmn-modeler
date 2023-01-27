@@ -179,6 +179,10 @@ button.dialog.fa {
   background-color: #2b3035 !important;
   color: white !important;
 }
+.FLOWS-DARK .djs-container {
+  --shape-drop-not-allowed-fill-color: #3f3035;
+  --shape-drop-allowed-fill-color: #2b3035;
+}
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
 }
