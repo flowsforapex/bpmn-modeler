@@ -19,7 +19,7 @@ import StarterProps from './parts/process/StarterProps';
 
 import TerminateEventProps from './parts/events/TerminateEventProps';
 import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionProps';
-import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
+import SequenceFlowProps, { checkConditionalSource, setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
@@ -94,13 +94,20 @@ export default function apexPropertiesProvider(
     removeInvalidExtensionsElements(elementRegistry, modeling);
   });
 
-  eventBus.on('connection.added', function (event) {
-    setDefaultSequence(event.element, modeling);
-  });
+  // TODO test if needed
+  // eventBus.on('connection.added', function (event) {
+  //   setDefaultSequence(event.element, modeling);
+  // });
 
   eventBus.on('commandStack.connection.create.postExecute', function (event) {
     setDefaultSequence(event.context.connection, modeling);
   });
+
+  eventBus.on('commandStack.connection.reconnect.postExecute', function (event) {
+    checkConditionalSource(event.context.connection, modeling);
+  });
+
+  console.log(eventBus);
 
   this.getGroups = function (element) {
     return function (groups) {

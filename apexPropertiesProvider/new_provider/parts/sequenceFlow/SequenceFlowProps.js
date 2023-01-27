@@ -40,6 +40,15 @@ export function setDefaultSequence(element, modeling) {
   }
 }
 
+export function checkConditionalSource(element, modeling) {
+  if (!isConditionalSource(element.source)) {
+    modeling.updateProperties(element, {
+      sequence: null,
+      conditionExpression: null,
+    });
+  }
+}
+
 export default function (args) {
 
   const {element} = args;
@@ -216,7 +225,6 @@ function Condition(props) {
         });
       };
       openEditor(
-        'condition',
         getProperty,
         saveProperty,
         'plsql',
@@ -233,7 +241,7 @@ function Condition(props) {
 
   if (language) {
     return [
-      getContainer('condition', translate),
+      getContainer(translate),
       new TextAreaEntry({
         id: id,
         element: element,
