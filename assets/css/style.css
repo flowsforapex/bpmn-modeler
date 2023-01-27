@@ -1,13 +1,45 @@
+/**
+ * general
+ */
+.canvas {
+  height: 80vh;
+  background-color: #f0f0f0;
+}
+.flows4apex-modeler {
+  position: relative;
+}  
+.properties-panel-parent {
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  right: 20px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 50%;
+  z-index: 10;
+  border: 1px solid #ccc;
+  overflow: auto;
+  display: block;
+  height: 90%;
+  background-color: #f0f0f0;
+}
+.properties-panel-parent:empty {
+  display: none;
+}
+.properties-panel-parent > .djs-properties-panel {
+  padding-bottom: 70px;
+  min-height:100%;
+}
 /** 
  * custom colors
  */
-.bjs-container {
+ .bjs-container {
   --default-fill-color: white;
   --default-stroke-color: black;
 }
-
-/***** properties panel *****/
-
+/**
+ * properties panel
+ */
 .bio-properties-panel-toggle-switch-entry > .bio-properties-panel-description {
   margin-left: 0px !important;
 }
@@ -46,7 +78,9 @@
 .open-dialog-label .fa.fa-box-arrow-in-ne {
   cursor: pointer;
 }
-/* quickpicks in descriptions */
+/**
+ * quickpicks in descriptions
+ */
 .bio-properties-panel-description .bio-properties-panel-quickpick-link {
   cursor: pointer;
   /* color: #52B415; */
@@ -54,7 +88,9 @@
   font-size: var(--text-size-base);
   /* text-decoration: none; */
 }
-/* button-like quickpicks */
+/**
+ * button-like quickpicks
+ */
 .bio-properties-panel-group-entries > .bio-properties-panel-quickpick {
   margin: 6px 32px 0px 12px;
 }
@@ -70,16 +106,22 @@
   margin: 2px 32px 6px 12px;
   font-style: italic;
 }
-/* Add border to first group in nested groups */
+/**
+ * Add border to first group in nested groups
+ */
 .bio-properties-panel-group-entries .bio-properties-panel-group:first-child
 {
   border-top: 1px solid var(--group-bottom-border-color);
 }
-/* Remove double border at the end of nested groups */
+/** 
+ * Remove double border at the end of nested groups
+ */
 .bio-properties-panel-scroll-container > .bio-properties-panel-group:has( > .bio-properties-panel-group-entries.open > .bio-properties-panel-group:last-child) {
   border-bottom: none;
 }
-/* Highlight top level group headers */
+/**
+ * Highlight top level group headers
+ */
 .bio-properties-panel-scroll-container > .bio-properties-panel-group > .bio-properties-panel-group-header > .bio-properties-panel-group-header-title {
   font-weight: 600;
 }
@@ -151,13 +193,16 @@ button.dialog.fa {
   height: 100%;
   border: 1px solid #888;
 }
-
-/***** dark mode *****/
-
+/**
+ * dark mode 
+ */
 /**
  * custom colors
  */
- .FLOWS-DARK .bjs-container {
+.FLOWS-DARK .canvas, .FLOWS-DARK .properties-panel-parent {
+  background-color: #2b3035;
+}
+.FLOWS-DARK .bjs-container {
   --default-fill-color: #2b3035;
   --default-stroke-color: white;
 }
@@ -213,7 +258,7 @@ button.dialog.fa {
 .FLOWS-DARK svg.new-parent {
   background-color: #2b3035 !important;
 }
-/*
+/**
  * custom monaco editor colors
  */
 .FLOWS-DARK .modal-content {
