@@ -1,8 +1,8 @@
 import languages from './languages/collector';
 
-export default function translationModule() {}
+export default function TranslationModule() {}
 
-translationModule.prototype.applyTranslation = function () {
+TranslationModule.prototype.applyTranslation = function () {
   var language;
 
   if (typeof window.f4a !== 'undefined') {

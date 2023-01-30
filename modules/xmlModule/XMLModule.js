@@ -1,6 +1,6 @@
-export default function xmlModule() {}
+export default function XMLModule() {}
 
-xmlModule.prototype.addCustomNamespace = function (xml) {
+XMLModule.prototype.addCustomNamespace = function (xml) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xml, 'text/xml');
 
@@ -12,7 +12,7 @@ xmlModule.prototype.addCustomNamespace = function (xml) {
   return new XMLSerializer().serializeToString(xmlDoc);
 };
 
-xmlModule.prototype.addToSVGStyle = function (svg, style) {
+XMLModule.prototype.addToSVGStyle = function (svg, style) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(svg, 'text/xml');
 

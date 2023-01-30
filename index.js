@@ -5,9 +5,9 @@ import bpmnlintConfig from './.bpmnlintrc';
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
 import propertiesProviderModule from './apexPropertiesProvider/new_provider';
 import customPaletteProviderModule from './custom/palette';
-import drilldownCenteringModule from './lib/drilldownCentering';
-import translationModule from './lib/translationModule';
-import xmlModule from './lib/xmlModule';
+import drilldownCenteringModule from './modules/drilldownCentering';
+import translationModule from './modules/translationModule';
+import xmlModule from './modules/xmlModule';
 
 import {
   BpmnPropertiesPanelModule,
