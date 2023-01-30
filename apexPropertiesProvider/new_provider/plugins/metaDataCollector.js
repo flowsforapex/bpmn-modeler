@@ -298,7 +298,7 @@ export function getJSONParameters(applicationId, taskStaticId) {
       .then(pData => pData);
   }
   console.log('getJSONParameters');
-  if (applicationId === '1' && taskStaticId === '1') {
+  if (applicationId === '1' && taskStaticId === 'A1T1') {
     return Promise.resolve(
       [
         {

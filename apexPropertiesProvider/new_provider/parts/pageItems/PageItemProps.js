@@ -22,7 +22,6 @@ export default function PageItemProps(args) {
     entries.push(
       {
         id: `${idPrefix}-itemNameText`,
-        idPrefix,
         element,
         listElement: pageItem,
         label: translate('Item Name'),
@@ -35,7 +34,6 @@ export default function PageItemProps(args) {
     entries.push(
       {
         id: `${idPrefix}-itemName`,
-        idPrefix,
         element,
         listElement: pageItem,
         label: translate('Item'),
@@ -50,7 +48,6 @@ export default function PageItemProps(args) {
   entries.push(
     {
       id: `${idPrefix}-itemValue`,
-      idPrefix,
       element,
       listElement: pageItem,
       label: translate('Item Value'),

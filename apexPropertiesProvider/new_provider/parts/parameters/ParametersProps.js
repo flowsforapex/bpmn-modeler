@@ -13,7 +13,6 @@ export default function ParameterProps(args) {
   return [
     {
       id: `${idPrefix}-parStaticId`,
-      idPrefix,
       element,
       listElement: parameter,
       label: translate('Static ID'),
@@ -23,7 +22,6 @@ export default function ParameterProps(args) {
     },
     {
       id: `${idPrefix}-parDataType`,
-      idPrefix,
       element,
       listElement: parameter,
       label: translate('Data Type'),
@@ -36,7 +34,6 @@ export default function ParameterProps(args) {
     },
     {
       id: `${idPrefix}-parValue`,
-      idPrefix,
       element,
       listElement: parameter,
       label: translate('Value'),

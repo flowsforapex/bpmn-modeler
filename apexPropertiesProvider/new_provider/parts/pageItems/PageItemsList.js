@@ -9,7 +9,7 @@ export default function PageItemsList(args) {
   const pageItems = helper.getSubExtensionElements(element) || [];
 
   const items = pageItems.map((pageItem, index) => {
-    const id = `${element.id}-pageItem-${index}`;
+    const id = `pageItem-${index}`;
 
     return {
       id,

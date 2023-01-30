@@ -6,16 +6,12 @@ import {
 
 import { Helptext } from '../../helper/HelpText';
 
-
 import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
-import { getBusinessObject } from '../../helper/util';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 export default function ProcVarProps(args) {
   const { idPrefix, procVar, element, injector } = args;
-
-  const businessObject = getBusinessObject(element);
 
   const translate = injector.get('translate');
 
@@ -65,7 +61,6 @@ export default function ProcVarProps(args) {
     entries.push(
       {
         id: `${idPrefix}-varSequence`,
-        idPrefix, // TODO check if needed (also in other lists)
         element,
         listElement: procVar,
         label: translate('Sequence'),
@@ -79,7 +74,6 @@ export default function ProcVarProps(args) {
   entries.push(
     {
       id: `${idPrefix}-varName`,
-      idPrefix,
       element,
       listElement: procVar,
       label: translate('Name'),
@@ -89,7 +83,6 @@ export default function ProcVarProps(args) {
     },
     {
       id: `${idPrefix}-varDataType`,
-      idPrefix,
       element,
       listElement: procVar,
       label: translate('Data Type'),
@@ -105,7 +98,6 @@ export default function ProcVarProps(args) {
     entries.push(
       {
         id: `${idPrefix}-varDescription`,
-        idPrefix,
         element,
         procVar,
         component: VarDescription,
@@ -117,7 +109,6 @@ export default function ProcVarProps(args) {
     entries.push(
       {
         id: `${idPrefix}-varDescriptionInput`,
-        idPrefix,
         element,
         listElement: procVar,
         label: translate('Description'),
@@ -130,7 +121,6 @@ export default function ProcVarProps(args) {
     entries.push(
       {
         id: `${idPrefix}-varExpressionType`,
-        idPrefix,
         element,
         listElement: procVar,
         label: translate('Expression Type'),
@@ -151,7 +141,6 @@ export default function ProcVarProps(args) {
           entries.push(
             {
               id: `${idPrefix}-varExpression`,
-              idPrefix,
               element,
               listElement: procVar,
               label: translate('Expression'),
@@ -168,7 +157,6 @@ export default function ProcVarProps(args) {
         entries.push(
           {
             id: `${idPrefix}-varExpression`,
-            idPrefix,
             element,
             listElement: procVar,
             label: translate('Expression'),
@@ -186,7 +174,7 @@ export default function ProcVarProps(args) {
 }
 
 function VarDescription(props) {
-  const { idPrefix, element, procVar } = props;
+  const { procVar } = props;
 
   return Helptext({
     text: procVar.varDescription,

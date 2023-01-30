@@ -14,7 +14,7 @@ export default function ParametersProps(args) {
   const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
 
   const items = procVars.map((procVar, index) => {
-    const id = `${element.id}-procVar-${index}`;
+    const id = `procVar-${index}`;
 
     return {
       id,

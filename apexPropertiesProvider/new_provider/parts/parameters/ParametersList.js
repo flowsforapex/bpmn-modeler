@@ -10,14 +10,11 @@ export default function ParametersProps(args) {
   const parameters = helper.getSubExtensionElements(element) || [];
 
   const items = parameters.map((parameter, index) => {
-    const id = `${element.id}-parameter-${index}`;
-
-    const label =
-      (parameter.get('parStaticId') && parameter.get('parValue')) ? `${parameter.get('parStaticId')}:${parameter.get('parValue')}` : parameter.get('parStaticId') ? parameter.get('parStaticId') : '';
+    const id = `parameter-${index}`;
 
     return {
       id,
-      label: label,
+      label: parameter.get('parStaticId') || '',
       entries: ParameterProps(
         {
           idPrefix: id,
