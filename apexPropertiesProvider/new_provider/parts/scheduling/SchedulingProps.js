@@ -44,8 +44,8 @@ function Priority(props) {
     { label: translate('Static'), value: 'static' },
     { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
-    { label: translate('Expression'), value: 'plsqlExpression' },
-    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
   ];
 
   const staticPriorityOptions = [
@@ -60,8 +60,8 @@ function Priority(props) {
   const editorTypes = [
     'sqlQuerySingle',
     'sqlQueryList',
-    'plsqlExpression',
-    'plsqlFunctionBody',
+    'plsqlRawExpression',
+    'plsqlRawFunctionBody',
   ];
   
   const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');

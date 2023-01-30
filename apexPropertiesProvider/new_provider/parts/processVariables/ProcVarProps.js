@@ -36,17 +36,59 @@ export default function ProcVarProps(args) {
     ...[{ label: translate('Process Variable'), value: 'processVariable' }],
     ...(varDataType !== 'CLOB' ? [{ label: translate('SQL query (single value)'), value: 'sqlQuerySingle' }] : []),
     ...(varDataType === 'VARCHAR2' ? [{ label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' }] : []),
-    ...(varDataType !== 'CLOB' ? [{ label: translate('Expression'), value: 'plsqlExpression' }] : []),
-    ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlFunctionBody' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Expression'), value: 'plsqlRawExpression' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Expression (Legacy)'), value: 'plsqlExpression' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlRawFunctionBody' }] : []),
+    ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body (Legacy)'), value: 'plsqlFunctionBody' }] : []),
   ];
 
   const expressionDescription = {
-    static: translate('Static value'),
-    processVariable: translate('Name of the Process Variable'),
-    sqlQuerySingle: translate('SQL query returning a single value'),
-    sqlQueryList: translate('SQL query returning a colon delimited list'),
-    plsqlExpression: translate('PL/SQL Expression returning a value'),
-    plsqlFunctionBody: translate('PL/SQL Function Body returning a value'),
+    static: {
+      VARCHAR2: translate('Static varchar2 value'),
+      NUMBER: translate('Static number value'),
+      DATE: translate('Static date value'),
+      TIMESTAMP: translate('Static timestamp value'),
+    },
+    processVariable: {
+      VARCHAR2: translate('Name of the Process Variable'),
+      NUMBER: translate('Name of the Process Variable'),
+      DATE: translate('Name of the Process Variable'),
+      TIMESTAMP: translate('Name of the Process Variable'),
+      CLOB: translate('Name of the Process Variable'),
+    },
+    sqlQuerySingle: {
+      VARCHAR2: translate('SQL query returning a single varchar2 value'),
+      NUMBER: translate('SQL query returning a single number value'),
+      DATE: translate('SQL query returning a single date value'),
+      TIMESTAMP: translate('SQL query returning a single timestamp value'),
+    },
+    sqlQueryList: {
+      VARCHAR2: translate('SQL query returning a colon delimited list'),
+    },
+    plsqlRawExpression: {
+      VARCHAR2: translate('PL/SQL Expression returning a varchar2 value'),
+      NUMBER: translate('PL/SQL Expression returning a number value'),
+      DATE: translate('PL/SQL Expression returning a date value'),
+      TIMESTAMP: translate('PL/SQL Expression returning a timestamp value'),
+    },
+    plsqlExpression: {
+      VARCHAR2: translate('PL/SQL Expression returning a varchar2 value'),
+      NUMBER: translate('PL/SQL Expression returning a varchar2 value in number format'),
+      DATE: translate('PL/SQL Expression returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS'),
+      TIMESTAMP: translate('PL/SQL Expression returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
+    },
+    plsqlRawFunctionBody: {
+      VARCHAR2: translate('PL/SQL Function Body returning a varchar2 value'),
+      NUMBER: translate('PL/SQL Function Body returning a number value'),
+      DATE: translate('PL/SQL Function Body returning a date value'),
+      TIMESTAMP: translate('PL/SQL Function Body returning a timestamp value'),
+    },
+    plsqlFunctionBody: {
+      VARCHAR2: translate('PL/SQL Function Body returning a varchar2 value'),
+      NUMBER: translate('PL/SQL Function Body returning a varchar2 value in number format'),
+      DATE: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS'),
+      TIMESTAMP: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
+    },
   };
 
   const editorTypes = [
@@ -89,6 +131,12 @@ export default function ProcVarProps(args) {
       description: dataTypeDescription[varDataType],
       property: 'varDataType',
       options: dataTypeOptions,
+      cleanup: (value) => {
+        return {
+                ...(value === 'CLOB' && varExpressionType !== 'processVariable' && {varExpressionType: null, varExpression: null}),
+                ...(value !== 'VARCHAR2' && varExpressionType === 'sqlQueryList' && {varExpressionType: null, varExpression: null})
+              }; 
+        },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
     }
@@ -144,7 +192,7 @@ export default function ProcVarProps(args) {
               element,
               listElement: procVar,
               label: translate('Expression'),
-              description: expressionDescription[varExpressionType],
+              description: expressionDescription[varExpressionType][varDataType],
               property: 'varExpression',
               language: language,
               type: varExpressionType,
@@ -160,7 +208,7 @@ export default function ProcVarProps(args) {
             element,
             listElement: procVar,
             label: translate('Expression'),
-            description: expressionDescription[varExpressionType],
+            description: expressionDescription[varExpressionType][varDataType],
             property: 'varExpression',
             component: DefaultTextAreaEntry,
             isEdited: isTextAreaEntryEdited,

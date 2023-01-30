@@ -47,15 +47,15 @@ function PotentialUsers(props) {
     { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-    { label: translate('Expression'), value: 'plsqlExpression' },
-    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
   ];
   
   const editorTypes = [
     'sqlQuerySingle',
     'sqlQueryList',
-    'plsqlExpression',
-    'plsqlFunctionBody',
+    'plsqlRawExpression',
+    'plsqlRawFunctionBody',
   ];
 
   const expressionType = potentialUsersHelper.getExtensionProperty(element, 'expressionType');
@@ -139,15 +139,15 @@ function PotentialGroups(props) {
     { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-    { label: translate('Expression'), value: 'plsqlExpression' },
-    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
   ];
   
   const editorTypes = [
     'sqlQuerySingle',
     'sqlQueryList',
-    'plsqlExpression',
-    'plsqlFunctionBody',
+    'plsqlRawExpression',
+    'plsqlRawFunctionBody',
   ];
 
   const expressionType = potentialGroupsHelper.getExtensionProperty(element, 'expressionType');
@@ -231,15 +231,15 @@ function ExcludedUsers(props) {
     { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
-    { label: translate('Expression'), value: 'plsqlExpression' },
-    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
   ];
   
   const editorTypes = [
     'sqlQuerySingle',
     'sqlQueryList',
-    'plsqlExpression',
-    'plsqlFunctionBody',
+    'plsqlRawExpression',
+    'plsqlRawFunctionBody',
   ];
 
   const expressionType = excludedUsersHelper.getExtensionProperty(element, 'expressionType');
