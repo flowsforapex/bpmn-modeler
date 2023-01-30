@@ -5,6 +5,7 @@ import bpmnlintConfig from './.bpmnlintrc';
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
 import propertiesProviderModule from './apexPropertiesProvider/new_provider';
 import customPaletteProviderModule from './custom/palette';
+import drilldownCenteringModule from './lib/drilldownCentering';
 import translationModule from './lib/translationModule';
 import xmlModule from './lib/xmlModule';
 
@@ -20,11 +21,12 @@ var bpmnModeler = {
     BpmnPropertiesPanelModule,
     BpmnPropertiesProviderModule,
     propertiesProviderModule,
+    AddExporter,
     lintModule,
     customPaletteProviderModule,
     translationModule,
     xmlModule,
-    AddExporter,
+    drilldownCenteringModule
   },
   moddleExtensions: {
     apexModdleDescriptor,
