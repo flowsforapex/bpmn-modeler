@@ -271,7 +271,7 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
         },
         {
           varName: 'Out2',
-          varDataType: 'TIMESTAMP',
+          varDataType: 'TIMESTAMP_WITH_TIME_ZONE',
           varDescription: 'Desc4'
         },
       ]

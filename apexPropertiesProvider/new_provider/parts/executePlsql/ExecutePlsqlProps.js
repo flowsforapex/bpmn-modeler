@@ -4,7 +4,7 @@ import {
 
 import { getBusinessObject } from '../../helper/util';
 
-import { is } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 

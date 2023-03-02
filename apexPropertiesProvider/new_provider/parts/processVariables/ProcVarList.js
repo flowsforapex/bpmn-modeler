@@ -1,6 +1,6 @@
 import ProcVarProps from './ProcVarProps';
 
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ParametersProps(args) {
 

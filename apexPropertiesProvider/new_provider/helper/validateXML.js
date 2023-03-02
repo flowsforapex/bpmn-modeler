@@ -62,7 +62,7 @@ function getFilters(element) {
   } else if (is(element, 'bpmn:CallActivity')) {
     return getCallActivityFilters();
     // filter processes
-  } else if (is(element, 'bpmn:Process')) {
+  } else if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
     return getProcessFilters(element);
   }
 

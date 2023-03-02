@@ -8,7 +8,7 @@ import { OpenDialogLabel } from '../../helper/OpenDialogLabel';
 
 import { getContainer, openEditor } from '../../plugins/monacoEditor';
 
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 const CONDITIONAL_SOURCES = [
   'bpmn:ExclusiveGateway',
@@ -40,42 +40,30 @@ export function setDefaultSequence(element, modeling) {
   }
 }
 
-export function checkConditionalSource(element, modeling) {
-  if (!isConditionalSource(element.source)) {
-    modeling.updateProperties(element, {
-      sequence: null,
-      conditionExpression: null,
-    });
-  }
-}
-
 export default function (args) {
 
   const {element} = args;
   
-  if (isConditionalSource(element.source)) {
-    return [
-      {
-        id: 'sequence',
-        element,
-        component: Sequence,
-        // isEdited: isNumberFieldEntryEdited,
-      },
-      {
-        id: 'language',
-        element,
-        component: Language,
-        isEdited: isSelectEntryEdited,
-      },
-      {
-        id: 'condition',
-        element,
-        component: Condition,
-        isEdited: isTextAreaEntryEdited,
-      },
-    ];
-  }
-  return [];
+  return [
+    {
+      id: 'sequence',
+      element,
+      component: Sequence,
+      // isEdited: isNumberFieldEntryEdited,
+    },
+    {
+      id: 'language',
+      element,
+      component: Language,
+      isEdited: isSelectEntryEdited,
+    },
+    {
+      id: 'condition',
+      element,
+      component: Condition,
+      isEdited: isTextAreaEntryEdited,
+    },
+  ];
 }
 
 function Sequence(props) {

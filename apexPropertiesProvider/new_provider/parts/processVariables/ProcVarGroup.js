@@ -13,7 +13,7 @@ import { getDefinedVariables } from '../../plugins/metaDataCollector';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function (args) {
   var type1 = null;

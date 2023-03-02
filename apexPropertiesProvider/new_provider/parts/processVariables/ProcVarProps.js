@@ -8,7 +8,7 @@ import { Helptext } from '../../helper/HelpText';
 
 import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ProcVarProps(args) {
   const { idPrefix, procVar, element, injector } = args;
@@ -23,7 +23,7 @@ export default function ProcVarProps(args) {
     { label: translate('Varchar2'), value: 'VARCHAR2' },
     { label: translate('Number'), value: 'NUMBER' },
     { label: translate('Date'), value: 'DATE' },
-    { label: translate('Timestamp'), value: 'TIMESTAMP' },
+    { label: translate('Timestamp with Time Zone'), value: 'TIMESTAMP_WITH_TIME_ZONE' },
     { label: translate('Clob'), value: 'CLOB' },
   ];
   
@@ -47,20 +47,20 @@ export default function ProcVarProps(args) {
       VARCHAR2: translate('Static varchar2 value'),
       NUMBER: translate('Static number value'),
       DATE: translate('Static date value'),
-      TIMESTAMP: translate('Static timestamp value'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('Static Timestamp with Time Zone value'),
     },
     processVariable: {
       VARCHAR2: translate('Name of the Process Variable'),
       NUMBER: translate('Name of the Process Variable'),
       DATE: translate('Name of the Process Variable'),
-      TIMESTAMP: translate('Name of the Process Variable'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('Name of the Process Variable'),
       CLOB: translate('Name of the Process Variable'),
     },
     sqlQuerySingle: {
       VARCHAR2: translate('SQL query returning a single varchar2 value'),
       NUMBER: translate('SQL query returning a single number value'),
       DATE: translate('SQL query returning a single date value'),
-      TIMESTAMP: translate('SQL query returning a single timestamp value'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('SQL query returning a single Timestamp with Time Zone value'),
     },
     sqlQueryList: {
       VARCHAR2: translate('SQL query returning a colon delimited list'),
@@ -69,32 +69,34 @@ export default function ProcVarProps(args) {
       VARCHAR2: translate('PL/SQL Expression returning a varchar2 value'),
       NUMBER: translate('PL/SQL Expression returning a number value'),
       DATE: translate('PL/SQL Expression returning a date value'),
-      TIMESTAMP: translate('PL/SQL Expression returning a timestamp value'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('PL/SQL Expression returning a Timestamp with Time Zone value'),
     },
     plsqlExpression: {
       VARCHAR2: translate('PL/SQL Expression returning a varchar2 value'),
       NUMBER: translate('PL/SQL Expression returning a varchar2 value in number format'),
       DATE: translate('PL/SQL Expression returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS'),
-      TIMESTAMP: translate('PL/SQL Expression returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('PL/SQL Expression returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
     },
     plsqlRawFunctionBody: {
       VARCHAR2: translate('PL/SQL Function Body returning a varchar2 value'),
       NUMBER: translate('PL/SQL Function Body returning a number value'),
       DATE: translate('PL/SQL Function Body returning a date value'),
-      TIMESTAMP: translate('PL/SQL Function Body returning a timestamp value'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('PL/SQL Function Body returning a Timestamp with Time Zone value'),
     },
     plsqlFunctionBody: {
       VARCHAR2: translate('PL/SQL Function Body returning a varchar2 value'),
       NUMBER: translate('PL/SQL Function Body returning a varchar2 value in number format'),
       DATE: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS'),
-      TIMESTAMP: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
     },
   };
 
   const editorTypes = [
     'sqlQuerySingle',
     'sqlQueryList',
+    'plsqlRawExpression',
     'plsqlExpression',
+    'plsqlRawFunctionBody',
     'plsqlFunctionBody',
   ];
 

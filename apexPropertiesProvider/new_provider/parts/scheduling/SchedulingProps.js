@@ -7,7 +7,7 @@ import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEdito
 
 import { Quickpick, Quickpicks } from '../../helper/Quickpick';
 
-var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 const priorityHelper = new ExtensionHelper('apex:Priority');
 const dueOnHelper = new ExtensionHelper('apex:DueOn');
@@ -179,13 +179,13 @@ function DueOn(props) {
   ];
 
   const expressionDescriptions = {
-    static: translate('Timestamp with Timezone in ISO 8601 or Oracle format'),
+    static: translate('Timestamp with Time Zone in ISO 8601 or Oracle format'),
     interval: translate('Duration in ISO 8601 or Oracle Interval DS \'DDD HH24:MI:SS\' format'),
     oracleScheduler: translate('Oracle Schedule expression'),
-    processVariable: translate('Name of the Process Variable (of type Timestamp with Timezone)'),
-    sqlQuerySingle: translate('SQL query returning Timestamp with Timezone'),
-    plsqlRawExpression: translate('PL/SQL Expression returning Timestamp with Timezone'),
-    plsqlRawFunctionBody: translate('PL/SQL Function Body returning Timestamp with Timezone'),
+    processVariable: translate('Name of the Process Variable (of type Timestamp with Time Zone)'),
+    sqlQuerySingle: translate('SQL query returning Timestamp with Time Zone'),
+    plsqlRawExpression: translate('PL/SQL Expression returning Timestamp with Time Zone'),
+    plsqlRawFunctionBody: translate('PL/SQL Function Body returning Timestamp with Time Zone'),
   };
 
   const editorTypes = [
