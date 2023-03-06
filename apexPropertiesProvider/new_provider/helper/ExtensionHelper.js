@@ -68,7 +68,7 @@ export default class ExtensionHelper {
         if (!extensionElements.get('values').some(k => k !== extensionElement)) {
           // remove extension elements
           updatedBusinessObject = businessObject;
-          update = { extensionElements: null};
+          update = { extensionElements: undefined};
         } else {
           // remove extension
           updatedBusinessObject = extensionElements;

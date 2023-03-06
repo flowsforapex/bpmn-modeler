@@ -143,7 +143,7 @@ function Language(props) {
       });
     } else {
       modeling.updateModdleProperties(element, businessObject, {
-        conditionExpression: null,
+        conditionExpression: undefined,
       });
     }
   };

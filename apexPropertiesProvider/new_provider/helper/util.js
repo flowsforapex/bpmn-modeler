@@ -58,7 +58,7 @@ export function removeExtension(element, businessObject, toRemove, modeling) {
   if (!extensionElements.get('values').some(k => k !== toRemove)) {
       // remove extension elements
       updatedBusinessObject = businessObject;
-      update = { extensionElements: null};
+      update = { extensionElements: undefined};
   } else {
     // remove extension
     updatedBusinessObject = extensionElements;

@@ -77,7 +77,7 @@ export default class ListExtensionHelper {
           // if extension elements have no other children
           if (!extensionElements.get('values').some(k => k !== extension)) {
             updatedBusinessObject = businessObject;
-            update = { extensionElements: null};
+            update = { extensionElements: undefined};
           }
         }
 
@@ -123,7 +123,7 @@ export default class ListExtensionHelper {
            // if extension elements have no other children
           if (!extensionElements.get('values').some(k => k !== extension)) {
             updatedBusinessObject = businessObject;
-            update = { extensionElements: null};
+            update = { extensionElements: undefined};
           }
         }
       }
