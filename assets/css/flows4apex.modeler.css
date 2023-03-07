@@ -186,6 +186,8 @@ button.dialog.fa {
 
   --color-flows-dark-properties-panel-background: #32383d;
   --color-flows-dark-properties-panel-input: #282c30;
+
+  --color-flows-dark-input-focus: #1e2630;
   
   --color-flows-dark-hover: #1e2328;
   --color-flows-dark-drop-not-allowed: #3f3035;
@@ -206,6 +208,17 @@ button.dialog.fa {
   --popup-background-color: var(--color-flows-dark-background);
   color: white;
 }
+.FLOWS-DARK .djs-popup-search input {
+  background-color: var(--color-flows-dark-properties-panel-input);
+  color: white;
+}
+.FLOWS-DARK .djs-popup-search input:focus {
+  background-color: var(--color-flows-dark-properties-panel-background);
+}
+.FLOWS-DARK .djs-popup .entry.selected {
+  background-color: var(--color-flows-dark-properties-panel-background);
+  color: white;
+}
 .FLOWS-DARK .djs-context-pad .entry {
   --context-pad-entry-background-color: var(--color-flows-dark-background);
   --context-pad-entry-hover-background-color: var(--color-flows-dark-hover);
@@ -223,14 +236,29 @@ button.dialog.fa {
   --shape-drop-not-allowed-fill-color: var(--color-flows-dark-drop-not-allowed);
   --shape-drop-allowed-fill-color: var(--color-flows-dark-background);
 }
+.FLOWS-DARK .djs-shape.connect-ok {
+  --shape-connect-allowed-fill-color: var(--color-flows-dark-properties-panel-background);
+}
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
+}
+.FLOWS-DARK .bjsl-button:not(.bjsl-button-error) {
+  color: #808080;
 }
 .FLOWS-DARK .bjsl-button-inactive {
   background-color: var(--color-flows-dark-lint) !important;
 }
+.FLOWS-DARK .bjsl-button-inactive:hover {
+  color: white;
+}
 .FLOWS-DARK svg.new-parent {
   background-color: var(--color-flows-dark-background) !important;
+}
+.FLOWS-DARK .bjsl-issues {
+  background-color: var(--color-flows-dark-properties-panel-background);
+}
+.FLOWS-DARK .bjsl-issues a {
+  color: white;
 }
 /**
  * custom properties panel colors
@@ -245,7 +273,7 @@ button.dialog.fa {
  }
 .FLOWS-DARK .bio-properties-panel {
   --input-background-color: var(--color-flows-dark-properties-panel-input);
-  --input-focus-background-color: var(--color-flows-dark-properties-panel-input);
+  --input-focus-background-color: var(--color-flows-dark-input-focus);
   --input-error-background-color: var(--color-flows-dark-properties-panel-input);
   --placeholder-background-color: var(--color-flows-dark-properties-panel-input);
   --add-entry-fill-color: white;
