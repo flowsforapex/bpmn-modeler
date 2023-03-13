@@ -15,7 +15,7 @@
       !CONDITIONAL_SOURCES.includes(businessObject.sourceRef.$type) &&
       businessObject.conditionExpression
     ) {
-        reporter.report(businessObject.id, 'Condition on non gateway path');
+        reporter.report(businessObject.id, 'SequenceFlow starting from non-Gateway element is conditional');
     }
   }
 
