@@ -22,8 +22,8 @@ import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionPro
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
-import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
+import BasicApexMessageProps from './parts/message/BasicApexMessageProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -90,9 +90,9 @@ export default function apexPropertiesProvider(
 ) {
   makePropertiesPanelResizable();
 
-  eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(elementRegistry, modeling);
-  });
+  // eventBus.on('saveXML.start', function () {
+  //   removeInvalidExtensionsElements(elementRegistry, modeling);
+  // });
 
   // TODO test if needed
   // eventBus.on('connection.added', function (event) {
@@ -151,6 +151,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:SendTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
       }
 
@@ -158,6 +159,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:ReceiveTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
       }
 

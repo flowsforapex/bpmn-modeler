@@ -24,8 +24,8 @@ export default function (args) {
     is(element, 'bpmn:ScriptTask') ||
     (is(element, 'bpmn:ServiceTask') && !['sendMail'].includes(businessObject.type)) ||
     is(element, 'bpmn:BusinessRuleTask') ||
-    is(element, 'bpmn:SendTask') ||
-    is(element, 'bpmn:ReceiveTask')
+    (is(element, 'bpmn:SendTask') && businessObject.type === 'executePlsql') ||
+    (is(element, 'bpmn:ReceiveTask') && businessObject.type === 'executePlsql')
    ) {
     return [
       {

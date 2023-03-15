@@ -12,8 +12,8 @@ export default function (args) {
     'bpmn:ServiceTask': 'executePlsql',
     'bpmn:ScriptTask': 'executePlsql',
     'bpmn:BusinessRuleTask': 'executePlsql',
-    'bpmn:SendTask': 'executePlsql',
-    'bpmn:ReceiveTask': 'executePlsql'
+    'bpmn:SendTask': 'basicApexMessage',
+    'bpmn:ReceiveTask': 'basicApexMessage'
   };
 
   const selectOptions = {
@@ -33,9 +33,11 @@ export default function (args) {
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
     'bpmn:SendTask': [
+      { label: translate('Basic APEX Message'), value: 'basicApexMessage' },
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
     'bpmn:ReceiveTask': [
+      { label: translate('Basic APEX Message'), value: 'basicApexMessage' },
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
   };
