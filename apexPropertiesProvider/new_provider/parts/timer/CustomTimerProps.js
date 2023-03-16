@@ -13,7 +13,6 @@ import { getBusinessObject } from '../../helper/util';
 var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 var minDash = require('min-dash');
-var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
 var dateHelper = new ExtensionHelper('apex:OracleDate');
 var durationHelper = new ExtensionHelper('apex:OracleDuration');

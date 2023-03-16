@@ -178,6 +178,11 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
       }
 
+      // add the message event props
+      if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
+      }
+
       // lane
       if (is(element, 'bpmn:Lane')) {
         newGroups.push(createSection({element, injector, translate}, 'role', 'APEX Role', RoleProps));

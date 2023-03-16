@@ -44,7 +44,7 @@ export function DefaultNumberEntry(props) {
 }
 
 export function DefaultTextFieldEntry(props) {
-  const { id, element, listElement, label, description, helper, property } = props;
+  const { id, element, listElement, label, description, helper, property, parent } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -54,13 +54,13 @@ export function DefaultTextFieldEntry(props) {
   const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
+    (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         [property]: value,
-      });
+      }, parent);
     } else {
       modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
@@ -80,7 +80,7 @@ export function DefaultTextFieldEntry(props) {
 }
 
 export function DefaultSelectEntry(props) {
-  const { id, element, listElement, label, description, helper, property, defaultValue, options, cleanup } = props;
+  const { id, element, listElement, label, description, helper, property, defaultValue, options, cleanup, parent } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -93,13 +93,13 @@ export function DefaultSelectEntry(props) {
     var value;
 
     if (defaultValue) {
-      value = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+      value = (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
 
       if (!value || !options.some(v => v.value === value)) {
         if (helper) {
           helper.setExtensionProperty(element, modeling, bpmnFactory, {
             [property]: defaultValue,
-          });
+          }, parent);
         } else {
           modeling.updateModdleProperties(element, businessObject, {
             [property]: defaultValue,
@@ -108,7 +108,7 @@ export function DefaultSelectEntry(props) {
       }
     }
 
-    return (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
+    return (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
   };
 
   const setValue = (value) => {
@@ -116,7 +116,7 @@ export function DefaultSelectEntry(props) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         [property]: value,
         ...(cleanup && cleanup(value))
-      });
+      }, parent);
     } else {
       modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
@@ -252,7 +252,7 @@ export function DefaultToggleSwitchEntry(props) {
 }
 
 export function DefaultTextAreaEntry(props) {
-  const { id, element, listElement, label, description, helper, property } = props;
+  const { id, element, listElement, label, description, helper, property, parent } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -261,13 +261,13 @@ export function DefaultTextAreaEntry(props) {
   // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         [property]: value,
-      });
+      }, parent);
     } else {
       modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
@@ -287,7 +287,7 @@ export function DefaultTextAreaEntry(props) {
 }
 
 export function DefaultTextAreaEntryWithEditor(props) {
-  const { id, element, listElement, label, description, helper, property, language, type } = props;
+  const { id, element, listElement, label, description, helper, property, language, type, parent } = props;
 
   const modeling = useService('modeling');
   const translate = useService('translate');
@@ -297,13 +297,13 @@ export function DefaultTextAreaEntryWithEditor(props) {
   // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
 
   const setValue = (value) => {
     if (helper) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         [property]: value,
-      });
+      }, parent);
     } else {
       modeling.updateModdleProperties(element, businessObject, {
         [property]: value,
@@ -313,12 +313,12 @@ export function DefaultTextAreaEntryWithEditor(props) {
 
   const labelWithIcon =
     OpenDialogLabel(label, () => {
-      var getProperty = () => (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+      var getProperty = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
       var saveProperty = function (text) {
         if (helper) {
           helper.setExtensionProperty(element, modeling, bpmnFactory, {
             [property]: text,
-          });
+          }, parent);
         } else {
           modeling.updateModdleProperties(element, businessObject, {
             [property]: text,

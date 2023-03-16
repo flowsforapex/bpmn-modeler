@@ -9,6 +9,10 @@ import ExtensionHelper from '../../helper/ExtensionHelper';
 import { useService } from 'bpmn-js-properties-panel';
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
+var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
+var minDash = require('min-dash');
+
 const endpointHelper = new ExtensionHelper('apex:Endpoint');
 const messageNameHelper = new ExtensionHelper('apex:MessageName');
 const correlationKeyHelper = new ExtensionHelper('apex:CorrelationKey');
@@ -16,6 +20,15 @@ const correlationValueHelper = new ExtensionHelper('apex:CorrelationValue');
 const payloadHelper = new ExtensionHelper('apex:Payload');
 
 const payloadVariableHelper = new ExtensionHelper('apex:PayloadVariable');
+
+function getMessageEvent(element) {
+  const businessObject = getBusinessObject(element);
+  const eventDefinitions = businessObject.get('eventDefinitions') || [];
+  
+  return minDash.find(eventDefinitions, function (definition) {
+    return ModelUtil.is(definition, 'bpmn:MessageEventDefinition');
+  });
+}
 
 export default function (args) {
 
@@ -27,14 +40,17 @@ export default function (args) {
 
   const entries = [];
 
-  if (is(element, 'bpmn:SendTask') && !['executePLSQL'].includes(businessObject.type)) {
+  if (
+    (is(element, 'bpmn:SendTask') && !['executePLSQL'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element))
+  ) {
     entries.push(
       {
         id: 'endpoint',
         element,
         component: DefaultExpression,
         helper: endpointHelper,
-        label: 'Endpoint'
+        label: 'Endpoint',
       },
       {
         id: 'messageName',
@@ -65,7 +81,10 @@ export default function (args) {
         label: 'Payload'
       },
     );
-  } else if (is(element, 'bpmn:ReceiveTask') && !['executePLSQL'].includes(businessObject.type)) {
+  } else if (
+    (is(element, 'bpmn:ReceiveTask') && !['executePLSQL'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
+  ) {
     entries.push(
       {
         id: 'messageName',
@@ -92,10 +111,7 @@ export default function (args) {
         id: 'payloadVariable',
         element,
         label: translate('Payload Variable'),
-        helper: payloadVariableHelper,
-        property: 'value',
-        component: DefaultTextFieldEntry,
-        isEdited: isTextFieldEntryEdited,
+        component: PayloadVariable,
       },
     );
   }
@@ -106,6 +122,8 @@ function DefaultExpression(props) {
   const {element, id, helper, label} = props;
 
   const translate = useService('translate');
+
+  const eventDefinition = getMessageEvent(element);
   
   const expressionTypeOptions = [
     { label: '', value: null },
@@ -123,7 +141,7 @@ function DefaultExpression(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = helper.getExtensionProperty(element, 'expressionType');
+  const expressionType = helper.getExtensionProperty(element, 'expressionType', eventDefinition);
   
   const entries = [];
 
@@ -142,45 +160,81 @@ function DefaultExpression(props) {
       },
       component: DefaultSelectEntry,
       isEdited: isSelectEntryEdited,
+      parent: eventDefinition,
     }
   );
 
-  if (editorTypes.includes(expressionType)) {
+  if (expressionType != null) {
 
-    const language =
-      expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+    if (editorTypes.includes(expressionType)) {
 
-    entries.push(
-      {
-        id: 'expression',
-        element,
-        label: translate('Expression'),
-        helper: helper,
-        property: 'expression',
-        language: language,
-        type: expressionType,
-        component: DefaultTextAreaEntryWithEditor,
-        isEdited: isTextAreaEntryEdited,
-      }
-    );
-  } else {
-    entries.push(
-      {
-        id: 'expression',
-        element,
-        label: translate('Expression'),
-        helper: helper,
-        property: 'expression',
-        component: DefaultTextAreaEntry,
-        isEdited: isTextAreaEntryEdited,
-      },
-    );
+      const language =
+        expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+      entries.push(
+        {
+          id: 'expression',
+          element,
+          label: translate('Expression'),
+          helper: helper,
+          property: 'expression',
+          language: language,
+          type: expressionType,
+          component: DefaultTextAreaEntryWithEditor,
+          isEdited: isTextAreaEntryEdited,
+          parent: eventDefinition,
+        }
+      );
+    } else {
+      entries.push(
+        {
+          id: 'expression',
+          element,
+          label: translate('Expression'),
+          helper: helper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+          parent: eventDefinition,
+        },
+      );
+    }
   }
 
   return new CollapsibleEntry({
     id: id,
     element: element,
     label: translate(label),
+    entries: entries,
+  });
+}
+
+function PayloadVariable(props) {
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const eventDefinition = getMessageEvent(element);
+  
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'payloadVariable',
+      element,
+      label: translate('Process Variable'),
+      helper: payloadVariableHelper,
+      property: 'value',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+      parent: eventDefinition,
+    },
+  );
+
+  return new CollapsibleEntry({
+    id: id,
+    element: element,
+    label: translate('Return Payload Into'),
     entries: entries,
   });
 }
