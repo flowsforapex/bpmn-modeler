@@ -9,8 +9,8 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
     var businessObject = getBusinessObject(element);
     // filter containing allowed elements
     var filter = [];
-    // explicit bo
-    var bo;
+    // child needed for events
+    var eventDefinition;
     // list with extension elements to remove
     var toRemove;
 
@@ -19,19 +19,28 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
 
       filter.push('apex:CustomExtension');
 
-      bo =
-        (businessObject.eventDefinitions &&
-          businessObject.eventDefinitions[0]) ||
-        businessObject;
+      eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
 
       toRemove =
-        bo.extensionElements &&
-        bo.extensionElements.values.filter(e => !filter.includes(e.$type));
+        businessObject.extensionElements &&
+        businessObject.extensionElements.values.filter(e => !filter.includes(e.$type));
 
       if (toRemove && toRemove.length > 0) {
         toRemove.forEach((e) => {
-          removeExtension(element, bo, e, modeling);
+          removeExtension(element, businessObject, e, modeling);
         });
+      }
+
+      if (eventDefinition) {
+        toRemove =
+          eventDefinition.extensionElements &&
+          eventDefinition.extensionElements.values.filter(e => !filter.includes(e.$type));
+
+        if (toRemove && toRemove.length > 0) {
+          toRemove.forEach((e) => {
+            removeExtension(element, eventDefinition, e, modeling);
+          });
+        }
       }
     }
   });
@@ -85,21 +94,46 @@ function getGatewayFilters(element) {
 }
 
 function getEventFilters(element) {
+  var filter = [];
   var businessObject = getBusinessObject(element);
-  // not timer event
-  if (!businessObject.eventDefinitions || businessObject.eventDefinitions.length === 0) {
-    return ['apex:OnEvent'];
+
+  filter.push('apex:OnEvent');
+
+  if (businessObject.eventDefinitions && businessObject.eventDefinitions[0]) {
+    if (is(businessObject.eventDefinitions[0], 'bpmn:TimerEventDefinition')) {    
+      
+      filter.push('apex:BeforeEvent');
+
+      switch (businessObject.eventDefinitions[0].timerType) {
+        case 'oracleDate':
+          filter.push('apex:OracleDate');
+          break;
+        case 'oracleDuration':
+          filter.push('apex:OracleDuration');
+          break;
+        case 'oracleCycle':
+          filter.push('apex:OracleCycle');
+          break;
+        default:
+          // do nothing
+      }
+    } else if (is(businessObject.eventDefinitions[0], 'bpmn:MessageEventDefinition')) {
+      if (is(element, 'bpmn:IntermediateThrowEvent')) {
+        filter.push('apex:Endpoint');
+        filter.push('apex:MessageName');
+        filter.push('apex:CorrelationKey');
+        filter.push('apex:CorrelationValue');
+        filter.push('apex:Payload');
+      } else if (is(element, 'bpmn:IntermediateCatchEvent')) {
+        filter.push('apex:MessageName');
+        filter.push('apex:CorrelationKey');
+        filter.push('apex:CorrelationValue');
+        filter.push('apex:PayloadVariable');
+      }
+    }
   }
-  switch (businessObject.eventDefinitions[0].timerType) {
-    case 'oracleDate':
-      return ['apex:OracleDate'];
-    case 'oracleDuration':
-      return ['apex:OracleDuration'];
-    case 'oracleCycle':
-      return ['apex:OracleCycle'];
-    default:
-      return [];
-  }
+
+  return filter;
 }
 
 function getTaskFilters(element) {
@@ -152,10 +186,35 @@ function getTaskFilters(element) {
     filter.push('apex:ExecutePlsql');
     // filter send tasks
   } else if (is(element, 'bpmn:SendTask')) {
-    filter.push('apex:ExecutePlsql');
+    switch (businessObject.type) {
+      case 'executePlsql':
+        filter.push('apex:ExecutePlsql');
+        break;
+      case 'basicApexMessage':
+        filter.push('apex:Endpoint');
+        filter.push('apex:MessageName');
+        filter.push('apex:CorrelationKey');
+        filter.push('apex:CorrelationValue');
+        filter.push('apex:Payload');
+        break;
+      default:
+      // do nothing
+    }
     // filter receive tasks
   } else if (is(element, 'bpmn:ReceiveTask')) {
-    filter.push('apex:ExecutePlsql');
+    switch (businessObject.type) {
+      case 'executePlsql':
+        filter.push('apex:ExecutePlsql');
+        break;
+      case 'basicApexMessage':
+        filter.push('apex:MessageName');
+        filter.push('apex:CorrelationKey');
+        filter.push('apex:CorrelationValue');
+        filter.push('apex:PayloadVariable');
+        break;
+      default:
+      // do nothing
+    }
   }
   return filter;
 }

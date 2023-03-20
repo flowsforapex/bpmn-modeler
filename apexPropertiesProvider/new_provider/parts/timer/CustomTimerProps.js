@@ -217,8 +217,6 @@ function TimerDefinition(props) {
   const debounce = useService('debounceInput');
   const modeling = useService('modeling');
 
-  console.log(timerEventFormalExpression);
-
   const getValue = () => timerEventFormalExpression && timerEventFormalExpression.get('body');
 
   const setValue = (value) => {

@@ -10,7 +10,6 @@ import { useService } from 'bpmn-js-properties-panel';
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
 var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
-var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 var minDash = require('min-dash');
 
 const endpointHelper = new ExtensionHelper('apex:Endpoint');
@@ -41,7 +40,7 @@ export default function (args) {
   const entries = [];
 
   if (
-    (is(element, 'bpmn:SendTask') && !['executePLSQL'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:SendTask') && !['executePlsql'].includes(businessObject.type)) ||
     (is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element))
   ) {
     entries.push(
@@ -82,7 +81,7 @@ export default function (args) {
       },
     );
   } else if (
-    (is(element, 'bpmn:ReceiveTask') && !['executePLSQL'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:ReceiveTask') && !['executePlsql'].includes(businessObject.type)) ||
     (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
   ) {
     entries.push(

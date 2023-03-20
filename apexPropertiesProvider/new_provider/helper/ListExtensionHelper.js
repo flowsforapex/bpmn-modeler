@@ -133,8 +133,6 @@ export default class ListExtensionHelper {
         updatedBusinessObject,
         update
       );
-
-      console.log(updatedBusinessObject);
     };
   }
 

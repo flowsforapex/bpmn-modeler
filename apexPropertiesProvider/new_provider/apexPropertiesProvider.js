@@ -22,6 +22,7 @@ import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionPro
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
+import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
 import BasicApexMessageProps from './parts/message/BasicApexMessageProps';
 
@@ -90,9 +91,9 @@ export default function apexPropertiesProvider(
 ) {
   makePropertiesPanelResizable();
 
-  // eventBus.on('saveXML.start', function () {
-  //   removeInvalidExtensionsElements(elementRegistry, modeling);
-  // });
+  eventBus.on('saveXML.start', function () {
+    removeInvalidExtensionsElements(elementRegistry, modeling);
+  });
 
   // TODO test if needed
   // eventBus.on('connection.added', function (event) {
