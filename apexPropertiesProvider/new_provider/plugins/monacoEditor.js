@@ -59,8 +59,8 @@ export function getContainer(translate, id) {
   return container;
 }
 
-export function openEditor(getText, saveText, language, id) {
-  const modal = domQuery(`#modal-dialog-${id}`); // fix not always correct modal selected (add type again ??)
+export function openEditor(getText, saveText, language, type, id) {
+  const modal = domQuery(`#modal-dialog-${id}`);
   const parent = modal.parentNode;
   const container = domQuery('.dialog-container');
 
@@ -109,27 +109,21 @@ export function openEditor(getText, saveText, language, id) {
 
   if (language === 'plsql' || language === 'sql') {
     parseBtn.onclick = function () {
-      // // ajaxIdentifier
-      // var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-      // // ajax process
-      // apex.server
-      //   .plugin(
-      //     ajaxIdentifier,
-      //     {
-      //       x01: 'PARSE_CODE',
-      //       x02: monacoEditor.getValue(),
-      //       x03: language,
-      //       x04: type,
-      //     },
-      //     {}
-      //   )
-      //   .then((pData) => {
-
-        const pData = {
-          'message': 'ORA-06550: line 4, column 4:\nPLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:\n\n   ( begin case declare end exception exit for goto if loop mod\n   null pragma raise return select update while with\n   \u003Can identifier\u003E \u003Ca double-quoted delimited-identifier\u003E\n   \u003Ca bind variable\u003E \u003C\u003C continue close current delete fetch lock\n   insert open rollback savepoint set sql execute commit forall\n   merge pipe purge json_exists json_value json_query\n   json_object json_array',
-          'success': 'false',
-        };
-
+      // ajaxIdentifier
+      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // ajax process
+      apex.server
+        .plugin(
+          ajaxIdentifier,
+          {
+            x01: 'PARSE_CODE',
+            x02: monacoEditor.getValue(),
+            x03: language,
+            x04: type,
+          },
+          {}
+        )
+        .then((pData) => {
         domQuery('#error-text', modal).innerText =
             pData.message.replace(/\n/g, ' ');
           switch (pData.success) {
@@ -145,7 +139,7 @@ export function openEditor(getText, saveText, language, id) {
               domQuery('#error-text', modal).style.color =
                 'inherit';
           }
-        // });
+        });
     };
   } else {
     parseBtn.style.display = 'none';

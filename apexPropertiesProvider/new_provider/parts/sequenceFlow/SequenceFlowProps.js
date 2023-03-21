@@ -216,6 +216,7 @@ function Condition(props) {
         getProperty,
         saveProperty,
         'plsql',
+        `${language}Boolean`,
         id
       );
     });
