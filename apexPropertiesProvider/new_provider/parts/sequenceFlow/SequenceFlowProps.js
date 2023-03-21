@@ -216,7 +216,7 @@ function Condition(props) {
         getProperty,
         saveProperty,
         'plsql',
-        `${language}Boolean`
+        id
       );
     });
 
@@ -229,7 +229,7 @@ function Condition(props) {
 
   if (language) {
     return [
-      getContainer(translate),
+      getContainer(translate, id),
       new TextAreaEntry({
         id: id,
         element: element,

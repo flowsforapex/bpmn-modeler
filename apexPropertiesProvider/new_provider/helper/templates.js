@@ -289,6 +289,8 @@ export function DefaultTextAreaEntry(props) {
 export function DefaultTextAreaEntryWithEditor(props) {
   const { id, element, listElement, label, description, helper, property, language, type, parent } = props;
 
+  console.log(id); // TODO use this for unique dialog instances
+
   const modeling = useService('modeling');
   const translate = useService('translate');
   const debounce = useService('debounceInput');
@@ -329,12 +331,12 @@ export function DefaultTextAreaEntryWithEditor(props) {
         getProperty,
         saveProperty,
         language,
-        type
+        id
       );
     });
 
   return [
-    getContainer(translate),
+    getContainer(translate, id),
     new TextAreaEntry({
       id: id,
       element: element,

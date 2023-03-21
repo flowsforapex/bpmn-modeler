@@ -3,9 +3,9 @@ import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 var domQuery = require('min-dom').query;
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
-export function getContainer(translate) {
+export function getContainer(translate, id) {
   const container = jsxRuntime.jsx('div', {
-    id: 'modal-dialog',
+    id: `modal-dialog-${id}`,
     class: 'modal',
     children: jsxRuntime.jsx('div', {
       id: 'modal-content',
@@ -59,17 +59,17 @@ export function getContainer(translate) {
   return container;
 }
 
-export function openEditor(getText, saveText, language, type) {
-  const modal = domQuery('#modal-dialog');
+export function openEditor(getText, saveText, language, id) {
+  const modal = domQuery(`#modal-dialog-${id}`); // fix not always correct modal selected (add type again ??)
   const parent = modal.parentNode;
   const container = domQuery('.dialog-container');
 
-  const undoBtn = domQuery('#modal-dialog #undo-btn');
-  const redoBtn = domQuery('#modal-dialog #redo-btn');
-  const searchBtn = domQuery('#modal-dialog #search-btn');
-  const parseBtn = domQuery('#modal-dialog #parse-btn');
-  const closeBtn = domQuery('#modal-dialog #close-btn');
-  const saveBtn = domQuery('#modal-dialog #save-btn');
+  const undoBtn = domQuery('#undo-btn', modal);
+  const redoBtn = domQuery('#redo-btn', modal);
+  const searchBtn = domQuery('#search-btn', modal);
+  const parseBtn = domQuery('#parse-btn', modal);
+  const closeBtn = domQuery('#close-btn', modal);
+  const saveBtn = domQuery('#save-btn', modal);
 
   var searchFlag = false;
 
@@ -77,7 +77,7 @@ export function openEditor(getText, saveText, language, type) {
     document.getElementsByClassName('flows4apex-modeler FLOWS-DARK').length > 0 ? 'vs-dark' : 'vs';
 
   const monacoEditor = editor.create(
-    domQuery('#modal-dialog #editor-container'),
+    domQuery('#editor-container', modal),
     {
       value: [getText()].join('\n'),
       language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
@@ -105,41 +105,47 @@ export function openEditor(getText, saveText, language, type) {
     else monacoEditor.trigger('keyboard', 'closeFindWidget');
   };
 
-  domQuery('#modal-dialog #error-text').innerText = '';
+  domQuery('#error-text', modal).innerText = '';
 
   if (language === 'plsql' || language === 'sql') {
     parseBtn.onclick = function () {
-      // ajaxIdentifier
-      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
-      // ajax process
-      apex.server
-        .plugin(
-          ajaxIdentifier,
-          {
-            x01: 'PARSE_CODE',
-            x02: monacoEditor.getValue(),
-            x03: language,
-            x04: type,
-          },
-          {}
-        )
-        .then((pData) => {
-          domQuery('#modal-dialog #error-text').innerText =
+      // // ajaxIdentifier
+      // var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      // // ajax process
+      // apex.server
+      //   .plugin(
+      //     ajaxIdentifier,
+      //     {
+      //       x01: 'PARSE_CODE',
+      //       x02: monacoEditor.getValue(),
+      //       x03: language,
+      //       x04: type,
+      //     },
+      //     {}
+      //   )
+      //   .then((pData) => {
+
+        const pData = {
+          'message': 'ORA-06550: line 4, column 4:\nPLS-00103: Encountered the symbol "end-of-file" when expecting one of the following:\n\n   ( begin case declare end exception exit for goto if loop mod\n   null pragma raise return select update while with\n   \u003Can identifier\u003E \u003Ca double-quoted delimited-identifier\u003E\n   \u003Ca bind variable\u003E \u003C\u003C continue close current delete fetch lock\n   insert open rollback savepoint set sql execute commit forall\n   merge pipe purge json_exists json_value json_query\n   json_object json_array',
+          'success': 'false',
+        };
+
+        domQuery('#error-text', modal).innerText =
             pData.message.replace(/\n/g, ' ');
           switch (pData.success) {
             case 'true':
-              domQuery('#modal-dialog #error-text').style.color =
+              domQuery('#error-text', modal).style.color =
                 '#52B415';
               break;
             case 'false':
-              domQuery('#modal-dialog #error-text').style.color =
+              domQuery('#error-text', modal).style.color =
                 '#cc3333';
               break;
             default:
-              domQuery('#modal-dialog #error-text').style.color =
+              domQuery('#error-text', modal).style.color =
                 'inherit';
           }
-        });
+        // });
     };
   } else {
     parseBtn.style.display = 'none';

@@ -8,7 +8,9 @@ import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-import { DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntry, DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry } from '../../helper/templates';
+
+var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
 const extensionHelper = new ExtensionHelper('apex:ExecutePlsql');
 
@@ -19,6 +21,8 @@ export default function (args) {
   const businessObject = getBusinessObject(element);
 
   const translate = injector.get('translate');
+
+  const entries = [];
   
   if (
     is(element, 'bpmn:ScriptTask') ||
@@ -27,7 +31,7 @@ export default function (args) {
     (is(element, 'bpmn:SendTask') && businessObject.type === 'executePlsql') ||
     (is(element, 'bpmn:ReceiveTask') && businessObject.type === 'executePlsql')
    ) {
-    return [
+    entries.push(
       {
         id: 'plsqlCode',
         element,
@@ -43,23 +47,40 @@ export default function (args) {
       {
         id: 'engine',
         element,
-        label: translate('Use APEX_EXEC'),
+        label: translate('Allow Binding'),
         helper: extensionHelper,
         property: 'engine',
         component: DefaultToggleSwitchEntry,
         isEdited: isToggleSwitchEntryEdited,
-      },
-      {
-        id: 'autoBinds',
-        element,
-        label: translate('Bind Page Item Values (depr)'),
-        description: translate('Enable automatic parameter binding of APEX Page Items. Set to Yes if you only reference APEX Page Items.'),
-        helper: extensionHelper,
-        property: 'autoBinds',
-        component: DefaultToggleSwitchEntry,
-        isEdited: isToggleSwitchEntryEdited,
-      },
-    ];
+      }
+    );
+
+    const allowBinds = extensionHelper.getExtensionProperty(element, 'engine');
+
+    if (allowBinds === 'true') {
+      entries.push(
+        {
+          id: 'autoBinds',
+          element,
+          label: translate('Bind parameter values'),
+          description:
+              jsxRuntime.jsx('a', {
+                children: translate('documentation'),
+                href: 'https://flowsforapex.org/latest/tasks/#3-bpmnscripttask---runs-a-plsql-script',
+                target: '_blank'
+              }),
+          helper: extensionHelper,
+          property: 'autoBinds',
+          defaultValue: 'false',
+          options: [
+            { label: 'Bind process variables', value: 'false' },
+            { label: 'Bind page items (deprecated)', value: 'true' },
+          ],
+          component: DefaultSelectEntry,
+          isEdited: isToggleSwitchEntryEdited,
+        },
+      );
+    }
   }
-  return [];
+  return entries;
 }
