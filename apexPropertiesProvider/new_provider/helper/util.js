@@ -81,5 +81,6 @@ export function nextId(prefix) {
 }
 
 export function getBusinessObject(element) {
-  return is(element, 'bpmn:Participant') ? getBO(element).processRef : getBO(element);
+
+  return (is(element, 'bpmn:Participant') && getBO(element).processRef) ? getBO(element).processRef : getBO(element);
 }

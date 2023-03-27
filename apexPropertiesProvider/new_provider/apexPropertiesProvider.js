@@ -1,4 +1,5 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
+import { getBusinessObject } from './helper/util';
 import ExecutePlsqlProps from './parts/executePlsql/ExecutePlsqlProps';
 import ProcVarGroup from './parts/processVariables/ProcVarGroup';
 import ApexPageProps from './parts/userTask/ApexPageProps';
@@ -171,7 +172,7 @@ export default function apexPropertiesProvider(
       }
 
       // process // TODO validate participant properties
-      if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
+      if (is(element, 'bpmn:Process') || is(getBusinessObject(element), 'bpmn:Process')) {
         newGroups.push(createSection({element, injector, translate}, 'execution', 'Execution', ExecutionProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Variables', ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
