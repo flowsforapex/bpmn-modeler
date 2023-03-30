@@ -183,8 +183,8 @@ button.dialog.fa {
  */
 .FLOWS-DARK {
   --color-flows-dark-background: #2b3035;
+  --color-flows-lighter-dark-background: #32383d;
 
-  --color-flows-dark-properties-panel-background: #32383d;
   --color-flows-dark-properties-panel-input: #282c30;
 
   --color-flows-dark-input-focus: #1e2630;
@@ -213,10 +213,10 @@ button.dialog.fa {
   color: white;
 }
 .FLOWS-DARK .djs-popup-search input:focus {
-  background-color: var(--color-flows-dark-properties-panel-background);
+  background-color: var(--color-flows-lighter-dark-background);
 }
 .FLOWS-DARK .djs-popup .entry.selected {
-  background-color: var(--color-flows-dark-properties-panel-background);
+  background-color: var(--color-flows-lighter-dark-background);
   color: white;
 }
 .FLOWS-DARK .djs-context-pad .entry {
@@ -225,7 +225,7 @@ button.dialog.fa {
   color: white;
 }
 .FLOWS-DARK .djs-palette {
-  --palette-background-color: var(--color-flows-dark-background);
+  --palette-background-color: var(--color-flows-lighter-dark-background);
   --palette-entry-color: white;
 }
 .FLOWS-DARK .djs-direct-editing-parent {
@@ -237,7 +237,7 @@ button.dialog.fa {
   --shape-drop-allowed-fill-color: var(--color-flows-dark-background);
 }
 .FLOWS-DARK .djs-shape.connect-ok {
-  --shape-connect-allowed-fill-color: var(--color-flows-dark-properties-panel-background);
+  --shape-connect-allowed-fill-color: var(--color-flows-lighter-dark-background);
 }
 .FLOWS-DARK .bjs-powered-by {
   color: white !important;
@@ -255,7 +255,7 @@ button.dialog.fa {
   background-color: var(--color-flows-dark-background) !important;
 }
 .FLOWS-DARK .bjsl-issues {
-  background-color: var(--color-flows-dark-properties-panel-background);
+  background-color: var(--color-flows-lighter-dark-background);
 }
 .FLOWS-DARK .bjsl-issues a {
   color: white;
@@ -263,12 +263,17 @@ button.dialog.fa {
 /**
  * custom properties panel colors
  */
- .FLOWS-DARK .bio-properties-panel-container,
- .FLOWS-DARK .bio-properties-panel-header,
- .FLOWS-DARK .bio-properties-panel-group,
- .FLOWS-DARK .bio-properties-panel-group-header.sticky
- {
-   background-color: var(--color-flows-dark-properties-panel-background);
+.FLOWS .bio-properties-panel-container {
+  background-color: hsl(225, 10%, 95%);
+}
+.FLOWS-DARK .bio-properties-panel-container,
+.FLOWS-DARK .bio-properties-panel-header {
+  background-color: var(--color-flows-dark-background);
+  color: white;
+}
+.FLOWS-DARK .bio-properties-panel-group,
+.FLOWS-DARK .bio-properties-panel-group-header.sticky {
+   background-color: var(--color-flows-lighter-dark-background);
    color: white;
  }
 .FLOWS-DARK .bio-properties-panel {
@@ -285,11 +290,14 @@ button.dialog.fa {
 .FLOWS-DARK .bio-properties-panel-description {
   color: white;
 }
+.FLOWS-DARK .bio-properties-panel-header-icon  {
+  fill: white;
+}
 /**
  * custom monaco editor colors
  */
 .FLOWS-DARK .modal-content {
-  background-color: var(--color-flows-dark-properties-panel-background);
+  background-color: var(--color-flows-lighter-dark-background);
 }
 .FLOWS-DARK button.dialog {
   color: white;
