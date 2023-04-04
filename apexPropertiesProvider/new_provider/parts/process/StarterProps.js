@@ -52,7 +52,6 @@ function PotentialStartingUsers(props) {
   const expressionTypeOptions = [
     { label: '', value: null },
     { label: translate('Static'), value: 'static' },
-    { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
     { label: translate('Expression'), value: 'plsqlRawExpression' },
@@ -144,7 +143,6 @@ function PotentialStartingGroups(props) {
   const expressionTypeOptions = [
     { label: '', value: null },
     { label: translate('Static'), value: 'static' },
-    { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
     { label: translate('Expression'), value: 'plsqlRawExpression' },
@@ -236,7 +234,6 @@ function ExcludedStartingUsers(props) {
   const expressionTypeOptions = [
     { label: '', value: null },
     { label: translate('Static'), value: 'static' },
-    { label: translate('Process Variable'), value: 'processVariable' },
     { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
     { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
     { label: translate('Expression'), value: 'plsqlRawExpression' },

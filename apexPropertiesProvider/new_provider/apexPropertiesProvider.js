@@ -223,7 +223,7 @@ export default function apexPropertiesProvider(
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
       
-      groups = groups.filter(g => g.id !== 'timer');
+      groups = groups.filter(g => g.id !== 'timer' && g.id !== 'message');
 
       return groups;
     };
