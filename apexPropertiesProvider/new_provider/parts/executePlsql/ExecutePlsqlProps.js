@@ -65,7 +65,7 @@ export default function (args) {
           label: translate('Bind parameter values'),
           description:
               jsxRuntime.jsx('a', {
-                children: translate('documentation'),
+                children: translate('Documentation'),
                 href: 'https://flowsforapex.org/latest/tasks/#3-bpmnscripttask---runs-a-plsql-script',
                 target: '_blank'
               }),
@@ -73,8 +73,8 @@ export default function (args) {
           property: 'autoBinds',
           defaultValue: 'false',
           options: [
-            { label: 'Bind process variables', value: 'false' },
-            { label: 'Bind page items (deprecated)', value: 'true' },
+            { label: translate('Bind process variables'), value: 'false' },
+            { label: translate('Bind page items (deprecated)'), value: 'true' },
           ],
           component: DefaultSelectEntry,
           isEdited: isToggleSwitchEntryEdited,

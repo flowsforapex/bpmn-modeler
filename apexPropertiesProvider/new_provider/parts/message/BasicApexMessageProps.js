@@ -49,35 +49,35 @@ export default function (args) {
         element,
         component: DefaultExpression,
         helper: endpointHelper,
-        label: 'Endpoint',
+        label: translate('Endpoint'),
       },
       {
         id: 'messageName',
         element,
         component: DefaultExpression,
         helper: messageNameHelper,
-        label: 'Message Name'
+        label: translate('Message Name')
       },
       {
         id: 'correlationKey',
         element,
         component: DefaultExpression,
         helper: correlationKeyHelper,
-        label: 'Correlation Key'
+        label: translate('Correlation Key')
       },
       {
         id: 'correlationValue',
         element,
         component: DefaultExpression,
         helper: correlationValueHelper,
-        label: 'Correlation Value'
+        label: translate('Correlation Value')
       },
       {
         id: 'payload',
         element,
         component: DefaultExpression,
         helper: payloadHelper,
-        label: 'Payload'
+        label: translate('Payload')
       },
     );
   } else if (
@@ -90,21 +90,21 @@ export default function (args) {
         element,
         component: DefaultExpression,
         helper: messageNameHelper,
-        label: 'Message Name'
+        label: translate('Message Name')
       },
       {
         id: 'correlationKey',
         element,
         component: DefaultExpression,
         helper: correlationKeyHelper,
-        label: 'Correlation Key'
+        label: translate('Correlation Key')
       },
       {
         id: 'correlationValue',
         element,
         component: DefaultExpression,
         helper: correlationValueHelper,
-        label: 'Correlation Value'
+        label: translate('Correlation Value')
       },
       {
         id: 'payloadVariable',
@@ -148,7 +148,7 @@ function DefaultExpression(props) {
     {
       id: 'expressionType',
       element,
-      label: 'Expression Type',
+      label: translate('Expression Type'),
       helper: helper,
       property: 'expressionType',
       options: expressionTypeOptions,
