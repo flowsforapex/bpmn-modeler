@@ -203,7 +203,7 @@ function DefaultExpression(props) {
   return new CollapsibleEntry({
     id: id,
     element: element,
-    label: translate(label),
+    label: label,
     entries: entries,
   });
 }

@@ -186,3 +186,13 @@ translate(
 translate('Link Name');
 translate('Activity Ref');
 translate('Wait for Completion');
+
+// procVarGroups
+translate('Before Task');
+translate('After Task');
+translate('In Variables');
+translate('Out Variables');
+translate('Before Split');
+translate('After Merge');
+translate('Before Event');
+translate('On Event');

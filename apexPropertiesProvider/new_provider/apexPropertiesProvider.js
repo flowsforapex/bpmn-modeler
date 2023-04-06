@@ -37,7 +37,7 @@ function createSection(args, id, label, props) {
 
   const section = {
     id: id,
-    label: args.translate(label),
+    label: label,
     entries: props(args)
   };
 
@@ -114,108 +114,108 @@ export default function apexPropertiesProvider(
         is(element, 'bpmn:Task') && 
         !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask'])
       ) {
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // userTask
       if (is(element, 'bpmn:UserTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'apexPage', 'APEX Page', ApexPageProps));
-        newGroups.push(createSection({element, injector, translate}, 'apexApproval', 'APEX Approval', ApexApprovalProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
-        newGroups.push(createSection({element, translate}, 'assignment', 'Assignment', AssignmentProps));
-        newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'apexPage', translate('APEX Page'), ApexPageProps));
+        newGroups.push(createSection({element, injector, translate}, 'apexApproval', translate('APEX Approval'), ApexApprovalProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
+        newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 
       // scriptTask
       if (is(element, 'bpmn:ScriptTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // serviceTask
       if (is(element, 'bpmn:ServiceTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'sendMail', 'Mail', SendMailProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // businessRuleTask
       if (is(element, 'bpmn:BusinessRuleTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // sendTask
       if (is(element, 'bpmn:SendTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // receiveTask
       if (is(element, 'bpmn:ReceiveTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'taskType', 'Task Type', TaskTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'executePlsql', 'PL/SQL', ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // callActivity
       if (is(element, 'bpmn:CallActivity')) {
-        newGroups.push(createSection({element, injector, translate}, 'callActivity', 'Called Diagram', CallActivityProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Mapping', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'callActivity', translate('Called Diagram'), CallActivityProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('In/Out Mapping'), ProcVarGroup));
       }
 
       // process // TODO validate participant properties
       if (is(element, 'bpmn:Process') || is(getBusinessObject(element), 'bpmn:Process')) {
-        newGroups.push(createSection({element, injector, translate}, 'execution', 'Execution', ExecutionProps));
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'In/Out Variables', ProcVarGroup));
-        newGroups.push(createSection({element, translate}, 'starter', 'Potential Starters', StarterProps));
-        newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', 'Background Task Session', BackgroundTaskSessionProps));
-        newGroups.push(createSection({element, translate}, 'scheduling', 'Scheduling', SchedulingProps));
+        newGroups.push(createSection({element, injector, translate}, 'execution', translate('Execution'), ExecutionProps));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('In/Out Variables'), ProcVarGroup));
+        newGroups.push(createSection({element, translate}, 'starter', translate('Potential Starters'), StarterProps));
+        newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', translate('Background Task Session'), BackgroundTaskSessionProps));
+        newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 
       // add the message event props
       if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', 'Basic APEX Message', BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
       }
 
       // lane
       if (is(element, 'bpmn:Lane')) {
-        newGroups.push(createSection({element, injector, translate}, 'role', 'APEX Role', RoleProps));
+        newGroups.push(createSection({element, injector, translate}, 'role', translate('APEX Role'), RoleProps));
       }
 
       // gateways
       if (is(element, 'bpmn:Gateway')) {
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // add the routing expression section
       if (is(element, 'bpmn:SequenceFlow')) {
-        newGroups.push(createSection({element, injector, translate}, 'condition', 'Condition', SequenceFlowProps));
+        newGroups.push(createSection({element, injector, translate}, 'condition', translate('Condition'), SequenceFlowProps));
       }
 
       // add the custom timer section
-      newGroups.push(createSection({element, translate}, 'customTimer', 'Timer', CustomTimerProps));
+      newGroups.push(createSection({element, translate}, 'customTimer', translate('Timer'), CustomTimerProps));
 
       // add event proc var section
       if (is(element, 'bpmn:Event')) {
-        newGroups.push(createSection({element, injector, translate}, 'procVars', 'Variable Expressions', ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
       // add terminate event section
       if (is(element, 'bpmn:EndEvent')) {
-        newGroups.push(createSection({element, translate}, 'customTerminate', 'Details', TerminateEventProps));
+        newGroups.push(createSection({element, translate}, 'customTerminate', translate('Details'), TerminateEventProps));
       }
 
       // add custom section
       if (pluginMode === 'development') {
-        newGroups.push(createSection({element, injector, translate}, 'custom', 'Custom', CustomExtensionProps));
+        newGroups.push(createSection({element, injector, translate}, 'custom', translate('Custom'), CustomExtensionProps));
       }
       
       // filter: add all non-empty groups

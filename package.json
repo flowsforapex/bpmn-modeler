@@ -14,7 +14,7 @@
     "dev-demo-prod": "webpack-dev-server --mode production --config webpack.config.demo.js",
     "lint": "eslint ./",
     "update-dependencies": "npx remove-node-modules && npm i",
-    "get-translations": "node translation-extractor"
+    "get-translations": "node modules/translationModule/translation-extractor"
   },
   "repository": {
     "type": "git",
