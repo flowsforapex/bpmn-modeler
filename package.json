@@ -13,7 +13,8 @@
     "dev-demo": "webpack-dev-server --mode development --config webpack.config.demo.js",
     "dev-demo-prod": "webpack-dev-server --mode production --config webpack.config.demo.js",
     "lint": "eslint ./",
-    "update-dependencies": "npx remove-node-modules && npm i"
+    "update-dependencies": "npx remove-node-modules && npm i",
+    "get-translations": "node translation-extractor"
   },
   "repository": {
     "type": "git",
@@ -53,6 +54,7 @@
     "eslint-config-webpack": "^1.2.5",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^3.4.1",
+    "gettext-extractor": "^3.5.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
     "webpack": "^5.68.0",
