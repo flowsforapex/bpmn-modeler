@@ -26,6 +26,7 @@ export default function (args) {
   const timerEventDefinitionType = getTimerDefinitionType(timerEventDefinition);
 
   if (isTimerSupported(element)) {
+
     return [
       {
         id: 'timerDefinitionType',
@@ -211,7 +212,10 @@ function TimerDefinitionType(props) {
 function TimerDefinition(props) {
   const { element, id, timerEventDefinition, timerEventDefinitionType } = props;
 
-  const timerEventFormalExpression = timerEventDefinition.get(timerEventDefinitionType);
+  console.log(timerEventDefinition);
+  console.log(timerEventDefinitionType);
+
+  const timerEventFormalExpression = timerEventDefinitionType && timerEventDefinition.get(timerEventDefinitionType);
 
   const translate = useService('translate');
   const debounce = useService('debounceInput');
