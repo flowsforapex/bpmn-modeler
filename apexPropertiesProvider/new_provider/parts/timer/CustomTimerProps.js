@@ -212,9 +212,6 @@ function TimerDefinitionType(props) {
 function TimerDefinition(props) {
   const { element, id, timerEventDefinition, timerEventDefinitionType } = props;
 
-  console.log(timerEventDefinition);
-  console.log(timerEventDefinitionType);
-
   const timerEventFormalExpression = timerEventDefinitionType && timerEventDefinition.get(timerEventDefinitionType);
 
   const translate = useService('translate');
