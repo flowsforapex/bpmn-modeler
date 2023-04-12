@@ -633,7 +633,7 @@
     },
     {
       "name": "CustomExtension",
-      "extends": ["bpmn:Process" ],
+      "superClass": [ "Element" ],
       "properties": [
         {
           "name": "customExtension",
