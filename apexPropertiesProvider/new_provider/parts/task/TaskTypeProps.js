@@ -38,7 +38,6 @@ export default function (args) {
     ],
     'bpmn:ReceiveTask': [
       { label: translate('Basic APEX Message'), value: 'basicApexMessage' },
-      { label: translate('Execute PL/SQL'), value: 'executePlsql' },
     ],
   };
   

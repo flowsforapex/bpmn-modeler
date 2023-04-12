@@ -81,7 +81,7 @@ export default function (args) {
       },
     );
   } else if (
-    (is(element, 'bpmn:ReceiveTask') && !['executePlsql'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:ReceiveTask')) ||
     (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
   ) {
     entries.push(
