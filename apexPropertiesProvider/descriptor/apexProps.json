@@ -66,6 +66,17 @@
       ]
     },
     {
+      "name": "EventAttributes",
+      "extends": [ "bpmn:Event" ],
+      "properties": [
+        {
+          "name": "type",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "CallActivityAttributes",
       "extends": [ "bpmn:CallActivity" ],
       "properties": [

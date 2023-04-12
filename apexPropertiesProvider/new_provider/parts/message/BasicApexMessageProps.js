@@ -20,7 +20,7 @@ const payloadHelper = new ExtensionHelper('apex:Payload');
 
 const payloadVariableHelper = new ExtensionHelper('apex:PayloadVariable');
 
-function getMessageEvent(element) {
+export function getMessageEvent(element) {
   const businessObject = getBusinessObject(element);
   const eventDefinitions = businessObject.get('eventDefinitions') || [];
   

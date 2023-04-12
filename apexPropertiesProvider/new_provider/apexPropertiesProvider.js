@@ -25,6 +25,7 @@ import SendMailProps from './parts/serviceTask/SendMailProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
+import EventTypeProps from './parts/events/EventTypeProps';
 import BasicApexMessageProps from './parts/message/BasicApexMessageProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -171,7 +172,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('In/Out Mapping'), ProcVarGroup));
       }
 
-      // process // TODO validate participant properties
+      // process
       if (is(element, 'bpmn:Process') || is(getBusinessObject(element), 'bpmn:Process')) {
         newGroups.push(createSection({element, injector, translate}, 'execution', translate('Execution'), ExecutionProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('In/Out Variables'), ProcVarGroup));
@@ -182,6 +183,7 @@ export default function apexPropertiesProvider(
 
       // add the message event props
       if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
       }
 
