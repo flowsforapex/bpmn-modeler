@@ -2,39 +2,50 @@ var { is } = require('bpmn-js/lib/util/ModelUtil');
 
 import { getBusinessObject, removeExtension } from './util';
 
+import { getMessageEvent } from '../parts/message/BasicApexMessageProps';
+
+var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
+
 export function removeInvalidExtensionsElements(elementRegistry, modeling) {
   var elements = Object.values(elementRegistry._elements).map(e => e.element);
 
   elements.forEach((element) => {
     var businessObject = getBusinessObject(element);
     // filter containing allowed elements
-    var filter = [];
+    var extensionFilter = [];
     // child needed for events
     var eventDefinition;
     // list with extension elements to remove
     var toRemove;
+    // list with the attributes to remove
+    var attributesToRemove = [];
 
     if (element.type !== 'label') {
-      filter = getFilters(element);
+      extensionFilter = getExtensionFilters(element);
 
-      filter.push('apex:CustomExtension');
+      // customExtension always allowed
+      extensionFilter.push('apex:CustomExtension');
 
+      // retrieve eventDefinition
       eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
 
+      // collect element which have to be removed
       toRemove =
         businessObject.extensionElements &&
-        businessObject.extensionElements.values.filter(e => !filter.includes(e.$type));
+        businessObject.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
+      // remove extensions
       if (toRemove && toRemove.length > 0) {
         toRemove.forEach((e) => {
           removeExtension(element, businessObject, e, modeling);
         });
       }
 
+      // if event -> remove on eventDefinition level
       if (eventDefinition) {
         toRemove =
           eventDefinition.extensionElements &&
-          eventDefinition.extensionElements.values.filter(e => !filter.includes(e.$type));
+          eventDefinition.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
         if (toRemove && toRemove.length > 0) {
           toRemove.forEach((e) => {
@@ -42,11 +53,51 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
           });
         }
       }
+
+      attributesToRemove = getAttributesToRemove(element);
+
+      if (attributesToRemove && attributesToRemove.length > 0) {
+        attributesToRemove.forEach((e) => {
+          if (businessObject.get(e)) {
+            modeling.updateModdleProperties(element, businessObject, {
+              [e]: null,
+            });
+          }
+        });
+      }
     }
   });
 }
 
-function getFilters(element) {
+function getAttributesToRemove(element) {
+  var filter = [];
+  if (
+    !ModelingUtil.isAny(element, [
+      'bpmn:UserTask',
+      'bpmn:ServiceTask',
+      'bpmn:ScriptTask',
+      'bpmn:BusinessRuleTask',
+      'bpmn:SendTask',
+      'bpmn:ReceiveTask',
+    ]) &&
+    !(is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) &&
+    !(is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
+  ) {
+    filter.push('apex:type');
+  }
+  if (
+    !is(element, 'bpmn:CallActivity') &&
+    !is(element, 'bpmn:Process') &&
+    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexPage') &&
+    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexApproval') &&
+    !(is(element, 'bpmn:ServiceTask') && getBusinessObject(element).type === 'sendMail')
+  ) {
+    filter.push('apex:manualInput');
+  }
+  return filter;
+}
+
+function getExtensionFilters(element) {
   // filter gateways
   if (
     is(element, 'bpmn:ExclusiveGateway') ||
