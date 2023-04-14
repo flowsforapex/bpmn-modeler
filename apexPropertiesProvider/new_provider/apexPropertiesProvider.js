@@ -89,7 +89,7 @@ export default function apexPropertiesProvider(
   modeling,
   elementRegistry,
   translate,
-  pluginMode
+  showCustomExtensions
 ) {
   makePropertiesPanelResizable();
 
@@ -216,7 +216,7 @@ export default function apexPropertiesProvider(
       }
 
       // add custom section
-      if (pluginMode === 'development') {
+      if (showCustomExtensions) {
         newGroups.push(createSection({element, injector, translate}, 'custom', translate('Custom'), CustomExtensionProps));
       }
       
@@ -241,5 +241,5 @@ apexPropertiesProvider.$inject = [
   'modeling',
   'elementRegistry',
   'translate',
-  'config.pluginMode'
+  'config.showCustomExtensions'
 ];
