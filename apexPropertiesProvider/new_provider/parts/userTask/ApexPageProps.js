@@ -34,9 +34,6 @@ const listExtensionHelper = new ListExtensionHelper(
 );
 
 export default function (args) {
-  const [applications, setApplications] = useState([]);
-  const [pages, setPages] = useState([]);
-  const [items, setItems] = useState([]);
 
   const {element, injector} = args;
 
@@ -46,22 +43,33 @@ export default function (args) {
 
   const entries = [];
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, []);
-
-  useEffect(() => {
-    getPages(applicationId).then(pages => setPages(pages));
-  }, [applicationId]);
-
-  useEffect(() => {
-    getItems(applicationId, pageId).then(items => setItems(items));
-  }, [applicationId, pageId]);
-
   if (!['apexApproval'].includes(businessObject.type)) {
+
+    const [values, setValues] = useState({});
+
+    useEffect(() => {
+      if (!values.applications) {
+        getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
+      }
+    }, [element.id]);
+
+    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+    useEffect(() => {
+      if (applicationId) {
+        getPages(applicationId).then(pages => setValues((existing) => { return {...existing, pages: pages}; }));
+      }
+    }, [applicationId]);
+
+    const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+
+    useEffect(() => {
+      if (applicationId && pageId) {
+        getItems(applicationId, pageId).then(items => setValues((existing) => { return {...existing, items: items}; }));
+      }
+    }, [applicationId, pageId]);
+
+    const {applications, pages, items} = values;
 
     const manualInput = businessObject.manualInput === 'true';
 

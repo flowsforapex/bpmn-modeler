@@ -31,8 +31,6 @@ const listExtensionHelper = new ListExtensionHelper(
 );
 
 export default function (args) {
-  const [applications, setApplications] = useState([]);
-  const [tasks, setTasks] = useState([]);
 
   const {element, injector} = args;
 
@@ -44,17 +42,25 @@ export default function (args) {
 
   const entries = [];
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, []);
-
-  useEffect(() => {
-    getTasks(applicationId).then(tasks => setTasks(tasks));
-  }, [applicationId]);
-
   if (businessObject.type === 'apexApproval') {
+
+    const [values, setValues] = useState({});
+
+    useEffect(() => {
+      if (!values.applications) {
+        getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
+      }
+    }, [element.id]);
+
+    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+    useEffect(() => {
+      if (applicationId) {
+        getTasks(applicationId).then(tasks => setValues((existing) => { return {...existing, tasks: tasks}; }));
+      }
+    }, [applicationId]);
+
+    const {applications, tasks} = values;
 
     const manualInput = businessObject.manualInput === 'true';
 
