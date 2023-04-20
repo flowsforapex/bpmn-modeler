@@ -8,33 +8,35 @@ import { getBusinessObject } from '../../helper/util';
 import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-
-import {
-  getDiagrams
-} from '../../plugins/metaDataCollector';
+import { getDiagrams } from '../../plugins/metaDataCollector';
 
 export default function (args) {
-  const [diagrams, setDiagrams] = useState([]);
 
   const {element, injector} = args;
 
   const businessObject = getBusinessObject(element);
 
+  const [values, setValues] = useState([]);
+
+  useEffect(() => {
+    if (!values.diagrams) {
+      getDiagrams().then(diagrams => setValues((existing) => { return {...existing, diagrams: diagrams}; }));
+    }
+  }, [element.id]);
+
+  const {diagrams} = values;
+
   const translate = injector.get('translate');
+
+  const entries = [];
 
   const versionSelectionOptions = [
     { label: translate('Latest version'), value: 'latestVersion' },
     { label: translate('Named version'), value: 'namedVersion' },
   ];
 
-  const entries = [];
-
   const manualInput = businessObject.manualInput === 'true';
-  const selection = businessObject.calledDiagramVersionSelection;
-
-  useEffect(() => {
-    getDiagrams().then(diagrams => setDiagrams(diagrams));
-  }, []);
+  const versionSelection = businessObject.calledDiagramVersionSelection;
 
   entries.push(
     {
@@ -95,7 +97,7 @@ export default function (args) {
     }
   );
 
-  if (selection === 'namedVersion') {
+  if (versionSelection === 'namedVersion') {
     entries.push(
       {
         id: 'calledDiagramVersion',

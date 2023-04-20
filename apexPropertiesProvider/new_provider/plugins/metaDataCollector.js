@@ -105,8 +105,8 @@ export function getApplicationsMail() {
   console.log('getApplicationsMail');
   return Promise.resolve([
     { label: '', value: null },
-    { label: '1 - A1', value: '1' },
-    { label: '2 - A2', value: '2' },
+    { label: '1 - AM1', value: '1' },
+    { label: '2 - AM2', value: '2' },
   ]); 
 }
 

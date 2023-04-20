@@ -13,15 +13,12 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-
 import { getApplicationsMail, getJSONPlaceholders, getTemplates } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:SendMail');
 
 export default function (args) {
-  const [applications, setApplications] = useState([]);
-  const [templates, setTemplates] = useState([]);
-
+  
   const {element, injector} = args;
 
   const businessObject = getBusinessObject(element);
@@ -29,18 +26,28 @@ export default function (args) {
   const translate = injector.get('translate');
 
   const entries = [];
-
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-
-  useEffect(() => {
-    getApplicationsMail().then(applications => setApplications(applications));
-  }, []);
-
-  useEffect(() => {
-    getTemplates(applicationId).then(templates => setTemplates(templates));
-  }, [applicationId]);
   
   if (businessObject.type === 'sendMail') {
+
+    const [values, setValues] = useState({});
+
+    useEffect(() => {
+      if (!values.applicationsMail) {
+        getApplicationsMail().then(applicationsMail => setValues((existing) => {
+          return {...existing, applicationsMail: applicationsMail};
+        }));
+      }
+    }, [element.id]);
+
+    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+    useEffect(() => {
+      if (applicationId) {
+        getTemplates(applicationId).then(templates => setValues((existing) => { return {...existing, templates: templates}; }));
+      }
+    }, [applicationId]);
+    
+    const {applicationsMail, templates} = values;
     
     const manualInput = businessObject.manualInput === 'true';
     const useTemplate = (extensionHelper.getExtensionProperty(element, 'useTemplate') === 'true');
@@ -167,7 +174,7 @@ export default function (args) {
             label: translate('Application'),
             helper: extensionHelper,
             property: 'applicationId',
-            state: applications,
+            state: applicationsMail,
             component: DefaultSelectEntryAsync,
             isEdited: isSelectEntryEdited,
           },

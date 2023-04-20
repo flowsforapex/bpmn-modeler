@@ -6,40 +6,42 @@ import {
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
 
 import { getBusinessObject } from '../../helper/util';
-import {
-  getApplications, getPages, getUsernames
-} from '../../plugins/metaDataCollector';
 
 export default function (args) {
-  const [applications, setApplications] = useState([]);
-  const [pages, setPages] = useState([]);
-  const [usernames, setUsernames] = useState([]);
-  
+
   const {element, injector} = args;
 
   const businessObject = getBusinessObject(element);
+
+  const [values, setValues] = useState({});
+
+  useEffect(() => {
+    if (!values.applications) {
+      getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
+    }
+    if (!values.usernames) {
+      getUsernames().then(usernames => setValues((existing) => { return {...existing, usernames: usernames}; }));
+    }
+  }, [element.id]);
+
+  const {applicationId} = businessObject;
+
+  useEffect(() => {
+    if (applicationId) {
+      getPages(applicationId).then(pages => setValues((existing) => { return {...existing, pages: pages}; }));
+    }
+  }, [applicationId]);
+
+  const {applications, usernames, pages} = values;
 
   const translate = injector.get('translate');
 
   const entries = [];
 
   const manualInput = businessObject.manualInput === 'true';
-
-  const {applicationId} = businessObject;
-
-  useEffect(() => {
-    getApplications().then(applications => setApplications(applications));
-  }, []);
-
-  useEffect(() => {
-    getPages(applicationId).then(pages => setPages(pages));
-  }, [applicationId]);
-
-  useEffect(() => {
-    getUsernames().then(usernames => setUsernames(usernames));
-  }, []);
 
   entries.push(
     {
@@ -89,6 +91,7 @@ export default function (args) {
         label: translate('Default Application'),
         property: 'applicationId',
         state: applications,
+        // asyncGetter: getApplications,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
@@ -107,6 +110,7 @@ export default function (args) {
         label: translate('Default Username'),
         property: 'username',
         state: usernames,
+        // asyncGetter: getUsernames,
         component: DefaultSelectEntryAsync,
         isEdited: isSelectEntryEdited,
       },
