@@ -11,7 +11,6 @@ import ParametersList from '../parameters/ParametersList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
