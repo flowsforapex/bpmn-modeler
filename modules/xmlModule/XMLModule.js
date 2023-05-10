@@ -55,11 +55,13 @@ export default function XMLModule(
         // get old priority value
         const priority = approvalHelper.getExtensionProperty(element, 'priority');
 
-        // copy old priority value if no new value specified
-        if (priority && !priorityHelper.getExtensionProperty(element, 'expression')) {
-          priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {'expressionType': 'plsqlRawExpression', 'expression': priority});
+        if (priority) {
           // clear old value
           approvalHelper.setExtensionProperty(element, modeling, bpmnFactory, {'priority': null});
+          // copy old priority value if no new value specified
+          if (!priorityHelper.getExtensionProperty(element, 'expression')) {
+            priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {'expressionType': 'plsqlRawExpression', 'expression': priority});
+          }
         }
       }
     });
