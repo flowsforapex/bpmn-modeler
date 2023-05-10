@@ -11,6 +11,7 @@ import ParametersList from '../parameters/ParametersList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
+
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
@@ -189,16 +190,6 @@ export default function (args) {
         description: translate('Initiator of this approval task'),
         helper: extensionHelper,
         property: 'initiator',
-        component: DefaultTextFieldEntry,
-        isEdited: isTextFieldEntryEdited,
-      },
-      {
-        id: 'priority',
-        element,
-        label: translate('Priority'),
-        description: translate('Overwrite default value set in task definition'),
-        helper: extensionHelper,
-        property: 'priority',
         component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
