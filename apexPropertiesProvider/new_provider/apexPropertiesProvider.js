@@ -26,7 +26,7 @@ import SendMailProps from './parts/serviceTask/SendMailProps';
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
 import EventTypeProps from './parts/events/EventTypeProps';
-import BasicApexMessageProps from './parts/message/BasicApexMessageProps';
+import SimpleMessageProps from './parts/message/SimpleMessageProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -154,7 +154,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:SendTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
@@ -162,7 +162,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:ReceiveTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
       }
 
@@ -184,7 +184,7 @@ export default function apexPropertiesProvider(
       // add the message event props
       if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
         newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
-        newGroups.push(createSection({element, injector, translate}, 'basicApexMessage', translate('Basic APEX Message'), BasicApexMessageProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
       }
 
       // lane
