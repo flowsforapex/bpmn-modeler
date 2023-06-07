@@ -192,16 +192,6 @@ export default function (args) {
         component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
-      {
-        id: 'priority',
-        element,
-        label: translate('Priority'),
-        description: translate('Overwrite default value set in task definition'),
-        helper: extensionHelper,
-        property: 'priority',
-        component: DefaultTextFieldEntry,
-        isEdited: isTextFieldEntryEdited,
-      },
     );
   }
   return entries;

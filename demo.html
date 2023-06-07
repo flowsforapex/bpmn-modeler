@@ -90,6 +90,8 @@
           var canvas = myModeler.get("canvas");
           var overlays = myModeler.get("overlays");
 
+          myModeler.get('xmlModule').refactorElements();
+
           // zoom to fit full viewport
           canvas.zoom("fit-viewport");
         } catch (err) {
