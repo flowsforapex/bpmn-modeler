@@ -2,7 +2,7 @@
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 import { DefaultSelectEntry } from '../../helper/templates';
 
-import { getMessageEvent } from '../message/BasicApexMessageProps';
+import { getMessageEvent } from '../message/SimpleMessageProps';
 
 export default function (args) {
 
@@ -11,16 +11,16 @@ export default function (args) {
   const translate = injector.get('translate');
 
   const defaultValues = {
-    'bpmn:IntermediateThrowEvent': 'basicApexMessage',
-    'bpmn:IntermediateCatchEvent': 'basicApexMessage',
+    'bpmn:IntermediateThrowEvent': 'simpleMessage',
+    'bpmn:IntermediateCatchEvent': 'simpleMessage',
   };
 
   const selectOptions = {
     'bpmn:IntermediateThrowEvent': [
-      { label: translate('Basic APEX Message'), value: 'basicApexMessage' },
+      { label: translate('Simple Message'), value: 'simpleMessage' },
     ],
     'bpmn:IntermediateCatchEvent': [
-      { label: translate('Basic APEX Message'), value: 'basicApexMessage' },
+      { label: translate('Simple Message'), value: 'simpleMessage' },
     ],
   };
 

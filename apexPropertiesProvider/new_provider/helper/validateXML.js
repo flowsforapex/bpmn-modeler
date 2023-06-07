@@ -1,10 +1,8 @@
 var { is } = require('bpmn-js/lib/util/ModelUtil');
-
-import { getBusinessObject, removeExtension } from './util';
-
-import { getMessageEvent } from '../parts/message/BasicApexMessageProps';
-
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
+
+import { getMessageEvent } from '../parts/message/SimpleMessageProps';
+import { getBusinessObject, removeExtension } from './util';
 
 export function removeInvalidExtensionsElements(elementRegistry, modeling) {
   var elements = Object.values(elementRegistry._elements).map(e => e.element);
@@ -241,7 +239,7 @@ function getTaskFilters(element) {
       case 'executePlsql':
         filter.push('apex:ExecutePlsql');
         break;
-      case 'basicApexMessage':
+      case 'simpleMessage':
         filter.push('apex:Endpoint');
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
@@ -257,7 +255,7 @@ function getTaskFilters(element) {
       case 'executePlsql':
         filter.push('apex:ExecutePlsql');
         break;
-      case 'basicApexMessage':
+      case 'simpleMessage':
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
         filter.push('apex:CorrelationValue');
