@@ -182,7 +182,7 @@ export default function apexPropertiesProvider(
       }
 
       // add the message event props
-      if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
+      if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:BoundaryEvent')) {
         newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
       }
@@ -204,15 +204,23 @@ export default function apexPropertiesProvider(
 
       // add the custom timer section
       newGroups.push(createSection({element, translate}, 'customTimer', translate('Timer'), CustomTimerProps));
+      
+      // add start event sections
+      if (is(element, 'bpmn:StartEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
+      }
+      
+      // add terminate event section
+      if (is(element, 'bpmn:EndEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
+        newGroups.push(createSection({element, translate}, 'customTerminate', translate('Details'), TerminateEventProps));
+      }
 
       // add event proc var section
       if (is(element, 'bpmn:Event')) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-      }
-
-      // add terminate event section
-      if (is(element, 'bpmn:EndEvent')) {
-        newGroups.push(createSection({element, translate}, 'customTerminate', translate('Details'), TerminateEventProps));
       }
 
       // add custom section
