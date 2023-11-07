@@ -170,13 +170,13 @@ function getEventFilters(element) {
           // do nothing
       }
     } else if (is(businessObject.eventDefinitions[0], 'bpmn:MessageEventDefinition')) {
-      if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:StartEvent')) {
+      if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:EndEvent')) {
         filter.push('apex:Endpoint');
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
         filter.push('apex:CorrelationValue');
         filter.push('apex:Payload');
-      } else if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:EndEvent') || is(element, 'bpmn:BoundaryEvent')) {
+      } else if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:StartEvent') || is(element, 'bpmn:BoundaryEvent')) {
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
         filter.push('apex:CorrelationValue');
