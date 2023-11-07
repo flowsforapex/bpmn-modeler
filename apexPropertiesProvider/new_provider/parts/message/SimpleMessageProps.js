@@ -42,7 +42,7 @@ export default function (args) {
   if (
     (is(element, 'bpmn:SendTask') && !['executePlsql'].includes(businessObject.type)) ||
     (is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) ||
-    (is(element, 'bpmn:StartEvent') && getMessageEvent(element))
+    (is(element, 'bpmn:EndEvent') && getMessageEvent(element))
   ) {
     entries.push(
       {
@@ -84,7 +84,7 @@ export default function (args) {
   } else if (
     (is(element, 'bpmn:ReceiveTask')) ||
     (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element)) ||
-    (is(element, 'bpmn:EndEvent') && getMessageEvent(element)) ||
+    (is(element, 'bpmn:StartEvent') && getMessageEvent(element)) ||
     (is(element, 'bpmn:BoundaryEvent') && getMessageEvent(element))
   ) {
     entries.push(
