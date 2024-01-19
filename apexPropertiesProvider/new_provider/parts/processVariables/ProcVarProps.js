@@ -25,6 +25,7 @@ export default function ProcVarProps(args) {
     { label: translate('Date'), value: 'DATE' },
     { label: translate('Timestamp with Time Zone'), value: 'TIMESTAMP_WITH_TIME_ZONE' },
     { label: translate('Clob'), value: 'CLOB' },
+    { label: translate('JSON Object'), value: 'JSON' },
   ];
   
   const dataTypeDescription = {
@@ -40,6 +41,7 @@ export default function ProcVarProps(args) {
     ...(varDataType !== 'CLOB' ? [{ label: translate('Expression (Legacy)'), value: 'plsqlExpression' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlRawFunctionBody' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body (Legacy)'), value: 'plsqlFunctionBody' }] : []),
+    ...(varDataType === 'JSON' ? [{ label: translate('SQL query (JSON array)'), value: 'sqlQueryArray' }] : []),
   ];
 
   const expressionDescription = {
@@ -89,6 +91,9 @@ export default function ProcVarProps(args) {
       DATE: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS'),
       TIMESTAMP_WITH_TIME_ZONE: translate('PL/SQL Function Body returning a varchar2 value in format YYYY-MM-DD HH24:MI:SS TZR'),
     },
+    sqlQueryArray: {
+      JSON: translate('SQL query returning a JSON array'),
+    }
   };
 
   const editorTypes = [
@@ -98,6 +103,7 @@ export default function ProcVarProps(args) {
     'plsqlExpression',
     'plsqlRawFunctionBody',
     'plsqlFunctionBody',
+    'sqlQueryArray'
   ];
 
   
@@ -186,7 +192,7 @@ export default function ProcVarProps(args) {
       if (editorTypes.includes(varExpressionType)) {
 
         const language =
-          varExpressionType === 'sqlQuerySingle' || varExpressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+          ('sqlQuerySingle', 'sqlQueryList', 'sqlQueryArray').includes(varExpressionType) ? 'sql' : 'plsql';
 
           entries.push(
             {
