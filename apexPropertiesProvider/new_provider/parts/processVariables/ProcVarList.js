@@ -13,7 +13,7 @@ export default function ParametersProps(args) {
 
   const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
 
-  const items = procVars.map((procVar, index) => {
+  const items = procVars.sort((a, b) => Number(a.varSequence) - Number(b.varSequence)).map((procVar, index) => {
     const id = `procVar-${index}`;
 
     return {
@@ -36,6 +36,7 @@ export default function ParametersProps(args) {
 
   return {
     items,
+    shouldSort: false,
     add: helper.addSubFactory(
       {
         element,
