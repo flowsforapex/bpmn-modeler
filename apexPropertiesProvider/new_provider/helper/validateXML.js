@@ -30,6 +30,7 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
       // collect element which have to be removed
       toRemove =
         businessObject.extensionElements &&
+        businessObject.extensionElements.values &&
         businessObject.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
       // remove extensions
@@ -43,6 +44,7 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
       if (eventDefinition) {
         toRemove =
           eventDefinition.extensionElements &&
+          eventDefinition.extensionElements.values &&
           eventDefinition.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
         if (toRemove && toRemove.length > 0) {

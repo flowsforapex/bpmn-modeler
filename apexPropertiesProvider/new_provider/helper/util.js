@@ -13,7 +13,7 @@ export function getExtensionElements(element) {
 export function getExtension(element, type) {
   const extensionElements = getExtensionElements(element);
 
-  if (!extensionElements) {
+  if (!extensionElements || !extensionElements.values) {
     return null;
   }
 
