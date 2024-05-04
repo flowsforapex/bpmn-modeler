@@ -23,10 +23,11 @@ import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionPro
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
-import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
 import EventTypeProps from './parts/events/EventTypeProps';
 import SimpleMessageProps from './parts/message/SimpleMessageProps';
+
+import LoopProps from './parts/loop/LoopProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -94,7 +95,7 @@ export default function apexPropertiesProvider(
   makePropertiesPanelResizable();
 
   eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(elementRegistry, modeling);
+    // removeInvalidExtensionsElements(elementRegistry, modeling);
   });
 
   // TODO test if needed
@@ -116,6 +117,7 @@ export default function apexPropertiesProvider(
         !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask'])
       ) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // userTask
@@ -181,6 +183,11 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 
+      // subprocess
+      if (is(element, 'bpmn:SubProcess')) {
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
+      }
+
       // add the message event props
       if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:BoundaryEvent')) {
         newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
@@ -232,8 +239,10 @@ export default function apexPropertiesProvider(
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
+
+      const removeGroups = ['timer', 'message', 'multiInstance'];
       
-      groups = groups.filter(g => g.id !== 'timer' && g.id !== 'message');
+      groups = groups.filter(g => !removeGroups.includes(g.id));
 
       return groups;
     };
