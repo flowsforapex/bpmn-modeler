@@ -13,6 +13,8 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
     var extensionFilter = [];
     // child needed for events
     var eventDefinition;
+    // child needed for loops
+    var loopCharacteristics;
     // list with extension elements to remove
     var toRemove;
     // list with the attributes to remove
@@ -26,6 +28,9 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
 
       // retrieve eventDefinition
       eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
+
+      // retrieve loopCharacteristics
+      ({loopCharacteristics} = businessObject);
 
       // collect element which have to be removed
       toRemove =
@@ -50,6 +55,23 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
         if (toRemove && toRemove.length > 0) {
           toRemove.forEach((e) => {
             removeExtension(element, eventDefinition, e, modeling);
+          });
+        }
+      }
+
+      // if loop -> remove on loopCharacteristics level
+      if (loopCharacteristics) {
+        
+        extensionFilter = getLoopFilters(element);
+        
+        toRemove =
+          loopCharacteristics.extensionElements &&
+          loopCharacteristics.extensionElements.values &&
+          loopCharacteristics.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
+
+        if (toRemove && toRemove.length > 0) {
+          toRemove.forEach((e) => {
+            removeExtension(element, loopCharacteristics, e, modeling);
           });
         }
       }
@@ -185,6 +207,20 @@ function getEventFilters(element) {
         filter.push('apex:PayloadVariable');
       }
     }
+  }
+
+  return filter;
+}
+
+function getLoopFilters(element) {
+  var filter = [];
+  var businessObject = getBusinessObject(element);
+
+  filter.push('apex:InputCollection');
+  filter.push('apex:OutputCollection');
+
+  if (is(businessObject.loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
+    filter.push('apex:CompletionCondition');
   }
 
   return filter;

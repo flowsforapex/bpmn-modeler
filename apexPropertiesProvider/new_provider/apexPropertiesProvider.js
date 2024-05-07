@@ -29,6 +29,8 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 
 import LoopProps from './parts/loop/LoopProps';
 
+import { removeInvalidExtensionsElements } from './helper/validateXML';
+
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
 var domQuery = require('min-dom').query;
@@ -95,7 +97,7 @@ export default function apexPropertiesProvider(
   makePropertiesPanelResizable();
 
   eventBus.on('saveXML.start', function () {
-    // removeInvalidExtensionsElements(elementRegistry, modeling);
+    removeInvalidExtensionsElements(elementRegistry, modeling);
   });
 
   // TODO test if needed
@@ -128,6 +130,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // scriptTask
@@ -135,6 +138,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // serviceTask
@@ -143,6 +147,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // businessRuleTask
@@ -150,6 +155,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // sendTask
@@ -158,6 +164,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // receiveTask
@@ -166,6 +173,12 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
+      }
+
+      // manualTask
+      if (is(element, 'bpmn:ManualTask')) {
+        newGroups.push(createSection({element, injector, translate}, 'loop', translate('Loop'), LoopProps));
       }
 
       // callActivity

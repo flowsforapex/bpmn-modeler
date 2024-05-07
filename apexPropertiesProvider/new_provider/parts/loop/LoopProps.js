@@ -8,16 +8,13 @@ import ExtensionHelper from '../../helper/ExtensionHelper';
 import { useService } from 'bpmn-js-properties-panel';
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
-var ModelUtil = require('bpmn-js/lib/util/ModelUtil');
-var minDash = require('min-dash');
-
 const inputCollectionHelper = new ExtensionHelper('apex:InputCollection');
 const outputCollectionHelper = new ExtensionHelper('apex:OutputCollection');
 const completionConditionHelper = new ExtensionHelper('apex:CompletionCondition');
 
 export function getLoopCharacteristics(element) {
   const businessObject = getBusinessObject(element);
-  const loopCharacteristics = businessObject.get('loopCharacteristics') || [];
+  const {loopCharacteristics} = businessObject;
   
   return loopCharacteristics;
 }
@@ -78,9 +75,9 @@ function InputCollection(props) {
   
   const expressionTypeOptions = [
     { label: '', value: null },
-    { label: translate('List'), value: 'list' },
     { label: translate('Array'), value: 'array' },
-    { label: translate('SQL query array'), value: 'sqlQueryArray' },
+    { label: translate('List'), value: 'list' },
+    { label: translate('SQL Query Array'), value: 'sqlQueryArray' },
   ];
 
   const editorTypes = [
@@ -182,9 +179,9 @@ function OutputCollection(props) {
   
   const expressionTypeOptions = [
     { label: '', value: null },
-    { label: translate('List'), value: 'list' },
     { label: translate('Array'), value: 'array' },
-    { label: translate('SQL query array'), value: 'sqlQueryArray' },
+    { label: translate('List'), value: 'list' },
+    { label: translate('SQL Query Array'), value: 'sqlQueryArray' },
   ];
 
   const editorTypes = [
@@ -249,24 +246,20 @@ function OutputCollection(props) {
       );
     
     }
-
-    // if (expressionType === 'list') { // TODO check
-
-      entries.push(
-        {
-          id: 'insideVariable',
-          element,
-          label: translate('Inside Variable'),
-          helper: helper,
-          property: 'insideVariable',
-          component: DefaultTextFieldEntry,
-          isEdited: isTextFieldEntryEdited,
-          parent: loopCharacteristics,
-        },
-      );
-
-    // }
   }
+
+  entries.push(
+    {
+      id: 'insideVariable',
+      element,
+      label: translate('Inside Variable'),
+      helper: helper,
+      property: 'insideVariable',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+      parent: loopCharacteristics,
+    },
+  );
 
   return new CollapsibleEntry({
     id: id,
