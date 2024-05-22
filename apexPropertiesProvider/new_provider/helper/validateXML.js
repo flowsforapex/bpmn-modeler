@@ -62,7 +62,7 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
       // if loop -> remove on loopCharacteristics level
       if (loopCharacteristics) {
         
-        extensionFilter = getLoopFilters(element);
+        extensionFilter = getLoopFilters();
         
         toRemove =
           loopCharacteristics.extensionElements &&
@@ -212,17 +212,13 @@ function getEventFilters(element) {
   return filter;
 }
 
-function getLoopFilters(element) {
+function getLoopFilters() {
   var filter = [];
-  var businessObject = getBusinessObject(element);
 
   filter.push('apex:InputCollection');
   filter.push('apex:OutputCollection');
-
-  if (is(businessObject.loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
-    filter.push('apex:CompletionCondition');
-  }
-
+  filter.push('apex:CompletionCondition');
+  
   return filter;
 }
 

@@ -47,20 +47,15 @@ export default function (args) {
         component: OutputCollection,
         helper: outputCollectionHelper,
         label: translate('Output Collection')
+      },
+      {
+        id: 'completionCondition',
+        element,
+        component: CompletionCondition,
+        helper: completionConditionHelper,
+        label: translate('Completion Condition')
       }
     );
-
-    if (is(businessObject.loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
-      entries.push(
-        {
-          id: 'completionCondition',
-          element,
-          component: CompletionCondition,
-          helper: completionConditionHelper,
-          label: translate('Completion Condition')
-        }
-      );
-    }
   }
 
   return entries;
@@ -75,13 +70,13 @@ function InputCollection(props) {
   
   const expressionTypeOptions = [
     { label: '', value: null },
-    { label: translate('Array'), value: 'array' },
-    { label: translate('List'), value: 'list' },
-    { label: translate('SQL Query Array'), value: 'sqlQueryArray' },
+    { label: translate('Process Variable (List)'), value: 'processVariableList' },
+    { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
+    { label: translate('SQL Query'), value: 'sqlQuery' },
   ];
 
   const editorTypes = [
-    'sqlQueryArray',
+    'sqlQuery',
   ];
 
   const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
@@ -92,7 +87,7 @@ function InputCollection(props) {
     {
       id: 'expressionType',
       element,
-      label: translate('Expression Type'),
+      label: translate('Collection Type'),
       helper: helper,
       property: 'expressionType',
       options: expressionTypeOptions,
@@ -144,13 +139,13 @@ function InputCollection(props) {
     
     }
 
-    if (expressionType === 'list') {
+    if (expressionType === 'processVariableList') {
 
       entries.push(
         {
           id: 'insideVariable',
           element,
-          label: translate('Inside Variable'),
+          label: translate('Input Element'),
           helper: helper,
           property: 'insideVariable',
           component: DefaultTextFieldEntry,
@@ -179,14 +174,10 @@ function OutputCollection(props) {
   
   const expressionTypeOptions = [
     { label: '', value: null },
-    { label: translate('Array'), value: 'array' },
-    { label: translate('List'), value: 'list' },
-    { label: translate('SQL Query Array'), value: 'sqlQueryArray' },
+    { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
   ];
 
-  const editorTypes = [
-    'sqlQueryArray',
-  ];
+  const editorTypes = [];
 
   const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
   
@@ -196,7 +187,7 @@ function OutputCollection(props) {
     {
       id: 'expressionType',
       element,
-      label: translate('Expression Type'),
+      label: translate('Collection Type'),
       helper: helper,
       property: 'expressionType',
       options: expressionTypeOptions,
@@ -252,7 +243,7 @@ function OutputCollection(props) {
     {
       id: 'insideVariable',
       element,
-      label: translate('Inside Variable'),
+      label: translate('Output Element'),
       helper: helper,
       property: 'insideVariable',
       component: DefaultTextFieldEntry,
