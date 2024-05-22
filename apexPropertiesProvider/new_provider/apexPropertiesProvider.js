@@ -27,7 +27,7 @@ import CustomExtensionProps from './parts/CustomExtensionProps';
 import EventTypeProps from './parts/events/EventTypeProps';
 import SimpleMessageProps from './parts/message/SimpleMessageProps';
 
-import LoopProps from './parts/loop/LoopProps';
+import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 
@@ -128,7 +128,7 @@ export default function apexPropertiesProvider(
         !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask'])
       ) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // userTask
@@ -139,7 +139,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // scriptTask
@@ -147,7 +147,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // serviceTask
@@ -156,7 +156,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // businessRuleTask
@@ -164,7 +164,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // sendTask
@@ -173,7 +173,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // receiveTask
@@ -182,12 +182,12 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // manualTask
       if (is(element, 'bpmn:ManualTask')) {
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // callActivity
@@ -207,7 +207,7 @@ export default function apexPropertiesProvider(
 
       // subprocess
       if (is(element, 'bpmn:SubProcess')) {
-        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, LoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // add the message event props
