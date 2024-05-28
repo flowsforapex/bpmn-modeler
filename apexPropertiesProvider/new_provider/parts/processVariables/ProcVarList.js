@@ -36,7 +36,6 @@ export default function ParametersProps(args) {
 
   return {
     items,
-    shouldSort: false,
     add: helper.addSubFactory(
       {
         element,
