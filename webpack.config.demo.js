@@ -30,10 +30,11 @@ module.exports = {
           to: "assets/bpmn-js",
         },
         {
-          from: path.resolve(
-            __dirname,
-            "node_modules/bpmn-js-properties-panel/dist/assets"
-          ),
+          from: path.resolve(__dirname, "node_modules/bpmn-js-color-picker/colors/color-picker.css"),
+          to: "assets/bpmn-js-color-picker/colors",
+        },
+        {
+          from: path.resolve(__dirname, "node_modules/@bpmn-io/properties-panel/dist/assets"),
           to: "assets/bpmn-js-properties-panel",
         },
         {

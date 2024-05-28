@@ -6,11 +6,12 @@
   <title>Flows for APEX - Modeler</title>
 
   <link rel="stylesheet" href="assets/css/flows4apex.modeler.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/diagram-js.css" type="text/css"/>
   <link rel="stylesheet" href="assets/bpmn-js/bpmn-js.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js/diagram-js.css" type="text/css"/>
   <link rel="stylesheet" href="assets/bpmn-js/bpmn-font/css/bpmn-embedded.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-properties-panel/properties-panel.css" type="text/css"/>
   <link rel="stylesheet" href="assets/bpmn-js-bpmnlint/bpmn-js-bpmnlint.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js-properties-panel/properties-panel.css" type="text/css"/>
+  <link rel="stylesheet" href="assets/bpmn-js-color-picker/colors/color-picker.css" type="text/css"/>
   <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css" type="text/css"/>
 </head>
 
@@ -46,6 +47,7 @@
         bpmnModeler.customModules.xmlModule,
         bpmnModeler.customModules.drilldownCentering,
         bpmnModeler.customModules.bpmnDiOrdering,
+        bpmnModeler.customModules.colorPickerModule,
       ],
       moddleExtensions: {
         apex: bpmnModeler.moddleExtensions.apexModdleDescriptor

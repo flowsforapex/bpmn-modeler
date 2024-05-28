@@ -1,6 +1,6 @@
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import { query as domQuery } from 'min-dom';
 
-var domQuery = require('min-dom').query;
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
 export function getContainer(translate, id) {

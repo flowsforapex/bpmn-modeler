@@ -34,7 +34,7 @@ import { removeInvalidExtensionsElements } from './helper/validateXML';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-var domQuery = require('min-dom').query;
+import { query as domQuery } from 'min-dom';
 
 const LOW_PRIORITY = 500;
 

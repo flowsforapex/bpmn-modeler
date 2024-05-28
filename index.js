@@ -1,5 +1,6 @@
 import AddExporter from '@bpmn-io/add-exporter';
 import lintModule from 'bpmn-js-bpmnlint';
+import colorPickerModule from 'bpmn-js-color-picker';
 import BpmnModeler from 'bpmn-js/lib/Modeler';
 import bpmnlintConfig from './.bpmnlintrc';
 import apexModdleDescriptor from './apexPropertiesProvider/descriptor/apexProps';
@@ -28,7 +29,8 @@ var bpmnModeler = {
     translationModule,
     xmlModule,
     drilldownCentering,
-    bpmnDiOrdering
+    bpmnDiOrdering,
+    colorPickerModule
   },
   moddleExtensions: {
     apexModdleDescriptor,
