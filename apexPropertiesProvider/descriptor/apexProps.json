@@ -167,6 +167,20 @@
       ]
     },
     {
+      "name": "ApexSimpleForm",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "formTemplateId",
+          "type": "String"
+        },
+        {
+          "name": "formTemplate",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "Parameters",
       "superClass": [ "Element" ],
       "properties": [

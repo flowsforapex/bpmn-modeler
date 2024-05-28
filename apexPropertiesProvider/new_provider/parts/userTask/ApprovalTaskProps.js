@@ -50,7 +50,7 @@ export default function (args) {
       if (!values.applications) {
         getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
       }
-    }, [element.id]);
+    }, [element.id, businessObject.type]);
 
     const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
 

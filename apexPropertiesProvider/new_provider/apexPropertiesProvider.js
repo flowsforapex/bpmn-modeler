@@ -4,6 +4,7 @@ import ExecutePlsqlProps from './parts/executePlsql/ExecutePlsqlProps';
 import ProcVarGroup from './parts/processVariables/ProcVarGroup';
 import ApexPageProps from './parts/userTask/ApexPageProps';
 import ApexApprovalProps from './parts/userTask/ApprovalTaskProps';
+import ApexSimpleFormProps from './parts/userTask/SimpleFormProps';
 
 import TaskTypeProps from './parts/task/TaskTypeProps';
 import CustomTimerProps from './parts/timer/CustomTimerProps';
@@ -136,6 +137,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', translate('APEX Page'), ApexPageProps));
         newGroups.push(createSection({element, injector, translate}, 'apexApproval', translate('APEX Approval'), ApexApprovalProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleForm', translate('APEX Simple Form'), ApexSimpleFormProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));

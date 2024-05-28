@@ -192,7 +192,7 @@ export function DefaultSelectEntryAsync(props) {
 }
 
 export function DefaultToggleSwitchEntry(props) {
-  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup } = props;
+  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup, cleanupHelper } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -229,12 +229,24 @@ export function DefaultToggleSwitchEntry(props) {
       helper.setExtensionProperty(element, modeling, bpmnFactory, {
         // eslint-disable-next-line no-nested-ternary
         [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
-        ...(cleanup && cleanup(value))
       });
     } else {
       modeling.updateModdleProperties(element, businessObject, {
         // eslint-disable-next-line no-nested-ternary
         [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
+      });
+    }
+
+    if (helper) {
+      helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        ...(cleanup && cleanup(value))
+      });
+    } else if (cleanupHelper) {
+      cleanupHelper.setExtensionProperty(element, modeling, bpmnFactory, {
+        ...(cleanup && cleanup(value))
+      });
+    } else {
+      modeling.updateModdleProperties(element, businessObject, {
         ...(cleanup && cleanup(value))
       });
     }

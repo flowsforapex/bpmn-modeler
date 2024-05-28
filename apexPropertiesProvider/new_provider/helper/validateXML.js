@@ -115,6 +115,7 @@ function getAttributesToRemove(element) {
     !is(element, 'bpmn:Process') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexPage') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexApproval') &&
+    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexSimpleForm') &&
     !(is(element, 'bpmn:ServiceTask') && getBusinessObject(element).type === 'sendMail')
   ) {
     filter.push('apex:manualInput');
@@ -243,11 +244,14 @@ function getTaskFilters(element) {
       case 'apexPage':
         filter.push('apex:ApexPage');
         break;
-      case 'externalUrl':
-        filter.push('apex:ExternalUrl');
-        break;
+      // case 'externalUrl':
+      //   filter.push('apex:ExternalUrl');
+      //   break;
       case 'apexApproval':
         filter.push('apex:ApexApproval');
+        break;
+      case 'apexSimpleForm':
+        filter.push('apex:ApexSimpleForm');
         break;
       default:
       // do nothing
