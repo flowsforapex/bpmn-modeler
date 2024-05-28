@@ -80,7 +80,7 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
 
       if (attributesToRemove && attributesToRemove.length > 0) {
         attributesToRemove.forEach((e) => {
-          if (businessObject.get(e)) {
+          if (!businessObject.isImplicit && businessObject.get(e)) {
             modeling.updateModdleProperties(element, businessObject, {
               [e]: null,
             });
