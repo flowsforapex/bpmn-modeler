@@ -16,7 +16,7 @@ export default function (args) {
 
   const businessObject = getBusinessObject(element);
 
-  const [values, setValues] = useState([]);
+  const [values, setValues] = useState({});
 
   useEffect(() => {
     if (!values.diagrams) {
