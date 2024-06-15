@@ -203,7 +203,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'execution', translate('Execution'), ExecutionProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('In/Out Variables'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'starter', translate('Potential Starters'), StarterProps));
-        newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', translate('Background Task Session'), BackgroundTaskSessionProps));
+        // newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', translate('Background Task Session'), BackgroundTaskSessionProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 

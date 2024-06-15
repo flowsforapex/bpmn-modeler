@@ -16,6 +16,7 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { html } from 'htm/preact';
 
 import {
   getApplications,
@@ -44,32 +45,6 @@ export default function (args) {
   const entries = [];
 
   if (businessObject.type === 'apexPage' || !businessObject.type) {
-
-    const [values, setValues] = useState({});
-
-    useEffect(() => {
-      if (!values.applications) {
-        getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
-      }
-    }, [element.id, businessObject.type]);
-
-    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-
-    useEffect(() => {
-      if (applicationId) {
-        getPages(applicationId).then(pages => setValues((existing) => { return {...existing, pages: pages}; }));
-      }
-    }, [applicationId]);
-
-    const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
-
-    useEffect(() => {
-      if (applicationId && pageId) {
-        getItems(applicationId, pageId).then(items => setValues((existing) => { return {...existing, items: items}; }));
-      }
-    }, [applicationId, pageId]);
-
-    const {applications, pages, items} = values;
 
     const manualInput = businessObject.manualInput === 'true';
 
@@ -112,21 +87,13 @@ export default function (args) {
         {
           id: 'applicationId',
           element,
-          label: translate('Application'),
-          helper: extensionHelper,
-          property: 'applicationId',
-          state: applications,
-          component: DefaultSelectEntryAsync,
-          isEdited: isSelectEntryEdited,
+          component: ApplicationProp,
+          isEdited: isSelectEntryEdited
         },
         {
           id: 'pageId',
           element,
-          label: translate('Page'),
-          helper: extensionHelper,
-          property: 'pageId',
-          state: pages,
-          component: DefaultSelectEntryAsync,
+          component: PageProp,
           isEdited: isSelectEntryEdited,
         },
       );
@@ -147,7 +114,7 @@ export default function (args) {
             element,
             injector,
             helper: listExtensionHelper,
-            state: items,
+            // state: items,
           }
         ),
       }
@@ -177,6 +144,60 @@ export default function (args) {
       );
   }
   return entries;
+}
+
+function ApplicationProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    function fetchApplications() {
+      getApplications().then(a => setApplications(a));
+    }
+
+    fetchApplications();
+  }, [setApplications]);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Application')}
+    helper=${extensionHelper}
+    property=${'applicationId'}
+    state=${applications}
+  />`;
+}
+
+function PageProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [pages, setPages] = useState([]);
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+  useEffect(() => {
+    function fetchPages() {
+      getPages(applicationId).then(p => setPages(p));
+    }
+
+    fetchPages();
+  }, [setPages, applicationId]);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Page')}
+    helper=${extensionHelper}
+    property=${'pageId'}
+    state=${pages}
+  />`;
 }
 
 function QuickpickItems(props) {

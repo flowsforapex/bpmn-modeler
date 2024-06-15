@@ -2,12 +2,15 @@ import {
   isSelectEntryEdited,
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
 
 import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { html } from 'htm/preact';
+
 import { getDiagrams } from '../../plugins/metaDataCollector';
 
 export default function (args) {
@@ -15,16 +18,6 @@ export default function (args) {
   const {element, injector} = args;
 
   const businessObject = getBusinessObject(element);
-
-  const [values, setValues] = useState({});
-
-  useEffect(() => {
-    if (!values.diagrams) {
-      getDiagrams().then(diagrams => setValues((existing) => { return {...existing, diagrams: diagrams}; }));
-    }
-  }, [element.id]);
-
-  const {diagrams} = values;
 
   const translate = injector.get('translate');
 
@@ -68,13 +61,9 @@ export default function (args) {
       {
         id: 'calledDiagram',
         element,
-        label: translate('Called Diagram'),
-        description: translate('Name of the diagram'),
-        property: 'calledDiagram',
-        state: diagrams,
-        component: DefaultSelectEntryAsync,
+        component: CalledDiagramProp,
         isEdited: isSelectEntryEdited,
-      },
+      }
     );
   }
 
@@ -111,4 +100,30 @@ export default function (args) {
   }
 
   return entries;
+}
+
+function CalledDiagramProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [diagrams, setDiagrams] = useState([]);
+
+  useEffect(() => {
+    function fetchDiagrams() {
+      getDiagrams().then(d => setDiagrams(d));
+    }
+
+    fetchDiagrams();
+  }, [setDiagrams]);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Called Diagram')}
+    description=${translate('Name of the diagram')}
+    property=${'calledDiagram'}
+    state=${diagrams}
+  />`;
 }

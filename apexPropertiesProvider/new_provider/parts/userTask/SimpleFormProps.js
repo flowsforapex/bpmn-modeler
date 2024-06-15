@@ -1,12 +1,15 @@
 import { isSelectEntryEdited, isTextAreaEntryEdited } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+
+import { getBusinessObject } from '../../helper/util';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { html } from 'htm/preact';
 
-import { getBusinessObject } from '../../helper/util';
 import { getFormTemplates } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
@@ -22,16 +25,6 @@ export default function (args) {
   const entries = [];
 
   if (businessObject.type === 'apexSimpleForm') {
-
-    const [values, setValues] = useState({});
-
-    useEffect(() => {
-      if (!values.formTemplates) {
-        getFormTemplates().then(formTemplates => setValues((existing) => { return {...existing, formTemplates: formTemplates}; }));
-      }
-    }, [element.id, businessObject.type]);
-
-    const {formTemplates} = values;
 
     const manualInput = businessObject.manualInput === 'true';
 
@@ -73,15 +66,37 @@ export default function (args) {
         {
           id: 'formTemplateId',
           element,
-          label: translate('Form Template'),
-          helper: extensionHelper,
-          property: 'formTemplateId',
-          state: formTemplates,
-          component: DefaultSelectEntryAsync,
+          component: FormTemplateProp,
           isEdited: isSelectEntryEdited,
         }
       );
     }
   }
   return entries;
+}
+
+function FormTemplateProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [formTemplates, setFormTemplates] = useState([]);
+
+  useEffect(() => {
+    function fetchFormTemplates() {
+      getFormTemplates().then(ft => setFormTemplates(ft));
+    }
+
+    fetchFormTemplates();
+  }, [setFormTemplates]);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Form Template')}
+    helper=${extensionHelper}
+    property=${'formTemplateId'}
+    state=${formTemplates}
+  />`;
 }

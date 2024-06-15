@@ -20,7 +20,7 @@ export default function PageItemsList(args) {
           element,
           injector,
           pageItem,
-          state
+          // state
         },
       ),
       autoFocusEntry: `${id}-name`,
