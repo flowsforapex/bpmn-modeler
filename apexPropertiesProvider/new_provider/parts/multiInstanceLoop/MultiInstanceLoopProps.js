@@ -157,6 +157,19 @@ function InputCollection(props) {
     }
   }
 
+  entries.push(
+    {
+      id: 'description',
+      element,
+      label: translate('Description'),
+      helper: helper,
+      property: 'description',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+      parent: loopCharacteristics,
+    },
+  );
+
   return new CollapsibleEntry({
     id: id,
     element: element,
