@@ -78,18 +78,14 @@ function ItemNameProp(props) {
   const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
 
   useEffect(() => {
-    function fetchItems() {
-      getItems(applicationId, pageId).then(i => setItems(i));
-    }
-
-    fetchItems();
-  }, [setItems, applicationId, pageId]);
+    if (applicationId && pageId) getItems(applicationId, pageId).then(i => setItems(i));
+  }, [applicationId, pageId]);
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Item')}
-    property=${'itemName'}
+    property=itemName
     state=${items}
   />`;
 }

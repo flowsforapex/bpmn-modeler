@@ -84,19 +84,15 @@ function FormTemplateProp(props) {
   const [formTemplates, setFormTemplates] = useState([]);
 
   useEffect(() => {
-    function fetchFormTemplates() {
-      getFormTemplates().then(ft => setFormTemplates(ft));
-    }
-
-    fetchFormTemplates();
-  }, [setFormTemplates]);
+    getFormTemplates().then(ft => setFormTemplates(ft));
+  }, []);
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Form Template')}
     helper=${extensionHelper}
-    property=${'formTemplateId'}
+    property=formTemplateId
     state=${formTemplates}
   />`;
 }

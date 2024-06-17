@@ -2,40 +2,22 @@ import {
   isSelectEntryEdited,
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
+
+import { getBusinessObject } from '../../helper/util';
 
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
+import { html } from 'htm/preact';
 
-import { getBusinessObject } from '../../helper/util';
+import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
 
 export default function (args) {
 
   const {element, injector} = args;
 
   const businessObject = getBusinessObject(element);
-
-  const [values, setValues] = useState({});
-
-  useEffect(() => {
-    if (!values.applications) {
-      getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
-    }
-    if (!values.usernames) {
-      getUsernames().then(usernames => setValues((existing) => { return {...existing, usernames: usernames}; }));
-    }
-  }, [element.id]);
-
-  const {applicationId} = businessObject;
-
-  useEffect(() => {
-    if (applicationId) {
-      getPages(applicationId).then(pages => setValues((existing) => { return {...existing, pages: pages}; }));
-    }
-  }, [applicationId]);
-
-  const {applications, usernames, pages} = values;
 
   const translate = injector.get('translate');
 
@@ -88,33 +70,89 @@ export default function (args) {
       {
         id: 'applicationId',
         element,
-        label: translate('Default Application'),
-        property: 'applicationId',
-        state: applications,
-        // asyncGetter: getApplications,
-        component: DefaultSelectEntryAsync,
+        component: ApplicationProp,
         isEdited: isSelectEntryEdited,
       },
       {
         id: 'pageId',
         element,
-        label: translate('Default Page'),
-        property: 'pageId',
-        state: pages,
-        component: DefaultSelectEntryAsync,
+        component: PageProp,
         isEdited: isSelectEntryEdited,
       },
       {
         id: 'username',
         element,
-        label: translate('Default Username'),
-        property: 'username',
-        state: usernames,
-        // asyncGetter: getUsernames,
-        component: DefaultSelectEntryAsync,
+        component: UsernameProp,
         isEdited: isSelectEntryEdited,
       },
     );
   }
   return entries;
+}
+
+function ApplicationProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [applications, setApplications] = useState([]);
+
+  useEffect(() => {
+    getApplications().then(a => setApplications(a));
+  }, []);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Default Application')}
+    property=applicationId
+    state=${applications}
+  />`;
+}
+
+function PageProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const businessObject = getBusinessObject(element);
+
+  const [pages, setPages] = useState([]);
+
+  const {applicationId} = businessObject;
+
+  useEffect(() => {
+    if (applicationId) getPages(applicationId).then(p => setPages(p));
+  }, [applicationId]);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Default Page')}
+    property=pageId
+    state=${pages}
+  />`;
+}
+
+function UsernameProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [usernames, setUsernames] = useState([]);
+
+  useEffect(() => {
+    getUsernames().then(u => setUsernames(u));
+  }, []);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Default Username')}
+    property=username
+    state=${usernames}
+  />`;
 }

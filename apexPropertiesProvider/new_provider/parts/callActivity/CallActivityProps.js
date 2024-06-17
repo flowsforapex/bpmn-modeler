@@ -111,19 +111,15 @@ function CalledDiagramProp(props) {
   const [diagrams, setDiagrams] = useState([]);
 
   useEffect(() => {
-    function fetchDiagrams() {
-      getDiagrams().then(d => setDiagrams(d));
-    }
-
-    fetchDiagrams();
-  }, [setDiagrams]);
+    getDiagrams().then(d => setDiagrams(d));
+  }, []);
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Called Diagram')}
     description=${translate('Name of the diagram')}
-    property=${'calledDiagram'}
+    property=calledDiagram
     state=${diagrams}
   />`;
 }
