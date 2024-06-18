@@ -81,10 +81,10 @@ function FormTemplateProp(props) {
 
   const translate = useService('translate');
 
-  const [formTemplates, setFormTemplates] = useState([]);
+  const [formTemplates, setFormTemplates] = useState({});
 
   useEffect(() => {
-    getFormTemplates().then(ft => setFormTemplates(ft));
+    getFormTemplates().then(ft => setFormTemplates({ values: ft, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}

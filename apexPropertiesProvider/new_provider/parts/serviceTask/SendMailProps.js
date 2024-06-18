@@ -242,10 +242,10 @@ function ApplicationProp(props) {
 
   const translate = useService('translate');
 
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState({});
 
   useEffect(() => {
-    getApplicationsMail().then(a => setApplications(a));
+    getApplicationsMail().then(a => setApplications({ values: a, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}
@@ -264,13 +264,15 @@ function TemplateProp(props) {
 
   const translate = useService('translate');
 
-  const [templates, setTemplates] = useState([]);
+  const [templates, setTemplates] = useState({});
 
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
 
   useEffect(() => {
-    if (applicationId) getTemplates(applicationId).then(t => setTemplates(t));
+    getTemplates(applicationId).then(t => setTemplates({ values: t, loaded: true, applicationId: applicationId }));
   }, [applicationId]);
+
+  const needsRefresh = applicationId !== templates.applicationId;
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
@@ -279,6 +281,7 @@ function TemplateProp(props) {
     helper=${extensionHelper}
     property=templateId
     state=${templates}
+    needsRefresh=${needsRefresh}
   />`;
 }
 

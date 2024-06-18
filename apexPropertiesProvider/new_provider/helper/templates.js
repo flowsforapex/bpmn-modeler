@@ -138,7 +138,7 @@ export function DefaultSelectEntry(props) {
 }
 
 export function DefaultSelectEntryAsync(props) {
-  const { id, element, listElement, label, description, helper, property, state } = props;
+  const { id, element, listElement, label, description, helper, property, state, needsRefresh } = props;
 
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
@@ -151,17 +151,30 @@ export function DefaultSelectEntryAsync(props) {
     const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
 
     const existing =
-      currValue == null || (state && state.map(e => e.value).includes(currValue));
+      currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
 
-    return state && [
-      ...(existing ? [] : [{ label: `${currValue}*`, value: currValue }]),
-      ...state.map((s) => {
-        return {
-          label: s.label,
-          value: s.value,
-        };
-      }),
-    ];
+    const result = [];
+
+    // only return values if list will not be refreshed
+    if (state && !needsRefresh) {
+      // only if state loaded, current value is not null and does not exist in list
+      if (state.loaded && currValue && !existing) {
+        result.push({ label: `${currValue}*`, value: currValue });
+      }
+      // if state has values
+      if (state.values) {
+        result.push(
+          ...state.values.map((s) => {
+            return {
+              label: s.label,
+              value: s.value,
+            };
+          })
+        );
+      }
+    }
+
+    return result;
   };
 
   const getValue = () =>

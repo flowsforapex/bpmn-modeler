@@ -18,7 +18,7 @@ import { getItems } from '../../plugins/metaDataCollector';
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
 export default function PageItemProps(args) {
-  const { idPrefix, pageItem, state, element, injector } = args;
+  const { idPrefix, pageItem, element, injector } = args;
 
   const businessObject = getBusinessObject(element);
 
@@ -45,6 +45,7 @@ export default function PageItemProps(args) {
       {
         id: `${idPrefix}-itemName`,
         element,
+        listElement: pageItem,
         component: ItemNameProp,
         isEdited: isSelectEntryEdited,
       }
@@ -68,24 +69,28 @@ export default function PageItemProps(args) {
 
 function ItemNameProp(props) {
 
-  const {element, id} = props;
+  const {element, id, listElement} = props;
 
   const translate = useService('translate');
 
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState({});
 
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
   const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
 
   useEffect(() => {
-    if (applicationId && pageId) getItems(applicationId, pageId).then(i => setItems(i));
+    getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));
   }, [applicationId, pageId]);
+
+  const needsRefresh = (applicationId !== items.applicationId) || (pageId !== items.pageId);
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
+    listElement=${listElement}
     label=${translate('Item')}
     property=itemName
     state=${items}
+    needsRefresh=${needsRefresh}
   />`;
 }

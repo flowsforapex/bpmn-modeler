@@ -108,10 +108,10 @@ function CalledDiagramProp(props) {
 
   const translate = useService('translate');
 
-  const [diagrams, setDiagrams] = useState([]);
+  const [diagrams, setDiagrams] = useState({});
 
   useEffect(() => {
-    getDiagrams().then(d => setDiagrams(d));
+    getDiagrams().then(d => setDiagrams({ values: d, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}

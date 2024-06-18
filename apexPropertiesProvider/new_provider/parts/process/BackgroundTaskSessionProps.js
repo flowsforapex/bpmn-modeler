@@ -11,6 +11,8 @@ import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntr
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
+var pagesLoaded = false;
+
 import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
 
 export default function (args) {
@@ -96,10 +98,10 @@ function ApplicationProp(props) {
 
   const translate = useService('translate');
 
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState({});
 
   useEffect(() => {
-    getApplications().then(a => setApplications(a));
+    getApplications().then(a => setApplications({ values: a, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}
@@ -119,20 +121,23 @@ function PageProp(props) {
 
   const businessObject = getBusinessObject(element);
 
-  const [pages, setPages] = useState([]);
+  const [pages, setPages] = useState({ loaded: false });
 
   const {applicationId} = businessObject;
-
+  
   useEffect(() => {
-    if (applicationId) getPages(applicationId).then(p => setPages(p));
+    getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));
   }, [applicationId]);
-
+  
+  const needsRefresh = applicationId !== pages.applicationId;
+  
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Default Page')}
     property=pageId
     state=${pages}
+    needsRefresh=${needsRefresh}
   />`;
 }
 
@@ -142,10 +147,10 @@ function UsernameProp(props) {
 
   const translate = useService('translate');
 
-  const [usernames, setUsernames] = useState([]);
+  const [usernames, setUsernames] = useState({});
 
   useEffect(() => {
-    getUsernames().then(u => setUsernames(u));
+    getUsernames().then(u => setUsernames({ values: u, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}

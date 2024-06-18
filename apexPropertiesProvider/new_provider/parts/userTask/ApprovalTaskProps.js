@@ -197,10 +197,10 @@ function ApplicationProp(props) {
 
   const translate = useService('translate');
 
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState({});
 
   useEffect(() => {
-    getApplications().then(a => setApplications(a));
+    getApplications().then(a => setApplications({ values: a, loaded: true }));
   }, []);
 
   return html`<${DefaultSelectEntryAsync}
@@ -219,13 +219,15 @@ function TaskProp(props) {
 
   const translate = useService('translate');
 
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState({});
 
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
 
   useEffect(() => {
-    if (applicationId) getTasks(applicationId).then(t => setTasks(t));
+    getTasks(applicationId).then(t => setTasks({ values: t, loaded: true, applicationId: applicationId }));
   }, [applicationId]);
+
+  const needsRefresh = applicationId !== tasks.applicationId;
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
@@ -234,6 +236,7 @@ function TaskProp(props) {
     helper=${extensionHelper}
     property=taskStaticId
     state=${tasks}
+    needsRefresh=${needsRefresh}
   />`;
 }
 

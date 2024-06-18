@@ -1,6 +1,6 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup
+  isTextFieldEntryEdited, ListGroup, SelectEntry
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -18,11 +18,7 @@ import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntr
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
-import {
-  getApplications,
-  getItems,
-  getPages
-} from '../../plugins/metaDataCollector';
+import { getApplications, getItems, getPages } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
@@ -114,7 +110,6 @@ export default function (args) {
             element,
             injector,
             helper: listExtensionHelper,
-            // state: items,
           }
         ),
       }
@@ -152,22 +147,18 @@ function ApplicationProp(props) {
 
   const translate = useService('translate');
 
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState({});
 
   useEffect(() => {
-    function fetchApplications() {
-      getApplications().then(a => setApplications(a));
-    }
-
-    fetchApplications();
-  }, [setApplications]);
+    getApplications().then(a => setApplications({ values: a, loaded: true }));
+  }, []);
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Application')}
     helper=${extensionHelper}
-    property=${'applicationId'}
+    property=applicationId
     state=${applications}
   />`;
 }
@@ -178,25 +169,24 @@ function PageProp(props) {
 
   const translate = useService('translate');
 
-  const [pages, setPages] = useState([]);
+  const [pages, setPages] = useState({});
 
   const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
 
   useEffect(() => {
-    function fetchPages() {
-      getPages(applicationId).then(p => setPages(p));
-    }
+    getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));
+  }, [applicationId]);
 
-    fetchPages();
-  }, [setPages, applicationId]);
+  const needsRefresh = applicationId !== pages.applicationId;
 
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
     label=${translate('Page')}
     helper=${extensionHelper}
-    property=${'pageId'}
+    property=pageId
     state=${pages}
+    needsRefresh=${needsRefresh}
   />`;
 }
 
