@@ -107,7 +107,7 @@ export function openEditor(getText, saveText, language, type, id) {
 
   domQuery('#error-text', modal).innerText = '';
 
-  if (language === 'plsql' || language === 'sql') {
+  if (language === 'plsql' || language === 'sql' || language === 'json') {
     parseBtn.onclick = function () {
       // ajaxIdentifier
       var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');

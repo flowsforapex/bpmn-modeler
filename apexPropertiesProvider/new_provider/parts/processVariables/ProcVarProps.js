@@ -37,11 +37,11 @@ export default function ProcVarProps(args) {
     ...[{ label: translate('Process Variable'), value: 'processVariable' }],
     ...(varDataType !== 'CLOB' ? [{ label: translate('SQL query (single value)'), value: 'sqlQuerySingle' }] : []),
     ...(varDataType === 'VARCHAR2' ? [{ label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' }] : []),
+    ...(varDataType === 'JSON' ? [{ label: translate('SQL query (JSON array)'), value: 'sqlQueryArray' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Expression'), value: 'plsqlRawExpression' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Expression (Legacy)'), value: 'plsqlExpression' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlRawFunctionBody' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body (Legacy)'), value: 'plsqlFunctionBody' }] : []),
-    ...(varDataType === 'JSON' ? [{ label: translate('SQL query (JSON array)'), value: 'sqlQueryArray' }] : []),
   ];
 
   const expressionDescription = {
@@ -141,8 +141,9 @@ export default function ProcVarProps(args) {
       options: dataTypeOptions,
       cleanup: (value) => {
         return {
-                ...(value === 'CLOB' && varExpressionType !== 'processVariable' && {varExpressionType: null, varExpression: null}),
-                ...(value !== 'VARCHAR2' && varExpressionType === 'sqlQueryList' && {varExpressionType: null, varExpression: null})
+                ...(value === 'CLOB' && varExpressionType !== 'processVariable' && {varExpressionType: 'processVariable', varExpression: null}),
+                ...(value !== 'VARCHAR2' && varExpressionType === 'sqlQueryList' && {varExpressionType: 'static', varExpression: null}),
+                ...(value !== 'JSON' && varExpressionType === 'sqlQueryArray' && {varExpressionType: 'static', varExpression: null})
               }; 
         },
       component: DefaultSelectEntry,
@@ -192,7 +193,7 @@ export default function ProcVarProps(args) {
       if (editorTypes.includes(varExpressionType)) {
 
         const language =
-          ('sqlQuerySingle', 'sqlQueryList', 'sqlQueryArray').includes(varExpressionType) ? 'sql' : 'plsql';
+          ['sqlQuerySingle', 'sqlQueryList', 'sqlQueryArray'].includes(varExpressionType) ? 'sql' : 'plsql';
 
           entries.push(
             {
