@@ -171,6 +171,18 @@
       "superClass": [ "Element" ],
       "properties": [
         {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "pageId",
+          "type": "String"
+        },
+        {
+          "name": "itemName",
+          "type": "String"
+        },
+        {
           "name": "formTemplateId",
           "type": "String"
         },
