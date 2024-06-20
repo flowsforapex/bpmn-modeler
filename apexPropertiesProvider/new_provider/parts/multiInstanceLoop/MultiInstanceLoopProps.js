@@ -8,6 +8,7 @@ import ExtensionHelper from '../../helper/ExtensionHelper';
 import { useService } from 'bpmn-js-properties-panel';
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
+const descriptionHelper = new ExtensionHelper('apex:Description');
 const inputCollectionHelper = new ExtensionHelper('apex:InputCollection');
 const outputCollectionHelper = new ExtensionHelper('apex:OutputCollection');
 const completionConditionHelper = new ExtensionHelper('apex:CompletionCondition');
@@ -35,12 +36,28 @@ export default function (args) {
   ) {
     entries.push(
       {
-        id: 'inputCollection',
+        id: 'description',
         element,
-        component: InputCollection,
-        helper: inputCollectionHelper,
-        label: translate('Input Collection'),
-      },
+        component: DescriptionProp,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+
+    const loopCharacteristics = getLoopCharacteristics(element);
+
+    if (!is(loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
+      entries.push(
+        {
+          id: 'inputCollection',
+          element,
+          component: InputCollection,
+          helper: inputCollectionHelper,
+          label: translate('Input Collection'),
+        }
+      );
+    }
+
+    entries.push(
       {
         id: 'outputCollection',
         element,
@@ -61,6 +78,36 @@ export default function (args) {
   return entries;
 }
 
+function DescriptionProp(props) {
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const loopCharacteristics = getLoopCharacteristics(element);
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: id,
+      element,
+      label: translate('Description'),
+      helper: descriptionHelper,
+      property: 'value',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+      parent: loopCharacteristics,
+    },
+  );
+
+  return new CollapsibleEntry({
+    id: id,
+    element: element,
+    label: translate('Description'),
+    entries: entries,
+  });
+}
+
 function InputCollection(props) {
   const {element, id, helper, label} = props;
 
@@ -72,11 +119,11 @@ function InputCollection(props) {
     { label: '', value: null },
     { label: translate('Process Variable (List)'), value: 'processVariableList' },
     { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
-    { label: translate('SQL Query'), value: 'sqlQuery' },
+    { label: translate('SQL Query'), value: 'sqlQueryArray' },
   ];
 
   const editorTypes = [
-    'sqlQuery',
+    'sqlQueryArray',
   ];
 
   const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
@@ -156,19 +203,6 @@ function InputCollection(props) {
 
     }
   }
-
-  entries.push(
-    {
-      id: 'description',
-      element,
-      label: translate('Description'),
-      helper: helper,
-      property: 'description',
-      component: DefaultTextFieldEntry,
-      isEdited: isTextFieldEntryEdited,
-      parent: loopCharacteristics,
-    },
-  );
 
   return new CollapsibleEntry({
     id: id,

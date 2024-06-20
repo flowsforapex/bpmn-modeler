@@ -761,6 +761,17 @@
       ]
     },
     {
+      "name": "Description",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "InputCollection",
       "superClass": [ "Element" ],
       "properties": [
@@ -774,10 +785,6 @@
         },
         {
           "name": "insideVariable",
-          "type": "String"
-        },
-        {
-          "name": "description",
           "type": "String"
         }
       ]
