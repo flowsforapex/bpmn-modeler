@@ -1,9 +1,16 @@
-import { isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { 
+  isSelectEntryEdited,
+  isTextAreaEntryEdited, ListGroup, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
+import ListExtensionHelper from '../../helper/ListExtensionHelper';
+
+import PageItemsList from '../pageItems/PageItemsList';
+
+import { Quickpick } from '../../helper/Quickpick';
 
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry, DefaultTextFieldEntry } from '../../helper/templates';
 
@@ -13,6 +20,14 @@ import { html } from 'htm/preact';
 import { getFormTemplates, getApplications, getPages, getItems } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
+
+const listExtensionHelper = new ListExtensionHelper(
+  'apex:ApexSimpleForm',
+  'apex:PageItems',
+  'pageItems',
+  'apex:PageItem',
+  'pageItem'
+);
 
 export default function (args) {
 
@@ -68,25 +83,33 @@ export default function (args) {
           component: DefaultTextFieldEntry,
           isEdited: isTextFieldEntryEdited,
         },
-        {
-          id: 'itemNameText',
-          element,
-          label: translate('Item Name'),
-          helper: extensionHelper,
-          property: 'itemName',
-          component: DefaultTextFieldEntry,
-          isEdited: isTextFieldEntryEdited,
-        },
-        {
-          id: 'formTemplate',
-          element,
-          label: translate('Form Template'),
-          helper: extensionHelper,
-          property: 'formTemplate',
-          language: 'json',
-          component: DefaultTextAreaEntryWithEditor,
-          isEdited: isTextAreaEntryEdited,
-        },
+        // {
+        //   id: 'processIdItem',
+        //   element,
+        //   label: translate('Item containing process ID'),
+        //   helper: extensionHelper,
+        //   property: 'processIdItem',
+        //   component: DefaultTextFieldEntry,
+        //   isEdited: isTextFieldEntryEdited,
+        // },
+        // {
+        //   id: 'subflowIdItem',
+        //   element,
+        //   label: translate('Item containing subflow ID'),
+        //   helper: extensionHelper,
+        //   property: 'subflowIdItem',
+        //   component: DefaultTextFieldEntry,
+        //   isEdited: isTextFieldEntryEdited,
+        // },
+        // {
+        //   id: 'stepKeyItem',
+        //   element,
+        //   label: translate('Item containing step key'),
+        //   helper: extensionHelper,
+        //   property: 'stepKeyItem',
+        //   component: DefaultTextFieldEntry,
+        //   isEdited: isTextFieldEntryEdited,
+        // }
       );
     } else {
       entries.push(
@@ -102,18 +125,96 @@ export default function (args) {
           component: PageProp,
           isEdited: isSelectEntryEdited,
         },
+        // {
+        //   id: 'processIdItem',
+        //   element,
+        //   property: 'processIdItem',
+        //   label: translate('Item containing process ID'),
+        //   component: ItemProp,
+        //   isEdited: isSelectEntryEdited,
+        // },
+        // {
+        //   id: 'subflowIdItem',
+        //   element,
+        //   property: 'subflowIdItem',
+        //   label: translate('Item containing subflow ID'),
+        //   component: ItemProp,
+        //   isEdited: isSelectEntryEdited,
+        // },
+        // {
+        //   id: 'stepKeyItem',
+        //   element,
+        //   property: 'stepKeyItem',
+        //   label: translate('Item containing step key'),
+        //   component: ItemProp,
+        //   isEdited: isSelectEntryEdited,
+        // },
+      );
+    }
+
+    entries.push(
+      {
+        element,
+        component: QuickpickItems,
+      },
+      {
+        id: 'pageItems',
+        element,
+        label: 'Page Items',
+        component: ListGroup,
+        ...PageItemsList(
+          {
+            element,
+            injector,
+            helper: listExtensionHelper,
+          }
+        ),
+      }
+    );
+
+    entries.push(
+      {
+        id: 'formTemplateId',
+        element,
+        component: FormTemplateProp,
+        isEdited: isSelectEntryEdited,
+      }
+    );
+
+    if (manualInput) {
+      entries.push(
+        // TODO do we want to provide this (alternativ to FormTemplateProp above for manual input?
+        // -> how could we pass this onto the form page?
+        // {
+        //   id: 'formTemplate',
+        //   element,
+        //   label: translate('Form Template'),
+        //   helper: extensionHelper,
+        //   property: 'formTemplate',
+        //   language: 'json',
+        //   component: DefaultTextAreaEntryWithEditor,
+        //   isEdited: isTextAreaEntryEdited,
+        // },
         {
-          id: 'itemName',
+          id: 'templateIdItem',
           element,
-          component: ItemNameProp,
-          isEdited: isSelectEntryEdited,
+          label: translate('Item containing template ID'),
+          helper: extensionHelper,
+          property: 'templateIdItem',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
         },
+      );
+    } else {
+      entries.push(
         {
-          id: 'formTemplateId',
+          id: 'templateIdItem',
           element,
-          component: FormTemplateProp,
+          property: 'templateIdItem',
+          label: translate('Item containing template ID'),
+          component: ItemProp,
           isEdited: isSelectEntryEdited,
-        },
+        }
       );
     }
   }
@@ -141,6 +242,7 @@ function FormTemplateProp(props) {
     state=${formTemplates}
   />`;
 }
+
 function ApplicationProp(props) {
 
   const {element, id} = props;
@@ -190,11 +292,9 @@ function PageProp(props) {
   />`;
 }
 
-function ItemNameProp(props) {
+function ItemProp(props) {
 
-  const {element, id} = props;
-
-  const translate = useService('translate');
+  const {element, id, property, label} = props;
 
   const [items, setItems] = useState({});
 
@@ -210,10 +310,53 @@ function ItemNameProp(props) {
   return html`<${DefaultSelectEntryAsync}
     id=${id}
     element=${element}
-    label=${translate('Item')}
+    label=${label}
     helper=${extensionHelper}
-    property=itemName
+    property=${property}
     state=${items}
     needsRefresh=${needsRefresh}
   />`;
+}
+
+function QuickpickItems(props) {
+  const { element } = props;
+
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+  const modeling = useService('modeling');
+
+  return Quickpick(
+    {
+      text: translate('Generate default items'),
+      handler: () => {
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
+            itemName: 'PROCESS_ID',
+            itemValue: '&F4A$PROCESS_ID.',
+          }
+        });
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
+            itemName: 'SUBFLOW_ID',
+            itemValue: '&F4A$SUBFLOW_ID.',
+          }
+        });
+        listExtensionHelper.addSubElement({
+          element,
+          modeling,
+          bpmnFactory,
+          newProps: {
+            itemName: 'STEP_KEY',
+            itemValue: '&F4A$STEP_KEY.',
+          }
+        });
+      }
+    }
+  );
 }

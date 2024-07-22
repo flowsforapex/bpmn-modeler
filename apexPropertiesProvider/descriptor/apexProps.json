@@ -187,8 +187,12 @@
           "type": "String"
         },
         {
-          "name": "formTemplate",
+          "name": "templateIdItem",
           "type": "String"
+        },
+        {
+          "name": "pageItems",
+          "type": "PageItems"
         }
       ]
     },
