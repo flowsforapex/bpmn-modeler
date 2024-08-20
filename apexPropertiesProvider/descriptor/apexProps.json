@@ -183,16 +183,16 @@
           "type": "String"
         },
         {
-          "name": "formTemplateId",
-          "type": "String"
-        },
-        {
-          "name": "templateIdItem",
-          "type": "String"
-        },
-        {
           "name": "pageItems",
           "type": "PageItems"
+        },
+        {
+          "name": "formTemplateItem",
+          "type": "String"
+        },
+        {
+          "name": "formTemplateId",
+          "type": "String"
         }
       ]
     },

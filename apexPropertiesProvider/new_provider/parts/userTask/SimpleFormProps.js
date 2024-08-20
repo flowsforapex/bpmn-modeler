@@ -83,33 +83,6 @@ export default function (args) {
           component: DefaultTextFieldEntry,
           isEdited: isTextFieldEntryEdited,
         },
-        // {
-        //   id: 'processIdItem',
-        //   element,
-        //   label: translate('Item containing process ID'),
-        //   helper: extensionHelper,
-        //   property: 'processIdItem',
-        //   component: DefaultTextFieldEntry,
-        //   isEdited: isTextFieldEntryEdited,
-        // },
-        // {
-        //   id: 'subflowIdItem',
-        //   element,
-        //   label: translate('Item containing subflow ID'),
-        //   helper: extensionHelper,
-        //   property: 'subflowIdItem',
-        //   component: DefaultTextFieldEntry,
-        //   isEdited: isTextFieldEntryEdited,
-        // },
-        // {
-        //   id: 'stepKeyItem',
-        //   element,
-        //   label: translate('Item containing step key'),
-        //   helper: extensionHelper,
-        //   property: 'stepKeyItem',
-        //   component: DefaultTextFieldEntry,
-        //   isEdited: isTextFieldEntryEdited,
-        // }
       );
     } else {
       entries.push(
@@ -125,30 +98,6 @@ export default function (args) {
           component: PageProp,
           isEdited: isSelectEntryEdited,
         },
-        // {
-        //   id: 'processIdItem',
-        //   element,
-        //   property: 'processIdItem',
-        //   label: translate('Item containing process ID'),
-        //   component: ItemProp,
-        //   isEdited: isSelectEntryEdited,
-        // },
-        // {
-        //   id: 'subflowIdItem',
-        //   element,
-        //   property: 'subflowIdItem',
-        //   label: translate('Item containing subflow ID'),
-        //   component: ItemProp,
-        //   isEdited: isSelectEntryEdited,
-        // },
-        // {
-        //   id: 'stepKeyItem',
-        //   element,
-        //   property: 'stepKeyItem',
-        //   label: translate('Item containing step key'),
-        //   component: ItemProp,
-        //   isEdited: isSelectEntryEdited,
-        // },
       );
     }
 
@@ -172,29 +121,8 @@ export default function (args) {
       }
     );
 
-    entries.push(
-      {
-        id: 'formTemplateId',
-        element,
-        component: FormTemplateProp,
-        isEdited: isSelectEntryEdited,
-      }
-    );
-
     if (manualInput) {
       entries.push(
-        // TODO do we want to provide this (alternativ to FormTemplateProp above for manual input?
-        // -> how could we pass this onto the form page?
-        // {
-        //   id: 'formTemplate',
-        //   element,
-        //   label: translate('Form Template'),
-        //   helper: extensionHelper,
-        //   property: 'formTemplate',
-        //   language: 'json',
-        //   component: DefaultTextAreaEntryWithEditor,
-        //   isEdited: isTextAreaEntryEdited,
-        // },
         {
           id: 'templateIdItem',
           element,
@@ -208,15 +136,24 @@ export default function (args) {
     } else {
       entries.push(
         {
-          id: 'templateIdItem',
+          id: 'formTemplateItem',
           element,
-          property: 'templateIdItem',
+          property: 'formTemplateItem',
           label: translate('Item containing template ID'),
           component: ItemProp,
           isEdited: isSelectEntryEdited,
         }
       );
     }
+
+    entries.push(
+      {
+        id: 'formTemplateId',
+        element,
+        component: FormTemplateProp,
+        isEdited: isSelectEntryEdited,
+      }
+    );
   }
   return entries;
 }
