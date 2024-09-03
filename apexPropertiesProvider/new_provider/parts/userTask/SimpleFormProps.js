@@ -109,7 +109,7 @@ export default function (args) {
       {
         id: 'pageItems',
         element,
-        label: 'Page Items',
+        label: translate('Page Items'),
         component: ListGroup,
         ...PageItemsList(
           {

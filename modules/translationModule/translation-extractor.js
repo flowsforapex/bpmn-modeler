@@ -29,4 +29,6 @@ extractor.printStats();
  * ^\n
  * ""\n
  * ^.*charset=UTF-8.*$\n
+ * 
+ * afterwards replace "$ with ": "x", to generate the test translation entries
 */

@@ -202,7 +202,7 @@ function DueOn(props) {
     {
       id: 'dueOnExpressionType',
       element,
-      label: 'Expression Type',
+      label: translate('Expression Type'),
       helper: dueOnHelper,
       property: 'expressionType',
       options: expressionTypeOptions,
