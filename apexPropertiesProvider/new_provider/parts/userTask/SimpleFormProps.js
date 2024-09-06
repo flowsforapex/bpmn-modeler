@@ -53,13 +53,6 @@ export default function (args) {
         invert: true,
         component: DefaultToggleSwitchEntry,
         // isEdited: isToggleSwitchEntryEdited,
-        cleanup: (value) => {
-          return {
-            ...(value === true && {formTemplate: null}),
-            ...(value === false && {formTemplateId: null})
-          };
-        },
-        cleanupHelper: extensionHelper
       }
     );
 
@@ -124,11 +117,12 @@ export default function (args) {
     if (manualInput) {
       entries.push(
         {
-          id: 'templateIdItem',
+          id: 'formTemplateItemText',
           element,
-          label: translate('Item containing template ID'),
+          property: 'formTemplateItem',
           helper: extensionHelper,
-          property: 'templateIdItem',
+          label: translate('Form Template Item Name'),
+          description: translate('Page Item containing the form template reference'),
           component: DefaultTextFieldEntry,
           isEdited: isTextFieldEntryEdited,
         },
@@ -139,7 +133,8 @@ export default function (args) {
           id: 'formTemplateItem',
           element,
           property: 'formTemplateItem',
-          label: translate('Item containing template ID'),
+          label: translate('Form Template Item'),
+          description: translate('Page Item containing the form template reference'),
           component: ItemProp,
           isEdited: isSelectEntryEdited,
         }
@@ -231,7 +226,7 @@ function PageProp(props) {
 
 function ItemProp(props) {
 
-  const {element, id, property, label} = props;
+  const {element, id, property, label, description} = props;
 
   const [items, setItems] = useState({});
 
@@ -248,6 +243,7 @@ function ItemProp(props) {
     id=${id}
     element=${element}
     label=${label}
+    description=${description}
     helper=${extensionHelper}
     property=${property}
     state=${items}
