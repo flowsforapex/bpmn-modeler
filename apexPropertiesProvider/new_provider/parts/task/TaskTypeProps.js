@@ -19,7 +19,6 @@ export default function (args) {
   const selectOptions = {
     'bpmn:UserTask': [
       { label: translate('APEX Page'), value: 'apexPage' },
-      // { label: translate('External URL'), value: 'externalUrl' },
       { label: translate('APEX Approval'), value: 'apexApproval' },
       { label: translate('APEX Simple Form'), value: 'apexSimpleForm' },
     ],

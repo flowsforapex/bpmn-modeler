@@ -88,32 +88,12 @@ export default function (args) {
           component: ApplicationProp,
           isEdited: isSelectEntryEdited,
         },
-        // {
-        //   id: 'applicationId',
-        //   element,
-        //   label: translate('Application'),
-        //   helper: extensionHelper,
-        //   property: 'applicationId',
-        //   state: applications,
-        //   component: DefaultSelectEntryAsync,
-        //   isEdited: isSelectEntryEdited,
-        // },
         {
           id: 'taskStaticId',
           element,
           component: TaskProp,
           isEdited: isSelectEntryEdited,
         },
-        // {
-        //   id: 'taskStaticId',
-        //   element,
-        //   label: translate('Task Definition'),
-        //   helper: extensionHelper,
-        //   property: 'taskStaticId',
-        //   state: tasks,
-        //   component: DefaultSelectEntryAsync,
-        //   isEdited: isSelectEntryEdited,
-        // },
       );
     }
 

@@ -248,9 +248,6 @@ function getTaskFilters(element) {
       case 'apexPage':
         filter.push('apex:ApexPage');
         break;
-      // case 'externalUrl':
-      //   filter.push('apex:ExternalUrl');
-      //   break;
       case 'apexApproval':
         filter.push('apex:ApexApproval');
         break;
