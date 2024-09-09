@@ -1,7 +1,7 @@
 import PageItemProps from './PageItemProps';
 
 export default function PageItemsList(args) {
-  const {element, injector, helper, state} = args;
+  const {element, injector, helper} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
   const modeling = injector.get('modeling');
@@ -19,8 +19,7 @@ export default function PageItemsList(args) {
           idPrefix: id,
           element,
           injector,
-          pageItem,
-          state
+          pageItem
         },
       ),
       autoFocusEntry: `${id}-name`,

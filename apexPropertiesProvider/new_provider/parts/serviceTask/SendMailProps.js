@@ -13,6 +13,8 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { html } from 'htm/preact';
+
 import { getApplicationsMail, getJSONPlaceholders, getTemplates } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:SendMail');
@@ -29,27 +31,8 @@ export default function (args) {
   
   if (businessObject.type === 'sendMail') {
 
-    const [values, setValues] = useState({});
-
-    useEffect(() => {
-      if (!values.applicationsMail) {
-        getApplicationsMail().then(applicationsMail => setValues((existing) => {
-          return {...existing, applicationsMail: applicationsMail};
-        }));
-      }
-    }, [element.id]);
-
-    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-
-    useEffect(() => {
-      if (applicationId) {
-        getTemplates(applicationId).then(templates => setValues((existing) => { return {...existing, templates: templates}; }));
-      }
-    }, [applicationId]);
-    
-    const {applicationsMail, templates} = values;
-    
     const manualInput = businessObject.manualInput === 'true';
+    
     const useTemplate = (extensionHelper.getExtensionProperty(element, 'useTemplate') === 'true');
 
     entries.push(
@@ -171,21 +154,13 @@ export default function (args) {
           {
             id: 'applicationId',
             element,
-            label: translate('Application'),
-            helper: extensionHelper,
-            property: 'applicationId',
-            state: applicationsMail,
-            component: DefaultSelectEntryAsync,
+            component: ApplicationProp,
             isEdited: isSelectEntryEdited,
           },
           {
             id: 'templateId',
             element,
-            label: translate('Template'),
-            helper: extensionHelper,
-            property: 'templateId',
-            state: templates,
-            component: DefaultSelectEntryAsync,
+            component: TemplateProp,
             isEdited: isSelectEntryEdited,
           }
         );
@@ -259,6 +234,55 @@ export default function (args) {
     );
   }
   return entries;
+}
+
+function ApplicationProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [applications, setApplications] = useState({});
+
+  useEffect(() => {
+    getApplicationsMail().then(a => setApplications({ values: a, loaded: true }));
+  }, []);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Application')}
+    helper=${extensionHelper}
+    property=applicationId
+    state=${applications}
+  />`;
+}
+
+function TemplateProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [templates, setTemplates] = useState({});
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+  useEffect(() => {
+    getTemplates(applicationId).then(t => setTemplates({ values: t, loaded: true, applicationId: applicationId }));
+  }, [applicationId]);
+
+  const needsRefresh = applicationId !== templates.applicationId;
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Template')}
+    helper=${extensionHelper}
+    property=templateId
+    state=${templates}
+    needsRefresh=${needsRefresh}
+  />`;
 }
 
 function QuickpickPlaceholder(props) {

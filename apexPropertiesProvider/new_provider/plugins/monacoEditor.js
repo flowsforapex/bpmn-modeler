@@ -1,6 +1,6 @@
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
+import { query as domQuery } from 'min-dom';
 
-var domQuery = require('min-dom').query;
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
 
 export function getContainer(translate, id) {
@@ -107,7 +107,7 @@ export function openEditor(getText, saveText, language, type, id) {
 
   domQuery('#error-text', modal).innerText = '';
 
-  if (language === 'plsql' || language === 'sql') {
+  if (language === 'plsql' || language === 'sql' || language === 'json') {
     parseBtn.onclick = function () {
       // ajaxIdentifier
       var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');

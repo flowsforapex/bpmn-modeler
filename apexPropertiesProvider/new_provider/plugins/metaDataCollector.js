@@ -346,3 +346,26 @@ export function getJSONPlaceholders(applicationId, templateId) {
   }
   return Promise.resolve({});
 }
+
+export function getFormTemplates() {
+  if (typeof apex !== 'undefined') {
+    apex.debug.info('getFormTemplates');
+    // ajaxIdentifier
+    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    // ajax process
+    return apex.server
+      .plugin(
+        ajaxIdentifier,
+        {
+          x01: 'GET_FORM_TEMPLATES',
+        },
+        {}
+      )
+      .then(pData => pData);
+  } 
+  console.log('getFormTemplates');
+  return Promise.resolve([
+    { label: '', value: null },
+    { label: 'address', value: '99999' },
+  ]); 
+}

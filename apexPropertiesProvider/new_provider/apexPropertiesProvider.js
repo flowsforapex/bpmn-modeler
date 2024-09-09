@@ -4,6 +4,7 @@ import ExecutePlsqlProps from './parts/executePlsql/ExecutePlsqlProps';
 import ProcVarGroup from './parts/processVariables/ProcVarGroup';
 import ApexPageProps from './parts/userTask/ApexPageProps';
 import ApexApprovalProps from './parts/userTask/ApprovalTaskProps';
+import ApexSimpleFormProps from './parts/userTask/SimpleFormProps';
 
 import TaskTypeProps from './parts/task/TaskTypeProps';
 import CustomTimerProps from './parts/timer/CustomTimerProps';
@@ -23,14 +24,17 @@ import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionPro
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
-import { removeInvalidExtensionsElements } from './helper/validateXML';
 import CustomExtensionProps from './parts/CustomExtensionProps';
 import EventTypeProps from './parts/events/EventTypeProps';
 import SimpleMessageProps from './parts/message/SimpleMessageProps';
 
+import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
+
+import { removeInvalidExtensionsElements } from './helper/validateXML';
+
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-var domQuery = require('min-dom').query;
+import { query as domQuery } from 'min-dom';
 
 const LOW_PRIORITY = 500;
 
@@ -110,12 +114,22 @@ export default function apexPropertiesProvider(
     return function (groups) {
       const newGroups = [];
 
+      const businessObject = getBusinessObject(element);
+      
+      let multiInstanceLoopHeading;
+      
+      if (businessObject.loopCharacteristics) {
+        if (is(businessObject.loopCharacteristics, 'bpmn:MultiInstanceLoopCharacteristics')) multiInstanceLoopHeading = translate('Multi-Instance');
+        if (is(businessObject.loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) multiInstanceLoopHeading = translate('Loop');
+      }
+
       // task
       if (
         is(element, 'bpmn:Task') && 
         !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask'])
       ) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // userTask
@@ -123,9 +137,11 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', translate('APEX Page'), ApexPageProps));
         newGroups.push(createSection({element, injector, translate}, 'apexApproval', translate('APEX Approval'), ApexApprovalProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleForm', translate('APEX Simple Form'), ApexSimpleFormProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // scriptTask
@@ -133,6 +149,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // serviceTask
@@ -141,6 +158,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // businessRuleTask
@@ -148,6 +166,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // sendTask
@@ -156,6 +175,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // receiveTask
@@ -164,6 +184,12 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
+      }
+
+      // manualTask
+      if (is(element, 'bpmn:ManualTask')) {
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
 
       // callActivity
@@ -181,8 +207,13 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 
+      // subprocess
+      if (is(element, 'bpmn:SubProcess')) {
+        newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
+      }
+
       // add the message event props
-      if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent')) {
+      if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:BoundaryEvent')) {
         newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
       }
@@ -204,15 +235,23 @@ export default function apexPropertiesProvider(
 
       // add the custom timer section
       newGroups.push(createSection({element, translate}, 'customTimer', translate('Timer'), CustomTimerProps));
+      
+      // add start event sections
+      if (is(element, 'bpmn:StartEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
+      }
+      
+      // add terminate event section
+      if (is(element, 'bpmn:EndEvent')) {
+        newGroups.push(createSection({element, injector, translate}, 'eventType', translate('Event Type'), EventTypeProps));
+        newGroups.push(createSection({element, injector, translate}, 'simpleMessage', translate('Simple Message'), SimpleMessageProps));
+        newGroups.push(createSection({element, translate}, 'customTerminate', translate('Details'), TerminateEventProps));
+      }
 
       // add event proc var section
       if (is(element, 'bpmn:Event')) {
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
-      }
-
-      // add terminate event section
-      if (is(element, 'bpmn:EndEvent')) {
-        newGroups.push(createSection({element, translate}, 'customTerminate', translate('Details'), TerminateEventProps));
       }
 
       // add custom section
@@ -224,8 +263,10 @@ export default function apexPropertiesProvider(
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
+
+      const removeGroups = ['timer', 'message', 'multiInstance'];
       
-      groups = groups.filter(g => g.id !== 'timer' && g.id !== 'message');
+      groups = groups.filter(g => !removeGroups.includes(g.id));
 
       return groups;
     };

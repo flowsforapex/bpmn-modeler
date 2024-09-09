@@ -4,6 +4,8 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
@@ -14,11 +16,9 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { html } from 'htm/preact';
 
-import { getBusinessObject } from '../../helper/util';
-import {
-  getApplications, getJSONParameters, getTasks
-} from '../../plugins/metaDataCollector';
+import { getApplications, getJSONParameters, getTasks } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
@@ -43,24 +43,6 @@ export default function (args) {
   const entries = [];
 
   if (businessObject.type === 'apexApproval') {
-
-    const [values, setValues] = useState({});
-
-    useEffect(() => {
-      if (!values.applications) {
-        getApplications().then(applications => setValues((existing) => { return {...existing, applications: applications}; }));
-      }
-    }, [element.id]);
-
-    const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-
-    useEffect(() => {
-      if (applicationId) {
-        getTasks(applicationId).then(tasks => setValues((existing) => { return {...existing, tasks: tasks}; }));
-      }
-    }, [applicationId]);
-
-    const {applications, tasks} = values;
 
     const manualInput = businessObject.manualInput === 'true';
 
@@ -103,21 +85,13 @@ export default function (args) {
         {
           id: 'applicationId',
           element,
-          label: translate('Application'),
-          helper: extensionHelper,
-          property: 'applicationId',
-          state: applications,
-          component: DefaultSelectEntryAsync,
+          component: ApplicationProp,
           isEdited: isSelectEntryEdited,
         },
         {
           id: 'taskStaticId',
           element,
-          label: translate('Task Definition'),
-          helper: extensionHelper,
-          property: 'taskStaticId',
-          state: tasks,
-          component: DefaultSelectEntryAsync,
+          component: TaskProp,
           isEdited: isSelectEntryEdited,
         },
       );
@@ -195,6 +169,55 @@ export default function (args) {
     );
   }
   return entries;
+}
+
+function ApplicationProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [applications, setApplications] = useState({});
+
+  useEffect(() => {
+    getApplications().then(a => setApplications({ values: a, loaded: true }));
+  }, []);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Application')}
+    helper=${extensionHelper}
+    property=applicationId
+    state=${applications}
+  />`;
+}
+
+function TaskProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [tasks, setTasks] = useState({});
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+
+  useEffect(() => {
+    getTasks(applicationId).then(t => setTasks({ values: t, loaded: true, applicationId: applicationId }));
+  }, [applicationId]);
+
+  const needsRefresh = applicationId !== tasks.applicationId;
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Task Definition')}
+    helper=${extensionHelper}
+    property=taskStaticId
+    state=${tasks}
+    needsRefresh=${needsRefresh}
+  />`;
 }
 
 function ParametersQuickpick(props) {

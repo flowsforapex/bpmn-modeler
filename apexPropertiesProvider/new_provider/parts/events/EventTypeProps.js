@@ -13,6 +13,9 @@ export default function (args) {
   const defaultValues = {
     'bpmn:IntermediateThrowEvent': 'simpleMessage',
     'bpmn:IntermediateCatchEvent': 'simpleMessage',
+    'bpmn:StartEvent': 'simpleMessage',
+    'bpmn:EndEvent': 'simpleMessage',
+    'bpmn:BoundaryEvent': 'simpleMessage',
   };
 
   const selectOptions = {
@@ -22,13 +25,25 @@ export default function (args) {
     'bpmn:IntermediateCatchEvent': [
       { label: translate('Simple Message'), value: 'simpleMessage' },
     ],
+    'bpmn:StartEvent': [
+      { label: translate('Simple Message'), value: 'simpleMessage' },
+    ],
+    'bpmn:EndEvent': [
+      { label: translate('Simple Message'), value: 'simpleMessage' },
+    ],
+    'bpmn:BoundaryEvent': [
+      { label: translate('Simple Message'), value: 'simpleMessage' },
+    ],
   };
-
+  
   if (
     (is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) ||
-    (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
-  ) {
-    return [
+    (is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element)) ||
+    (is(element, 'bpmn:StartEvent') && getMessageEvent(element)) ||
+    (is(element, 'bpmn:EndEvent') && getMessageEvent(element)) ||
+    (is(element, 'bpmn:BoundaryEvent') && getMessageEvent(element))
+    ) {
+      return [
       {
         id: 'eventType',
         element,

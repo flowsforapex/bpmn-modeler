@@ -13,6 +13,8 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
     var extensionFilter = [];
     // child needed for events
     var eventDefinition;
+    // child needed for loops
+    var loopCharacteristics;
     // list with extension elements to remove
     var toRemove;
     // list with the attributes to remove
@@ -27,9 +29,13 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
       // retrieve eventDefinition
       eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
 
+      // retrieve loopCharacteristics
+      ({loopCharacteristics} = businessObject);
+
       // collect element which have to be removed
       toRemove =
         businessObject.extensionElements &&
+        businessObject.extensionElements.values &&
         businessObject.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
       // remove extensions
@@ -43,6 +49,7 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
       if (eventDefinition) {
         toRemove =
           eventDefinition.extensionElements &&
+          eventDefinition.extensionElements.values &&
           eventDefinition.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
 
         if (toRemove && toRemove.length > 0) {
@@ -52,11 +59,28 @@ export function removeInvalidExtensionsElements(elementRegistry, modeling) {
         }
       }
 
+      // if loop -> remove on loopCharacteristics level
+      if (loopCharacteristics) {
+        
+        extensionFilter = getLoopFilters(loopCharacteristics);
+        
+        toRemove =
+          loopCharacteristics.extensionElements &&
+          loopCharacteristics.extensionElements.values &&
+          loopCharacteristics.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
+
+        if (toRemove && toRemove.length > 0) {
+          toRemove.forEach((e) => {
+            removeExtension(element, loopCharacteristics, e, modeling);
+          });
+        }
+      }
+
       attributesToRemove = getAttributesToRemove(element);
 
       if (attributesToRemove && attributesToRemove.length > 0) {
         attributesToRemove.forEach((e) => {
-          if (businessObject.get(e)) {
+          if (!businessObject.isImplicit && businessObject.get(e)) {
             modeling.updateModdleProperties(element, businessObject, {
               [e]: null,
             });
@@ -79,7 +103,10 @@ function getAttributesToRemove(element) {
       'bpmn:ReceiveTask',
     ]) &&
     !(is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) &&
-    !(is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element))
+    !(is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element)) &&
+    !(is(element, 'bpmn:StartEvent') && getMessageEvent(element)) &&
+    !(is(element, 'bpmn:EndEvent') && getMessageEvent(element)) &&
+    !(is(element, 'bpmn:BoundaryEvent') && getMessageEvent(element))
   ) {
     filter.push('apex:type');
   }
@@ -88,6 +115,7 @@ function getAttributesToRemove(element) {
     !is(element, 'bpmn:Process') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexPage') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexApproval') &&
+    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexSimpleForm') &&
     !(is(element, 'bpmn:ServiceTask') && getBusinessObject(element).type === 'sendMail')
   ) {
     filter.push('apex:manualInput');
@@ -167,13 +195,13 @@ function getEventFilters(element) {
           // do nothing
       }
     } else if (is(businessObject.eventDefinitions[0], 'bpmn:MessageEventDefinition')) {
-      if (is(element, 'bpmn:IntermediateThrowEvent')) {
+      if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:EndEvent')) {
         filter.push('apex:Endpoint');
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
         filter.push('apex:CorrelationValue');
         filter.push('apex:Payload');
-      } else if (is(element, 'bpmn:IntermediateCatchEvent')) {
+      } else if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:StartEvent') || is(element, 'bpmn:BoundaryEvent')) {
         filter.push('apex:MessageName');
         filter.push('apex:CorrelationKey');
         filter.push('apex:CorrelationValue');
@@ -182,6 +210,20 @@ function getEventFilters(element) {
     }
   }
 
+  return filter;
+}
+
+function getLoopFilters(loopCharacteristics) {
+  var filter = [];
+
+  filter.push('apex:Description');
+  filter.push('apex:OutputCollection');
+  filter.push('apex:CompletionCondition');
+
+  if (!is(loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
+    filter.push('apex:InputCollection');
+  }
+  
   return filter;
 }
 
@@ -206,11 +248,11 @@ function getTaskFilters(element) {
       case 'apexPage':
         filter.push('apex:ApexPage');
         break;
-      case 'externalUrl':
-        filter.push('apex:ExternalUrl');
-        break;
       case 'apexApproval':
         filter.push('apex:ApexApproval');
+        break;
+      case 'apexSimpleForm':
+        filter.push('apex:ApexSimpleForm');
         break;
       default:
       // do nothing

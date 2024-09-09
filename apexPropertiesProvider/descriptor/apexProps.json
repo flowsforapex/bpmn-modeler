@@ -167,6 +167,36 @@
       ]
     },
     {
+      "name": "ApexSimpleForm",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "pageId",
+          "type": "String"
+        },
+        {
+          "name": "itemName",
+          "type": "String"
+        },
+        {
+          "name": "pageItems",
+          "type": "PageItems"
+        },
+        {
+          "name": "formTemplateItem",
+          "type": "String"
+        },
+        {
+          "name": "formTemplateId",
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "Parameters",
       "superClass": [ "Element" ],
       "properties": [
@@ -216,16 +246,6 @@
         },
         {
           "name": "itemValue",
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "ExternalUrl",
-      "superClass": [ "Element" ],
-      "properties": [
-        {
-          "name": "url",
           "type": "String"
         }
       ]
@@ -730,6 +750,67 @@
         {
           "name": "value",
           "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Description",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "InputCollection",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        },
+        {
+          "name": "insideVariable",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "OutputCollection",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        },
+        {
+          "name": "insideVariable",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "CompletionCondition",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
           "type": "String"
         }
       ]

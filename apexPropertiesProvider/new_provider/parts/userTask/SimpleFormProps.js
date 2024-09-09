@@ -1,7 +1,6 @@
-import {
+import { 
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup, SelectEntry
-} from '@bpmn-io/properties-panel';
+  isTextAreaEntryEdited, ListGroup, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
@@ -13,17 +12,17 @@ import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry, DefaultTextFieldEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
-import { getApplications, getItems, getPages } from '../../plugins/metaDataCollector';
+import { getFormTemplates, getApplications, getPages, getItems } from '../../plugins/metaDataCollector';
 
-const extensionHelper = new ExtensionHelper('apex:ApexPage');
+const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
+  'apex:ApexSimpleForm',
   'apex:PageItems',
   'pageItems',
   'apex:PageItem',
@@ -40,7 +39,7 @@ export default function (args) {
 
   const entries = [];
 
-  if (businessObject.type === 'apexPage' || !businessObject.type) {
+  if (businessObject.type === 'apexSimpleForm') {
 
     const manualInput = businessObject.manualInput === 'true';
 
@@ -56,7 +55,7 @@ export default function (args) {
         // isEdited: isToggleSwitchEntryEdited,
       }
     );
-    
+
     if (manualInput) {
       entries.push(
         {
@@ -94,7 +93,7 @@ export default function (args) {
         },
       );
     }
-    
+
     entries.push(
       {
         element,
@@ -115,30 +114,65 @@ export default function (args) {
       }
     );
 
-    entries.push(
+    if (manualInput) {
+      entries.push(
         {
-          id: 'request',
+          id: 'formTemplateItemText',
           element,
-          label: translate('Request'),
-          description: translate('Request Value for Page Call'),
+          property: 'formTemplateItem',
           helper: extensionHelper,
-          property: 'request',
-          component: DefaultTextFieldEntry,
-          isEdited: isTextFieldEntryEdited,
-        },
-        {
-          id: 'cache',
-          element,
-          label: translate('Clear Cache'),
-          description: translate('Clear Cache Value for Page Call'),
-          helper: extensionHelper,
-          property: 'cache',
+          label: translate('Form Template Item Name'),
+          description: translate('Page Item containing the form template reference'),
           component: DefaultTextFieldEntry,
           isEdited: isTextFieldEntryEdited,
         },
       );
+    } else {
+      entries.push(
+        {
+          id: 'formTemplateItem',
+          element,
+          property: 'formTemplateItem',
+          label: translate('Form Template Item'),
+          description: translate('Page Item containing the form template reference'),
+          component: ItemProp,
+          isEdited: isSelectEntryEdited,
+        }
+      );
+    }
+
+    entries.push(
+      {
+        id: 'formTemplateId',
+        element,
+        component: FormTemplateProp,
+        isEdited: isSelectEntryEdited,
+      }
+    );
   }
   return entries;
+}
+
+function FormTemplateProp(props) {
+
+  const {element, id} = props;
+
+  const translate = useService('translate');
+
+  const [formTemplates, setFormTemplates] = useState({});
+
+  useEffect(() => {
+    getFormTemplates().then(ft => setFormTemplates({ values: ft, loaded: true }));
+  }, []);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${translate('Form Template')}
+    helper=${extensionHelper}
+    property=formTemplateId
+    state=${formTemplates}
+  />`;
 }
 
 function ApplicationProp(props) {
@@ -186,6 +220,33 @@ function PageProp(props) {
     helper=${extensionHelper}
     property=pageId
     state=${pages}
+    needsRefresh=${needsRefresh}
+  />`;
+}
+
+function ItemProp(props) {
+
+  const {element, id, property, label, description} = props;
+
+  const [items, setItems] = useState({});
+
+  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+
+  useEffect(() => {
+    getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));
+  }, [applicationId, pageId]);
+
+  const needsRefresh = (applicationId !== items.applicationId) || (pageId !== items.pageId);
+
+  return html`<${DefaultSelectEntryAsync}
+    id=${id}
+    element=${element}
+    label=${label}
+    description=${description}
+    helper=${extensionHelper}
+    property=${property}
+    state=${items}
     needsRefresh=${needsRefresh}
   />`;
 }
