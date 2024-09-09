@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const {
   GettextExtractor,
   JsExtractors,
@@ -21,14 +23,18 @@ extractor.savePotFile('modules/translationModule/messages.pot');
 
 extractor.printStats();
 
-/** *
- * finalize generated .pot file by using these regex in search & replace (with empty string)
- * ^#.*
- * msgstr.*
- * msgid 
- * ^\n
- * ""\n
- * ^.*charset=UTF-8.*$\n
- * 
- * afterwards replace "$ with ": "x", to generate the test translation entries
-*/
+fs.readFile('modules/translationModule/messages.pot', 'utf-8', (_, data) => {
+  
+  const result = data
+    .replace(/^#.*/gm, '')
+    .replace(/msgstr.*/gm, '')
+    .replace(/msgid /gm, '')
+    .replace(/^\n/gm, '')
+    .replace(/""\n/g, '')
+    .replace(/^.*charset=UTF-8.*$\n/gm, '')
+    // generate the test translation entries
+    .replace(/"$/gm, '": "x"');
+
+  fs.writeFile('modules/translationModule/messages.pot', result, 'utf8', function (_) {});
+});
+  
