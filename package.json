@@ -30,7 +30,7 @@
   "dependencies": {
     "@bpmn-io/add-exporter": "^0.2.0",
     "@bpmn-io/properties-panel": "^3.23.0",
-    "bpmn-js": "^17.9.2",
+    "bpmn-js": "^17.10.0",
     "bpmn-js-bpmnlint": "^0.22.3",
     "bpmn-js-color-picker": "^0.7.1",
     "bpmn-js-properties-panel": "^5.23.0",
