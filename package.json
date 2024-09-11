@@ -33,7 +33,7 @@
     "bpmn-js": "^17.9.2",
     "bpmn-js-bpmnlint": "^0.22.3",
     "bpmn-js-color-picker": "^0.7.1",
-    "bpmn-js-properties-panel": "^5.23.0",
+    "bpmn-js-properties-panel": "^5.23.1",
     "bpmnlint": "^10.3.0",
     "bpmnlint-loader": "^0.1.6",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
