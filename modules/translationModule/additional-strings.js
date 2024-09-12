@@ -195,6 +195,10 @@ translate('Start event must be blank');
 translate('Sub process has multiple blank start events');
 translate('Sub process is missing end event');
 translate('Sub process is missing start event');
+translate('Element is an implicit start');
+translate('Element is an implicit end');
+translate('Boundary events on iterating sub processes are currently not supported');
+translate('Iterating call activites are currently not supported');
 
 // events
 translate('Signal');

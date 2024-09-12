@@ -33,7 +33,7 @@ fs.readFile('modules/translationModule/messages.pot', 'utf-8', (_, data) => {
     .replace(/""\n/g, '')
     .replace(/^.*charset=UTF-8.*$\n/gm, '')
     // generate the test translation entries
-    .replace(/"$/gm, '": "x"');
+    .replace(/"$/gm, '": "x",');
 
   fs.writeFile('modules/translationModule/messages.pot', result, 'utf8', function (_) {});
 });
