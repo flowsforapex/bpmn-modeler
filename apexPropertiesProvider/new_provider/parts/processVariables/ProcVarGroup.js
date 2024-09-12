@@ -25,187 +25,189 @@ export default function (args) {
 
   const entries = [];
 
-  if (
-    ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
-  ) {
-
-    type1 = {
-      type: 'apex:BeforeTask',
-      id: 'beforeTask',
-      label: 'Before Task'
-    };
-
-    type2 = {
-      type: 'apex:AfterTask',
-      id: 'afterTask',
-      label: 'After Task'
-    };
-    
-  } else if (
-    ModelingUtil.is(element, 'bpmn:CallActivity')
-  ) {
-
-    type1 = {
-      type: 'apex:InVariables',
-      id: 'inVariables',
-      label: 'In Variables',
-      name: 'In'
-    };
-
-    type2 = {
-      type: 'apex:OutVariables',
-      id: 'outVariables',
-      label: 'Out Variables',
-      name: 'Out'
-    };
-
-  } else if (
-    ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']) && businessObject.isCallable === 'true'
-  ) {
-
-    type1 = {
-      type: 'apex:InVariables',
-      id: 'inVariables',
-      label: 'In Variables',
-      name: 'In'
-    };
-
-    type2 = {
-      type: 'apex:OutVariables',
-      id: 'outVariables',
-      label: 'Out Variables',
-      name: 'Out'
-    };
-
-  } else if (
-    ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
-  ) {
-    // opening gateway
-    if (element.incoming.length === 1 && element.outgoing.length > 1) {
+  if (!businessObject.loopCharacteristics) {
+    if (
+      ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
+    ) {
 
       type1 = {
-        type: 'apex:BeforeSplit',
-        id: 'beforeSplit',
-        label: 'Before Split'
+        type: 'apex:BeforeTask',
+        id: 'beforeTask',
+        label: 'Before Task'
       };
 
-      // closing gateway
-    } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
-
-      type1 = {
-        type: 'apex:AfterMerge',
-        id: 'afterMerge',
-        label: 'After Merge'
-      };
-
-      // opening and closing gateway
-    } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
-
-      type1 = {
-        type: 'apex:BeforeSplit',
-        id: 'beforeSplit',
-        label: 'Before Split'
-      };
-  
       type2 = {
-        type: 'apex:AfterMerge',
-        id: 'afterMerge',
-        label: 'After Merge'
+        type: 'apex:AfterTask',
+        id: 'afterTask',
+        label: 'After Task'
       };
       
+    } else if (
+      ModelingUtil.is(element, 'bpmn:CallActivity')
+    ) {
+
+      type1 = {
+        type: 'apex:InVariables',
+        id: 'inVariables',
+        label: 'In Variables',
+        name: 'In'
+      };
+
+      type2 = {
+        type: 'apex:OutVariables',
+        id: 'outVariables',
+        label: 'Out Variables',
+        name: 'Out'
+      };
+
+    } else if (
+      ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']) && businessObject.isCallable === 'true'
+    ) {
+
+      type1 = {
+        type: 'apex:InVariables',
+        id: 'inVariables',
+        label: 'In Variables',
+        name: 'In'
+      };
+
+      type2 = {
+        type: 'apex:OutVariables',
+        id: 'outVariables',
+        label: 'Out Variables',
+        name: 'Out'
+      };
+
+    } else if (
+      ModelingUtil.isAny(element, ['bpmn:ExclusiveGateway', 'bpmn:ParallelGateway', 'bpmn:InclusiveGateway', 'bpmn:EventBasedGateway'])
+    ) {
+      // opening gateway
+      if (element.incoming.length === 1 && element.outgoing.length > 1) {
+
+        type1 = {
+          type: 'apex:BeforeSplit',
+          id: 'beforeSplit',
+          label: 'Before Split'
+        };
+
+        // closing gateway
+      } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
+
+        type1 = {
+          type: 'apex:AfterMerge',
+          id: 'afterMerge',
+          label: 'After Merge'
+        };
+
+        // opening and closing gateway
+      } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
+
+        type1 = {
+          type: 'apex:BeforeSplit',
+          id: 'beforeSplit',
+          label: 'Before Split'
+        };
+    
+        type2 = {
+          type: 'apex:AfterMerge',
+          id: 'afterMerge',
+          label: 'After Merge'
+        };
+        
+      }
+    } else if (
+      ModelingUtil.isAny(element, ['bpmn:StartEvent', 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:BoundaryEvent', 'bpmn:EndEvent'])
+    ) {
+
+      if (
+        getBusinessObject(element).eventDefinitions &&
+        getBusinessObject(element).eventDefinitions.some(
+          e => e.$type === 'bpmn:TimerEventDefinition'
+        )
+      ) {
+        type1 = {
+          type: 'apex:BeforeEvent',
+          id: 'beforeEvent',
+          label: 'Before Event'
+        };
+      }
+
+      type2 = {
+        type: 'apex:OnEvent',
+        id: 'onEvent',
+        label: 'On Event'
+      }; 
     }
-  } else if (
-    ModelingUtil.isAny(element, ['bpmn:StartEvent', 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:BoundaryEvent', 'bpmn:EndEvent'])
-  ) {
+
+    const listExtensionHelper1 = type1 ? new ListExtensionHelper(
+      type1.type,
+      null,
+      'procVars',
+      'apex:ProcessVariable',
+      null,
+      type1.name
+    ) : null;
+
+    const listExtensionHelper2 = type2 ? new ListExtensionHelper(
+      type2.type,
+      null,
+      'procVars',
+      'apex:ProcessVariable',
+      null,
+      type2.name
+    ) : null;
 
     if (
-      getBusinessObject(element).eventDefinitions &&
-      getBusinessObject(element).eventDefinitions.some(
-        e => e.$type === 'bpmn:TimerEventDefinition'
-      )
+      ModelingUtil.is(element, 'bpmn:CallActivity')
     ) {
-      type1 = {
-        type: 'apex:BeforeEvent',
-        id: 'beforeEvent',
-        label: 'Before Event'
-      };
+      entries.push(
+        {
+          element,
+          component: QuickpickDefinedVariables,
+          helper1: listExtensionHelper1,
+          helper2: listExtensionHelper2
+        },
+      );
+      entries.push(
+        {
+          element,
+          component: QuickpickBusinessRef,
+          helper: listExtensionHelper1
+        },
+      );
     }
 
-    type2 = {
-      type: 'apex:OnEvent',
-      id: 'onEvent',
-      label: 'On Event'
-    }; 
-  }
-
-  const listExtensionHelper1 = type1 ? new ListExtensionHelper(
-    type1.type,
-    null,
-    'procVars',
-    'apex:ProcessVariable',
-    null,
-    type1.name
-  ) : null;
-
-  const listExtensionHelper2 = type2 ? new ListExtensionHelper(
-    type2.type,
-    null,
-    'procVars',
-    'apex:ProcessVariable',
-    null,
-    type2.name
-  ) : null;
-
-  if (
-    ModelingUtil.is(element, 'bpmn:CallActivity')
-  ) {
-    entries.push(
-      {
+    if (type1) {
+      entries.push({
+        id: type1.id,
         element,
-        component: QuickpickDefinedVariables,
-        helper1: listExtensionHelper1,
-        helper2: listExtensionHelper2
-      },
-    );
-    entries.push(
-      {
+        label: translate(type1.label),
+        component: ListGroup,
+        ...ProcVarList(
+          {
+            element,
+            injector,
+            helper: listExtensionHelper1
+          }
+        ), 
+      });
+    }
+
+    if (type2) {
+      entries.push({
+        id: type2.id,
         element,
-        component: QuickpickBusinessRef,
-        helper: listExtensionHelper1
-      },
-    );
-  }
-
-  if (type1) {
-    entries.push({
-      id: type1.id,
-      element,
-      label: translate(type1.label),
-      component: ListGroup,
-      ...ProcVarList(
-        {
-          element,
-          injector,
-          helper: listExtensionHelper1
-        }
-      ), 
-    });
-  }
-
-  if (type2) {
-    entries.push({
-      id: type2.id,
-      element,
-      label: translate(type2.label),
-      component: ListGroup,
-      ...ProcVarList(
-        {
-          element,
-          injector,
-          helper: listExtensionHelper2
-        }
-      ), 
-    });
+        label: translate(type2.label),
+        component: ListGroup,
+        ...ProcVarList(
+          {
+            element,
+            injector,
+            helper: listExtensionHelper2
+          }
+        ), 
+      });
+    }
   }
 
   return entries;
