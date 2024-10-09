@@ -231,8 +231,10 @@ function getTaskFilters(element) {
   var filter = [];
   var businessObject = getBusinessObject(element);
 
-  filter.push('apex:BeforeTask');
-  filter.push('apex:AfterTask');
+  if (!businessObject.loopCharacteristics) {
+    filter.push('apex:BeforeTask');
+    filter.push('apex:AfterTask');
+  }
 
   // filter user tasks
   if (is(element, 'bpmn:UserTask')) {

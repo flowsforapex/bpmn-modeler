@@ -1,5 +1,5 @@
 /**
- * A rule that warns when using unsupported start event types.
+ * A rule that warns when using conditional sequence flows without gateways.
  */
  module.exports = function () {
   function check(businessObject, reporter) {
