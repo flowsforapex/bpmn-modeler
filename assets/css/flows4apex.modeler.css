@@ -4,13 +4,14 @@
 /**
  * general
  */
+ .flows4apex-modeler {
+  position: relative;
+  display: block;
+}  
 .canvas {
   height: 80vh;
   background-color: #f0f0f0;
 }
-.flows4apex-modeler {
-  position: relative;
-}  
 .properties-panel-parent {
   position: absolute;
   top: 20px;
