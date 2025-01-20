@@ -29,109 +29,11 @@
     });
   </script>
   <script src="./bundle.js"></script>
-  <script>
-    /*
-    var myModeler = new bpmnModeler.Modeler({
-      container: "#canvas",
-      keyboard: { bindTo: document },
-      propertiesPanel: {
-        parent: '#properties'
-      },
-      linting: {
-        bpmnlint: bpmnModeler.linting.apexLinting
-      },
-      additionalModules: [
-        bpmnModeler.customModules.BpmnPropertiesPanelModule,
-        bpmnModeler.customModules.BpmnPropertiesProviderModule,
-        bpmnModeler.customModules.propertiesProviderModule,
-        bpmnModeler.customModules.AddExporter,
-        bpmnModeler.customModules.lintModule,
-        bpmnModeler.customModules.customPaletteProviderModule,
-        bpmnModeler.customModules.translationModule,
-        bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.drilldownCentering,
-        bpmnModeler.customModules.bpmnDiOrdering,
-        bpmnModeler.customModules.colorPickerModule,
-      ],
-      moddleExtensions: {
-        apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
-      },
-      bpmnRenderer: {
-        defaultFillColor: "var(--default-fill-color)",
-        defaultStrokeColor: "var(--default-stroke-color)",
-        defaultLabelColor: "var(--default-stroke-color)",
-      },
-      exporter: {
-        name: 'Flows for APEX',
-        version: '23.1.0',
-      },
-      showCustomExtensions: true
-      // colorPicker: {
-      //   colors: [
-      //     {
-      //       label: 'Default',
-      //       fill: undefined,
-      //     stroke: undefined,
-      //     },
-      //     {
-      //       label: 'Meep',
-      //       fill: '#BA74FB',
-      //     stroke: '#FF04FF'
-      //     }
-      //   ]
-      // }
-    });
-
-    async function init() {
-
-      openDiagram();
-
-      async function openDiagram() {
-        const defaultDiagram =
-        `<?xml version="1.0" encoding="UTF-8"?>
-        <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wxm0ft" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="11.1.0">
-          <bpmn:process id="Process_177w5fg" isExecutable="false" />
-          <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-            <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_177w5fg" />
-          </bpmndi:BPMNDiagram>
-        </bpmn:definitions>`;
-        // import diagram
-        try {
-
-          await myModeler.importXML(defaultDiagram);
-
-          if (!myModeler._definitions.get('xmlns:apex')) {
-            // custom namespace must be added manually for working default values 
-            const refactored = myModeler.get('xmlModule').addCustomNamespace(defaultDiagram);
-            await myModeler.importXML(refactored);
-          }
-
-          // access viewer components
-          var canvas = myModeler.get("canvas");
-          var overlays = myModeler.get("overlays");
-
-          myModeler.get('xmlModule').refactorElements();
-
-          // zoom to fit full viewport
-          canvas.zoom("fit-viewport");
-        } catch (err) {
-          console.error("could not import BPMN 2.0 diagram", err);
-        }
-      }
-    }
-
-    init();
-    */
-  </script>
    <script>
     async function logXml() {
-      try {
-        const result = await myModeler.saveXML( { format: true } );
-        const { xml } = result;
-        console.log(xml);
-      } catch (err) {
-        console.log( "Log Diagram failed.", err );
-      }
+      const modelerElement = document.querySelector('f4a-modeler');
+      const xml = await modelerElement.getDiagram();
+      console.log(xml);
     }
   </script>
   <button onclick="logXml()">XML</button>

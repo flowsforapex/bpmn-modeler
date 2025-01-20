@@ -37,6 +37,7 @@ class Modeler extends HTMLElement {
     this.showCustomExtensions = this.getAttribute('showCustomExtensions');
     this.themePluginClass = this.getAttribute('themePluginClass');
 
+    // create shadow dom
     this.attachShadow({ mode: 'open' });
   }
 
@@ -106,17 +107,15 @@ class Modeler extends HTMLElement {
 
     container.appendChild(this.dialogContainer);
 
-    // this.appendChild(container);
+    // append container
     this.shadowRoot.appendChild(container);
   }
 
   initModeler() {
     this.modeler = new BpmnModeler({
-      // container: `#${this.canvas.id}`,
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
       keyboard: { bindTo: document },
       propertiesPanel: {
-        // parent: `#${this.properties.id}`
         parent: this.shadowRoot.querySelector(`#${this.properties.id}`)
       },
       linting: {
@@ -162,9 +161,9 @@ class Modeler extends HTMLElement {
 
   async loadDiagram(diagramContent) {
 
-    this.diagramContent = diagramContent;
-    
     var result;
+    
+    this.diagramContent = diagramContent;
     
     try {
       result = await this.modeler.importXML(this.diagramContent);
