@@ -21,29 +21,6 @@ module.exports = {
           from: path.resolve(__dirname, "demo.html"),
           to: "./index.html",
         },
-        {
-          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
-          to: "assets/css/flows4apex.modeler.css",
-        },
-        {
-          from: path.resolve(__dirname, "node_modules/bpmn-js/dist/assets"),
-          to: "assets/bpmn-js",
-        },
-        {
-          from: path.resolve(__dirname, "node_modules/bpmn-js-color-picker/colors/color-picker.css"),
-          to: "assets/bpmn-js-color-picker/colors",
-        },
-        {
-          from: path.resolve(__dirname, "node_modules/@bpmn-io/properties-panel/dist/assets"),
-          to: "assets/bpmn-js-properties-panel",
-        },
-        {
-          from: path.resolve(
-            __dirname,
-            "node_modules/bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css"
-          ),
-          to: "assets/bpmn-js-bpmnlint",
-        },
       ],
     }),
     new MonacoWebpackPlugin({
@@ -67,7 +44,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["css-loader"],
       },
       {
         test: /\.ttf$/,

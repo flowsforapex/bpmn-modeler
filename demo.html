@@ -5,28 +5,32 @@
   <meta charset="UTF-8" />
   <title>Flows for APEX - Modeler</title>
 
-  <link rel="stylesheet" href="assets/css/flows4apex.modeler.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/bpmn-js.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/diagram-js.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/bpmn-font/css/bpmn-embedded.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-bpmnlint/bpmn-js-bpmnlint.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-properties-panel/properties-panel.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-color-picker/colors/color-picker.css" type="text/css"/>
-  <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css" type="text/css"/>
+  <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/24.2.0/libraries/font-apex/2.4/css/font-apex.min.css?v=24.2.0" type="text/css"/>
 </head>
 
 <body>
-  <div class="flows4apex-modeler FLOWS-DARK">
-    <div id="canvas" class="canvas"></div>
-    <div id="properties" class="properties-panel-parent"></div>
-    <div id="dialog-container" class="dialog-container"></div>
-  </div>
+  <f4a-modeler regionId="modeler" showCustomExtensions="true" themePluginClass="FLOWS-DARK" ></f4a-modeler>
   <script>
     // window.f4a = window.f4a || {};
     // window.f4a.language = 'test';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const defaultDiagram =
+        `<?xml version="1.0" encoding="UTF-8"?>
+        <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wxm0ft" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="11.1.0">
+          <bpmn:process id="Process_177w5fg" isExecutable="false" />
+          <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+            <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_177w5fg" />
+          </bpmndi:BPMNDiagram>
+        </bpmn:definitions>`;
+
+      const modelerElement = document.querySelector('f4a-modeler');
+      modelerElement.loadDiagram(defaultDiagram);
+    });
   </script>
   <script src="./bundle.js"></script>
   <script>
+    /*
     var myModeler = new bpmnModeler.Modeler({
       container: "#canvas",
       keyboard: { bindTo: document },
@@ -117,6 +121,7 @@
     }
 
     init();
+    */
   </script>
    <script>
     async function logXml() {
