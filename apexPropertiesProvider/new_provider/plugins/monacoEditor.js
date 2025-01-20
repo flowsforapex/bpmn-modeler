@@ -66,9 +66,9 @@ export function getContainer(translate, id) {
 }
 
 export function openEditor(getText, saveText, language, type, id) {
+  const container = domQuery('.dialog-container', domQuery('f4a-modeler').shadowRoot);
   const modal = domQuery(`#modal-dialog-${id}`, domQuery('f4a-modeler').shadowRoot);
   const parent = modal.parentNode;
-  const container = domQuery('.dialog-container', domQuery('f4a-modeler').shadowRoot);
 
   const undoBtn = domQuery('#undo-btn', modal);
   const redoBtn = domQuery('#redo-btn', modal);
@@ -95,9 +95,6 @@ export function openEditor(getText, saveText, language, type, id) {
   modal.style.display = 'flex';
 
   container.appendChild(modal);
-
-  const customElement = domQuery('f4a-modeler');
-  customElement.contentEditable = true;
 
   undoBtn.onclick = function () {
     monacoEditor.getModel().undo();
