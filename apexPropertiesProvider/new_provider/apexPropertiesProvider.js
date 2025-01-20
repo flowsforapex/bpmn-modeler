@@ -50,8 +50,8 @@ function createSection(args, id, label, props) {
 }
 
 function makePropertiesPanelResizable() {
-  const canvas = domQuery('.canvas');
-  const parentNode = domQuery('.properties-panel-parent');
+  const canvas = domQuery('.canvas', domQuery('f4a-modeler').shadowRoot);
+  const parentNode = domQuery('.properties-panel-parent', domQuery('f4a-modeler').shadowRoot);
 
   var mouseX;
   const BORDER_WIDTH = 5;
