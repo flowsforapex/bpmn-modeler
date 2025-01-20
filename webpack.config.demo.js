@@ -21,6 +21,10 @@ module.exports = {
           from: path.resolve(__dirname, "demo.html"),
           to: "./index.html",
         },
+        {
+          from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
+          to: "assets/css/flows4apex.modeler.css",
+        },
       ],
     }),
     new MonacoWebpackPlugin({
