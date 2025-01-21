@@ -34,7 +34,7 @@ class Modeler extends HTMLElement {
 
     this.regionId = this.getAttribute('regionId');
     this.ajaxIdentifier = this.getAttribute('ajaxIdentifier');
-    this.showCustomExtensions = this.getAttribute('showCustomExtensions');
+    this.showCustomExtensions = (this.getAttribute('showCustomExtensions') === 'true');
     this.themePluginClass = this.getAttribute('themePluginClass');
 
     // create shadow dom
@@ -192,14 +192,12 @@ class Modeler extends HTMLElement {
 
     var result;
     
-    this.diagramContent = diagramContent;
-    
     try {
-      result = await this.modeler.importXML(this.diagramContent);
+      result = await this.modeler.importXML(diagramContent);
 
       if (!this.modeler._definitions.get('xmlns:apex')) {
         // custom namespace must be added manually for working default values 
-        const refactored = this.modeler.get('xmlModule').addCustomNamespace(this.diagramContent);
+        const refactored = this.modeler.get('xmlModule').addCustomNamespace(diagramContent);
         result = await this.modeler.importXML(refactored);
       }
 
@@ -217,7 +215,7 @@ class Modeler extends HTMLElement {
       this.modeler.get('eventBus').on('commandStack.changed', () => { this.changed = true; });
 
     } catch (err) {
-      apex.debug.error('Loading Diagram failed.', err, this.diagram); // TODO emit event
+      apex.debug.error('Loading Diagram failed.', err, diagramContent); // TODO emit event
     }
   }
 

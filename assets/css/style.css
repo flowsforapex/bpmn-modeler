@@ -2,6 +2,8 @@
  * general
  */
 .flows4apex-modeler {
+  --color-flows-modal-border: #888;
+  
   position: relative;
   display: block;
 }
@@ -29,7 +31,7 @@
 /** 
  * custom colors
  */
- .bjs-container {
+.bjs-container {
   --default-fill-color: var(--color-flows-fill);
   --default-stroke-color: var(--color-flows-stroke);
 }
@@ -119,8 +121,6 @@
  * monaco editor
  */
 .modal {
-  --color-flows-modal-border: #888;
-
   display: none;
   position: fixed;
   z-index: 999;
