@@ -190,33 +190,30 @@ class Modeler extends HTMLElement {
 
   async loadDiagram(diagramContent) {
 
-    var result;
-    
-    try {
-      result = await this.modeler.importXML(diagramContent);
+    let result = await this.modeler.importXML(diagramContent);
+    const { warnings } = result;
 
-      if (!this.modeler._definitions.get('xmlns:apex')) {
-        // custom namespace must be added manually for working default values 
-        const refactored = this.modeler.get('xmlModule').addCustomNamespace(diagramContent);
-        result = await this.modeler.importXML(refactored);
-      }
-
-      const { warnings } = result;
-
-      if (warnings.length > 0) {
-        apex.debug.warn('Warnings during XML Import', warnings); // TODO emit event
-      }
-
-      this.modeler.get('xmlModule').refactorElements();
-
-      this.zoom('fit-viewport');
-      this.changed = false;
-      
-      this.modeler.get('eventBus').on('commandStack.changed', () => { this.changed = true; });
-
-    } catch (err) {
-      apex.debug.error('Loading Diagram failed.', err, diagramContent); // TODO emit event
+    if (warnings.length > 0) {
+      apex.debug.warn('Warnings during XML Import', warnings); // TODO emit event
     }
+
+    this.zoom('fit-viewport');
+
+    // get modeler modules
+    const eventBus = this.modeler.get('eventBus');
+    const xmlModule = this.modeler.get('xmlModule');
+      
+    if (!this.modeler._definitions.get('xmlns:apex')) {
+      // custom namespace must be added manually for working default values 
+      const refactored = xmlModule.addCustomNamespace(diagramContent);
+      result = await this.modeler.importXML(refactored);
+    }  
+
+    xmlModule.refactorElements();
+
+    eventBus.on('commandStack.changed', () => { this.changed = true; });
+
+    this.changed = false; 
   }
 
   zoom(zoomOption) {
@@ -228,26 +225,16 @@ class Modeler extends HTMLElement {
   }
 
   async getDiagram() {
-    try {
-      const result = await this.modeler.saveXML({ format: true });
-      const { xml } = result;
-      return xml;
-    } catch (err) {
-      apex.debug.error('Get Diagram failed.', err); // TODO emit event
-      throw err;
-    }
+    const result = await this.modeler.saveXML({ format: true });
+    const { xml } = result;
+    return xml;
   }
 
   async getSVG() {
-    try {
-      const result = await this.modeler.saveSVG({ format: true });
-      const { svg } = result;
-      const styledSVG = this.modeler.get('xmlModule').addToSVGStyle(svg, '.djs-group { --default-fill-color: white; --default-stroke-color: black; }');
-      return styledSVG;
-    } catch (err) {
-      apex.debug.error('Get SVG failed.', err); // TODO emit event
-      throw err;
-    }
+    const result = await this.modeler.saveSVG({ format: true });
+    const { svg } = result;
+    const styledSVG = this.modeler.get('xmlModule').constructor.addStyleToSVG(svg);
+    return styledSVG;
   }
 }
 
