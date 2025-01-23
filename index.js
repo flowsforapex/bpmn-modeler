@@ -8,6 +8,7 @@ import propertiesProviderModule from './apexPropertiesProvider/new_provider';
 import customPaletteProviderModule from './custom/palette';
 import bpmnDiOrdering from './modules/bpmnDiOrdering';
 import drilldownCentering from './modules/drilldownCentering';
+import propPanelResize from './modules/propPanelResize';
 import translationModule from './modules/translationModule';
 import xmlModule from './modules/xmlModule';
 
@@ -16,12 +17,12 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-import css from './assets/css/style.css';
+import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
+import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
+import colorPickerCSS from 'bpmn-js-color-picker/colors/color-picker.css';
 import bpmnCSS from 'bpmn-js/dist/assets/bpmn-js.css';
 import diagramCSS from 'bpmn-js/dist/assets/diagram-js.css';
-import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
-import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
-import colorPickerCSS from 'bpmn-js-color-picker/colors/color-picker.css';
+import css from './assets/css/style.css';
 
 import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
@@ -131,6 +132,7 @@ class Modeler extends HTMLElement {
         translationModule,
         xmlModule,
         drilldownCentering,
+        propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
       ],

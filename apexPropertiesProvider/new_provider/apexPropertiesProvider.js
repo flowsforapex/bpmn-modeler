@@ -34,8 +34,6 @@ import { removeInvalidExtensionsElements } from './helper/validateXML';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
-import { query as domQuery } from 'min-dom';
-
 const LOW_PRIORITY = 500;
 
 function createSection(args, id, label, props) {
@@ -49,43 +47,6 @@ function createSection(args, id, label, props) {
   return section;
 }
 
-function makePropertiesPanelResizable() {
-  const canvas = domQuery('.canvas', domQuery('f4a-modeler').shadowRoot);
-  const parentNode = domQuery('.properties-panel-parent', domQuery('f4a-modeler').shadowRoot);
-
-  var mouseX;
-  const BORDER_WIDTH = 5;
-
-  document.addEventListener('mousedown', function (event) {
-    if (event.offsetX < BORDER_WIDTH) {
-      mouseX = event.x;
-      document.addEventListener('mousemove', resize, false);
-    }
-  });
-
-  document.addEventListener('mouseup', function () {
-    document.removeEventListener('mousemove', resize, false);
-  });
-
-  function resize(event) {
-    var dx = mouseX - event.x;
-    var panelWidth = parentNode.scrollWidth + dx;
-    var maxWidth =
-      (parseInt(getComputedStyle(canvas, '').width, 10) / 100) *
-      parseInt(getComputedStyle(parentNode).maxWidth, 10);
-    
-    mouseX = event.x;
-    
-    if (
-      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth, 10) &&
-      panelWidth < maxWidth
-    ) {
-      parentNode.style.width = `${panelWidth}px`;
-      parentNode.firstChild.style.width = `${panelWidth}px`;
-    }
-  }
-}
-
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -95,8 +56,6 @@ export default function apexPropertiesProvider(
   translate,
   showCustomExtensions
 ) {
-  makePropertiesPanelResizable();
-
   eventBus.on('saveXML.start', function () {
     removeInvalidExtensionsElements(elementRegistry, modeling);
   });
