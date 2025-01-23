@@ -205,7 +205,7 @@ class Modeler extends HTMLElement {
       
     if (!this.modeler._definitions.get('xmlns:apex')) {
       // custom namespace must be added manually for working default values 
-      const refactored = xmlModule.addCustomNamespace(diagramContent);
+      const refactored = xmlModule.constructor.addCustomNamespace(diagramContent);
       result = await this.modeler.importXML(refactored);
     }  
 
