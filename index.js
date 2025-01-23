@@ -50,7 +50,7 @@ class Modeler extends HTMLElement {
     document.head.appendChild(styleGlobal);
 
     // copy apex font file from global page to shadow dom
-    const apexFontFile = Array.from(document.styleSheets).find(s => s.href && s.href.includes('font-apex.min.css'));
+    const apexFontFile = Array.from(document.styleSheets).find(s => s.href && (s.href.includes('font-apex.min.css') || s.href.includes('font-apex.css')));
 
     if (apexFontFile) {
       const styleShadow = document.createElement('style');
