@@ -12,6 +12,7 @@ import CustomTimerProps from './parts/timer/CustomTimerProps';
 import AssignmentProps from './parts/userTask/AssignmentProps';
 
 import ExecutionProps from './parts/process/ExecutionProps';
+import GeneralProps from './parts/process/GeneralProps';
 
 import RoleProps from './parts/lane/RoleProps';
 import SchedulingProps from './parts/scheduling/SchedulingProps';
@@ -164,6 +165,9 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, translate}, 'starter', translate('Potential Starters'), StarterProps));
         newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', translate('Background Task Session'), BackgroundTaskSessionProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
+
+        const generalGroup = groups.find(g => g.id === 'general');
+        generalGroup.entries = generalGroup.entries.concat(GeneralProps({element, injector, translate}));
       }
 
       // subprocess

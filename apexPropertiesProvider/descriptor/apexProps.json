@@ -20,6 +20,16 @@
           "name": "isStartable",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "instanceName",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "minLoggingLevel",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
