@@ -1,6 +1,6 @@
 import { is } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
-import ExtensionHelper from '../../apexPropertiesProvider/new_provider/helper/ExtensionHelper';
-import { getBusinessObject } from '../../apexPropertiesProvider/new_provider/helper/util';
+import ExtensionHelper from '../../apexPropertiesProvider/provider/helper/ExtensionHelper';
+import { getBusinessObject } from '../../apexPropertiesProvider/provider/helper/util';
 
 export class XMLModule {
   
