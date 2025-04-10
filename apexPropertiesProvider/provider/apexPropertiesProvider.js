@@ -23,6 +23,8 @@ import StarterProps from './parts/process/StarterProps';
 import TerminateEventProps from './parts/events/TerminateEventProps';
 import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionProps';
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
+
+import ApexAIGenerationProps from './parts/serviceTask/ApexAIGenerationProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 import CustomExtensionProps from './parts/CustomExtensionProps';
@@ -117,6 +119,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
+        newGroups.push(createSection({element, injector, translate}, 'apexAIGeneration', translate('APEX AI Generation'), ApexAIGenerationProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }

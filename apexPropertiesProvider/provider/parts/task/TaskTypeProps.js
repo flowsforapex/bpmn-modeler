@@ -25,6 +25,7 @@ export default function (args) {
     'bpmn:ServiceTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },
       { label: translate('Send Mail'), value: 'sendMail' },
+      { label: translate('APEX AI Generation'), value: 'apexAIGeneration' },
     ],
     'bpmn:ScriptTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' }
