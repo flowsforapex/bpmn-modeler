@@ -117,6 +117,9 @@
 .bio-properties-panel-group[data-group-id="group-pageItems"] {
   border-bottom-style: none;
 }
+.bio-properties-panel-group-header {
+  background-color: inherit;
+}
 /** 
  * monaco editor
  */
