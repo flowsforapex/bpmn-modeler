@@ -424,7 +424,7 @@ function MaxRuns(props) {
 
   const setValue = (value) => {
     cycleHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      maxRuns: value,
+      maxRuns: String(value),
     }, timerEventDefinition);
   };
 
