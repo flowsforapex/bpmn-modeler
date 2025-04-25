@@ -2,7 +2,7 @@ export function getApplications() {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getApplications');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -26,7 +26,7 @@ export function getPages(applicationId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getPages');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -61,7 +61,7 @@ export function getItems(applicationId, pageId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getItems');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -90,7 +90,7 @@ export function getApplicationsMail() {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getApplicationsMail');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -114,7 +114,7 @@ export function getTemplates(applicationId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getTemplates');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -149,7 +149,7 @@ export function getDiagrams() {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getDiagrams');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -173,7 +173,7 @@ export function getUsernames() {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getUsernames');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -198,7 +198,7 @@ export function getTasks(applicationId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getTasks');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -233,7 +233,7 @@ export function getDefinedVariables(calledDiagram, calledDiagramVersionSelection
   if (typeof apex !== 'undefined') {
     apex.debug.info('getDefinedVariables');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -283,7 +283,7 @@ export function getJSONParameters(applicationId, taskStaticId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getJSONParameters');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -321,7 +321,7 @@ export function getJSONPlaceholders(applicationId, templateId) {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getJSONPlaceholders');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(
@@ -351,7 +351,7 @@ export function getFormTemplates() {
   if (typeof apex !== 'undefined') {
     apex.debug.info('getFormTemplates');
     // ajaxIdentifier
-    var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+    var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
     // ajax process
     return apex.server
       .plugin(

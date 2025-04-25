@@ -40,7 +40,7 @@ export default function (args) {
   const entries = [];
 
   if (
-    (is(element, 'bpmn:SendTask') && !['executePlsql'].includes(businessObject.type)) ||
+    (is(element, 'bpmn:SendTask') && (businessObject.type === 'simpleMessage' || !businessObject.type)) ||
     (is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) ||
     (is(element, 'bpmn:EndEvent') && getMessageEvent(element))
   ) {

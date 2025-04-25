@@ -271,6 +271,12 @@ function getTaskFilters(element) {
       case 'sendMail':
         filter.push('apex:SendMail');
         break;
+      case 'apexAIGeneration':
+        filter.push('apex:AiService');
+        filter.push('apex:AiTemperature');
+        filter.push('apex:AiPrompt');
+        filter.push('apex:ResultVariable');
+        break;
       default:
       // do nothing
     }
