@@ -115,7 +115,6 @@ class Modeler extends HTMLElement {
   initModeler() {
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
-      keyboard: { bindTo: document },
       propertiesPanel: {
         parent: this.shadowRoot.querySelector(`#${this.properties.id}`)
       },
@@ -152,33 +151,6 @@ class Modeler extends HTMLElement {
     });
   }
 
-  initEventHandler() {
-    // popup (context menu ) open/close
-    const eventBus = this.modeler.get('eventBus');
-    eventBus.on('popupMenu.open', (_) => {
-      this.modeler.get('keyboard').unbind();
-    });
-    eventBus.on('popupMenu.close', (_) => {
-      this.modeler.get('keyboard').bind(document);
-    });
-
-    // properties panel focus in/out
-    this.properties.addEventListener('focusin', (_) => {
-      this.modeler.get('keyboard').unbind();
-    });
-    this.properties.addEventListener('focusout', (_) => {
-      this.modeler.get('keyboard').bind(document);
-    });
-
-    // editor dialog focus in/out
-    this.dialogContainer.addEventListener('focusin', (_) => {
-      this.modeler.get('keyboard').unbind();
-    });
-    this.dialogContainer.addEventListener('focusout', (_) => {
-      this.modeler.get('keyboard').bind(document);
-    });
-  }
-
   connectedCallback() {
 
     this.initCSS();
@@ -186,8 +158,6 @@ class Modeler extends HTMLElement {
     this.initHTML();
 
     this.initModeler();
-
-    this.initEventHandler();
   }
 
   async loadDiagram(diagramContent) {
