@@ -20,6 +20,16 @@
           "name": "isStartable",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "instanceName",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "minLoggingLevel",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
@@ -326,6 +336,62 @@
         },
         {
           "name": "immediately",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ResultVariable",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "resultVariable",
+          "type": "String",
+          "isBody": true
+        }
+      ]
+    },
+    {
+      "name": "AiService",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AiTemperature",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ],
+      "xml": {
+        "tagAlias": "upperCase"
+      }
+    },
+    {
+      "name": "AiPrompt",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
           "type": "String"
         }
       ]

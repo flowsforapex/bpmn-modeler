@@ -1,4 +1,4 @@
-import XMLModule from './XMLModule';
+import { XMLModule } from './XMLModule';
 
 export default {
   __init__: ['xmlModule'],

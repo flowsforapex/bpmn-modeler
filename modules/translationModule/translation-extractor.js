@@ -15,7 +15,7 @@ extractor
       },
     }),
   ])
-  .parseFilesGlob('apexPropertiesProvider/new_provider/**/*.js')
+  .parseFilesGlob('apexPropertiesProvider/provider/**/*.js')
   .parseFilesGlob('custom/**/*.js')
   .parseFilesGlob('modules/translationModule/additional-strings.js');
 

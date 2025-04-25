@@ -1,0 +1,324 @@
+/**
+ * general
+ */
+.flows4apex-modeler {
+  --color-flows-modal-border: #888;
+  
+  position: relative;
+  display: block;
+}
+.canvas {
+  height: 80vh;
+  background-color: var(--color-flows-canvas-background);
+}
+.properties-panel-parent {
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  right: 20px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 50%;
+  z-index: 10;
+  border: 1px solid hsl(225, 10%, 75%); /* --palette-border-color */
+  overflow: auto;
+  display: block;
+  height: 90%;
+}
+.properties-panel-parent:empty {
+  display: none;
+}
+/** 
+ * custom colors
+ */
+.bjs-container {
+  --default-fill-color: var(--color-flows-fill);
+  --default-stroke-color: var(--color-flows-stroke);
+}
+/**
+ * properties panel
+ */
+.bio-properties-panel-toggle-switch-entry > .bio-properties-panel-description {
+  margin-left: 0px !important;
+}
+.bio-properties-panel-toggle-switch-entry + .bio-properties-panel-toggle-switch-entry {
+  margin-top: 0px !important;
+}
+/**
+ * resize icon
+ */
+ .properties-panel-parent:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: w-resize;
+}
+/**
+ * open dialog button
+ */
+.open-dialog-label {
+  display: flex;
+  justify-content: space-between;
+}
+.open-dialog-label .fa.fa-box-arrow-in-ne {
+  cursor: pointer;
+}
+/**
+ * quickpicks in descriptions
+ */
+.bio-properties-panel-description .bio-properties-panel-quickpick-link {
+  cursor: pointer;
+  margin-inline-end: 12px;
+  font-size: var(--text-size-base);
+}
+/**
+ * button-like quickpicks
+ */
+.bio-properties-panel-group-entries > .bio-properties-panel-quickpick {
+  margin: 6px 32px 0px 12px;
+}
+.bio-properties-panel-group-entries > .bio-properties-panel-quickpick > .bio-properties-panel-quickpick-link {
+  cursor: pointer;
+  color: var(--color-flows-button-link);
+  margin-inline-end: 12px;
+}
+/**
+ * helptext
+ */
+.bio-properties-panel-helptext {
+  margin: 2px 32px 6px 12px;
+  font-style: italic;
+}
+/**
+ * Add border to first group in nested groups
+ */
+.bio-properties-panel-group-entries .bio-properties-panel-group:first-child
+{
+  border-top: 1px solid var(--group-bottom-border-color);
+}
+/** 
+ * Remove double border at the end of nested groups
+ */
+.bio-properties-panel-scroll-container > .bio-properties-panel-group:has( > .bio-properties-panel-group-entries.open > .bio-properties-panel-group:last-child) {
+  border-bottom: none;
+}
+/**
+ * Highlight top level group headers
+ */
+.bio-properties-panel-scroll-container > .bio-properties-panel-group > .bio-properties-panel-group-header > .bio-properties-panel-group-header-title {
+  font-weight: 600;
+}
+/**
+ * Remove border at the end of pageItems group
+ */
+.bio-properties-panel-group[data-group-id="group-pageItems"] {
+  border-bottom-style: none;
+}
+.bio-properties-panel-group-header {
+  background-color: inherit;
+}
+/** 
+ * monaco editor
+ */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+  background-color: white;
+  margin: auto;
+  padding: 0 10px;
+  border: 1px solid var(--color-flows-modal-border);
+  width: 1000px;
+  height: 500px;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: 10% 80% 10%;
+}
+.button-container {
+  display: flex;
+  align-items: center;
+}
+.button-container.end {
+  justify-content: end;
+}
+.button-container.start button.dialog {
+  margin-right: 5px;
+}
+.button-container.end button.dialog {
+  margin-left: 5px;
+}
+button.dialog {
+  position: static;
+  height: 30px;
+  min-width: 60px;
+  cursor: pointer;
+  border: 1px solid var(--color-flows-modal-border);
+  border-radius: 2px;
+  background-color: hsl(225, 10%, 97%); /* --input-background-color */
+}
+button.dialog:hover {
+  color: var(--color-flows-button-link);
+}
+button.dialog.fa {
+  width: 40px;
+}
+#save-btn {
+  background-color: var(--color-flows-button-link);
+  color: var(--color-flows-button-link-text);
+}
+#error-text {
+  width: 100%;
+  max-height: 40px;
+  overflow: auto;
+}
+#editor-container {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-flows-modal-border);
+}
+/**
+ * define dark model css variables
+ */
+.FLOWS-DARK {
+  --color-flows-dark-background: #2b3035;
+  --color-flows-lighter-dark-background: #32383d;
+  --color-flows-dark-input: #282c30;
+  --color-flows-dark-input-hover-focus: #1e2328;
+  --color-flows-dark-text: white;
+}
+/**
+ * custom dark mode colors
+ */
+.FLOWS-DARK .canvas {
+  background-color: var(--color-flows-dark-canvas-background);
+}
+.FLOWS-DARK .bjs-container {
+  --default-fill-color: var(--color-flows-dark-fill);
+  --default-stroke-color: var(--color-flows-dark-stroke);
+}
+.FLOWS-DARK .djs-popup {
+  --popup-body-background-color:  var(--color-flows-dark-background);
+  --popup-background-color: var(--color-flows-dark-background);
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-popup-search input {
+  background-color: var(--color-flows-lighter-dark-background);
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-popup-search input:focus {
+  background-color: var(--color-flows-dark-input-hover-focus);
+}
+.FLOWS-DARK .djs-popup .entry.selected {
+  background-color: var(--color-flows-lighter-dark-background);
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-popup button.entry {
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-context-pad .entry {
+  --context-pad-entry-background-color: var(--color-flows-dark-background);
+  --context-pad-entry-hover-background-color: var(--color-flows-dark-input-hover-focus);
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-palette {
+  --palette-background-color: var(--color-flows-lighter-dark-background);
+  --palette-entry-color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .djs-direct-editing-parent {
+  /* background when editing element text */
+  background-color: var(--color-flows-dark-background) !important;
+  color: var(--color-flows-dark-text) !important;
+}
+.FLOWS-DARK .djs-container {
+  /* moving elements onto each other */
+  --shape-drop-not-allowed-fill-color: #3f3035;
+  --shape-drop-allowed-fill-color: var(--color-flows-dark-background);
+}
+.FLOWS-DARK .djs-shape.connect-ok {
+  --shape-connect-allowed-fill-color: var(--color-flows-lighter-dark-background);
+}
+.FLOWS-DARK .bjs-powered-by {
+  color: var(--color-flows-dark-text) !important;
+}
+.FLOWS-DARK .bjsl-button:not(.bjsl-button-error) {
+  color: #808080;
+}
+.FLOWS-DARK .bjsl-button-inactive {
+  background-color: #4c4e50 !important;
+}
+.FLOWS-DARK .bjsl-button-inactive:hover {
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK svg.new-parent {
+  /* moving elements to the canvas */
+  background-color: var(--color-flows-dark-background) !important;
+}
+.FLOWS-DARK .bjsl-issues {
+  background-color: var(--color-flows-lighter-dark-background);
+}
+.FLOWS-DARK .bjsl-issues a {
+  color: var(--color-flows-dark-text);
+}
+/**
+ * custom properties panel dark mode colors
+ */
+.FLOWS-DARK .bio-properties-panel-container,
+.FLOWS-DARK .bio-properties-panel-header {
+  background-color: var(--color-flows-dark-background);
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .bio-properties-panel-group,
+.FLOWS-DARK .bio-properties-panel-group-header.sticky {
+   background-color: var(--color-flows-lighter-dark-background);
+   color: var(--color-flows-dark-text);
+ }
+.FLOWS-DARK .bio-properties-panel {
+  --input-background-color: var(--color-flows-dark-input);
+  --input-focus-background-color: var(--color-flows-dark-input-hover-focus);
+  --input-error-background-color: var(--color-flows-dark-input);
+  --placeholder-background-color: var(--color-flows-dark-input);
+  --add-entry-fill-color: var(--color-flows-dark-text);
+  --arrow-fill-color: var(--color-flows-dark-text);
+  --dot-color: var(--color-flows-dark-text);
+  --arrow-hover-background-color: var(--color-flows-dark-input);
+}
+.FLOWS-DARK .bio-properties-panel-input,
+.FLOWS-DARK .bio-properties-panel-description {
+  color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .bio-properties-panel-header-icon  {
+  fill: var(--color-flows-dark-text);
+}
+/**
+ * custom monaco editor dark mode colors
+ */
+.FLOWS-DARK .modal-content {
+  background-color: var(--color-flows-lighter-dark-background);
+  border-color: var(--color-flows-modal-border);
+}
+.FLOWS-DARK button.dialog {
+  color: var(--color-flows-dark-text);
+  background-color: var(--color-flows-dark-input);
+  border-color: var(--color-flows-modal-border);
+}
+.FLOWS-DARK #editor-container {
+  border-color: var(--color-flows-modal-border);
+}
+.FLOWS-DARK button.dialog:hover {
+  color: var(--color-flows-button-link);
+}
+/* Overwrite text color when using bpmn extension */
+.djs-visual > *:not([style*="stroke: var(--default-stroke-color);"]) + text {
+  --default-stroke-color: black;
+}

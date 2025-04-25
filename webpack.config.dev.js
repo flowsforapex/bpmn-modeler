@@ -22,7 +22,6 @@ module.exports = {
     minimize: false,
   },
   devtool: "source-map",
-
   module: {
     rules: [
       {
@@ -35,7 +34,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["css-loader"],
       },
       {
         test: /\.ttf$/,

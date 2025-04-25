@@ -12,6 +12,7 @@ import CustomTimerProps from './parts/timer/CustomTimerProps';
 import AssignmentProps from './parts/userTask/AssignmentProps';
 
 import ExecutionProps from './parts/process/ExecutionProps';
+import GeneralProps from './parts/process/GeneralProps';
 
 import RoleProps from './parts/lane/RoleProps';
 import SchedulingProps from './parts/scheduling/SchedulingProps';
@@ -22,6 +23,8 @@ import StarterProps from './parts/process/StarterProps';
 import TerminateEventProps from './parts/events/TerminateEventProps';
 import BackgroundTaskSessionProps from './parts/process/BackgroundTaskSessionProps';
 import SequenceFlowProps, { setDefaultSequence } from './parts/sequenceFlow/SequenceFlowProps';
+
+import ApexAIGenerationProps from './parts/serviceTask/ApexAIGenerationProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 import CustomExtensionProps from './parts/CustomExtensionProps';
@@ -33,8 +36,6 @@ import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopP
 import { removeInvalidExtensionsElements } from './helper/validateXML';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
-
-import { query as domQuery } from 'min-dom';
 
 const LOW_PRIORITY = 500;
 
@@ -49,43 +50,6 @@ function createSection(args, id, label, props) {
   return section;
 }
 
-function makePropertiesPanelResizable() {
-  const canvas = domQuery('.canvas');
-  const parentNode = domQuery('.properties-panel-parent');
-
-  var mouseX;
-  const BORDER_WIDTH = 5;
-
-  document.addEventListener('mousedown', function (event) {
-    if (event.offsetX < BORDER_WIDTH) {
-      mouseX = event.x;
-      document.addEventListener('mousemove', resize, false);
-    }
-  });
-
-  document.addEventListener('mouseup', function () {
-    document.removeEventListener('mousemove', resize, false);
-  });
-
-  function resize(event) {
-    var dx = mouseX - event.x;
-    var panelWidth = parentNode.scrollWidth + dx;
-    var maxWidth =
-      (parseInt(getComputedStyle(canvas, '').width, 10) / 100) *
-      parseInt(getComputedStyle(parentNode).maxWidth, 10);
-    
-    mouseX = event.x;
-    
-    if (
-      panelWidth >= parseInt(getComputedStyle(parentNode).minWidth, 10) &&
-      panelWidth < maxWidth
-    ) {
-      parentNode.style.width = `${panelWidth}px`;
-      parentNode.firstChild.style.width = `${panelWidth}px`;
-    }
-  }
-}
-
 export default function apexPropertiesProvider(
   propertiesPanel,
   injector,
@@ -95,8 +59,6 @@ export default function apexPropertiesProvider(
   translate,
   showCustomExtensions
 ) {
-  makePropertiesPanelResizable();
-
   eventBus.on('saveXML.start', function () {
     removeInvalidExtensionsElements(elementRegistry, modeling);
   });
@@ -157,6 +119,7 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'executePlsql', translate('PL/SQL'), ExecutePlsqlProps));
         newGroups.push(createSection({element, injector, translate}, 'sendMail', translate('Mail'), SendMailProps));
+        newGroups.push(createSection({element, injector, translate}, 'apexAIGeneration', translate('APEX AI Generation'), ApexAIGenerationProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
       }
@@ -205,6 +168,9 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, translate}, 'starter', translate('Potential Starters'), StarterProps));
         newGroups.push(createSection({element, injector, translate}, 'backgroundTaskSession', translate('Background Task Session'), BackgroundTaskSessionProps));
         newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
+
+        const generalGroup = groups.find(g => g.id === 'general');
+        generalGroup.entries = generalGroup.entries.concat(GeneralProps({element, injector, translate}));
       }
 
       // subprocess

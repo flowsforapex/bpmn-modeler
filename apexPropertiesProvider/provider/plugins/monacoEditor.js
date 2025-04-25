@@ -17,18 +17,22 @@ export function getContainer(translate, id) {
             jsxRuntime.jsx('button', {
               id: 'undo-btn',
               class: 'dialog undo fa fa-undo',
+              type: 'button',
             }),
             jsxRuntime.jsx('button', {
               id: 'redo-btn',
               class: 'dialog redo fa fa-repeat',
+              type: 'button',
             }),
             jsxRuntime.jsx('button', {
               id: 'search-btn',
               class: 'dialog search fa fa-search',
+              type: 'button',
             }),
             jsxRuntime.jsx('button', {
               id: 'parse-btn',
               class: 'dialog parse fa fa-check-circle-o',
+              type: 'button',
             }),
             jsxRuntime.jsx('span', {
               id: 'error-text',
@@ -44,11 +48,13 @@ export function getContainer(translate, id) {
             jsxRuntime.jsx('button', {
               id: 'close-btn',
               class: 'dialog close',
+              type: 'button',
               children: translate('Cancel'),
             }),
             jsxRuntime.jsx('button', {
               id: 'save-btn',
               class: 'dialog save',
+              type: 'button',
               children: translate('Save'),
             }),
           ],
@@ -60,9 +66,9 @@ export function getContainer(translate, id) {
 }
 
 export function openEditor(getText, saveText, language, type, id) {
-  const modal = domQuery(`#modal-dialog-${id}`);
+  const container = domQuery('.dialog-container', domQuery('f4a-modeler').shadowRoot);
+  const modal = domQuery(`#modal-dialog-${id}`, domQuery('f4a-modeler').shadowRoot);
   const parent = modal.parentNode;
-  const container = domQuery('.dialog-container');
 
   const undoBtn = domQuery('#undo-btn', modal);
   const redoBtn = domQuery('#redo-btn', modal);
@@ -73,8 +79,7 @@ export function openEditor(getText, saveText, language, type, id) {
 
   var searchFlag = false;
 
-  const theme =
-    document.getElementsByClassName('flows4apex-modeler FLOWS-DARK').length > 0 ? 'vs-dark' : 'vs';
+  const theme = domQuery('.flows4apex-modeler.FLOWS-DARK', domQuery('f4a-modeler').shadowRoot) ? 'vs-dark' : 'vs';
 
   const monacoEditor = editor.create(
     domQuery('#editor-container', modal),
@@ -110,7 +115,7 @@ export function openEditor(getText, saveText, language, type, id) {
   if (language === 'plsql' || language === 'sql' || language === 'json') {
     parseBtn.onclick = function () {
       // ajaxIdentifier
-      var { ajaxIdentifier } = apex.jQuery('#modeler').modeler('option');
+      var ajaxIdentifier = apex.jQuery('f4a-modeler').prop('ajaxIdentifier');
       // ajax process
       apex.server
         .plugin(

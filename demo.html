@@ -6,84 +6,17 @@
   <title>Flows for APEX - Modeler</title>
 
   <link rel="stylesheet" href="assets/css/flows4apex.modeler.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/bpmn-js.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/diagram-js.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js/bpmn-font/css/bpmn-embedded.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-bpmnlint/bpmn-js-bpmnlint.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-properties-panel/properties-panel.css" type="text/css"/>
-  <link rel="stylesheet" href="assets/bpmn-js-color-picker/colors/color-picker.css" type="text/css"/>
-  <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/21.1.0/libraries/font-apex/2.1/css/font-apex.min.css" type="text/css"/>
+  <link rel="stylesheet" href="https://static.oracle.com/cdn/apex/24.2.0/libraries/font-apex/2.4/css/font-apex.min.css?v=24.2.0" type="text/css"/>
 </head>
 
 <body>
-  <div class="flows4apex-modeler FLOWS-DARK">
-    <div id="canvas" class="canvas"></div>
-    <div id="properties" class="properties-panel-parent"></div>
-    <div id="dialog-container" class="dialog-container"></div>
-  </div>
+  <f4a-modeler regionId="modeler" showCustomExtensions="true" themePluginClass="FLOWS-DARK" ></f4a-modeler>
   <script>
     // window.f4a = window.f4a || {};
     // window.f4a.language = 'test';
-  </script>
-  <script src="./bundle.js"></script>
-  <script>
-    var myModeler = new bpmnModeler.Modeler({
-      container: "#canvas",
-      keyboard: { bindTo: document },
-      propertiesPanel: {
-        parent: '#properties'
-      },
-      linting: {
-        bpmnlint: bpmnModeler.linting.apexLinting
-      },
-      additionalModules: [
-        bpmnModeler.customModules.BpmnPropertiesPanelModule,
-        bpmnModeler.customModules.BpmnPropertiesProviderModule,
-        bpmnModeler.customModules.propertiesProviderModule,
-        bpmnModeler.customModules.AddExporter,
-        bpmnModeler.customModules.lintModule,
-        bpmnModeler.customModules.customPaletteProviderModule,
-        bpmnModeler.customModules.translationModule,
-        bpmnModeler.customModules.xmlModule,
-        bpmnModeler.customModules.drilldownCentering,
-        bpmnModeler.customModules.bpmnDiOrdering,
-        bpmnModeler.customModules.colorPickerModule,
-      ],
-      moddleExtensions: {
-        apex: bpmnModeler.moddleExtensions.apexModdleDescriptor
-      },
-      bpmnRenderer: {
-        defaultFillColor: "var(--default-fill-color)",
-        defaultStrokeColor: "var(--default-stroke-color)",
-        defaultLabelColor: "var(--default-stroke-color)",
-      },
-      exporter: {
-        name: 'Flows for APEX',
-        version: '23.1.0',
-      },
-      showCustomExtensions: true
-      // colorPicker: {
-      //   colors: [
-      //     {
-      //       label: 'Default',
-      //       fill: undefined,
-      //     stroke: undefined,
-      //     },
-      //     {
-      //       label: 'Meep',
-      //       fill: '#BA74FB',
-      //     stroke: '#FF04FF'
-      //     }
-      //   ]
-      // }
-    });
 
-    async function init() {
-
-      openDiagram();
-
-      async function openDiagram() {
-        const defaultDiagram =
+    document.addEventListener('DOMContentLoaded', function() {
+      const defaultDiagram =
         `<?xml version="1.0" encoding="UTF-8"?>
         <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" id="Definitions_1wxm0ft" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="11.1.0">
           <bpmn:process id="Process_177w5fg" isExecutable="false" />
@@ -91,42 +24,17 @@
             <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_177w5fg" />
           </bpmndi:BPMNDiagram>
         </bpmn:definitions>`;
-        // import diagram
-        try {
 
-          await myModeler.importXML(defaultDiagram);
-
-          if (!myModeler._definitions.get('xmlns:apex')) {
-            // custom namespace must be added manually for working default values 
-            const refactored = myModeler.get('xmlModule').addCustomNamespace(defaultDiagram);
-            await myModeler.importXML(refactored);
-          }
-
-          // access viewer components
-          var canvas = myModeler.get("canvas");
-          var overlays = myModeler.get("overlays");
-
-          myModeler.get('xmlModule').refactorElements();
-
-          // zoom to fit full viewport
-          canvas.zoom("fit-viewport");
-        } catch (err) {
-          console.error("could not import BPMN 2.0 diagram", err);
-        }
-      }
-    }
-
-    init();
+      const modelerElement = document.querySelector('f4a-modeler');
+      modelerElement.loadDiagram(defaultDiagram);
+    });
   </script>
+  <script src="./bundle.js"></script>
    <script>
     async function logXml() {
-      try {
-        const result = await myModeler.saveXML( { format: true } );
-        const { xml } = result;
-        console.log(xml);
-      } catch (err) {
-        console.log( "Log Diagram failed.", err );
-      }
+      const modelerElement = document.querySelector('f4a-modeler');
+      const xml = await modelerElement.getDiagram();
+      console.log(xml);
     }
   </script>
   <button onclick="logXml()">XML</button>
