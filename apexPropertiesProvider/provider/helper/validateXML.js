@@ -240,7 +240,6 @@ function getTaskFilters(element) {
   if (is(element, 'bpmn:UserTask')) {
     // assignment
     filter.push('apex:PotentialUsers');
-    filter.push('apex:PotentialGroups');
     filter.push('apex:ExcludedUsers');
     // scheduling
     filter.push('apex:Priority');
@@ -249,12 +248,15 @@ function getTaskFilters(element) {
     switch (businessObject.type) {
       case 'apexPage':
         filter.push('apex:ApexPage');
+        filter.push('apex:PotentialGroups');
         break;
       case 'apexApproval':
         filter.push('apex:ApexApproval');
+        filter.push('apex:BusinessAdmin');
         break;
       case 'apexSimpleForm':
         filter.push('apex:ApexSimpleForm');
+        filter.push('apex:PotentialGroups');
         break;
       default:
       // do nothing

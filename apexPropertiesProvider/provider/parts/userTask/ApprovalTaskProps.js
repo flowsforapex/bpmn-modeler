@@ -1,6 +1,5 @@
 import {
-  isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup
+  isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited, ListGroup
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -149,8 +148,8 @@ export default function (args) {
       {
         id: 'resultVariable',
         element,
-        label: translate('Result Variable'),
-        description: translate('Name of the variable to return the approval result into'),
+        label: translate('Outcome Variable'),
+        description: translate('Name of the variable to return the task outcome into'),
         helper: extensionHelper,
         property: 'resultVariable',
         component: DefaultTextFieldEntry,
@@ -160,12 +159,22 @@ export default function (args) {
         id: 'initiator',
         element,
         label: translate('Initiator'),
-        description: translate('Initiator of this approval task'),
+        description: translate('Initiator of this task (defaults to current user)'),
         helper: extensionHelper,
         property: 'initiator',
         component: DefaultTextFieldEntry,
         isEdited: isTextFieldEntryEdited,
       },
+      {
+        id: 'initiatorCanComplete',
+        element,
+        label: translate('Initiator Can Complete'),
+        description: translate('Define if the initiator is allowed to complete the task'),
+        helper: extensionHelper,
+        property: 'initiatorCanComplete',
+        component: DefaultToggleSwitchEntry,
+        isEdited: isToggleSwitchEntryEdited,
+      }
     );
   }
   return entries;

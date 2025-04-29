@@ -98,7 +98,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:UserTask')) {
         newGroups.push(createSection({element, injector, translate}, 'taskType', translate('Task Type'), TaskTypeProps));
         newGroups.push(createSection({element, injector, translate}, 'apexPage', translate('APEX Page'), ApexPageProps));
-        newGroups.push(createSection({element, injector, translate}, 'apexApproval', translate('APEX Approval'), ApexApprovalProps));
+        newGroups.push(createSection({element, injector, translate}, 'apexApproval', translate('APEX Human Task'), ApexApprovalProps));
         newGroups.push(createSection({element, injector, translate}, 'simpleForm', translate('APEX Simple Form'), ApexSimpleFormProps));
         newGroups.push(createSection({element, injector, translate}, 'procVars', translate('Variable Expressions'), ProcVarGroup));
         newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));

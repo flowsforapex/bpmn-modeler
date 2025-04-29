@@ -3,6 +3,8 @@ import {
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
+import { getBusinessObject } from '../../helper/util';
+
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor } from '../../helper/templates';
@@ -10,28 +12,51 @@ import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEdito
 const potentialUsersHelper = new ExtensionHelper('apex:PotentialUsers');
 const potentialGroupsHelper = new ExtensionHelper('apex:PotentialGroups');
 const excludedUsersHelper = new ExtensionHelper('apex:ExcludedUsers');
+const businessAdminHelper = new ExtensionHelper('apex:BusinessAdmin');
 
 export default function (args) {
 
   const {element} = args;
 
-  return [
+  const businessObject = getBusinessObject(element);
+
+  const entries = [];
+
+  entries.push(
     {
       id: 'potentialUsers',
       element,
       component: PotentialUsers,
-    },
-    {
-      id: 'potentialGroups',
-      element,
-      component: PotentialGroups,
-    },
+    }
+  );
+  
+  if (businessObject.type === 'apexApproval') {
+    entries.push(
+      {
+        id: 'businessAdmin',
+        element,
+        component: BusinessAdmin,
+      }
+    );
+  } else {
+    entries.push(
+      {
+        id: 'potentialGroups',
+        element,
+        component: PotentialGroups,
+      }
+    );
+  }
+
+  entries.push(
     {
       id: 'excludedUsers',
       element,
       component: ExcludedUsers,
     }
-  ];
+  );
+  
+  return entries;
 }
 
 /** *** Potential Users *** **/
@@ -306,6 +331,98 @@ function ExcludedUsers(props) {
     id: id,
     element: element,
     label: translate('Excluded Users'),
+    entries: entries
+  });
+}
+
+/** *** Business Admin *** **/
+
+function BusinessAdmin(props) {
+  const { element, id } = props;
+
+  const translate = useService('translate');
+
+  const expressionTypeOptions = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+    { label: translate('SQL query (single value)'), value: 'sqlQuerySingle' },
+    { label: translate('SQL query (colon delimited list)'), value: 'sqlQueryList' },
+    { label: translate('Expression'), value: 'plsqlRawExpression' },
+    { label: translate('Function Body'), value: 'plsqlRawFunctionBody' },
+  ];
+  
+  const editorTypes = [
+    'sqlQuerySingle',
+    'sqlQueryList',
+    'plsqlRawExpression',
+    'plsqlRawFunctionBody',
+  ];
+
+  const expressionType = businessAdminHelper.getExtensionProperty(element, 'expressionType');
+
+  const entries = [];
+
+  entries.push(
+    {
+      id: 'businessAdminExpressionType',
+      element,
+      label: translate('Expression Type'),
+      helper: businessAdminHelper,
+      property: 'expressionType',
+      options: expressionTypeOptions,
+      cleanup: (value) => {
+        return {
+          ...(!value && {expression: null}),
+        };
+      },
+      component: DefaultSelectEntry,
+      isEdited: isSelectEntryEdited,
+    }
+  );
+
+  if (expressionType != null) {
+
+    if (editorTypes.includes(expressionType)) {
+
+      const language =
+      expressionType === 'sqlQuerySingle' || expressionType === 'sqlQueryList' ? 'sql' : 'plsql';
+
+      entries.push(
+        {
+          id: 'businessAdminExpression',
+          element,
+          label: translate('Expression'),
+          helper: businessAdminHelper,
+          property: 'expression',
+          language: language,
+          type: expressionType,
+          component: DefaultTextAreaEntryWithEditor,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    } else {
+
+      entries.push(
+        {
+          id: 'businessAdminExpression',
+          element,
+          label: translate('Expression'),
+          helper: businessAdminHelper,
+          property: 'expression',
+          component: DefaultTextAreaEntry,
+          isEdited: isTextAreaEntryEdited,
+        },
+      );
+    
+    }
+  }
+
+  return new CollapsibleEntry({
+    id: id,
+    element: element,
+    label: translate('Business Admin'),
     entries: entries
   });
 }

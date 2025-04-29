@@ -88,6 +88,17 @@ export default function (args) {
         isEdited: isSelectEntryEdited,
       },
     );
+
+    entries.push(
+      {
+        id: 'businessAdmin',
+        element,
+        label: translate('Default Business Admin'),
+        property: 'businessAdmin',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
   }
   return entries;
 }

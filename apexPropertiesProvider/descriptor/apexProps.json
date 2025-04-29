@@ -56,6 +56,11 @@
           "name": "username",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "businessAdmin",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
@@ -172,6 +177,10 @@
         },
         {
           "name": "priority",
+          "type": "String"
+        },
+        {
+          "name": "initiatorCanComplete",
           "type": "String"
         }
       ]
@@ -626,6 +635,20 @@
     },
     {
       "name": "ExcludedUsers",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "BusinessAdmin",
       "superClass": [ "Element" ],
       "properties": [
         {
