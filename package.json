@@ -34,7 +34,7 @@
     "bpmn-js-bpmnlint": "^0.23.0",
     "bpmn-js-color-picker": "^0.7.1",
     "bpmn-js-properties-panel": "^5.28.0",
-    "bpmnlint": "^11.4.2",
+    "bpmnlint": "^11.4.4",
     "bpmnlint-loader": "^0.1.6",
     "bpmnlint-plugin-apex": "file:bpmnlint-plugin-apex",
     "camunda-bpmn-moddle": "^7.0.1",
