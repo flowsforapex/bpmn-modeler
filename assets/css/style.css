@@ -196,6 +196,7 @@ button.dialog.fa {
   --color-flows-dark-input: #282c30;
   --color-flows-dark-input-hover-focus: #1e2328;
   --color-flows-dark-text: white;
+  --color-flows-dark-description: #818798;
 }
 /**
  * custom dark mode colors
@@ -293,9 +294,11 @@ button.dialog.fa {
   --dot-color: var(--color-flows-dark-text);
   --arrow-hover-background-color: var(--color-flows-dark-input);
 }
-.FLOWS-DARK .bio-properties-panel-input,
-.FLOWS-DARK .bio-properties-panel-description {
+.FLOWS-DARK .bio-properties-panel-input {
   color: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .bio-properties-panel-description {
+  color: var(--color-flows-dark-description);
 }
 .FLOWS-DARK .bio-properties-panel-header-icon  {
   fill: var(--color-flows-dark-text);

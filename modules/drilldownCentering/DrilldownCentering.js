@@ -7,28 +7,25 @@
  * @param {eventBus} eventBus
  * @param {canvas} canvas
  */
-export default function DrilldownCentering(eventBus, canvas) {
+export class DrilldownCentering {
+  
+  constructor(eventBus, canvas) {
+    
+    this.cancel = false;
+    
+    eventBus.on('root.added', (event) => {
+      // block first zoom when creating collaboration
+      if (event.element.type === 'bpmn:Collaboration') this.cancel = true;
+    });
 
-  const _this = this;
-
-  eventBus.on('root.added', function (event) {
-
-    // block first zoom when creating collaboration
-    if (event.element.type === 'bpmn:Collaboration') _this.cancel = true;
-
-  });
-
-  eventBus.on('root.set', function () {
-
-    if (!_this.cancel) {
-      canvas.zoom('fit-viewport', 'auto');
-    } else {
-      _this.cancel = false;
-    }
-
-  });
+    eventBus.on('root.set', () => {
+      if (!this.cancel) {
+        canvas.zoom('fit-viewport', 'auto');
+      } else {
+        this.cancel = false;
+      }
+    });
+  }
 }
-
-DrilldownCentering.prototype.cancel = false;
 
 DrilldownCentering.$inject = ['eventBus', 'canvas'];

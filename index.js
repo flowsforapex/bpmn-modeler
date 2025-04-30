@@ -169,11 +169,12 @@ class Modeler extends HTMLElement {
       apex.debug.warn('Warnings during XML Import', warnings); // TODO emit event
     }
 
-    this.zoom('fit-viewport');
-
     // get modeler modules
     const eventBus = this.modeler.get('eventBus');
     const xmlModule = this.modeler.get('xmlModule');
+    const canvas = this.modeler.get('canvas');
+
+    canvas.zoom('fit-viewport', 'auto');
       
     if (!this.modeler._definitions.get('xmlns:apex')) {
       // custom namespace must be added manually for working default values 
@@ -186,10 +187,6 @@ class Modeler extends HTMLElement {
     eventBus.on('commandStack.changed', () => { this.changed = true; });
 
     this.changed = false; 
-  }
-
-  zoom(zoomOption) {
-    this.modeler.get('canvas').zoom(zoomOption);
   }
 
   isChanged() {
