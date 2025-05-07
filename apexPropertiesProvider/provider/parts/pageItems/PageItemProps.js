@@ -6,8 +6,6 @@ import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
 
-import ExtensionHelper from '../../helper/ExtensionHelper';
-
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
@@ -15,10 +13,8 @@ import { html } from 'htm/preact';
 
 import { getItems } from '../../plugins/metaDataCollector';
 
-const extensionHelper = new ExtensionHelper('apex:ApexPage');
-
 export default function PageItemProps(args) {
-  const { idPrefix, pageItem, element, injector } = args;
+  const { idPrefix, pageItem, element, injector, helper } = args;
 
   const businessObject = getBusinessObject(element);
 
@@ -48,6 +44,7 @@ export default function PageItemProps(args) {
         listElement: pageItem,
         component: ItemNameProp,
         isEdited: isSelectEntryEdited,
+        helper: helper
       }
     );
   }
@@ -69,14 +66,14 @@ export default function PageItemProps(args) {
 
 function ItemNameProp(props) {
 
-  const {element, id, listElement} = props;
+  const {element, id, listElement, helper} = props;
 
   const translate = useService('translate');
 
   const [items, setItems] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+  const applicationId = helper.getExtensionProperty(element, 'applicationId');
+  const pageId = helper.getExtensionProperty(element, 'pageId');
 
   useEffect(() => {
     getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));

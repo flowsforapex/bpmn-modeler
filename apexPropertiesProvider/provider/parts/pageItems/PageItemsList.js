@@ -1,12 +1,12 @@
 import PageItemProps from './PageItemProps';
 
 export default function PageItemsList(args) {
-  const {element, injector, helper} = args;
+  const {element, injector, helper, listHelper} = args;
 
   const bpmnFactory = injector.get('bpmnFactory');
   const modeling = injector.get('modeling');
 
-  const pageItems = helper.getSubExtensionElements(element) || [];
+  const pageItems = listHelper.getSubExtensionElements(element) || [];
 
   const items = pageItems.map((pageItem, index) => {
     const id = `pageItem-${index}`;
@@ -19,11 +19,12 @@ export default function PageItemsList(args) {
           idPrefix: id,
           element,
           injector,
-          pageItem
+          pageItem,
+          helper
         },
       ),
       autoFocusEntry: `${id}-name`,
-      remove: helper.removeSubFactory({
+      remove: listHelper.removeSubFactory({
         element,
         modeling,
         listElement: pageItem,
@@ -33,7 +34,7 @@ export default function PageItemsList(args) {
 
   return {
     items,
-    add: helper.addSubFactory(
+    add: listHelper.addSubFactory(
       {
         element,
         bpmnFactory,

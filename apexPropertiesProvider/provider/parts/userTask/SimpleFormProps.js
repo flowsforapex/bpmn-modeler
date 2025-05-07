@@ -1,6 +1,7 @@
-import { 
+import {
   isSelectEntryEdited,
-  isTextAreaEntryEdited, ListGroup, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+  isTextFieldEntryEdited, ListGroup
+} from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
@@ -12,12 +13,12 @@ import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultToggleSwitchEntry, DefaultTextFieldEntry } from '../../helper/templates';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
-import { getFormTemplates, getApplications, getPages, getItems } from '../../plugins/metaDataCollector';
+import { getApplications, getFormTemplates, getItems, getPages } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
 
@@ -108,7 +109,8 @@ export default function (args) {
           {
             element,
             injector,
-            helper: listExtensionHelper,
+            helper: extensionHelper,
+            listHelper: listExtensionHelper,
           }
         ),
       }
