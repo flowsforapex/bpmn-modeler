@@ -1,24 +1,23 @@
-import {
-  isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup
-} from '@bpmn-io/properties-panel';
+import { isSelectEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
+import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { useService } from 'bpmn-js-properties-panel';
-
-import { getBusinessObject } from '../../helper/util';
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { html } from 'htm/preact';
 import ExtensionHelper from '../../helper/ExtensionHelper';
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
-
+import { Quickpick } from '../../helper/Quickpick';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { getBusinessObject } from '../../helper/util';
+import { getApplications, getFormTemplates, getItems, getPages } from '../../plugins/metaDataCollector';
 import PageItemsList from '../pageItems/PageItemsList';
 
-import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
-import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-import { html } from 'htm/preact';
 
-import { getApplications, getFormTemplates, getItems, getPages } from '../../plugins/metaDataCollector';
+
+
+
+
 
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
 
@@ -104,15 +103,9 @@ export default function (args) {
         id: 'pageItems',
         element,
         label: translate('Page Items'),
-        component: ListGroup,
-        ...PageItemsList(
-          {
-            element,
-            injector,
-            helper: extensionHelper,
-            listHelper: listExtensionHelper,
-          }
-        ),
+        component: PageItemsList,
+        helper: extensionHelper,
+        listHelper: listExtensionHelper,
       }
     );
 

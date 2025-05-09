@@ -303,6 +303,18 @@ button.dialog.fa {
 .FLOWS-DARK .bio-properties-panel-header-icon  {
   fill: var(--color-flows-dark-text);
 }
+.FLOWS-DARK .bio-properties-panel-add-entry svg path {
+  fill: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .bio-properties-panel-arrow svg path {
+  fill: var(--color-flows-dark-text);
+}
+.FLOWS-DARK .bio-properties-panel-list-entry.empty .bio-properties-panel-add-entry-label {
+  color: var(--color-flows-lighter-dark-background);
+}
+.FLOWS-DARK .bio-properties-panel-list-entry.empty .bio-properties-panel-add-entry-label:hover {
+  color: var(--color-flows-dark-text);
+}
 /**
  * custom monaco editor dark mode colors
  */

@@ -1,5 +1,5 @@
 import {
-  isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited, ListGroup
+  isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -15,6 +15,8 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
 
 import { getApplications, getJSONParameters, getTasks } from '../../plugins/metaDataCollector';
@@ -135,15 +137,8 @@ export default function (args) {
       {
         id: 'parameters',
         element,
-        label: 'Parameters',
-        component: ListGroup,
-        ...ParametersList(
-          {
-            element,
-            injector,
-            helper: listExtensionHelper,
-          }
-        ),
+        component: ParametersList,
+        listHelper: listExtensionHelper,
       },
       {
         id: 'resultVariable',

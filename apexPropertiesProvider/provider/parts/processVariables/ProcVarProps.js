@@ -3,6 +3,7 @@ import {
   isTextAreaEntryEdited,
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
 
 import { Helptext } from '../../helper/HelpText';
 
@@ -11,9 +12,10 @@ import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTe
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ProcVarProps(args) {
-  const { idPrefix, procVar, element, injector } = args;
+  
+  const { idPrefix, procVar, element } = args;
 
-  const translate = injector.get('translate');
+  const translate = useService('translate');
 
   const entries = [];
 

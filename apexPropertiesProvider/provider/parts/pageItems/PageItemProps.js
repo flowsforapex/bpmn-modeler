@@ -1,24 +1,24 @@
-import {
-  isSelectEntryEdited,
-  isTextFieldEntryEdited
-} from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
-
-import { getBusinessObject } from '../../helper/util';
-
-import { DefaultSelectEntryAsync, DefaultTextFieldEntry } from '../../helper/templates';
-
+import { isSelectEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+import { useService } from 'bpmn-js-properties-panel';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
-
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry } from '../../helper/templates';
+import { getBusinessObject } from '../../helper/util';
 import { getItems } from '../../plugins/metaDataCollector';
 
+
+
+
+
+
 export default function PageItemProps(args) {
-  const { idPrefix, pageItem, element, injector, helper } = args;
+
+  const { idPrefix, pageItem, element, helper } = args;
 
   const businessObject = getBusinessObject(element);
 
-  const translate = injector.get('translate');
+  const translate = useService('translate');
 
   const entries = [];
 
@@ -42,6 +42,7 @@ export default function PageItemProps(args) {
         id: `${idPrefix}-itemName`,
         element,
         listElement: pageItem,
+        helper: helper,
         component: ItemNameProp,
         isEdited: isSelectEntryEdited,
         helper: helper

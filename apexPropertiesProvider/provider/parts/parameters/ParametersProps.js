@@ -2,13 +2,15 @@ import {
   isSelectEntryEdited,
   isTextFieldEntryEdited
 } from '@bpmn-io/properties-panel';
+import { useService } from 'bpmn-js-properties-panel';
 
 import { DefaultSelectEntry, DefaultTextFieldEntry } from '../../helper/templates';
 
 export default function ParameterProps(args) {
-  const { idPrefix, parameter, element, injector } = args;
+  
+  const { idPrefix, parameter, element } = args;
 
-  const translate = injector.get('translate');
+  const translate = useService('translate');
   
   return [
     {
