@@ -13,10 +13,10 @@ export default function PageItemsList(args) {
   const modeling = useService('modeling');
   const translate = useService('translate');
 
-  const pageItems = helper.getSubExtensionElements(element) || [];
+  const pageItems = listHelper.getSubExtensionElements(element) || [];
 
   function addItem() {
-    return listHelper.addSubElement({
+    listHelper.addSubElement({
         element,
         bpmnFactory,
         modeling,
