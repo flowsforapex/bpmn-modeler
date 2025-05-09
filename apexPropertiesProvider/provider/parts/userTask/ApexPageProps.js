@@ -1,6 +1,6 @@
 import {
   isSelectEntryEdited,
-  isTextFieldEntryEdited, ListGroup, SelectEntry
+  isTextFieldEntryEdited, ListGroup
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -18,7 +18,7 @@ import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntr
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
-import { getApplications, getItems, getPages } from '../../plugins/metaDataCollector';
+import { getApplications, getPages } from '../../plugins/metaDataCollector';
 
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
@@ -109,7 +109,8 @@ export default function (args) {
           {
             element,
             injector,
-            helper: listExtensionHelper,
+            helper: extensionHelper,
+            listHelper: listExtensionHelper,
           }
         ),
       }
