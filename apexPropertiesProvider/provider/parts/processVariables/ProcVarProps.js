@@ -6,14 +6,15 @@ import {
 
 import { Helptext } from '../../helper/HelpText';
 
+import { useService } from 'bpmn-js-properties-panel';
 import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry } from '../../helper/templates';
 
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ProcVarProps(args) {
-  const { idPrefix, procVar, element, injector } = args;
+  const { idPrefix, procVar, element } = args;
 
-  const translate = injector.get('translate');
+  const translate = useService('translate');
 
   const entries = [];
 

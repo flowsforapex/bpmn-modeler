@@ -1,6 +1,3 @@
-import {
-  ListGroup
-} from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
 import { getBusinessObject } from '../../helper/util';
@@ -181,15 +178,8 @@ export default function (args) {
       entries.push({
         id: type1.id,
         element,
-        label: translate(type1.label),
-        component: ListGroup,
-        ...ProcVarList(
-          {
-            element,
-            injector,
-            helper: listExtensionHelper1
-          }
-        ), 
+        component: ProcVarList,
+        helper: listExtensionHelper1, 
       });
     }
 
@@ -197,15 +187,8 @@ export default function (args) {
       entries.push({
         id: type2.id,
         element,
-        label: translate(type2.label),
-        component: ListGroup,
-        ...ProcVarList(
-          {
-            element,
-            injector,
-            helper: listExtensionHelper2
-          }
-        ), 
+        component: ProcVarList,
+        helper: listExtensionHelper2, 
       });
     }
   }

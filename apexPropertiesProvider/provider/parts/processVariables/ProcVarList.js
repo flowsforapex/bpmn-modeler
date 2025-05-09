@@ -1,43 +1,26 @@
 import ProcVarProps from './ProcVarProps';
 
+import { CollapsibleEntry, ListEntry } from '@bpmn-io/properties-panel';
+
+import { useService } from 'bpmn-js-properties-panel';
+import { html } from 'htm/preact/index.js';
+
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ParametersProps(args) {
 
-  const {element, injector, helper} = args;
+  const {element, id, helper} = args;
 
-  const bpmnFactory = injector.get('bpmnFactory');
-  const modeling = injector.get('modeling');
+  const bpmnFactory = useService('bpmnFactory');
+  const modeling = useService('modeling');
+  const translate = useService('translate');
   
   const procVars = helper.getSubExtensionElements(element) || [];
 
   const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
 
-  const items = procVars.sort((a, b) => Number(a.varSequence) - Number(b.varSequence)).map((procVar, index) => {
-    const id = `procVar-${index}`;
-
-    return {
-      id,
-      label: isDefinition ? procVar.get('varName') : `${procVar.get('varSequence')} - ${procVar.get('varName')}` || '',
-      entries: ProcVarProps({
-        idPrefix: id,
-        element,
-        injector,
-        procVar,
-      }),
-      autoFocusEntry: `${id}-name`,
-      remove: helper.removeSubFactory({
-        element,
-        modeling,
-        listElement: procVar,
-      }),
-    };
-  });
-
-  return {
-    items,
-    add: helper.addSubFactory(
-      {
+  function addProcVar() {
+    return helper.addSubElement({
         element,
         bpmnFactory,
         modeling,
@@ -48,6 +31,52 @@ export default function ParametersProps(args) {
           ...(!isDefinition && {varExpressionType: 'static'}),
         }
       }
-    ),
-  };
+    );
+  }
+
+  function removeProcVar(procVar) {
+    helper.removeSubElement({
+      element,
+      modeling,
+      listElement: procVar,
+    });
+  }
+
+  return html`<${ListEntry}
+    element=${element}
+    id=${id}
+    label=${translate('Page Items')}
+    items=${procVars}
+    component=${ProcVar}
+    onAdd=${addProcVar}
+    onRemove=${removeProcVar}
+    helper=${helper}
+  />`;
+}
+
+
+function ProcVar(props) {
+  const {
+    element,
+    index,
+    item: procVar,
+    helper,
+  } = props;
+
+  const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
+
+  const id = `procVar-${index}`;
+
+  return html`<${CollapsibleEntry}
+    id=${id}
+    element=${element}
+    entries=${
+      ProcVarProps({
+        idPrefix: id,
+        element,
+        procVar,
+        helper
+      })}
+    label=${isDefinition ? procVar.get('varName') : `${procVar.get('varSequence')} - ${procVar.get('varName')}` || ''}
+    />`;
 }
