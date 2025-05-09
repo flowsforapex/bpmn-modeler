@@ -360,4 +360,92 @@ export default class ListExtensionHelper {
       );
     }
   }
+
+  removeSubElement(args) {
+    const { type, listAttr, entryAttr } = this;
+
+    const { element, listElement, modeling } = args;
+
+    const businessObject = getBusinessObject(element);
+    const {extensionElements} = businessObject;
+
+    if (entryAttr === null) {
+      const extension = getExtension(element, type);
+
+      if (!extension) {
+        return;
+      }
+
+      const children = extension[listAttr];
+
+      if (!children) {
+        return;
+      }
+
+      const newChildren = without(children, listElement);        
+
+      let updatedBusinessObject = extension;
+      let update = { [listAttr]: newChildren };
+
+      // if list container has no other entries
+      if (newChildren.length === 0) {
+        updatedBusinessObject = extensionElements;
+        update = { values: extensionElements.get('values').filter(v => v !== extension) };
+        // if extension elements have no other children
+        if (!extensionElements.get('values').some(k => k !== extension)) {
+          updatedBusinessObject = businessObject;
+          update = { extensionElements: undefined};
+        }
+      }
+
+      modeling.updateModdleProperties(
+        element,
+        updatedBusinessObject,
+        update
+      );
+    
+    } else {
+
+      const extension = getExtension(element, type);
+
+      if (!extension) {
+        return;
+      }
+
+      const children =
+        extension[listAttr] && extension[listAttr].get(entryAttr);
+
+      if (!children) {
+        return;
+      }
+
+      const newChildren = without(children, listElement);
+
+      let updatedBusinessObject = extension[listAttr];
+      let update = { [entryAttr]: newChildren };
+
+      // if list container has no other entries
+      if (newChildren.length === 0) {
+        updatedBusinessObject = extension;
+        update = { [listAttr]: undefined };
+        // if extension element has no other properties
+        if (!Object.keys(extension).some(k => k !== '$type' && k !== listAttr)) {
+          updatedBusinessObject = extensionElements;
+          update = { values: extensionElements.get('values').filter(v => v !== extension) };
+
+           // if extension elements have no other children
+          if (!extensionElements.get('values').some(k => k !== extension)) {
+            updatedBusinessObject = businessObject;
+            update = { extensionElements: undefined};
+          }
+        }
+      }
+
+      modeling.updateModdleProperties(
+        element,
+        updatedBusinessObject,
+        update
+      );
+    }
+  }
 }

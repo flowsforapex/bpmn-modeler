@@ -18,11 +18,12 @@ import { getItems } from '../../plugins/metaDataCollector';
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
 export default function PageItemProps(args) {
-  const { idPrefix, pageItem, element, injector } = args;
+
+  const { idPrefix, pageItem, element, helper } = args;
 
   const businessObject = getBusinessObject(element);
 
-  const translate = injector.get('translate');
+  const translate = useService('translate');
 
   const entries = [];
 

@@ -1,40 +1,22 @@
+import { useService } from 'bpmn-js-properties-panel';
+
+import { CollapsibleEntry, ListEntry } from '@bpmn-io/properties-panel';
+
+import { html } from 'htm/preact';
+
 import PageItemProps from './PageItemProps';
 
 export default function PageItemsList(args) {
-  const {element, injector, helper} = args;
+  const {element, id, helper, listHelper} = args;
 
-  const bpmnFactory = injector.get('bpmnFactory');
-  const modeling = injector.get('modeling');
+  const bpmnFactory = useService('bpmnFactory');
+  const modeling = useService('modeling');
+  const translate = useService('translate');
 
   const pageItems = helper.getSubExtensionElements(element) || [];
 
-  const items = pageItems.map((pageItem, index) => {
-    const id = `pageItem-${index}`;
-
-    return {
-      id,
-      label: pageItem.get('itemName') || '',
-      entries: PageItemProps(
-        {
-          idPrefix: id,
-          element,
-          injector,
-          pageItem
-        },
-      ),
-      autoFocusEntry: `${id}-name`,
-      remove: helper.removeSubFactory({
-        element,
-        modeling,
-        listElement: pageItem,
-      }),
-    };
-  });
-
-  return {
-    items,
-    add: helper.addSubFactory(
-      {
+  function addItem() {
+    return listHelper.addSubElement({
         element,
         bpmnFactory,
         modeling,
@@ -43,6 +25,50 @@ export default function PageItemsList(args) {
           itemValue: null,
         }
       }
-    ),
-  };
+    );
+  }
+
+  function removeItem(pageItem) {
+    listHelper.removeSubElement({
+      element,
+      modeling,
+      listElement: pageItem,
+    });
+  }
+
+  return html`<${ListEntry}
+    element=${element}
+    id=${id}
+    label=${translate('Page Items')}
+    items=${pageItems}
+    component=${PageItem}
+    onAdd=${addItem}
+    onRemove=${removeItem}
+    helper=${helper}
+  />`;
+}
+
+
+function PageItem(props) {
+  const {
+    element,
+    index,
+    item: pageItem,
+    helper
+  } = props;
+
+  const id = `pageItem-${index}`;
+
+  return html`<${CollapsibleEntry}
+    id=${id}
+    element=${element}
+    entries=${
+      PageItemProps({
+        idPrefix: id,
+        element,
+        pageItem,
+        helper
+      })}
+    label=${pageItem.get('itemName') || ''}
+    />`;
 }
