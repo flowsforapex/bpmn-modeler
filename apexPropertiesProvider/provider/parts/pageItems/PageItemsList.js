@@ -56,7 +56,8 @@ function PageItem(props) {
     element,
     index,
     item: pageItem,
-    helper
+    helper,
+    open
   } = props;
 
   const id = `pageItem-${index}`;
@@ -72,5 +73,6 @@ function PageItem(props) {
         helper
       })}
     label=${pageItem.get('itemName') || ''}
+    open=${open}
     />`;
 }

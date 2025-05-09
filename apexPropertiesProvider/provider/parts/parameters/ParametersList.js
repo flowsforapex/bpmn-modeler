@@ -54,7 +54,8 @@ function Parameter(props) {
   const {
     element,
     index,
-    item: parameter
+    item: parameter,
+    open
   } = props;
 
   const id = `parameter-${index}`;
@@ -69,5 +70,6 @@ function Parameter(props) {
         parameter
       })}
     label=${parameter.get('parStaticId') || ''}
+    open=${open}
     />`;
 }

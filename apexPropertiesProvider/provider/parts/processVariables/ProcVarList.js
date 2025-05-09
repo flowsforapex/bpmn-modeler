@@ -62,6 +62,7 @@ function ProcVar(props) {
     index,
     item: procVar,
     helper,
+    open
   } = props;
 
   const isDefinition = ModelingUtil.isAny(element, ['bpmn:Process', 'bpmn:Participant']);
@@ -79,5 +80,6 @@ function ProcVar(props) {
         helper
       })}
     label=${isDefinition ? procVar.get('varName') : `${procVar.get('varSequence')} - ${procVar.get('varName')}` || ''}
+    open=${open}
     />`;
 }
