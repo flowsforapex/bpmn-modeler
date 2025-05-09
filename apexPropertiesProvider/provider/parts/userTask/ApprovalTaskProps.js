@@ -1,5 +1,5 @@
 import {
-  isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited, ListGroup
+  isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited
 } from '@bpmn-io/properties-panel';
 import { useService } from 'bpmn-js-properties-panel';
 
@@ -135,15 +135,8 @@ export default function (args) {
       {
         id: 'parameters',
         element,
-        label: 'Parameters',
-        component: ListGroup,
-        ...ParametersList(
-          {
-            element,
-            injector,
-            helper: listExtensionHelper,
-          }
-        ),
+        component: ParametersList,
+        helper: listExtensionHelper,
       },
       {
         id: 'resultVariable',
