@@ -1,22 +1,23 @@
-import { useService } from 'bpmn-js-properties-panel';
-
 import { CollapsibleEntry, ListEntry } from '@bpmn-io/properties-panel';
 
+import { useService } from 'bpmn-js-properties-panel';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact/index.js';
 
 import ParametersProps from './ParametersProps';
 
 export default function ParametersList(args) {
-  const {element, id, helper} = args;
+  const {element, id, listHelper} = args;
 
   const bpmnFactory = useService('bpmnFactory');
   const modeling = useService('modeling');
   const translate = useService('translate');
   
-  const parameters = helper.getSubExtensionElements(element) || [];
+  const parameters = listHelper.getSubExtensionElements(element) || [];
 
   function addParameter() {
-    helper.addSubElement({
+    listHelper.addSubElement({
         element,
         bpmnFactory,
         modeling,
@@ -45,7 +46,6 @@ export default function ParametersList(args) {
     component=${Parameter}
     onAdd=${addParameter}
     onRemove=${removeParameter}
-    helper=${helper}
   />`;
 }
 
@@ -54,8 +54,7 @@ function Parameter(props) {
   const {
     element,
     index,
-    item: parameter,
-    helper
+    item: parameter
   } = props;
 
   const id = `parameter-${index}`;
@@ -67,8 +66,7 @@ function Parameter(props) {
       ParametersProps({
         idPrefix: id,
         element,
-        parameter,
-        helper
+        parameter
       })}
     label=${parameter.get('parStaticId') || ''}
     />`;

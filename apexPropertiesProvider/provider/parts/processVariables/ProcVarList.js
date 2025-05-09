@@ -1,19 +1,20 @@
-import ProcVarProps from './ProcVarProps';
-
 import { CollapsibleEntry, ListEntry } from '@bpmn-io/properties-panel';
 
 import { useService } from 'bpmn-js-properties-panel';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact/index.js';
+
+import ProcVarProps from './ProcVarProps';
 
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 export default function ParametersProps(args) {
 
-  const {element, id, helper} = args;
+  const {element, id, label, helper} = args;
 
   const bpmnFactory = useService('bpmnFactory');
   const modeling = useService('modeling');
-  const translate = useService('translate');
   
   const procVars = helper.getSubExtensionElements(element) || [];
 
@@ -45,7 +46,7 @@ export default function ParametersProps(args) {
   return html`<${ListEntry}
     element=${element}
     id=${id}
-    label=${translate('Page Items')}
+    label=${label}
     items=${procVars}
     component=${ProcVar}
     onAdd=${addProcVar}

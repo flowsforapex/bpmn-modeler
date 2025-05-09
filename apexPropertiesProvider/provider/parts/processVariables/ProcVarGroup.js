@@ -16,7 +16,7 @@ export default function (args) {
   var type1 = null;
   var type2 = null;
 
-  const {element, injector, translate} = args;
+  const {element, translate} = args;
 
   const businessObject = getBusinessObject(element);
 
@@ -178,6 +178,7 @@ export default function (args) {
       entries.push({
         id: type1.id,
         element,
+        label: translate(type1.label),
         component: ProcVarList,
         helper: listExtensionHelper1, 
       });
@@ -187,6 +188,7 @@ export default function (args) {
       entries.push({
         id: type2.id,
         element,
+        label: translate(type2.label),
         component: ProcVarList,
         helper: listExtensionHelper2, 
       });

@@ -16,6 +16,8 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
 
 import { getApplications, getPages } from '../../plugins/metaDataCollector';

@@ -15,6 +15,8 @@ import { Quickpick } from '../../helper/Quickpick';
 import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
 
 import { getApplications, getJSONParameters, getTasks } from '../../plugins/metaDataCollector';
@@ -136,7 +138,7 @@ export default function (args) {
         id: 'parameters',
         element,
         component: ParametersList,
-        helper: listExtensionHelper,
+        listHelper: listExtensionHelper,
       },
       {
         id: 'resultVariable',
