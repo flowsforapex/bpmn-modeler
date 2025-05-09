@@ -1,26 +1,23 @@
-import {
-  isSelectEntryEdited,
-  isTextFieldEntryEdited
-} from '@bpmn-io/properties-panel';
-import { useService } from 'bpmn-js-properties-panel';
-
-import { getBusinessObject } from '../../helper/util';
-
-import ExtensionHelper from '../../helper/ExtensionHelper';
-import ListExtensionHelper from '../../helper/ListExtensionHelper';
-
-import PageItemsList from '../pageItems/PageItemsList';
-
-import { Quickpick } from '../../helper/Quickpick';
-
-import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
-
+import { isSelectEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
-
+import { useService } from 'bpmn-js-properties-panel';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
-
+import ExtensionHelper from '../../helper/ExtensionHelper';
+import ListExtensionHelper from '../../helper/ListExtensionHelper';
+import { Quickpick } from '../../helper/Quickpick';
+import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { getBusinessObject } from '../../helper/util';
 import { getApplications, getPages } from '../../plugins/metaDataCollector';
+import PageItemsList from '../pageItems/PageItemsList';
+
+
+
+
+
+
+
+
 
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
