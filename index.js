@@ -17,12 +17,25 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
+// import { ElementTemplatesPropertiesProviderModule } from './custom/elementTemplates/index.esm';
+import { CloudElementTemplatesCoreModule, CloudElementTemplatesPropertiesProviderModule, ElementTemplatesCoreModule, ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
+import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
+
+import customCamundaPlatformPropertiesProvider from './custom/elementTemplates';
+
+import {
+  CreateAppendAnythingModule,
+  CreateAppendElementTemplatesModule
+} from 'bpmn-js-create-append-anything';
+
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
 import colorPickerCSS from 'bpmn-js-color-picker/colors/color-picker.css';
 import bpmnCSS from 'bpmn-js/dist/assets/bpmn-js.css';
 import diagramCSS from 'bpmn-js/dist/assets/diagram-js.css';
 import css from './assets/css/style.css';
+
+import templateChooserCSS from '@bpmn-io/element-template-chooser/dist/element-template-chooser.css';
 
 import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
@@ -69,6 +82,7 @@ class Modeler extends HTMLElement {
         colorPickerCSS,
         embeddedRulesCSS,
         monacoCSS,
+        templateChooserCSS,
       ]
       .map((file) => {
         const sheet = new CSSStyleSheet();
@@ -113,6 +127,38 @@ class Modeler extends HTMLElement {
   }
 
   initModeler() {
+
+    const elementTemplates = [
+      {
+        // '$schema': './apexPropertiesProvider/descriptor/apexProps.json',
+        'name': 'Template 1',
+        'id': 'sometemplate',
+        'description': 'some description',
+        'entriesVisible': true,
+        // 'version': 1,
+        // 'engines': {
+        //   'camunda': '^8.6'
+        // },
+        'appliesTo': [
+          'bpmn:ServiceTask'
+        ],
+        // 'elementType': {
+        //   'value': 'bpmn:ServiceTask',
+        // },
+        'properties': [
+          {
+            'label': 'REST Endpoint URL',
+            'description': 'Specify the url of the REST API to talk to.',
+            'type': 'String'
+            // 'binding': {
+            //   'type': 'zeebe:taskHeader',
+            //   'key': 'resultVariable'
+            // }
+          }
+        ]
+      }
+    ];
+
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
       propertiesPanel: {
@@ -134,6 +180,14 @@ class Modeler extends HTMLElement {
         propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
+        // ElementTemplatesCoreModule,
+        ElementTemplatesPropertiesProviderModule,
+        customCamundaPlatformPropertiesProvider,
+        // CloudElementTemplatesCoreModule,
+        // CloudElementTemplatesPropertiesProviderModule,
+        ElementTemplateChooserModule,
+        // CreateAppendAnythingModule,
+        // CreateAppendElementTemplatesModule,
       ],
       moddleExtensions: {
         apex: apexModdleDescriptor
@@ -147,7 +201,8 @@ class Modeler extends HTMLElement {
         name: 'Flows for APEX',
         version: '25.1.0',
       },
-      showCustomExtensions: this.showCustomExtensions
+      showCustomExtensions: this.showCustomExtensions,
+      elementTemplates: elementTemplates
     });
   }
 
