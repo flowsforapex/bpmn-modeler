@@ -44,7 +44,6 @@ export default function (args) {
         { label: translate('Abnormal Events (1)'), value: '1' },
         { label: translate('Major Events (2)'), value: '2' },
         { label: translate('Routine (4)'), value: '4' },
-        { label: translate('Detailed (6)'), value: '6' },
         { label: translate('Full (8)'), value: '8' },
       ],
       component: DefaultSelectEntry,

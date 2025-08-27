@@ -1,4 +1,3 @@
-import { transform } from 'lodash';
 
 // template from https://github.com/bpmn-io/bpmn-js-i18n
 translate('Activate create/remove space tool');
@@ -6,6 +5,8 @@ translate('Activate global connect tool');
 translate('Activate hand tool');
 translate('Activate lasso tool');
 translate('Ad-hoc');
+translate('Ad-hoc sub-process (collapsed)');
+translate('Ad-hoc sub-process (expanded)');
 translate('Add lane above');
 translate('Add lane below');
 translate('Align elements');
