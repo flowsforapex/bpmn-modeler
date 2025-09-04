@@ -25,17 +25,16 @@ module.exports = {
           from: path.resolve(__dirname, "assets/css/flows4apex.modeler.css"),
           to: "assets/css/flows4apex.modeler.css",
         },
+        {
+          from: path.resolve(__dirname, "assets/fonts/codicon.ttf"),
+          to: "assets/fonts/codicon.ttf",
+        }
       ],
     }),
     new MonacoWebpackPlugin({
       languages: ["sql", "json", "html"],
     }),
   ],
-  devtool: "source-map",
-  devServer: {
-    compress: true,
-    port: 8082,
-  },
   module: {
     rules: [
       {
@@ -52,8 +51,13 @@ module.exports = {
       },
       {
         test: /\.ttf$/,
-        use: ["file-loader"],
+        type: "asset/resource",
       },
     ],
+  },
+  devtool: "source-map",
+  devServer: {
+    compress: true,
+    port: 8082,
   },
 };
