@@ -18,10 +18,6 @@ module.exports = {
       languages: ["sql", "json", "html"],
     }),
   ],
-  optimization: {
-    minimize: false,
-  },
-  devtool: "source-map",
   module: {
     rules: [
       {
@@ -38,8 +34,12 @@ module.exports = {
       },
       {
         test: /\.ttf$/,
-        use: ["file-loader"],
+        type: "asset/resource",
       },
     ],
   },
+  optimization: {
+    minimize: false,
+  },
+  devtool: "source-map",
 };
