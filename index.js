@@ -24,6 +24,8 @@ import customCamundaPlatformPropertiesProvider from './custom/camundaPlatform';
 
 import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
 
+import templates from './apexPropertiesProvider/descriptor/elementTemplates';
+
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
 import colorPickerCSS from 'bpmn-js-color-picker/colors/color-picker.css';
@@ -125,61 +127,8 @@ class Modeler extends HTMLElement {
 
   initModeler() {
 
-    window.MY_TEMPLATES = [
-      {
-        appliesTo: ['bpmn:UserTask'],
-        id: 'Template1',
-        name: 'Template 1',
-        properties: [
-          {
-            label: 'Attribute A',
-            type: 'String',
-            value: '',
-            binding: {
-              type: 'property',
-              name: 'apex:attributeA'
-            }
-          },
-          {
-            label: 'Attribute B',
-            type: 'String',
-            value: '',
-            binding: {
-              type: 'property',
-              name: 'apex:attributeB'
-            }
-          }
-        ]
-      },
-      {
-        appliesTo: ['bpmn:UserTask'],
-        id: 'Template2',
-        name: 'Template 2',
-        properties: [
-          {
-            label: 'Attribute C',
-            type: 'String',
-            value: '',
-            binding: {
-              type: 'property',
-              name: 'apex:attributeC'
-            }
-          },
-          {
-            label: 'Attribute D',
-            type: 'String',
-            value: '',
-            binding: {
-              type: 'property',
-              name: 'apex:attributeD'
-            }
-          }
-        ]
-      },
-    ];
-
     // create moddle descriptor syntax
-    const mappedTypes = window.MY_TEMPLATES.map((t) => {
+    const mappedTypes = templates.map((t) => {
       return {
         name: t.id,
         superClass: ['Element'],
@@ -191,11 +140,25 @@ class Modeler extends HTMLElement {
               prefix: 'apex',
               localName: p.binding.name.split(':')[1]
             },
-            type: p.type
+            type: 'String'
           };
         })
       };
     });
+
+    const mergedModdle = {
+      name: 'APEX',
+      prefix: 'apex',
+      uri: 'https://flowsforapex.org',
+      xml: {
+        'tagAlias': 'lowerCase'
+      },
+      associations: [],
+      types: [
+        ...apexModdleDescriptor.types,
+        ...mappedTypes
+      ]
+    };
 
     const elementTemplates = [
       {
@@ -215,20 +178,6 @@ class Modeler extends HTMLElement {
         ]
       },
     ];
-
-    const mergedModdle = {
-      name: 'APEX',
-      prefix: 'apex',
-      uri: 'https://flowsforapex.org',
-      xml: {
-        'tagAlias': 'lowerCase'
-      },
-      associations: [],
-      types: [
-        ...apexModdleDescriptor.types,
-        ...mappedTypes
-      ]
-    };
 
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
@@ -268,7 +217,8 @@ class Modeler extends HTMLElement {
         version: '25.1.0',
       },
       showCustomExtensions: this.showCustomExtensions,
-      elementTemplates: elementTemplates
+      elementTemplates: elementTemplates,
+      templates: templates
     });
   }
 

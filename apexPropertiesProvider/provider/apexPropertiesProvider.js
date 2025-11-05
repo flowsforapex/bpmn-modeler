@@ -58,7 +58,8 @@ export default function apexPropertiesProvider(
   modeling,
   elementRegistry,
   translate,
-  showCustomExtensions
+  showCustomExtensions,
+  templates
 ) {
   eventBus.on('saveXML.start', function () {
     // removeInvalidExtensionsElements(elementRegistry, modeling);
@@ -226,6 +227,9 @@ export default function apexPropertiesProvider(
         newGroups.push(createSection({element, injector, translate}, 'custom', translate('Custom'), CustomExtensionProps));
       }
       
+      // add template section
+      newGroups.push(createSection({element, injector, translate, templates}, 'template', translate('Template'), ElementTemplateProps));
+      
       // filter: add all non-empty groups
       newGroups.forEach((g) => {
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
@@ -234,10 +238,6 @@ export default function apexPropertiesProvider(
       const removeGroups = ['timer', 'message', 'multiInstance'];
       
       groups = groups.filter(g => !removeGroups.includes(g.id));
-
-      if (element.type === 'bpmn:UserTask') {
-        groups.push(createSection({element, injector, translate}, 'template', translate('Template'), ElementTemplateProps));
-      }
 
       return groups;
     };
@@ -253,5 +253,6 @@ apexPropertiesProvider.$inject = [
   'modeling',
   'elementRegistry',
   'translate',
-  'config.showCustomExtensions'
+  'config.showCustomExtensions',
+  'config.templates'
 ];

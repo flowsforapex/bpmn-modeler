@@ -1,0 +1,52 @@
+[
+  {
+    "appliesTo": ["bpmn:UserTask"],
+    "id": "Template1",
+    "name": "Template 1",
+    "properties": [
+      {
+        "label": "Attribute A",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "property",
+          "name": "apex:attributeA"
+        }
+      },
+      {
+        "label": "Attribute B",
+        "type": "Boolean",
+        "value": "",
+        "binding": {
+          "type": "property",
+          "name": "apex:attributeB"
+        }
+      }
+    ]
+  },
+  {
+    "appliesTo": ["bpmn:UserTask"],
+    "id": "Template2",
+    "name": "Template 2",
+    "properties": [
+      {
+        "label": "Attribute C",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "property",
+          "name": "apex:attributeC"
+        }
+      },
+      {
+        "label": "Attribute D",
+        "type": "String",
+        "value": "",
+        "binding": {
+          "type": "property",
+          "name": "apex:attributeD"
+        }
+      }
+    ]
+  }
+]
