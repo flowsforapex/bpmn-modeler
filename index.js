@@ -17,16 +17,12 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-// import { ElementTemplatesPropertiesProviderModule } from './custom/elementTemplates/index.esm';
-import { CloudElementTemplatesCoreModule, CloudElementTemplatesPropertiesProviderModule, ElementTemplatesCoreModule, ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
+import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
+// import { ElementTemplatesPropertiesProviderModule } from './custom/elementTemplates/elementTemplatePropertiesProvider';
+
+import customCamundaPlatformPropertiesProvider from './custom/camundaPlatform';
+
 import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
-
-import customCamundaPlatformPropertiesProvider from './custom/elementTemplates';
-
-import {
-  CreateAppendAnythingModule,
-  CreateAppendElementTemplatesModule
-} from 'bpmn-js-create-append-anything';
 
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
@@ -41,6 +37,7 @@ import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
 
 import monacoCSS from 'monaco-editor/min/vs/editor/editor.main.css';
+import { merge } from 'lodash';
 
 class Modeler extends HTMLElement {
   constructor() {
@@ -128,36 +125,110 @@ class Modeler extends HTMLElement {
 
   initModeler() {
 
-    const elementTemplates = [
+    window.MY_TEMPLATES = [
       {
-        // '$schema': './apexPropertiesProvider/descriptor/apexProps.json',
-        'name': 'Template 1',
-        'id': 'sometemplate',
-        'description': 'some description',
-        'entriesVisible': true,
-        // 'version': 1,
-        // 'engines': {
-        //   'camunda': '^8.6'
-        // },
-        'appliesTo': [
-          'bpmn:ServiceTask'
-        ],
-        // 'elementType': {
-        //   'value': 'bpmn:ServiceTask',
-        // },
-        'properties': [
+        appliesTo: ['bpmn:UserTask'],
+        id: 'Template1',
+        name: 'Template 1',
+        properties: [
           {
-            'label': 'REST Endpoint URL',
-            'description': 'Specify the url of the REST API to talk to.',
-            'type': 'String'
-            // 'binding': {
-            //   'type': 'zeebe:taskHeader',
-            //   'key': 'resultVariable'
-            // }
+            label: 'Attribute A',
+            type: 'String',
+            value: '',
+            binding: {
+              type: 'property',
+              name: 'apex:attributeA'
+            }
+          },
+          {
+            label: 'Attribute B',
+            type: 'String',
+            value: '',
+            binding: {
+              type: 'property',
+              name: 'apex:attributeB'
+            }
           }
         ]
-      }
+      },
+      {
+        appliesTo: ['bpmn:UserTask'],
+        id: 'Template2',
+        name: 'Template 2',
+        properties: [
+          {
+            label: 'Attribute C',
+            type: 'String',
+            value: '',
+            binding: {
+              type: 'property',
+              name: 'apex:attributeC'
+            }
+          },
+          {
+            label: 'Attribute D',
+            type: 'String',
+            value: '',
+            binding: {
+              type: 'property',
+              name: 'apex:attributeD'
+            }
+          }
+        ]
+      },
     ];
+
+    // create moddle descriptor syntax
+    const mappedTypes = window.MY_TEMPLATES.map((t) => {
+      return {
+        name: t.id,
+        superClass: ['Element'],
+        properties: t.properties.map((p) => {
+          return {
+            name: p.binding.name,
+            ns: {
+              name: p.binding.name,
+              prefix: 'apex',
+              localName: p.binding.name.split(':')[1]
+            },
+            type: p.type
+          };
+        })
+      };
+    });
+
+    const elementTemplates = [
+      {
+        appliesTo: ['bpmn:UserTask'],
+        id: 'template3',
+        name: 'Template 3',
+        properties: [
+          {
+            label: 'Dummy Value',
+            type: 'String',
+            value: '',
+            binding: {
+              'type': 'property',
+              'name': 'apex:dummyValue'
+            }
+          }
+        ]
+      },
+    ];
+
+    const mergedModdle = {
+      name: 'APEX',
+      prefix: 'apex',
+      uri: 'https://flowsforapex.org',
+      xml: {
+        'tagAlias': 'lowerCase'
+      },
+      associations: [],
+      types: [
+        ...apexModdleDescriptor.types,
+        ...mappedTypes
+      ]
+    };
 
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
@@ -180,17 +251,12 @@ class Modeler extends HTMLElement {
         propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
-        // ElementTemplatesCoreModule,
         ElementTemplatesPropertiesProviderModule,
         customCamundaPlatformPropertiesProvider,
-        // CloudElementTemplatesCoreModule,
-        // CloudElementTemplatesPropertiesProviderModule,
         ElementTemplateChooserModule,
-        // CreateAppendAnythingModule,
-        // CreateAppendElementTemplatesModule,
       ],
       moddleExtensions: {
-        apex: apexModdleDescriptor
+        apex: mergedModdle
       },
       bpmnRenderer: {
         defaultFillColor: 'var(--default-fill-color)',

@@ -77,6 +77,15 @@
           "name": "manualInput",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "template",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "dummyValue",
+          "type": "String"
         }
       ]
     },

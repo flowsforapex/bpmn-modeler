@@ -34,6 +34,7 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
+import ElementTemplateProps from './parts/elementTemplates/ElementTemplateProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -60,7 +61,7 @@ export default function apexPropertiesProvider(
   showCustomExtensions
 ) {
   eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(elementRegistry, modeling);
+    // removeInvalidExtensionsElements(elementRegistry, modeling);
   });
 
   // TODO test if needed
@@ -233,6 +234,10 @@ export default function apexPropertiesProvider(
       const removeGroups = ['timer', 'message', 'multiInstance'];
       
       groups = groups.filter(g => !removeGroups.includes(g.id));
+
+      if (element.type === 'bpmn:UserTask') {
+        groups.push(createSection({element, injector, translate}, 'template', translate('Template'), ElementTemplateProps));
+      }
 
       return groups;
     };
