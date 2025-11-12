@@ -7,7 +7,7 @@ import { getBusinessObject } from '../../helper/util';
 
 export default function (args) {
 
-  const {element, injector, templates} = args;
+  const {element, injector, elementTemplates} = args;
 
   const businessObject = getBusinessObject(element);
   
@@ -15,10 +15,10 @@ export default function (args) {
 
   const entries = [];
 
-  if (templates && templates.length > 0) {
+  if (elementTemplates && elementTemplates.length > 0) {
 
     const applicableTemplates =
-      templates
+      elementTemplates
       .filter(t => t.appliesTo.includes(businessObject.$type));
 
     if (applicableTemplates && applicableTemplates.length > 0) {

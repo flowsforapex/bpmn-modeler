@@ -17,14 +17,9 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-import { ElementTemplatesPropertiesProviderModule } from 'bpmn-js-element-templates';
-// import { ElementTemplatesPropertiesProviderModule } from './custom/elementTemplates/elementTemplatePropertiesProvider';
+import ElementTemplateChooserModule from './custom/elementTemplates';
 
-import customCamundaPlatformPropertiesProvider from './custom/camundaPlatform';
-
-import ElementTemplateChooserModule from '@bpmn-io/element-template-chooser';
-
-import templates from './apexPropertiesProvider/descriptor/elementTemplates';
+import elementTemplates from './apexPropertiesProvider/descriptor/elementTemplates';
 
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
@@ -33,13 +28,12 @@ import bpmnCSS from 'bpmn-js/dist/assets/bpmn-js.css';
 import diagramCSS from 'bpmn-js/dist/assets/diagram-js.css';
 import css from './assets/css/style.css';
 
-import templateChooserCSS from '@bpmn-io/element-template-chooser/dist/element-template-chooser.css';
+import elementTemplatesCss from './assets/css/element-templates.css';
 
 import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
 
 import monacoCSS from 'monaco-editor/min/vs/editor/editor.main.css';
-import { merge } from 'lodash';
 
 class Modeler extends HTMLElement {
   constructor() {
@@ -81,7 +75,7 @@ class Modeler extends HTMLElement {
         colorPickerCSS,
         embeddedRulesCSS,
         monacoCSS,
-        templateChooserCSS,
+        elementTemplatesCss,
       ]
       .map((file) => {
         const sheet = new CSSStyleSheet();
@@ -128,7 +122,7 @@ class Modeler extends HTMLElement {
   initModeler() {
 
     // create moddle descriptor syntax
-    const mappedTypes = templates.map((t) => {
+    const mappedTypes = elementTemplates.map((t) => {
       return {
         name: t.id,
         superClass: ['Element'],
@@ -160,24 +154,24 @@ class Modeler extends HTMLElement {
       ]
     };
 
-    const elementTemplates = [
-      {
-        appliesTo: ['bpmn:UserTask'],
-        id: 'template3',
-        name: 'Template 3',
-        properties: [
-          {
-            label: 'Dummy Value',
-            type: 'String',
-            value: '',
-            binding: {
-              'type': 'property',
-              'name': 'apex:dummyValue'
-            }
-          }
-        ]
-      },
-    ];
+    // const elementTemplates = [
+    //   {
+    //     appliesTo: ['bpmn:UserTask'],
+    //     id: 'template3',
+    //     name: 'Template 3',
+    //     properties: [
+    //       {
+    //         label: 'Dummy Value',
+    //         type: 'String',
+    //         value: '',
+    //         binding: {
+    //           'type': 'property',
+    //           'name': 'apex:dummyValue'
+    //         }
+    //       }
+    //     ]
+    //   },
+    // ];
 
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
@@ -200,8 +194,6 @@ class Modeler extends HTMLElement {
         propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
-        ElementTemplatesPropertiesProviderModule,
-        customCamundaPlatformPropertiesProvider,
         ElementTemplateChooserModule,
       ],
       moddleExtensions: {
@@ -217,8 +209,7 @@ class Modeler extends HTMLElement {
         version: '25.1.0',
       },
       showCustomExtensions: this.showCustomExtensions,
-      elementTemplates: elementTemplates,
-      templates: templates
+      elementTemplates: elementTemplates
     });
   }
 

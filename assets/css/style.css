@@ -188,6 +188,14 @@ button.dialog.fa {
   border: 1px solid var(--color-flows-modal-border);
 }
 /**
+ * Element templates
+ */
+.djs-popup.element-template-chooser {
+  top: calc((100vh - 350px) / 3) !important;
+  left: 50% !important;
+  transform: translateX(-50%) scale(1) !important;
+}
+/**
  * define dark model css variables
  */
 .FLOWS-DARK {

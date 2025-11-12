@@ -34,6 +34,7 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
+
 import ElementTemplateProps from './parts/elementTemplates/ElementTemplateProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -59,7 +60,7 @@ export default function apexPropertiesProvider(
   elementRegistry,
   translate,
   showCustomExtensions,
-  templates
+  elementTemplates
 ) {
   eventBus.on('saveXML.start', function () {
     // removeInvalidExtensionsElements(elementRegistry, modeling);
@@ -228,7 +229,7 @@ export default function apexPropertiesProvider(
       }
       
       // add template section
-      newGroups.push(createSection({element, injector, translate, templates}, 'template', translate('Template'), ElementTemplateProps));
+      newGroups.push(createSection({element, injector, translate, elementTemplates}, 'template', translate('Template'), ElementTemplateProps));
       
       // filter: add all non-empty groups
       newGroups.forEach((g) => {
@@ -254,5 +255,5 @@ apexPropertiesProvider.$inject = [
   'elementRegistry',
   'translate',
   'config.showCustomExtensions',
-  'config.templates'
+  'config.elementTemplates'
 ];
