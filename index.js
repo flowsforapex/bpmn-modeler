@@ -17,9 +17,9 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-import ElementTemplateChooserModule from './custom/elementTemplates';
-
 import elementTemplates from './apexPropertiesProvider/descriptor/elementTemplates';
+
+import { CreateAppendAnythingModule } from 'bpmn-js-create-append-anything';
 
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
@@ -27,8 +27,6 @@ import colorPickerCSS from 'bpmn-js-color-picker/colors/color-picker.css';
 import bpmnCSS from 'bpmn-js/dist/assets/bpmn-js.css';
 import diagramCSS from 'bpmn-js/dist/assets/diagram-js.css';
 import css from './assets/css/style.css';
-
-import elementTemplatesCss from './assets/css/element-templates.css';
 
 import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
@@ -75,7 +73,6 @@ class Modeler extends HTMLElement {
         colorPickerCSS,
         embeddedRulesCSS,
         monacoCSS,
-        elementTemplatesCss,
       ]
       .map((file) => {
         const sheet = new CSSStyleSheet();
@@ -154,25 +151,6 @@ class Modeler extends HTMLElement {
       ]
     };
 
-    // const elementTemplates = [
-    //   {
-    //     appliesTo: ['bpmn:UserTask'],
-    //     id: 'template3',
-    //     name: 'Template 3',
-    //     properties: [
-    //       {
-    //         label: 'Dummy Value',
-    //         type: 'String',
-    //         value: '',
-    //         binding: {
-    //           'type': 'property',
-    //           'name': 'apex:dummyValue'
-    //         }
-    //       }
-    //     ]
-    //   },
-    // ];
-
     this.modeler = new BpmnModeler({
       container: this.shadowRoot.querySelector(`#${this.canvas.id}`),
       propertiesPanel: {
@@ -194,7 +172,7 @@ class Modeler extends HTMLElement {
         propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
-        ElementTemplateChooserModule,
+        CreateAppendAnythingModule,
       ],
       moddleExtensions: {
         apex: mergedModdle
@@ -206,7 +184,7 @@ class Modeler extends HTMLElement {
       },
       exporter: {
         name: 'Flows for APEX',
-        version: '25.1.0',
+        version: '26.1.0',
       },
       showCustomExtensions: this.showCustomExtensions,
       elementTemplates: elementTemplates

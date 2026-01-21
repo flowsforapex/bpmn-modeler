@@ -3,7 +3,7 @@ import { DefaultSelectEntry } from '../../helper/templates';
 
 export default function (args) {
 
-  const {element, injector} = args;
+  const {element, injector, elementTemplates} = args;
 
   const translate = injector.get('translate');
 
@@ -41,6 +41,10 @@ export default function (args) {
       { label: translate('Simple Message'), value: 'simpleMessage' },
     ],
   };
+
+  const typesWithTemplates = [...new Set(elementTemplates.flatMap(t => t.appliesTo))];
+
+  typesWithTemplates.forEach(t => selectOptions[t] && selectOptions[t].push({ label: translate('Template'), value: 'template' }));
   
   return [
     {

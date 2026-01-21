@@ -15,13 +15,13 @@ export default function (args) {
 
   const entries = [];
 
-  if (elementTemplates && elementTemplates.length > 0) {
+  if (businessObject.type === 'template' && elementTemplates) {
 
     const applicableTemplates =
       elementTemplates
       .filter(t => t.appliesTo.includes(businessObject.$type));
 
-    if (applicableTemplates && applicableTemplates.length > 0) {
+    if (applicableTemplates) {
 
       const options = applicableTemplates.map((t) => { return { label: t.name, value: t.id }; });
 

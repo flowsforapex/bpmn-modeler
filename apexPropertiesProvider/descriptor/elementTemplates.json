@@ -16,6 +16,8 @@
       {
         "label": "Attribute B",
         "type": "Boolean",
+        "parentField": "Attribute A",
+        "showIfParentEquals": "",
         "value": "",
         "binding": {
           "type": "property",
