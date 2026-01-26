@@ -34,6 +34,7 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
 import { removeInvalidExtensionsElements } from './helper/validateXML';
+import { CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -176,6 +177,12 @@ export default function apexPropertiesProvider(
       // subprocess
       if (is(element, 'bpmn:SubProcess')) {
         newGroups.push(createSection({element, injector, translate}, 'loop', multiInstanceLoopHeading, MultiInstanceLoopProps));
+        newGroups.push(createSection({element, injector, translate}, 'starting', translate('Starting Activities'), StartingProps));
+        newGroups.push(createSection({element, injector, translate}, 'completion', translate('Completion Condition'), CompletionProps));
+        newGroups.push(createSection({element, injector, translate}, 'visibility', translate('Visibility'), VisibilityProps));
+        newGroups.push(createSection({element, injector, translate}, 'detailPage', translate('Detail Page'), DetailPageProps));
+        newGroups.push(createSection({element, translate}, 'assignment', translate('Assignment'), AssignmentProps));
+        newGroups.push(createSection({element, translate}, 'scheduling', translate('Scheduling'), SchedulingProps));
       }
 
       // add the message event props
@@ -230,7 +237,7 @@ export default function apexPropertiesProvider(
         if (typeof g.entries !== 'undefined' && g.entries.length > 0) groups.push(g);
       });
 
-      const removeGroups = ['timer', 'message', 'multiInstance'];
+      const removeGroups = ['timer', 'message', 'multiInstance', 'adHocCompletion'];
       
       groups = groups.filter(g => !removeGroups.includes(g.id));
 
