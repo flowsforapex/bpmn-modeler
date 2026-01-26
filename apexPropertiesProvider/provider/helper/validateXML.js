@@ -113,6 +113,7 @@ function getAttributesToRemove(element) {
   if (
     !is(element, 'bpmn:CallActivity') &&
     !is(element, 'bpmn:Process') &&
+    !is(element, 'bpmn:AdHocSubProcess') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexPage') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexApproval') &&
     !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexSimpleForm') &&
@@ -150,6 +151,9 @@ function getExtensionFilters(element) {
     // filter processes
   } else if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
     return getProcessFilters(element);
+    // filter ad-hoc sub processes
+  } else if (is(element, 'bpmn:AdHocSubProcess')) {
+    return getAdHocProcessFilters(element);
   }
 
   return [];
@@ -346,6 +350,26 @@ function getProcessFilters(element) {
     filter.push('apex:PotentialStartingGroups');
     filter.push('apex:ExcludedStartingUsers');
   }
+
+  return filter;
+}
+
+function getAdHocProcessFilters(element) {
+  var filter = [];
+  var businessObject = getBusinessObject(element);
+
+  filter.push('apex:StartingActivities');
+  filter.push('apex:CompletionCondition');
+  filter.push('apex:TaskVisibility');
+
+  filter.push('apex:ApexPage');
+
+  filter.push('apex:Priority');
+  filter.push('apex:DueOn');
+
+  filter.push('apex:PotentialStartingUsers');
+  filter.push('apex:PotentialStartingGroups');
+  filter.push('apex:ExcludedStartingUsers');
 
   return filter;
 }

@@ -11,8 +11,6 @@ import { DefaultSelectEntryAsync, DefaultTextFieldEntry, DefaultToggleSwitchEntr
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 import { html } from 'htm/preact';
 
-var pagesLoaded = false;
-
 import { getApplications, getPages, getUsernames } from '../../plugins/metaDataCollector';
 
 export default function (args) {
