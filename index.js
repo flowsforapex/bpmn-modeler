@@ -17,9 +17,7 @@ import {
   BpmnPropertiesProviderModule
 } from 'bpmn-js-properties-panel';
 
-import elementTemplates from './apexPropertiesProvider/descriptor/elementTemplates';
-
-import { CreateAppendAnythingModule } from 'bpmn-js-create-append-anything';
+// import elementTemplates from './apexPropertiesProvider/descriptor/elementTemplates';
 
 import propertiesPanelCSS from '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
 import lintCSS from 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
@@ -41,6 +39,7 @@ class Modeler extends HTMLElement {
     this.ajaxIdentifier = this.getAttribute('ajaxIdentifier');
     this.showCustomExtensions = (this.getAttribute('showCustomExtensions') === 'true');
     this.themePluginClass = this.getAttribute('themePluginClass');
+    this.elementTemplates = this.getAttribute('elementTemplates');
 
     // create shadow dom
     this.attachShadow({ mode: 'open' });
@@ -119,7 +118,7 @@ class Modeler extends HTMLElement {
   initModeler() {
 
     // create moddle descriptor syntax
-    const mappedTypes = elementTemplates.map((t) => {
+    const mappedTypes = this.elementTemplates.map((t) => {
       return {
         name: t.id,
         superClass: ['Element'],
@@ -172,7 +171,6 @@ class Modeler extends HTMLElement {
         propPanelResize,
         bpmnDiOrdering,
         colorPickerModule,
-        CreateAppendAnythingModule,
       ],
       moddleExtensions: {
         apex: mergedModdle
@@ -187,7 +185,7 @@ class Modeler extends HTMLElement {
         version: '26.1.0',
       },
       showCustomExtensions: this.showCustomExtensions,
-      elementTemplates: elementTemplates
+      elementTemplates: this.elementTemplates
     });
   }
 

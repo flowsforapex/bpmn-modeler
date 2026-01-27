@@ -1,8 +1,8 @@
-import { isSelectEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited } from '@bpmn-io/properties-panel';
+import { isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited, isToggleSwitchEntryEdited } from '@bpmn-io/properties-panel';
 
 import ExtensionHelper from '../../helper/ExtensionHelper';
 
-import { DefaultSelectEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 import { getBusinessObject } from '../../helper/util';
 
 export default function (args) {
@@ -66,6 +66,18 @@ export default function (args) {
                 isEdited: isTextFieldEntryEdited,
               }
             );
+          } else if (prop.type === 'Text') {
+            entries.push(
+              {
+                id: id,
+                element,
+                label: prop.label,
+                helper: extensionHelper,
+                property: prop.binding.name.split(':')[1],
+                component: DefaultTextAreaEntry,
+                isEdited: isTextAreaEntryEdited,
+              }
+            );
           } else if (prop.type === 'Boolean') {
             entries.push(
               {
@@ -77,6 +89,20 @@ export default function (args) {
                 // defaultValue: 'false',
                 component: DefaultToggleSwitchEntry,
                 // isEdited: isToggleSwitchEntryEdited,
+              }
+            );
+          } else if (prop.type === 'Dropdown') {
+            entries.push(
+              {
+                id: id,
+                element,
+                label: prop.label,
+                helper: extensionHelper,
+                property: prop.binding.name.split(':')[1],
+                // defaultValue: 'false',
+                options: prop.choices.map((c) => { return {'label': c.name, 'value': c.value}; }),
+                component: DefaultSelectEntry,
+                isEdited: isSelectEntryEdited,
               }
             );
           }
