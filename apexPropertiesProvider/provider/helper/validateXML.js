@@ -356,8 +356,7 @@ function getProcessFilters(element) {
 
 function getAdHocProcessFilters(element) {
   var filter = [];
-  var businessObject = getBusinessObject(element);
-
+  
   filter.push('apex:StartingActivities');
   filter.push('apex:CompletionCondition');
   filter.push('apex:TaskVisibility');
@@ -367,9 +366,9 @@ function getAdHocProcessFilters(element) {
   filter.push('apex:Priority');
   filter.push('apex:DueOn');
 
-  filter.push('apex:PotentialStartingUsers');
-  filter.push('apex:PotentialStartingGroups');
-  filter.push('apex:ExcludedStartingUsers');
+  filter.push('apex:PotentialUsers');
+  filter.push('apex:PotentialGroups');
+  filter.push('apex:ExcludedUsers');
 
   return filter;
 }
