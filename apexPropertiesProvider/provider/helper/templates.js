@@ -23,11 +23,11 @@ export function DefaultNumberEntry(props) {
     const setValue = (value) => {
       if (helper) {
         helper.setExtensionProperty(element, modeling, bpmnFactory, {
-          [property]: String(value),
+          [property]: value ? String(value) : value,
         });
       } else {
         modeling.updateModdleProperties(element, businessObject, {
-          [property]: String(value),
+          [property]: value ? String(value) : value,
         });
       }
     };

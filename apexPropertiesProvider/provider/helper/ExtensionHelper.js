@@ -25,7 +25,9 @@ export default class ExtensionHelper {
     let update;
     let updatedBusinessObject;
 
-    if (!extensionElements) {
+    const hasValues = Object.values(values).some(v => v !== undefined && v !== '');
+
+    if (!extensionElements && hasValues) {
       updatedBusinessObject = businessObject;
 
       extensionElements = createExtensionElements(element, bpmnFactory);
@@ -39,7 +41,7 @@ export default class ExtensionHelper {
       extensionElements.values.push(extensionElement);
 
       update = { extensionElements };
-    } else if (!extensionElement) {
+    } else if (!extensionElement && hasValues) {
       updatedBusinessObject = extensionElements;
 
       extensionElement = createExtension(
@@ -52,19 +54,13 @@ export default class ExtensionHelper {
       update = {
         values: extensionElements.get('values').concat(extensionElement),
       };
-    } else {
-      const removedProperties = [];
+    } else if (extensionElements && extensionElement) {
+      const removedProperties = Object.entries(values).filter(([_, v]) => !v).map(([k, _]) => k);
 
-      // set empty properties to undefined (will be removed)
-      for (const v in values) {
-        if (!values[v]) {
-          values[v] = undefined;
-          removedProperties.push(v);
-        }
-      }
-
+      const hasProperties = Object.keys(extensionElement).some(k => k !== '$type' && !removedProperties.includes(k));
+      
       // if extension element has no other properties
-      if (!Object.keys(extensionElement).some(k => k !== '$type' && !removedProperties.includes(k))) {
+      if (!hasProperties) {
         // if extension elements have no other children
         if (!extensionElements.get('values').some(k => k !== extensionElement)) {
           // remove extension elements
@@ -78,10 +74,14 @@ export default class ExtensionHelper {
           };
         }
       } else {
+        // set empty properties to undefined (will be removed)
+        const updatedValues = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, (v || undefined)]));
         // update (or remove) properties
         updatedBusinessObject = extensionElement;
-        update = values;
+        update = updatedValues;
       }
+    } else {
+      return null;
     }
 
     return modeling.updateModdleProperties(
