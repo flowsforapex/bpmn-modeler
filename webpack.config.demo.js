@@ -1,5 +1,4 @@
 const CopyPlugin = require("copy-webpack-plugin");
-const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const path = require("path");
 
 module.exports = {
@@ -28,11 +27,12 @@ module.exports = {
         {
           from: path.resolve(__dirname, "assets/fonts/codicon.ttf"),
           to: "assets/fonts/codicon.ttf",
-        }
+        },
+        {
+          from: path.resolve(__dirname, "assets/monaco"),
+          to: "assets/monaco",
+        },
       ],
-    }),
-    new MonacoWebpackPlugin({
-      languages: ["sql", "json", "html"],
     }),
   ],
   module: {

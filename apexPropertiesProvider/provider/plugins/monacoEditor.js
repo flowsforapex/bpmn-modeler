@@ -1,4 +1,3 @@
-import { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 import { query as domQuery } from 'min-dom';
 
 var jsxRuntime = require('@bpmn-io/properties-panel/preact/jsx-runtime');
@@ -81,16 +80,20 @@ export function openEditor(getText, saveText, language, type, id) {
 
   const theme = domQuery('.flows4apex-modeler.FLOWS-DARK', domQuery('f4a-modeler').shadowRoot) ? 'vs-dark' : 'vs';
 
-  const monacoEditor = editor.create(
-    domQuery('#editor-container', modal),
-    {
-      value: [getText()].join('\n'),
-      language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
-      minimap: { enabled: 'false' },
-      automaticLayout: true,
-      theme: theme,
-    }
-  );
+  let monacoEditor;
+
+  window._monacoReady.then((monaco) => {
+    monacoEditor = monaco.editor.create(
+      domQuery('#editor-container', modal),
+      {
+        value: [getText()].join('\n'),
+        language: (language === 'plsql' ? 'sql' : language) || 'plaintext',
+        minimap: { enabled: 'false' },
+        automaticLayout: true,
+        theme: theme,
+      }
+    );
+  });
 
   modal.style.display = 'flex';
 
