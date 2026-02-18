@@ -449,6 +449,14 @@
           "type": "String"
         },
         {
+          "name": "varSourceType",
+          "type": "String"
+        },
+        {
+          "name": "varSource",
+          "type": "String"
+        },
+        {
           "name": "varExpression",
           "type": "String"
         },
