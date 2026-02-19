@@ -223,13 +223,18 @@ export default function ProcVarProps(args) {
           property: 'varSourceType',
           defaultValue: 'processVariable',
           options: sourceTypeOptions,
+          cleanup: (value) => {
+          return {
+                  ...(value !== 'processVariable' && {varSource: null})
+                }; 
+          },
           component: DefaultSelectEntry,
           isEdited: isSelectEntryEdited,
         }
       );
     }
 
-    if (varSourceType != null) {
+    if (varSourceType === 'processVariable') {
       entries.push(
         {
           id: `${idPrefix}-varSource`,
