@@ -64,7 +64,7 @@ function Priority(props) {
     'plsqlRawFunctionBody',
   ];
   
-  const expressionType = priorityHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = priorityHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -127,8 +127,13 @@ function Priority(props) {
           {
             text: translate('Process Priority'),
             handler: () => {
-              priorityHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-                expression: 'PROCESS_PRIORITY',
+              priorityHelper.setProperty({
+                element,
+                values: {
+                  expression: 'PROCESS_PRIORITY',
+                },
+                modeling,
+                bpmnFactory
               });
             }
           }
@@ -194,7 +199,7 @@ function DueOn(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = dueOnHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = dueOnHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -223,16 +228,26 @@ function DueOn(props) {
         {
           text: translate('Oracle'),
           handler: () => {
-            dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
+            dueOnHelper.setProperty({
+              element,
+              values: {
+                formatMask: 'YYYY-MM-DD HH24:MI:SS TZR',
+              },
+              modeling,
+              bpmnFactory
             });
           }
         },
         {
           text: translate('ISO'),
           handler: () => {
-            dueOnHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-              formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
+            dueOnHelper.setProperty({
+              element,
+              values: {
+                formatMask: 'YYYY-MM-DD"T"HH24:MI:SS TZR',
+              },
+              modeling,
+              bpmnFactory
             });
           }
         }
@@ -256,7 +271,7 @@ function DueOn(props) {
   if (expressionType != null) {
 
     const getDescription = () => {
-      const value = dueOnHelper.getExtensionProperty(element, 'expressionType');
+      const value = dueOnHelper.getProperty({element, property: 'expressionType'});
   
       return expressionDescriptions[value];
     };

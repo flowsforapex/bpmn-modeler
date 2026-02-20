@@ -10,14 +10,14 @@ export default class ExtensionHelper {
     this.type = type;
   }
 
-  getExtensionProperty(element, property, parent) {
+  getProperty({element, property, parent} = {}) {
     const businessObject = parent || getBusinessObject(element);
     const extensionElement = getExtension(businessObject, this.type);
 
     return extensionElement && extensionElement[property];
   }
 
-  setExtensionProperty(element, modeling, bpmnFactory, values, parent) {
+  setProperty({element, values, parent, modeling, bpmnFactory} = {}) {
     const businessObject = parent || getBusinessObject(element);
     let extensionElements = getExtensionElements(businessObject);
     let extensionElement = getExtension(businessObject, this.type);

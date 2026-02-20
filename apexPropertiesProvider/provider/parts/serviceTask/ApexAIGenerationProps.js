@@ -82,7 +82,7 @@ function AiService(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = AiServiceHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = AiServiceHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -172,7 +172,7 @@ function AiTemperature(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = AiTemperatureHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = AiTemperatureHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -262,7 +262,7 @@ function AiPrompt(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = AiPromptHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = AiTemperatureHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 

@@ -33,7 +33,7 @@ export default function (args) {
 
     const manualInput = businessObject.manualInput === 'true';
     
-    const useTemplate = (extensionHelper.getExtensionProperty(element, 'useTemplate') === 'true');
+    const useTemplate = (extensionHelper.getProperty({element, property: 'useTemplate'}) === 'true');
 
     entries.push(
       {
@@ -266,7 +266,7 @@ function TemplateProp(props) {
 
   const [templates, setTemplates] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getTemplates(applicationId).then(t => setTemplates({ values: t, loaded: true, applicationId: applicationId }));
@@ -292,8 +292,8 @@ function QuickpickPlaceholder(props) {
   const bpmnFactory = useService('bpmnFactory');
   const modeling = useService('modeling');
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const templateId = extensionHelper.getExtensionProperty(element, 'templateId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
+  const templateId = extensionHelper.getProperty({element, property: 'templateId'});
 
   return Quickpick(
     {
@@ -301,8 +301,13 @@ function QuickpickPlaceholder(props) {
       handler: () => {
         getJSONPlaceholders(applicationId, templateId)
         .then((placeholder) => {
-          extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            placeholder: JSON.stringify(placeholder, null, 1)
+          extensionHelper.setProperty({
+            element,
+            values: {
+              placeholder: JSON.stringify(placeholder, null, 1)
+            },
+            modeling,
+            bpmnFactory
           });
         });
       }

@@ -164,7 +164,7 @@ function PageProp(props) {
 
   const [pages, setPages] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));

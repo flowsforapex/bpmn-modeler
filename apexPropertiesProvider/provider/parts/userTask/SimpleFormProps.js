@@ -200,7 +200,7 @@ function PageProp(props) {
 
   const [pages, setPages] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));
@@ -225,8 +225,8 @@ function ItemProp(props) {
 
   const [items, setItems] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
+  const pageId = extensionHelper.getProperty({element, property: 'pageId'});
 
   useEffect(() => {
     getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));

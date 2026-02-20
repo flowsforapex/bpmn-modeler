@@ -7,6 +7,23 @@ import { getBusinessObject } from './util';
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
+const genericGetValue = ({helper, element, listElement, property, parent, businessObject} = {}) => {
+
+  if (helper) {
+    return helper.getProperty({element, listElement, property, parent});
+  }
+  return businessObject[property];
+};
+
+const genericSetValue = ({helper, element, listElement, values, parent, businessObject, modeling, bpmnFactory} = {}) => {
+
+  if (helper) {
+    helper.setProperty({element, listElement, values, parent, modeling, bpmnFactory});
+  } else {
+    modeling.updateModdleProperties(element, businessObject, values);
+  }
+};
+
 export function DefaultNumberEntry(props) {
   const { id, element, listElement, label, description, helper, property } = props;
 
@@ -14,29 +31,33 @@ export function DefaultNumberEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-   // business object passed in props for list elements
-   const businessObject = listElement || getBusinessObject(element);
+  const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
+  const getValue = () => genericGetValue({
+    helper,
+    element,
+    listElement,
+    property,
+    businessObject
+  });
 
-    const setValue = (value) => {
-      if (helper) {
-        helper.setExtensionProperty(element, modeling, bpmnFactory, {
-          [property]: value ? String(value) : value,
-        });
-      } else {
-        modeling.updateModdleProperties(element, businessObject, {
-          [property]: value ? String(value) : value,
-        });
-      }
-    };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value ? String(value) : value,
+    },
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   return NumberFieldEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
+    id,
+    element,
+    label,
+    description,
     getValue,
     setValue,
     debounce,
@@ -50,32 +71,39 @@ export function DefaultTextFieldEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // business object passed in props for list elements
+  
   const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
+  const getValue = () => genericGetValue({
+    helper,
+    element,
+    listElement,
+    property,
+    parent,
+    businessObject
+  });
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value,
+    },
+    parent,
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue,
+    setValue,
+    debounce,
   });
 }
 
@@ -86,54 +114,71 @@ export function DefaultSelectEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => {
-    var value;
+    let value;
 
     if (defaultValue) {
-      value = (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
+
+      value = genericGetValue({
+        helper,
+        element,
+        listElement,
+        property,
+        parent,
+        businessObject
+      });
 
       if (!value || !options.some(v => v.value === value)) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        genericSetValue({
+          helper,
+          element,
+          listElement,
+          values: {
             [property]: defaultValue,
-          }, parent);
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: defaultValue,
-          });
-        }
+          },
+          parent,
+          businessObject,
+          modeling,
+          bpmnFactory
+        });
       }
     }
 
-    return (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
+    return genericGetValue({
+      helper,
+      element,
+      listElement,
+      property,
+      parent,
+      businessObject
+    });
   };
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-        ...(cleanup && cleanup(value))
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-        ...(cleanup && cleanup(value))
-      });
-    }
-  };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value,
+      ...(cleanup && cleanup(value))
+    },
+    parent,
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   return new SelectEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
+    id,
+    element,
+    label,
+    description,
+    getValue,
+    setValue,
     getOptions: () => options,
-    debounce: debounce,
+    debounce,
   });
 }
 
@@ -144,11 +189,17 @@ export function DefaultSelectEntryAsync(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
   const getOptions = () => {
-    const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+    
+    const currValue = genericGetValue({
+      helper,
+      element,
+      listElement,
+      property,
+      businessObject
+    });
 
     const existing =
       currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
@@ -177,30 +228,35 @@ export function DefaultSelectEntryAsync(props) {
     return result;
   };
 
-  const getValue = () =>
-    (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
+  const getValue = () => genericGetValue({
+    helper,
+    element,
+    listElement,
+    property,
+    businessObject
+  });
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value,
+    },
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   return new SelectEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions,
+    id,
+    element,
+    label,
+    description,
+    getValue,
+    setValue,
+    debounce,
+    getOptions,
   });
 }
 
@@ -211,52 +267,75 @@ export function DefaultToggleSwitchEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
   const getValue = () => {
     var value;
     
     if (defaultValue) {
-      value = helper ? (helper.getExtensionProperty(element, property)) : businessObject[property];
+      
+      value = genericGetValue({
+        helper,
+        element,
+        listElement,
+        property,
+        businessObject
+      });
 
       if (!value) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
+        genericSetValue({
+          helper,
+          element,
+          listElement,
+          values: {
             [property]: defaultValue,
-          });
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: defaultValue,
-          });
-        }
+          },
+          businessObject,
+          modeling,
+          bpmnFactory
+        });
       }
     }
 
-    return helper ? (helper.getExtensionProperty(element, property) === (invert ? 'false' : 'true')) : (businessObject[property] === (invert ? 'false' : 'true'));
+    return genericGetValue({
+      helper,
+      element,
+      listElement,
+      property,
+      businessObject
+    }) === (invert ? 'false' : 'true');
   };
     
-
   const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
+    genericSetValue({
+      helper,
+      element,
+      listElement,
+      values: {
         // eslint-disable-next-line no-nested-ternary
         [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        // eslint-disable-next-line no-nested-ternary
-        [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
-      });
-    }
+      },
+      businessObject,
+      modeling,
+      bpmnFactory
+    });
 
+    // special cleanup for toggle switch entries
     if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        ...(cleanup && cleanup(value))
+      helper.setProperty({
+        element,
+        listElement,
+        values: {
+          ...(cleanup && cleanup(value))
+        }
       });
     } else if (cleanupHelper) {
-      cleanupHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-        ...(cleanup && cleanup(value))
+      cleanupHelper.setProperty({
+        element,
+        listElement,
+        values: {
+          ...(cleanup && cleanup(value))
+        }
       });
     } else {
       modeling.updateModdleProperties(element, businessObject, {
@@ -266,13 +345,13 @@ export function DefaultToggleSwitchEntry(props) {
   };
 
   return new ToggleSwitchEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue,
+    setValue,
+    debounce,
   });
 }
 
@@ -283,31 +362,38 @@ export function DefaultTextAreaEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
+  const getValue = () => genericGetValue({
+    helper,
+    element,
+    listElement,
+    property,
+    parent,
+    businessObject
+  });
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value,
+    },
+    parent,
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   return new TextAreaEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue,
+    setValue,
+    debounce,
   });
 }
 
@@ -315,41 +401,56 @@ export function DefaultTextAreaEntryWithEditor(props) {
   const { id, element, listElement, label, description, helper, property, language, type, parent } = props;
 
   const modeling = useService('modeling');
-  const translate = useService('translate');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
+  const translate = useService('translate');
 
-  // business object passed in props for list elements
   const businessObject = listElement || getBusinessObject(element);
 
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
+  const getValue = () => genericGetValue({
+    helper,
+    element,
+    listElement,
+    property,
+    parent,
+    businessObject
+  });
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const setValue = value => genericSetValue({
+    helper,
+    element,
+    listElement,
+    values: {
+      [property]: value,
+    },
+    parent,
+    businessObject,
+    modeling,
+    bpmnFactory
+  });
 
   const labelWithIcon =
     OpenDialogLabel(label, () => {
-      var getProperty = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
-      var saveProperty = function (text) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
-            [property]: text,
-          }, parent);
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: text,
-          });
-        }
-      };
+      var getProperty = () => genericGetValue({
+        helper,
+        element,
+        listElement,
+        property,
+        parent,
+        businessObject
+      });
+      var saveProperty = text => genericSetValue({
+        helper,
+        element,
+        listElement,
+        values: {
+          [property]: text,
+        },
+        parent,
+        businessObject,
+        modeling,
+        bpmnFactory
+      });
       openEditor(
         getProperty,
         saveProperty,
@@ -362,13 +463,13 @@ export function DefaultTextAreaEntryWithEditor(props) {
   return [
     getContainer(translate, id),
     new TextAreaEntry({
-      id: id,
-      element: element,
+      id,
+      element,
       label: labelWithIcon,
-      description: description,
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
+      description,
+      getValue,
+      setValue,
+      debounce,
     })
   ];
 }

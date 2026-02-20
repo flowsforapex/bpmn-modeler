@@ -126,7 +126,7 @@ function InputCollection(props) {
     'sqlQueryArray',
   ];
 
-  const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
+  const expressionType = helper.getProperty({element, property: 'expressionType', parent: loopCharacteristics});
   
   const entries = [];
 
@@ -226,7 +226,7 @@ function OutputCollection(props) {
 
   const editorTypes = [];
 
-  const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
+  const expressionType = helper.getProperty({element, property: 'expressionType', parent: loopCharacteristics});
   
   const entries = [];
 
@@ -320,7 +320,7 @@ function CompletionCondition(props) {
     { label: translate('Function Body'), value: 'plsqlFunctionBody' },
   ];
 
-  const expressionType = helper.getExtensionProperty(element, 'expressionType', loopCharacteristics);
+  const expressionType = helper.getProperty({element, property: 'expressionType', parent: loopCharacteristics});
   
   const entries = [];
 

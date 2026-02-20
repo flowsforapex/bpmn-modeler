@@ -52,7 +52,7 @@ export function StartingProps(args) {
       { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
     ];
 
-    const expressionType = startingHelper.getExtensionProperty(element, 'expressionType');
+    const expressionType = startingHelper.getProperty({element, property: 'expressionType'});
 
     entries.push(
       {
@@ -107,7 +107,7 @@ export function CompletionProps(args) {
       { label: translate('Function Body'), value: 'plsqlFunctionBody' },
     ];
 
-    const expressionType = completionHelper.getExtensionProperty(element, 'expressionType');
+    const expressionType = completionHelper.getProperty({element, property: 'expressionType'});
 
     entries.push(
       {
@@ -201,7 +201,7 @@ export function DetailPageProps(args) {
 
   const entries = [];
 
-  const visibility = visibilityHelper.getExtensionProperty(element, 'value');
+  const visibility = visibilityHelper.getProperty({element, property: 'value'});
 
   if (is(element, 'bpmn:AdHocSubProcess') && (!visibility || visibility === 'subprocess' || visibility === 'all')) {
 
@@ -328,7 +328,7 @@ function PageProp(props) {
 
   const [pages, setPages] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));
