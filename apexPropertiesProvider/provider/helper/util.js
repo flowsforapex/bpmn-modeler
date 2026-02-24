@@ -22,8 +22,8 @@ export function getExtension(element, type) {
   })[0];
 }
 
-export function createElement(elementType, properties, parent, factory) {
-  const element = factory.create(elementType, properties);
+export function createElement(elementType, properties, parent, bpmnFactory) {
+  const element = bpmnFactory.create(elementType, properties);
 
   if (parent) {
     element.$parent = parent;
@@ -83,4 +83,86 @@ export function nextId(prefix) {
 export function getBusinessObject(element) {
 
   return (is(element, 'bpmn:Participant') && getBO(element).processRef) ? getBO(element).processRef : getBO(element);
+}
+
+export function isChildOf(element, type) {
+
+  const businessObject = getBusinessObject(element);
+
+  const parent = businessObject.$parent;
+
+  if (parent) {
+    
+    if (is(parent, type)) return true;
+
+    return isChildOf(parent, type);
+  }
+
+  return false;
+}
+
+export function updateProperties(element, businessObject, values, modeling, bpmnFactory) {
+
+  const directProperties = Object.fromEntries(Object.entries(values).filter(([k, _]) => k.indexOf('.') === -1));
+  const nestedProperties = Object.fromEntries(Object.entries(values).filter(([k, _]) => k.indexOf('.') !== -1));
+
+  // update direct properties
+  modeling.updateModdleProperties(
+    element,
+    businessObject,
+    directProperties
+  );
+
+  // update nested properties
+  Object.entries(nestedProperties).forEach(([k, v]) => {
+    const [parentProp, childProp] = k.split('.');
+
+    let extension = businessObject[parentProp];
+
+    let update;
+    let updatedBusinessObject;
+
+    if (!extension) {
+      
+      const typeName = `apex:${parentProp.charAt(0).toUpperCase() + parentProp.slice(1)}`;
+      
+      updatedBusinessObject = businessObject;
+
+      extension = createExtension(
+        typeName,
+        { [childProp]: v },
+        businessObject,
+        bpmnFactory
+      );
+
+      update = {
+        [parentProp]: extension
+      };
+    } else {
+      updatedBusinessObject = extension;
+      update = { [childProp]: v };
+    }
+    
+    modeling.updateModdleProperties(
+      element,
+      updatedBusinessObject,
+      update
+    );
+
+  });
+}
+
+export function getProperty(element, businessObject, property) {
+
+  // nested
+  if (property.indexOf('.') !== -1) {
+    const parent = property.split('.')[0];
+    const extension = businessObject[parent];
+
+    if (extension) {
+      return extension[property.split('.')[1]];
+    }
+  }
+
+  return businessObject[property];
 }

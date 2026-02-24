@@ -2,7 +2,7 @@ import { NumberFieldEntry, SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwi
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { getBusinessObject } from './util';
+import { getBusinessObject, getProperty, updateProperties } from './util';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
@@ -11,8 +11,8 @@ const genericGetValue = ({helper, element, listElement, property, parent, busine
 
   if (helper) {
     return helper.getProperty({element, listElement, property, parent});
-  }
-  return businessObject[property];
+  } 
+  return getProperty(element, businessObject, property);
 };
 
 const genericSetValue = ({helper, element, listElement, values, parent, businessObject, modeling, bpmnFactory} = {}) => {
@@ -20,7 +20,7 @@ const genericSetValue = ({helper, element, listElement, values, parent, business
   if (helper) {
     helper.setProperty({element, listElement, values, parent, modeling, bpmnFactory});
   } else {
-    modeling.updateModdleProperties(element, businessObject, values);
+    updateProperties(element, businessObject, values, modeling, bpmnFactory);
   }
 };
 

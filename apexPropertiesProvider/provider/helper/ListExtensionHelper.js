@@ -1,7 +1,8 @@
 import {
   createElement,
   createExtension,
-  createExtensionElements, getBusinessObject, getExtension
+  createExtensionElements, getBusinessObject, getExtension,
+  updateProperties
 } from './util';
 
 import { without } from 'min-dash';
@@ -49,77 +50,36 @@ export default class ListExtensionHelper {
 
     let extensionElements = businessObject.get('extensionElements');
 
-    // top level lists (e.g. procVars)
-    if (listType === null && entryAttr === null) {
-      
-      // (1) ensure extension elements
-      if (!extensionElements) {
-        extensionElements = createExtensionElements(element, bpmnFactory);
+    // (1) ensure extension elements
+    if (!extensionElements) {
+      extensionElements = createExtensionElements(element, bpmnFactory);
 
-        modeling.updateModdleProperties(
-          element,
-          businessObject,
-          { extensionElements },
-        );
-      }
-
-      // (2) ensure parent extension
-      let extension = getExtension(element, type);
-
-      if (!extension) {
-        extension = createExtension(type, {}, extensionElements, bpmnFactory);
-
-        modeling.updateModdleProperties(
-          element,
-          extensionElements,
-          { values: [...extensionElements.get('values'), extension] },
-        );
-      }
-
-      // (3) create entry
-      const newEntry = createElement(
-        entryType,
-        newProps,
-        extension,
-        bpmnFactory
-      );
-
-      // (4) add entry to list
       modeling.updateModdleProperties(
         element,
-        extension,
-        { [listAttr]: [...extension.get(listAttr), newEntry] },
+        businessObject,
+        { extensionElements },
       );
+    }
 
-    // nested lists (e.g. pageItems)
-    } else {
+    // (2) ensure parent extension
+    let extension = getExtension(element, type);
 
-      // (1) ensure extension elements
-      if (!extensionElements) {
-        extensionElements = createExtensionElements(element, bpmnFactory);
+    if (!extension) {
+      extension = createExtension(type, {}, extensionElements, bpmnFactory);
 
-        modeling.updateModdleProperties(
-          element,
-          businessObject,
-          { extensionElements },
-        );
-      }
+      modeling.updateModdleProperties(
+        element,
+        extensionElements,
+        { values: [...extensionElements.get('values'), extension] },
+      );
+    }
 
-      // (2) ensure parent extension
-      let extension = getExtension(element, type);
+    let listContainer;
 
-      if (!extension) {
-        extension = createExtension(type, {}, extensionElements, bpmnFactory);
-
-        modeling.updateModdleProperties(
-          element,
-          extensionElements,
-          { values: [...extensionElements.get('values'), extension] },
-        );
-      }
-
-      // (3) ensure list extension
-      let listContainer = extension[listAttr];
+    // nested lists (e.g. pageItems) - top level lists (e.g. procVars) dont need another container level
+    if (listType) {
+      // ensure list extension
+      listContainer = extension[listAttr];
 
       if (!listContainer) {
         listContainer = createExtension(listType, {}, extension, bpmnFactory);
@@ -130,22 +90,35 @@ export default class ListExtensionHelper {
           { [listAttr]: listContainer },
         );
       }
-
-      // (3) create entry
-      const newEntry = createElement(
-        entryType,
-        newProps,
-        listContainer,
-        bpmnFactory
-      );
-
-      // (4) add entry to list
-      modeling.updateModdleProperties(
-        element,
-        listContainer,
-        { [entryAttr]: [...listContainer.get(entryAttr), newEntry] },
-      );
     }
+
+    let updatedBusinessObject;
+    
+    if (listContainer) updatedBusinessObject = listContainer;
+    else updatedBusinessObject = extension;
+
+    // (3) create entry
+    const newEntry = createElement(
+      entryType,
+      {},
+      updatedBusinessObject,
+      bpmnFactory
+    );
+
+    // update properties
+    updateProperties(element, newEntry, newProps, modeling, bpmnFactory);
+    
+    let update;
+
+    if (listContainer && entryAttr) update = { [entryAttr]: [...listContainer.get(entryAttr), newEntry] };
+    else update = {[listAttr]: [...extension.get(listAttr), newEntry] };
+
+    // (4) add entry to list
+    modeling.updateModdleProperties(
+      element,
+      updatedBusinessObject,
+      update,
+    );
   }
 
   removeSubElement(args) {
@@ -154,87 +127,76 @@ export default class ListExtensionHelper {
     const { element, listElement, modeling } = args;
 
     const businessObject = getBusinessObject(element);
+    
     const {extensionElements} = businessObject;
 
-    // top level lists (e.g. procVars)
-    if (entryAttr === null) {
-      const extension = getExtension(element, type);
+    const extension = getExtension(element, type);
 
-      if (!extension) {
-        return;
-      }
+    if (!extension) {
+      return;
+    }
 
-      const children = extension[listAttr];
+    let children;
 
-      if (!children) {
-        return;
-      }
-
-      const newChildren = without(children, listElement);        
-
-      let updatedBusinessObject = extension;
-      let update = { [listAttr]: newChildren };
-
-      // if list container has no other entries
-      if (newChildren.length === 0) {
-        updatedBusinessObject = extensionElements;
-        update = { values: extensionElements.get('values').filter(v => v !== extension) };
-        // if extension elements have no other children
-        if (!extensionElements.get('values').some(k => k !== extension)) {
-          updatedBusinessObject = businessObject;
-          update = { extensionElements: undefined};
-        }
-      }
-
-      modeling.updateModdleProperties(
-        element,
-        updatedBusinessObject,
-        update
-      );
-    
     // nested lists (e.g. pageItems)
-    } else {
+    if (entryAttr) children = extension[listAttr] && extension[listAttr].get(entryAttr);
+    else children = extension[listAttr];
 
-      const extension = getExtension(element, type);
+    if (!children) {
+      return;
+    }
 
-      if (!extension) {
-        return;
-      }
+    const newChildren = without(children, listElement);   
+    
+    let updatedBusinessObject;
+    let update;
 
-      const children =
-        extension[listAttr] && extension[listAttr].get(entryAttr);
-
-      if (!children) {
-        return;
-      }
-
-      const newChildren = without(children, listElement);
-
-      let updatedBusinessObject = extension[listAttr];
-      let update = { [entryAttr]: newChildren };
-
-      // if list container has no other entries
+    // nested lists (e.g. pageItems)
+    if (listAttr && entryAttr) {
+      
+      // if list container has no other entries -> remove list
       if (newChildren.length === 0) {
+
         updatedBusinessObject = extension;
         update = { [listAttr]: undefined };
-        // if extension element has no other properties
+        
+        // if extension has no other properties -> remove extension
         if (!Object.keys(extension).some(k => k !== '$type' && k !== listAttr)) {
+          
           updatedBusinessObject = extensionElements;
           update = { values: extensionElements.get('values').filter(v => v !== extension) };
 
-           // if extension elements have no other children
+          // if extension elements have no other children -> remove extension elements
           if (!extensionElements.get('values').some(k => k !== extension)) {
             updatedBusinessObject = businessObject;
             update = { extensionElements: undefined};
           }
         }
+      } else {
+        updatedBusinessObject = extension[listAttr];
+        update = { [entryAttr]: newChildren };
       }
-
-      modeling.updateModdleProperties(
-        element,
-        updatedBusinessObject,
-        update
-      );
+    // top level lists (e.g. procVars)
+    // if list container has no other entries -> remove list/extension
+    } else if (newChildren.length === 0) {
+        
+      updatedBusinessObject = extensionElements;
+      update = { values: extensionElements.get('values').filter(v => v !== extension) };
+        
+      // if extension elements have no other children -> remove extension elements
+      if (!extensionElements.get('values').some(k => k !== extension)) {
+        updatedBusinessObject = businessObject;
+        update = { extensionElements: undefined};
+      }
+    } else {
+      updatedBusinessObject = extension;
+      update = { [listAttr]: newChildren };
     }
+    
+    modeling.updateModdleProperties(
+      element,
+      updatedBusinessObject,
+      update
+    );
   }
 }
