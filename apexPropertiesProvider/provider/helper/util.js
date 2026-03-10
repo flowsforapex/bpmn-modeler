@@ -107,7 +107,11 @@ export function updateProperties(element, businessObject, values, modeling, bpmn
   const nestedProperties = {};
 
   Object.entries(values).forEach(([k, v]) => {
-    k.includes('.') ? (nestedProperties[k] = v) : (directProperties[k] = v);
+    if (k.includes('.')) {
+      nestedProperties[k] = v;
+    } else {
+      directProperties[k] = v;
+    }
   });
 
   // update direct properties
@@ -119,6 +123,7 @@ export function updateProperties(element, businessObject, values, modeling, bpmn
 
   // update nested properties
   Object.entries(nestedProperties).forEach(([k, v]) => {
+    // get parent and child by splitting property
     const [parentProp, childProp] = k.split('.');
 
     let extension = businessObject[parentProp];
@@ -127,7 +132,7 @@ export function updateProperties(element, businessObject, values, modeling, bpmn
     let updatedBusinessObject;
 
     if (!extension) {
-      
+      // type name has to start with uppercase
       const typeName = `apex:${parentProp.charAt(0).toUpperCase() + parentProp.slice(1)}`;
       
       updatedBusinessObject = businessObject;
@@ -160,7 +165,7 @@ export function getProperty(element, businessObject, property) {
 
   // nested
   if (property.indexOf('.') !== -1) {
-    const parent = property.split('.')[0];
+    const [parent] = property.split('.');
     const extension = businessObject[parent];
 
     if (extension) {
