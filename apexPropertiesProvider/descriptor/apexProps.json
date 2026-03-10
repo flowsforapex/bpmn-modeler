@@ -332,7 +332,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "inputParameters",
+          "name": "inputParameter",
           "type": "Parameter",
           "isMany": true
         }
@@ -343,7 +343,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "outputParameters",
+          "name": "outputParameter",
           "type": "Parameter",
           "isMany": true
         }
@@ -608,7 +608,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -619,7 +619,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -630,7 +630,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -641,7 +641,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -652,7 +652,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -663,7 +663,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -674,7 +674,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }
@@ -685,7 +685,7 @@
       "superClass": [ "Element" ],
       "properties": [
         {
-          "name": "procVars",
+          "name": "processVariable",
           "type": "ProcessVariable",
           "isMany": true
         }

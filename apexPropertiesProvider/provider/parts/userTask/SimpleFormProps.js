@@ -22,11 +22,14 @@ import { getApplications, getFormTemplates, getItems, getPages } from '../../plu
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexSimpleForm',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
+  {
+    listParentType: 'apex:ApexSimpleForm',
+    listType: 'apex:PageItems',
+    entryType: 'apex:PageItem',
+    listAttr: 'pageItems',
+    entryAttr: 'pageItem',
+    entryName: null
+  }
 );
 
 export default function (args) {

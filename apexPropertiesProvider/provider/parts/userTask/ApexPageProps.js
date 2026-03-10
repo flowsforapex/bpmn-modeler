@@ -22,11 +22,14 @@ import { getApplications, getPages } from '../../plugins/metaDataCollector';
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
+  {
+    listParentType: 'apex:ApexPage',
+    listType: 'apex:PageItems',
+    entryType: 'apex:PageItem',
+    listAttr: 'pageItems',
+    entryAttr: 'pageItem',
+    entryName: null
+  }
 );
 
 export default function (args) {

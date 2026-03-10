@@ -24,11 +24,14 @@ import { getApplications, getJSONParameters, getTasks } from '../../plugins/meta
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexApproval',
-  'apex:Parameters',
-  'parameters',
-  'apex:Parameter',
-  'parameter'
+  {
+    listParentType: 'apex:ApexApproval',
+    listType: 'apex:Parameters',
+    entryType: 'apex:Parameter',
+    listAttr: 'parameters',
+    entryAttr: 'parameter',
+    entryName: null
+  }
 );
 
 export default function (args) {

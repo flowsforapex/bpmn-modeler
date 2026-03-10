@@ -29,11 +29,14 @@ const visibilityHelper = new ExtensionHelper('apex:TaskVisibility');
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
+  {
+    listParentType: 'apex:ApexPage',
+    listType: 'apex:PageItems',
+    entryType: 'apex:PageItem',
+    listAttr: 'pageItems',
+    entryAttr: 'pageItem',
+    entryName: null
+  }
 );
 
 export function StartingProps(args) {

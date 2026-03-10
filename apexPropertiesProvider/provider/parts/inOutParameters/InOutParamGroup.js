@@ -20,21 +20,25 @@ export default function (args) {
     ) {
 
       const inputHelper = new ListExtensionHelper(
-        'apex:InputParameters',
-        null,
-        'inputParameters',
-        'apex:Parameter',
-        null,
-        'InputParameter'
+        {
+          listParentType: null,
+          listType: 'apex:InputParameters',
+          entryType: 'apex:Parameter',
+          listAttr: null,
+          entryAttr: 'inputParameter',
+          entryName: null
+        }
       );
 
       const outputHelper = new ListExtensionHelper(
-        'apex:OutputParameters',
-        null,
-        'outputParameters',
-        'apex:Parameter',
-        null,
-        'OutputParameter'
+        {
+          listParentType: null,
+          listType: 'apex:OutputParameters',
+          entryType: 'apex:Parameter',
+          listAttr: null,
+          entryAttr: 'outputParameter',
+          entryName: null
+        }
       );
 
       entries.push({
