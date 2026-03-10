@@ -33,8 +33,9 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 
 import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
-import { removeInvalidExtensionsElements } from './helper/validateXML';
+import InOutParamGroup from './parts/inOutParameters/InOutParamGroup';
 import { CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
+import TaskProps from './parts/task/TaskProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
 
@@ -48,9 +49,9 @@ export default function apexPropertiesProvider(
   translate,
   showCustomExtensions
 ) {
-  eventBus.on('saveXML.start', function () {
-    removeInvalidExtensionsElements(elementRegistry, modeling);
-  });
+  // eventBus.on('saveXML.start', function () {
+  //   removeInvalidExtensionsElements(elementRegistry, modeling);
+  // });
 
   // TODO test if needed
   // eventBus.on('connection.added', function (event) {
@@ -91,6 +92,11 @@ export default function apexPropertiesProvider(
       ) {
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
+        
+        addSection('parameters', 'Parameters', InOutParamGroup);
+
+        const generalGroup = groups.find(g => g.id === 'general');
+        generalGroup.entries = generalGroup.entries.concat(TaskProps({element, injector, translate}));
       }
 
       // userTask

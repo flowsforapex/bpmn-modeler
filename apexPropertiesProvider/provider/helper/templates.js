@@ -327,7 +327,10 @@ export function DefaultToggleSwitchEntry(props) {
         listElement,
         values: {
           ...(cleanup && cleanup(value))
-        }
+        },
+        businessObject,
+        modeling,
+        bpmnFactory
       });
     } else if (cleanupHelper) {
       cleanupHelper.setProperty({
@@ -335,7 +338,10 @@ export function DefaultToggleSwitchEntry(props) {
         listElement,
         values: {
           ...(cleanup && cleanup(value))
-        }
+        },
+        businessObject,
+        modeling,
+        bpmnFactory
       });
     } else {
       modeling.updateModdleProperties(element, businessObject, {

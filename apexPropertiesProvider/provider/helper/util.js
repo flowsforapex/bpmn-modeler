@@ -103,8 +103,12 @@ export function isChildOf(element, type) {
 
 export function updateProperties(element, businessObject, values, modeling, bpmnFactory) {
 
-  const directProperties = Object.fromEntries(Object.entries(values).filter(([k, _]) => k.indexOf('.') === -1));
-  const nestedProperties = Object.fromEntries(Object.entries(values).filter(([k, _]) => k.indexOf('.') !== -1));
+  const directProperties = {};
+  const nestedProperties = {};
+
+  Object.entries(values).forEach(([k, v]) => {
+    k.includes('.') ? (nestedProperties[k] = v) : (directProperties[k] = v);
+  });
 
   // update direct properties
   modeling.updateModdleProperties(

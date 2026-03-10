@@ -92,6 +92,50 @@
       ]
     },
     {
+      "name": "IsRepeatable",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "DisplayOrder",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Grouping",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Description",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "EventAttributes",
       "extends": [ "bpmn:Event" ],
       "properties": [
@@ -251,6 +295,99 @@
         },
         {
           "name": "parValue",
+          "type": "String"
+        },
+        { 
+          "name": "name",
+          "type": "String"
+        },
+        { 
+          "name": "type",
+          "type": "String"
+        },
+        { 
+          "name": "required",
+          "type": "String"
+        },
+        { 
+          "name": "description",
+          "type": "String"
+        },
+        { 
+          "name": "source",
+          "type": "Source"
+        },
+        { 
+          "name": "apexRendering",
+          "type": "ApexRendering"
+        },
+        { 
+          "name": "items",
+          "type": "Items"
+        }
+      ]
+    },
+    {
+      "name": "InputParameters",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "inputParameters",
+          "type": "Parameter",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "OutputParameters",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "outputParameters",
+          "type": "Parameter",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "Source",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ApexRendering",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "itemType",
+          "type": "String"
+        },
+        {
+          "name": "maxLength",
+          "type": "String"
+        },
+        {
+          "name": "placeholder",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Items",
+      "type": "Items",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "type",
           "type": "String"
         }
       ]
