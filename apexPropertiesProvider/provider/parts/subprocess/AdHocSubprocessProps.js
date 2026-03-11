@@ -11,13 +11,12 @@ import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 
 import { useEffect, useState } from '@bpmn-io/properties-panel/preact/hooks';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { html } from 'htm/preact';
 
 import { getApplications, getPages } from '../../plugins/metaDataCollector';
@@ -66,157 +65,208 @@ export function AdHocSubProcessProps(args) {
 
 export function StartingProps(args) {
 
-  const {element, injector} = args;
-
-  const translate = injector.get('translate');
+  const {element} = args;
 
   const entries = [];
 
   if (is(element, 'bpmn:AdHocSubProcess')) {
     
-    const expressionTypeOptions = [
-      { label: '', value: null },
-      { label: translate('Static'), value: 'static' },
-      { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
-    ];
-
-    const expressionType = startingHelper.getProperty({element, property: 'expressionType'});
-
     entries.push(
       {
         id: 'expressionType',
         element,
-        label: translate('Expression Type'),
-        helper: startingHelper,
-        property: 'expressionType',
-        options: expressionTypeOptions,
-        cleanup: (value) => {
-          return {
-            ...(!value && {expression: null}),
-          };
-        },
-        component: DefaultSelectEntry,
+        component: ExpressionTypeProp,
         isEdited: isSelectEntryEdited,
+      },
+      {
+        id: 'expression',
+        element,
+        component: ExpressionProp,
+        isEdited: isTextAreaEntryEdited,
       }
     );
-
-    if (expressionType != null) {
-
-      entries.push(
-        {
-          id: 'expression',
-          element,
-          label: translate('Expression'),
-          helper: startingHelper,
-          property: 'expression',
-          component: DefaultTextAreaEntry,
-          isEdited: isTextAreaEntryEdited,
-        }
-      );
-    }
   }
   
   return entries;
+}
+
+function ExpressionTypeProp(props) {
+
+  const {id, element} = props;
+
+  const translate = useService('translate');
+
+  const options = [
+    { label: '', value: null },
+    { label: translate('Static'), value: 'static' },
+    { label: translate('Process Variable (Array)'), value: 'processVariableArray' },
+  ];
+
+  const cleanup = (value) => {
+    return {
+      ...(!value && {expression: null}),
+    };
+  }
+
+  return html`<${DefaultSelectEntry}
+    id=${id}
+    element=${element}
+    label=${translate('Expression Type')}
+    helper=${startingHelper}
+    property=expressionType
+    options=${options}
+    cleanup=${cleanup}
+  />`;
+}
+
+function ExpressionProp(props) {
+
+  const {id, element} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = startingHelper.getProperty({element, property: 'expressionType'});
+
+  if (expressionType) {
+    return html`<${DefaultTextFieldEntry}
+      id=${id}
+      element=${element}
+      label=${translate('Expression')}
+      helper=${startingHelper}
+      property=expression
+    />`;
+  }
 }
 
 export function CompletionProps(args) {
 
-  const {element, injector} = args;
-
-  const translate = injector.get('translate');
+  const {element} = args;
 
   const entries = [];
 
   if (is(element, 'bpmn:AdHocSubProcess')) {
     
-    const expressionTypeOptions = [
-      { label: '', value: null },
-      { label: translate('Expression'), value: 'plsqlExpression' },
-      { label: translate('Function Body'), value: 'plsqlFunctionBody' },
-    ];
-
-    const expressionType = completionHelper.getProperty({element, property: 'expressionType'});
-
     entries.push(
       {
         id: 'expressionType',
         element,
-        label: translate('Condition Type'),
-        helper: completionHelper,
-        property: 'expressionType',
-        options: expressionTypeOptions,
-        cleanup: (value) => {
-          return {
-            ...(!value && {expression: null}),
-          };
-        },
-        component: DefaultSelectEntry,
+        component: ConditionTypeProp,
         isEdited: isSelectEntryEdited,
+      },
+      {
+        id: 'expression',
+        element,
+        component: ConditionProp,
+        isEdited: isTextAreaEntryEdited,
       }
     );
-
-    if (expressionType != null) {
-
-      const EXPRESSION_DESCRIPTION = {
-        plsqlExpression: translate('PL/SQL Expression returning a boolean value'),
-        plsqlFunctionBody: translate('PL/SQL Function Body returning a boolean value'),
-      };
-
-      const description = EXPRESSION_DESCRIPTION[expressionType];
-
-      entries.push(
-        {
-          id: 'expression',
-          element,
-          label: translate('Condition'),
-          description: description,
-          helper: completionHelper,
-          property: 'expression',
-          language: 'plsql',
-          type: `${expressionType}Boolean`, // TODO check editor validation
-          component: DefaultTextAreaEntryWithEditor,
-          isEdited: isTextAreaEntryEdited,
-        }
-      );
-    }
   }
   
   return entries;
 }
 
+function ConditionTypeProp(props) {
+
+  const {id, element} = props;
+
+  const translate = useService('translate');
+
+  const options = [
+    { label: '', value: null },
+    { label: translate('Expression'), value: 'plsqlExpression' },
+    { label: translate('Function Body'), value: 'plsqlFunctionBody' },
+  ];
+
+  const cleanup = (value) => {
+    return {
+      ...(!value && {expression: null}),
+    };
+  }
+
+  return html`<${DefaultSelectEntry}
+    id=${id}
+    element=${element}
+    label=${translate('Condition Type')}
+    helper=${completionHelper}
+    property=expressionType
+    options=${options}
+    cleanup=${cleanup}
+  />`;
+}
+
+function ConditionProp(props) {
+
+  const {id, element} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = completionHelper.getProperty({element, property: 'expressionType'});
+  
+  const EXPRESSION_DESCRIPTION = {
+    plsqlExpression: translate('PL/SQL Expression returning a boolean value'),
+    plsqlFunctionBody: translate('PL/SQL Function Body returning a boolean value'),
+  };
+
+  const description = EXPRESSION_DESCRIPTION[expressionType];
+
+  // TODO check editor validation
+  if (expressionType) {
+    return html`<${DefaultTextAreaEntryWithEditor}
+      id=${id}
+      element=${element}
+      label=${translate('Condition')}
+      description=${description}
+      helper=${completionHelper}
+      property=expression
+      language=plsql
+      type=${expressionType}Boolean,
+    />`;
+  }
+}
+
 export function VisibilityProps(args) {
 
-  const {element, injector} = args;
-
-  const translate = injector.get('translate');
+  const {element} = args;
 
   const entries = [];
 
   if (is(element, 'bpmn:AdHocSubProcess')) {
     
-    const visibilityOptions = [
-      { label: translate('None'), value: 'none' },
-      { label: translate('Sub Process'), value: 'subprocess' },
-      { label: translate('Activities'), value: 'activities' },
-      { label: translate('All'), value: 'all' },
-    ];
-
     entries.push(
       {
         id: 'taskVisibility',
         element,
-        label: translate('Task List Visibility'),
-        helper: visibilityHelper,
-        property: 'value',
-        defaultValue: 'all',
-        options: visibilityOptions,
-        component: DefaultSelectEntry,
+        component: TaskVisibilityProp,
         isEdited: isSelectEntryEdited,
       }
     );
   }
   
   return entries;
+}
+
+function TaskVisibilityProp(props) {
+
+  const {id, element} = props;
+
+  const translate = useService('translate');
+
+  const options = [
+    { label: translate('None'), value: 'none' },
+    { label: translate('Sub Process'), value: 'subprocess' },
+    { label: translate('Activities'), value: 'activities' },
+    { label: translate('All'), value: 'all' },
+  ];
+
+  return html`<${DefaultSelectEntry}
+    id=${id}
+    element=${element}
+    label=${translate('Task List Visibility')}
+    helper=${visibilityHelper}
+    property=value
+    defaultValue=all
+    options=${options}
+  />`;
 }
 
 export function DetailPageProps(args) {
