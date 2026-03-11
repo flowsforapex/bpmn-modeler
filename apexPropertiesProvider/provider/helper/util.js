@@ -101,7 +101,26 @@ export function isChildOf(element, type) {
   return false;
 }
 
-export function updateProperties(element, businessObject, values, modeling, bpmnFactory) {
+export function getProperty(element, listElement, property) {
+
+  const businessObject = listElement || getBusinessObject(element);
+
+  // nested
+  if (property.indexOf('.') !== -1) {
+    const [parent] = property.split('.');
+    const extension = businessObject[parent];
+
+    if (extension) {
+      return extension[property.split('.')[1]];
+    }
+  }
+
+  return businessObject[property];
+}
+
+export function updateProperties(element, listElement, values, modeling, bpmnFactory) {
+
+  const businessObject = listElement || getBusinessObject(element);
 
   const directProperties = {};
   const nestedProperties = {};
@@ -159,19 +178,4 @@ export function updateProperties(element, businessObject, values, modeling, bpmn
     );
 
   });
-}
-
-export function getProperty(element, businessObject, property) {
-
-  // nested
-  if (property.indexOf('.') !== -1) {
-    const [parent] = property.split('.');
-    const extension = businessObject[parent];
-
-    if (extension) {
-      return extension[property.split('.')[1]];
-    }
-  }
-
-  return businessObject[property];
 }

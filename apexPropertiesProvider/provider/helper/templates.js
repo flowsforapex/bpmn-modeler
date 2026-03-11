@@ -2,27 +2,27 @@ import { NumberFieldEntry, SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwi
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { getBusinessObject, getProperty, updateProperties } from './util';
+import { getProperty, updateProperties } from './util';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
 
-const genericGetValue = ({ helper, element, businessObject, property, listElement, parent } = {}) => {
+const genericGetValue = ({ helper, element, property, listElement, parent } = {}) => {
   if (helper) {
     return helper.getProperty({ element, property, listElement, parent });
   }
-  return getProperty(element, businessObject, property);
+  return getProperty(element, listElement, property);
 };
 
-const genericSetValue = ({ helper, element, businessObject, values, listElement, parent, context } = {}) => {
+const genericSetValue = ({ helper, element, values, listElement, parent, context } = {}) => {
   
   const { modeling, bpmnFactory } = context;
   
   if (helper) {
     helper.setProperty({ element, values, listElement, parent, modeling, bpmnFactory });
   } else {
-    updateProperties(element, businessObject, values, modeling, bpmnFactory);
+    updateProperties(element, listElement, values, modeling, bpmnFactory);
   }
 };
 
@@ -34,14 +34,11 @@ export function DefaultNumberEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => genericGetValue({
     helper,
     element,
     listElement,
-    property,
-    businessObject
+    property
   });
 
   const setValue = value => genericSetValue({
@@ -49,7 +46,6 @@ export function DefaultNumberEntry(props) {
     element,
     listElement,
     values: { [property]: value ? String(value) : value },
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -72,15 +68,12 @@ export function DefaultTextFieldEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => genericGetValue({
     helper,
     element,
     listElement,
     property,
-    parent,
-    businessObject
+    parent
   });
 
   const setValue = value => genericSetValue({
@@ -89,7 +82,6 @@ export function DefaultTextFieldEntry(props) {
     listElement,
     values: { [property]: value },
     parent,
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -112,8 +104,6 @@ export function DefaultSelectEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => {
     
     const value = genericGetValue({
@@ -121,8 +111,7 @@ export function DefaultSelectEntry(props) {
       element,
       listElement,
       property,
-      parent,
-      businessObject
+      parent
     });
     
     // set default value if empty or value not in options
@@ -133,7 +122,6 @@ export function DefaultSelectEntry(props) {
         listElement,
         values: { [property]: defaultValue },
         parent,
-        businessObject,
         context: { modeling, bpmnFactory }
       });
       return defaultValue;
@@ -148,7 +136,6 @@ export function DefaultSelectEntry(props) {
     listElement,
     values: { [property]: value, ...(cleanup && cleanup(value)) },
     parent,
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -172,16 +159,13 @@ export function DefaultSelectEntryAsync(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getOptions = () => {
     
     const currValue = genericGetValue({
       helper,
       element,
       listElement,
-      property,
-      businessObject
+      property
     });
     
     const existing = currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
@@ -214,8 +198,7 @@ export function DefaultSelectEntryAsync(props) {
     helper,
     element,
     listElement,
-    property,
-    businessObject
+    property
   });
 
   const setValue = value => genericSetValue({
@@ -223,7 +206,6 @@ export function DefaultSelectEntryAsync(props) {
     element,
     listElement,
     values: { [property]: value },
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -241,21 +223,18 @@ export function DefaultSelectEntryAsync(props) {
 
 export function DefaultToggleSwitchEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup, cleanupHelper } = props;
+  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup } = props;
   
   const modeling = useService('modeling');
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => {
     const value = genericGetValue({
       helper,
       element,
       listElement,
-      property,
-      businessObject
+      property
     });
     
     // set default value if empty
@@ -264,10 +243,7 @@ export function DefaultToggleSwitchEntry(props) {
         helper,
         element,
         listElement,
-        values: {
-          [property]: defaultValue,
-        },
-        businessObject,
+        values: { [property]: defaultValue },
         context: { modeling, bpmnFactory }
       });
       return defaultValue === (invert ? 'false' : 'true');
@@ -281,33 +257,9 @@ export function DefaultToggleSwitchEntry(props) {
       helper,
       element,
       listElement,
-      values: { [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false') },
-      businessObject,
+      values: { [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'), ...(cleanup && cleanup(value)) },
       context: { modeling, bpmnFactory }
     });
-
-    // special cleanup for toggle switch entries
-    if (helper) {
-      helper.setProperty({
-        element,
-        listElement,
-        values: { ...(cleanup && cleanup(value)) },
-        businessObject,
-        modeling,
-        bpmnFactory
-      });
-    } else if (cleanupHelper) {
-      cleanupHelper.setProperty({
-        element,
-        listElement,
-        values: { ...(cleanup && cleanup(value)) },
-        businessObject,
-        modeling,
-        bpmnFactory
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, { ...(cleanup && cleanup(value)) });
-    }
   };
 
   return new ToggleSwitchEntry({
@@ -329,15 +281,12 @@ export function DefaultTextAreaEntry(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => genericGetValue({
     helper,
     element,
     listElement,
     property,
-    parent,
-    businessObject
+    parent
   });
 
   const setValue = value => genericSetValue({
@@ -346,7 +295,6 @@ export function DefaultTextAreaEntry(props) {
     listElement,
     values: { [property]: value },
     parent,
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -370,15 +318,12 @@ export function DefaultTextAreaEntryWithEditor(props) {
   const bpmnFactory = useService('bpmnFactory');
   const translate = useService('translate');
   
-  const businessObject = listElement || getBusinessObject(element);
-
   const getValue = () => genericGetValue({
     helper,
     element,
     listElement,
     property,
-    parent,
-    businessObject
+    parent
   });
 
   const setValue = value => genericSetValue({
@@ -387,7 +332,6 @@ export function DefaultTextAreaEntryWithEditor(props) {
     listElement,
     values: { [property]: value },
     parent,
-    businessObject,
     context: { modeling, bpmnFactory }
   });
 
@@ -398,8 +342,7 @@ export function DefaultTextAreaEntryWithEditor(props) {
         element,
         listElement,
         property,
-        parent,
-        businessObject
+        parent
       });
       var saveProperty = text => genericSetValue({
         helper,
@@ -407,7 +350,6 @@ export function DefaultTextAreaEntryWithEditor(props) {
         listElement,
         values: { [property]: text },
         parent,
-        businessObject,
         context: { modeling, bpmnFactory }
       });
       openEditor(
