@@ -41,6 +41,11 @@
           "name": "manualInput",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "subject",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
@@ -86,6 +91,11 @@
         },
         {
           "name": "manualInput",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "subject",
           "isAttr": true,
           "type": "String"
         }

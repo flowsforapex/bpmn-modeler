@@ -23,6 +23,17 @@ export default function TaskProps(args) {
   const translate = injector.get('translate');
   
   const entries = [];
+
+  entries.push(
+    {
+      id: 'subject',
+      element,
+      label: translate('Subject'),
+      property: 'subject',
+      component: DefaultTextFieldEntry,
+      isEdited: isTextFieldEntryEdited,
+    }
+  );
   
   if (isChildOf(element, 'bpmn:AdHocSubProcess')) {
     entries.push(

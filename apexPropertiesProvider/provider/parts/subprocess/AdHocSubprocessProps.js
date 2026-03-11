@@ -39,6 +39,31 @@ const listExtensionHelper = new ListExtensionHelper(
   }
 );
 
+export function AdHocSubProcessProps(args) {
+
+  const {element, injector} = args;
+
+  const translate = injector.get('translate');
+
+  const entries = [];
+
+  if (is(element, 'bpmn:AdHocSubProcess')) {
+
+    entries.push(
+      {
+        id: 'subject',
+        element,
+        label: translate('Subject'),
+        property: 'subject',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  }
+
+  return entries;
+}
+
 export function StartingProps(args) {
 
   const {element, injector} = args;

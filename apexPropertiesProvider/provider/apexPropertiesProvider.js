@@ -12,7 +12,7 @@ import CustomTimerProps from './parts/timer/CustomTimerProps';
 import AssignmentProps from './parts/userTask/AssignmentProps';
 
 import ExecutionProps from './parts/process/ExecutionProps';
-import GeneralProps from './parts/process/GeneralProps';
+import ProcessProps from './parts/process/ProcessProps';
 
 import RoleProps from './parts/lane/RoleProps';
 import SchedulingProps from './parts/scheduling/SchedulingProps';
@@ -34,7 +34,7 @@ import SimpleMessageProps from './parts/message/SimpleMessageProps';
 import MultiInstanceLoopProps from './parts/multiInstanceLoop/MultiInstanceLoopProps';
 
 import InOutParamGroup from './parts/inOutParameters/InOutParamGroup';
-import { CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
+import { AdHocSubProcessProps, CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
 import TaskProps from './parts/task/TaskProps';
 
 var ModelingUtil = require('bpmn-js/lib/features/modeling/util/ModelingUtil');
@@ -88,7 +88,7 @@ export default function apexPropertiesProvider(
       // task
       if (
         is(element, 'bpmn:Task') &&
-        !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask'])
+        !ModelingUtil.isAny(element, ['bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask', 'bpmn:ManualTask'])
       ) {
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
@@ -99,6 +99,8 @@ export default function apexPropertiesProvider(
         generalGroup.entries = generalGroup.entries.concat(TaskProps({element, injector, translate}));
       }
 
+      //TODO add subject to usertask & adhocsp
+
       // userTask
       if (is(element, 'bpmn:UserTask')) {
         addSection('taskType', 'Task Type', TaskTypeProps);
@@ -106,6 +108,7 @@ export default function apexPropertiesProvider(
         addSection('apexApproval', 'APEX Human Task', ApexApprovalProps);
         addSection('simpleForm', 'APEX Simple Form', ApexSimpleFormProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('assignment', 'Assignment', AssignmentProps);
         addSection('scheduling', 'Scheduling', SchedulingProps);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
@@ -116,6 +119,7 @@ export default function apexPropertiesProvider(
         addSection('taskType', 'Task Type', TaskTypeProps);
         addSection('executePlsql', 'PL/SQL', ExecutePlsqlProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
       }
 
@@ -126,6 +130,7 @@ export default function apexPropertiesProvider(
         addSection('sendMail', 'Mail', SendMailProps);
         addSection('apexAIGeneration', 'APEX AI Generation', ApexAIGenerationProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
       }
 
@@ -134,6 +139,7 @@ export default function apexPropertiesProvider(
         addSection('taskType', 'Task Type', TaskTypeProps);
         addSection('executePlsql', 'PL/SQL', ExecutePlsqlProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
       }
 
@@ -143,6 +149,7 @@ export default function apexPropertiesProvider(
         addSection('executePlsql', 'PL/SQL', ExecutePlsqlProps);
         addSection('simpleMessage', 'Simple Message', SimpleMessageProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
       }
 
@@ -152,6 +159,7 @@ export default function apexPropertiesProvider(
         addSection('executePlsql', 'PL/SQL', ExecutePlsqlProps);
         addSection('simpleMessage', 'Simple Message', SimpleMessageProps);
         addSection('procVars', 'Variable Expressions', ProcVarGroup);
+        addSection('parameters', 'Parameters', InOutParamGroup);
         addSection('loop', multiInstanceLoopHeading, MultiInstanceLoopProps);
       }
 
@@ -175,7 +183,7 @@ export default function apexPropertiesProvider(
         addSection('scheduling', 'Scheduling', SchedulingProps);
 
         const generalGroup = groups.find(g => g.id === 'general');
-        generalGroup.entries = generalGroup.entries.concat(GeneralProps({element, injector, translate}));
+        generalGroup.entries = generalGroup.entries.concat(ProcessProps({element, injector, translate}));
       }
 
       // subprocess
@@ -187,6 +195,9 @@ export default function apexPropertiesProvider(
         addSection('detailPage', 'Detail Page', DetailPageProps);
         addSection('assignment', 'Assignment', AssignmentProps);
         addSection('scheduling', 'Scheduling', SchedulingProps);
+
+        const generalGroup = groups.find(g => g.id === 'general');
+        generalGroup.entries = generalGroup.entries.concat(AdHocSubProcessProps({element, injector, translate}));
       }
 
       // add the message event props
@@ -217,6 +228,7 @@ export default function apexPropertiesProvider(
       if (is(element, 'bpmn:StartEvent')) {
         addSection('eventType', 'Event Type', EventTypeProps);
         addSection('simpleMessage', 'Simple Message', SimpleMessageProps);
+        addSection('parameters', 'Parameters', InOutParamGroup);
       }
       
       // add terminate event section
