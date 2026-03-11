@@ -10,6 +10,7 @@
         "func-names": "off",
         "import/extensions": "off",
         "import/first": "off",
+        "import/no-extraneous-dependencies": ["error", { "allowModules": [ "htm/preact" ] }],
         "import/no-mutable-exports": "off",
         "import/order": "off",
         "import/prefer-default-export": "off",
