@@ -24,7 +24,7 @@ export default function (args) {
 
   if (!businessObject.loopCharacteristics) {
     if (
-      ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
+      ModelingUtil.isAny(element, ['bpmn:Task'])
     ) {
 
       type1 = {

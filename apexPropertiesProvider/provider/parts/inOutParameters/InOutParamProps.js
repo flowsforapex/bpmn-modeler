@@ -8,14 +8,84 @@ import {
 import { useService } from 'bpmn-js-properties-panel';
 
 import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
-import { getProperty } from '../../helper/util';
+
+import { html } from 'htm/preact';
 
 export default function InOutParamProps(args) {
+  
   const { idPrefix, param, element } = args;
   
-  const translate = useService('translate');
-  
   const entries = [];
+
+  // Basic parameter fields
+  entries.push(
+    {
+      id: `${idPrefix}-name`,
+      element,
+      listElement: param,
+      component: NameProp,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: `${idPrefix}-type`,
+      element,
+      listElement: param,
+      component: TypeProp,
+      isEdited: isSelectEntryEdited,
+    },
+    {
+      id: `${idPrefix}-required`,
+      element,
+      listElement: param,
+      component: RequiredProp,
+      // isEdited: isToggleSwitchEntryEdited,
+    },
+    {
+      id: `${idPrefix}-description`,
+      element,
+      listElement: param,
+      component: DescriptionProp,
+      isEdited: isTextAreaEntryEdited,
+    },
+    {
+      id: `${idPrefix}-expressionType`,
+      element,
+      listElement: param,
+      component: ExpressionTypeProp,
+      isEdited: isSelectEntryEdited,
+    },
+    {
+      id: `${idPrefix}-expression`,
+      element,
+      listElement: param,
+      component: ExpressionProp,
+      isEdited: isTextFieldEntryEdited,
+    }
+  );
+
+  return entries;
+}
+
+function NameProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  return html`<${DefaultTextFieldEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Name')}
+    property=name
+  />`;
+}
+
+function TypeProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
 
   const dataTypeOptions = [
     { label: translate('string'), value: 'string' },
@@ -25,81 +95,91 @@ export default function InOutParamProps(args) {
     { label: translate('object'), value: 'object' },
   ];
 
-  // Basic parameter fields
-  entries.push(
-    {
-      id: `${idPrefix}-name`,
-      element,
-      listElement: param,
-      label: translate('Name'),
-      property: 'name',
-      component: DefaultTextFieldEntry,
-      isEdited: isTextFieldEntryEdited,
-    },
-    {
-      id: `${idPrefix}-type`,
-      element,
-      listElement: param,
-      label: translate('Type'),
-      property: 'type',
-      options: dataTypeOptions,
-      component: DefaultSelectEntry,
-      isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-required`,
-      element,
-      listElement: param,
-      label: translate('Required'),
-      property: 'required',
-      defaultValue: 'false',
-      component: DefaultToggleSwitchEntry,
-      // isEdited: isToggleSwitchEntryEdited,
-    },
-    {
-      id: `${idPrefix}-description`,
-      element,
-      listElement: param,
-      label: translate('Description'),
-      property: 'description',
-      component: DefaultTextAreaEntry,
-      isEdited: isTextAreaEntryEdited,
-    }
-  );
+  return html`<${DefaultSelectEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Type')}
+    property=type
+    options=${dataTypeOptions}
+  />`;
+}
 
-  entries.push({
-    id: `${idPrefix}-expressionType`,
-    element,
-    listElement: param,
-    label: translate('Expression Type'),
-    property: 'source.expressionType',
-    options: [
-      { label: translate('Static'), value: 'static' },
-      { label: translate('User Input'), value: 'userInput' },
-      { label: translate('Process Variable'), value: 'processVariable' },
-    ],
-    cleanup: (value) => {
-      return {
-        ...(value === 'userInput' && {'source.expression': null}),
-      };
-    },
-    component: DefaultSelectEntry,
-    isEdited: isSelectEntryEdited,
-  });
+function RequiredProp(props) {
 
-  const expressionType = getProperty(element, param, 'source.expressionType');
+  const {id, element, listElement} = props;
 
-  if (expressionType === 'processVariable' || expressionType === 'static') {
-    entries.push({
-      id: `${idPrefix}-expression`,
-      element,
-      listElement: param,
-      label: translate('Expression'),
-      property: 'source.expression',
-      component: DefaultTextFieldEntry,
-      isEdited: isTextFieldEntryEdited,
-    });
+  const translate = useService('translate');
+
+  return html`<${DefaultToggleSwitchEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Required')}
+    property=required
+    defaultValue=false
+  />`;
+}
+
+function DescriptionProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  return html`<${DefaultTextAreaEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Description')}
+    property=description
+  />`;
+}
+
+function ExpressionTypeProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const options = [
+    { label: translate('Static'), value: 'static' },
+    { label: translate('User Input'), value: 'userInput' },
+    { label: translate('Process Variable'), value: 'processVariable' },
+  ];
+
+  const cleanup = (value) => {
+    return {
+      ...(value === 'userInput' && {'source.expression': null}),
+    };
   }
 
-  return entries;
+  return html`<${DefaultSelectEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Source')}
+    property='source.expressionType'
+    options=${options}
+    cleanup=${cleanup}
+  />`;
+}
+
+function ExpressionProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = listElement.source.expressionType;
+
+  if (expressionType === 'processVariable' || expressionType === 'static') {
+    return html`<${DefaultTextFieldEntry}
+      id=${id}
+      element=${element}
+      listElement=${listElement}
+      label=${translate('Expression')}
+      property='source.expression'
+    />`;
+  }
 }
