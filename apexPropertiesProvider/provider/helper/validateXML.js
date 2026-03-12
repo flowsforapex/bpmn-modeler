@@ -2,7 +2,34 @@ var { is } = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 import { getMessageEvent } from '../parts/message/SimpleMessageProps';
-import { getBusinessObject, removeExtension } from './util';
+import { getBusinessObject } from './util';
+
+// clean up function used in validateXML
+function removeExtension(element, businessObject, toRemove, modeling) {
+  const {extensionElements} = businessObject;
+
+  let updatedBusinessObject;
+  let update;
+  
+  // if extension elements have no other children
+  if (!extensionElements.get('values').some(k => k !== toRemove)) {
+      // remove extension elements
+      updatedBusinessObject = businessObject;
+      update = { extensionElements: undefined};
+  } else {
+    // remove extension
+    updatedBusinessObject = extensionElements;
+    update = {
+      values: extensionElements.get('values').filter(v => v !== toRemove),
+    };
+  }
+
+  modeling.updateModdleProperties(
+    element,
+    updatedBusinessObject,
+    update
+  );
+}
 
 export function removeInvalidExtensionsElements(elementRegistry, modeling) {
   var elements = Object.values(elementRegistry._elements).map(e => e.element);

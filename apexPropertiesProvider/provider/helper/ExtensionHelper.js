@@ -1,9 +1,6 @@
-import {
-  createExtension,
-  createExtensionElements, getBusinessObject, getExtension,
-  getExtensionElements
-} from './util';
+import { getBusinessObject } from './util';
 
+import { createExtensionElements, getExtension, getExtensionElements } from './extensions';
 
 export default class ExtensionHelper {
   constructor(type) {
@@ -39,7 +36,7 @@ export default class ExtensionHelper {
       extensionElements = createExtensionElements(element, bpmnFactory);
       
       // create extension
-      extensionElement = createExtension(
+      extensionElement = createElement(
         this.type,
         values,
         extensionElements,
@@ -56,7 +53,7 @@ export default class ExtensionHelper {
     } else if (!extensionElement && hasValues) {
       
       // create extension
-      extensionElement = createExtension(
+      extensionElement = createElement(
         this.type,
         values,
         extensionElements,

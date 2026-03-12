@@ -2,7 +2,7 @@ import { NumberFieldEntry, SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwi
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { getProperty, updateProperties } from './util';
+import { getProperty, updateProperties } from './properties';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
@@ -20,11 +20,11 @@ function useValue({ helper, element, listElement, parent }) {
   
   const get = (property) => helper
     ? helper.getProperty({ element, property, listElement, parent })
-    : getProperty(element, listElement, property);
+    : getProperty({ element, listElement, property });
 
   const set = (values, context) => helper
     ? helper.setProperty({ element, values, listElement, parent, ...context })
-    : updateProperties(element, listElement, values, context.modeling, context.bpmnFactory);
+    : updateProperties({ element, listElement, values, ...context });
 
   return { get, set };
 }

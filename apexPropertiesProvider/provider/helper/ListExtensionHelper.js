@@ -1,9 +1,8 @@
-import {
-  createElement,
-  createExtension,
-  createExtensionElements, getBusinessObject, getExtension,
-  updateProperties
-} from './util';
+import { getBusinessObject } from './util';
+
+import { createElement, createExtensionElements, getExtension } from './extensions';
+
+import { updateProperties } from './properties';
 
 import { without } from 'min-dash';
 
@@ -73,7 +72,7 @@ export default class ListExtensionHelper {
       parent = getExtension(element, listParentType);
 
       if (!parent) {
-        parent = createExtension(listParentType, {}, extensionElements, bpmnFactory);
+        parent = createElement(listParentType, {}, extensionElements, bpmnFactory);
 
         modeling.updateModdleProperties(
           element,
@@ -92,7 +91,7 @@ export default class ListExtensionHelper {
       else list = getExtension(element, listType);
 
       if (!list) {
-        list = createExtension(listType, {}, extensionElements, bpmnFactory);
+        list = createElement(listType, {}, extensionElements, bpmnFactory);
 
         if (parent) {
           modeling.updateModdleProperties(
@@ -119,7 +118,7 @@ export default class ListExtensionHelper {
     );
 
     // update properties
-    updateProperties(element, newEntry, newProps, modeling, bpmnFactory);
+    updateProperties({ element, listElement: newEntry, values: newProps, modeling, bpmnFactory });
 
     // (5) add entry to list
     modeling.updateModdleProperties(
