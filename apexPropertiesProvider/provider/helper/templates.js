@@ -7,166 +7,112 @@ import { getProperty, updateProperties } from './util';
 import { getContainer, openEditor } from '../plugins/monacoEditor';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
+function useContext() {
+  const modeling    = useService('modeling');
+  const bpmnFactory = useService('bpmnFactory');
+  const debounce    = useService('debounceInput');
+  const translate   = useService('translate');
 
-const genericGetValue = ({ helper, element, property, listElement, parent } = {}) => {
-  if (helper) {
-    return helper.getProperty({ element, property, listElement, parent });
-  }
-  return getProperty(element, listElement, property);
-};
+  return { modeling, bpmnFactory, debounce, translate };
+}
 
-const genericSetValue = ({ helper, element, values, listElement, parent, context } = {}) => {
+function useValue({ helper, element, listElement, parent }) {
   
-  const { modeling, bpmnFactory } = context;
-  
-  if (helper) {
-    helper.setProperty({ element, values, listElement, parent, modeling, bpmnFactory });
-  } else {
-    updateProperties(element, listElement, values, modeling, bpmnFactory);
-  }
-};
+  const get = (property) => helper
+    ? helper.getProperty({ element, property, listElement, parent })
+    : getProperty(element, listElement, property);
+
+  const set = (values, context) => helper
+    ? helper.setProperty({ element, values, listElement, parent, ...context })
+    : updateProperties(element, listElement, values, context.modeling, context.bpmnFactory);
+
+  return { get, set };
+}
 
 export function DefaultNumberEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property } = props;
+  const { id, element, label, description, property } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-  
-  const getValue = () => genericGetValue({
-    helper,
-    element,
-    listElement,
-    property
-  });
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value ? String(value) : value },
-    context: { modeling, bpmnFactory }
-  });
+  const value = (v) => { return { [property]: v ? String(v) : v }};
 
   return NumberFieldEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
-    debounce,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextFieldEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property, parent } = props;
+  const { id, element, label, description, property } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-  
-  const getValue = () => genericGetValue({
-    helper,
-    element,
-    listElement,
-    property,
-    parent
-  });
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value },
-    parent,
-    context: { modeling, bpmnFactory }
-  });
+  const value = (v) => { return { [property]: v }};
 
   return new TextFieldEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
-    debounce,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultSelectEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property, defaultValue, options, cleanup, parent } = props;
+  const { id, element, label, description, property, defaultValue, options, cleanup } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
+  const context = useContext();
+  const { get, set } = useValue(props);
   
   const getValue = () => {
     
-    const value = genericGetValue({
-      helper,
-      element,
-      listElement,
-      property,
-      parent
-    });
+    const value = get(property);
     
     // set default value if empty or value not in options
     if (defaultValue && (!value || !options.some(v => v.value === value))) {
-      genericSetValue({
-        helper,
-        element,
-        listElement,
-        values: { [property]: defaultValue },
-        parent,
-        context: { modeling, bpmnFactory }
-      });
+      set({ [property]: defaultValue }, context);
       return defaultValue;
     }
     
     return value;
   };
 
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value, ...(cleanup && cleanup(value)) },
-    parent,
-    context: { modeling, bpmnFactory }
-  });
+  const value = (v) => { return { [property]: v, ...(cleanup && cleanup(v)) }};
 
   return new SelectEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
+    getValue: getValue,
+    setValue: v => set(value(v), context),
     getOptions: () => options,
-    debounce,
+    debounce: context.debounce,
   });
 }
 
 export function DefaultSelectEntryAsync(props) {
   
-  const { id, element, listElement, label, description, helper, property, state, needsRefresh } = props;
+  const { id, element, label, description, property, state, needsRefresh } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
+  const context = useContext();
+  const { get, set } = useValue(props);
   
   const getOptions = () => {
     
-    const currValue = genericGetValue({
-      helper,
-      element,
-      listElement,
-      property
-    });
+    const currValue = get(property);
     
     const existing = currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
    
@@ -194,164 +140,89 @@ export function DefaultSelectEntryAsync(props) {
     return result;
   };
 
-  const getValue = () => genericGetValue({
-    helper,
-    element,
-    listElement,
-    property
-  });
-
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value },
-    context: { modeling, bpmnFactory }
-  });
+  const value = (v) => { return { [property]: v }};
 
   return new SelectEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
-    debounce,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
     getOptions,
   });
 }
 
 export function DefaultToggleSwitchEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup } = props;
+  const { id, element, label, description, property, defaultValue, invert, cleanup } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
+  const context = useContext();
+  const { get, set } = useValue(props);
+
+  const stringToBoolean = (v) => { return (v === (invert ? 'false' : 'true'))};
+
+  const booleanToString = (v) => { return (v ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'))};
   
   const getValue = () => {
-    const value = genericGetValue({
-      helper,
-      element,
-      listElement,
-      property
-    });
+    const value = get(property);
     
     // set default value if empty
     if (defaultValue && !value) {
-      genericSetValue({
-        helper,
-        element,
-        listElement,
-        values: { [property]: defaultValue },
-        context: { modeling, bpmnFactory }
-      });
-      return defaultValue === (invert ? 'false' : 'true');
+      set({ [property]: defaultValue }, context);
+      return stringToBoolean(defaultValue);
     }
     
-    return value === (invert ? 'false' : 'true');
+    return stringToBoolean(value);
   };
 
-  const setValue = (value) => {
-    genericSetValue({
-      helper,
-      element,
-      listElement,
-      values: { [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'), ...(cleanup && cleanup(value)) },
-      context: { modeling, bpmnFactory }
-    });
-  };
+  const value = (v) => { return { [property]: booleanToString(v), ...(cleanup && cleanup(value)) }}
 
   return new ToggleSwitchEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
-    debounce,
+    getValue: getValue,
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextAreaEntry(props) {
   
-  const { id, element, listElement, label, description, helper, property, parent } = props;
+  const { id, element, label, description, property } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-  
-  const getValue = () => genericGetValue({
-    helper,
-    element,
-    listElement,
-    property,
-    parent
-  });
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value },
-    parent,
-    context: { modeling, bpmnFactory }
-  });
+  const value = (v) => { return { [property]: v }};
 
   return new TextAreaEntry({
     id,
     element,
     label,
     description,
-    getValue,
-    setValue,
-    debounce,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextAreaEntryWithEditor(props) {
   
-  const { id, element, listElement, label, description, helper, property, language, type, parent } = props;
+  const { id, element, label, description, property, language, type } = props;
   
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-  const translate = useService('translate');
-  
-  const getValue = () => genericGetValue({
-    helper,
-    element,
-    listElement,
-    property,
-    parent
-  });
-
-  const setValue = value => genericSetValue({
-    helper,
-    element,
-    listElement,
-    values: { [property]: value },
-    parent,
-    context: { modeling, bpmnFactory }
-  });
+  const context = useContext();
+  const { get, set } = useValue(props);
 
   const labelWithIcon =
     OpenDialogLabel(label, () => {
-      var getProperty = () => genericGetValue({
-        helper,
-        element,
-        listElement,
-        property,
-        parent
-      });
-      var saveProperty = text => genericSetValue({
-        helper,
-        element,
-        listElement,
-        values: { [property]: text },
-        parent,
-        context: { modeling, bpmnFactory }
-      });
+      
+      var getProperty = () => get(property);
+      var saveProperty = text => set({ [property]: text }, context);
+      
       openEditor(
         getProperty,
         saveProperty,
@@ -361,16 +232,18 @@ export function DefaultTextAreaEntryWithEditor(props) {
       );
     });
 
+  const value = (v) => { return { [property]: v }};
+
   return [
-    getContainer(translate, id),
+    getContainer(context.translate, id),
     new TextAreaEntry({
       id,
       element,
       label: labelWithIcon,
       description,
-      getValue,
-      setValue,
-      debounce,
+      getValue: () => get(property),
+      setValue: v => set(value(v), context),
+      debounce: context.debounce,
     })
   ];
 }
