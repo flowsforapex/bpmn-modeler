@@ -40,3 +40,30 @@ export function createExtensionElements(element, bpmnFactory) {
     bpmnFactory
   );
 }
+
+// clean up function used in validateXML
+export function removeExtension(element, businessObject, toRemove, modeling) {
+  const {extensionElements} = businessObject;
+
+  let updatedBusinessObject;
+  let update;
+  
+  // if extension elements have no other children
+  if (!extensionElements.get('values').some(k => k !== toRemove)) {
+      // remove extension elements
+      updatedBusinessObject = businessObject;
+      update = { extensionElements: undefined};
+  } else {
+    // remove extension
+    updatedBusinessObject = extensionElements;
+    update = {
+      values: extensionElements.get('values').filter(v => v !== toRemove),
+    };
+  }
+
+  modeling.updateModdleProperties(
+    element,
+    updatedBusinessObject,
+    update
+  );
+}

@@ -2,400 +2,104 @@ var { is } = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
 import { getMessageEvent } from '../parts/message/SimpleMessageProps';
+import { adHocSubProcessExtensions, businessRuleTaskExtensions, callActivityExtensions, eventExtensions, gatewayExtensions, processExtensions, receiveTaskExtensions, scriptTaskExtensions, sendTaskExtensions, serviceTaskExtensions, subProcessExtensions, taskExtensions, userTaskExtensions } from './rules-config';
 import { getBusinessObject } from './util';
 
-// clean up function used in validateXML
-function removeExtension(element, businessObject, toRemove, modeling) {
-  const {extensionElements} = businessObject;
+import { removeExtension } from './extensions';
 
-  let updatedBusinessObject;
-  let update;
+const rulesConfig = {
+  'bpmn:Gateway': gatewayExtensions,
+  'bpmn:Task': taskExtensions,
+  'bpmn:UserTask': userTaskExtensions,
+  'bpmn:ScriptTask': scriptTaskExtensions,
+  'bpmn:ServiceTask': serviceTaskExtensions,
+  'bpmn:BusinessRuleTask': businessRuleTaskExtensions,
+  'bpmn:SendTask': sendTaskExtensions,
+  'bpmn:ReceiveTask': receiveTaskExtensions,
+  'bpmn:CallActivity': callActivityExtensions,
+  'bpmn:Event': eventExtensions,
+  'bpmn:Process': processExtensions,
+  'bpmn:Participant': processExtensions,
+  'bpmn:SubProcess': subProcessExtensions,
+  'bpmn:AdHocSubProcess': adHocSubProcessExtensions
+}
+
+function executeRules(element) {
   
-  // if extension elements have no other children
-  if (!extensionElements.get('values').some(k => k !== toRemove)) {
-      // remove extension elements
-      updatedBusinessObject = businessObject;
-      update = { extensionElements: undefined};
-  } else {
-    // remove extension
-    updatedBusinessObject = extensionElements;
-    update = {
-      values: extensionElements.get('values').filter(v => v !== toRemove),
-    };
-  }
+  const businessObject = getBusinessObject(element);
+  
+  // Custom extension is always allowed
+  let allowedExtensions = ['apex:CustomExtension'];
 
-  modeling.updateModdleProperties(
-    element,
-    updatedBusinessObject,
-    update
-  );
+  // loop over rules
+  Object.entries(rulesConfig)
+  // filter by element type
+  .filter(([type, _]) => is(element, type) || is(getBusinessObject(element), type))
+  .forEach(([, config]) => {
+    // get list of allowed extensions
+    allowedExtensions = [...allowedExtensions, ...(config(element, businessObject) || [])];
+  });
+
+  return new Set(allowedExtensions);
+}
+
+function removeExtensions(element, businessObject, extensions, modeling) {
+  if (!businessObject.extensionElements) return;
+
+  const toRemove = businessObject.extensionElements.values.filter(e => !extensions.has(e.$type));
+
+  toRemove.forEach(r => removeExtension(element, businessObject, r, modeling));
 }
 
 export function removeInvalidExtensionsElements(elementRegistry, modeling) {
   var elements = Object.values(elementRegistry._elements).map(e => e.element);
 
   elements.forEach((element) => {
-    var businessObject = getBusinessObject(element);
-    // filter containing allowed elements
-    var extensionFilter = [];
-    // child needed for events
-    var eventDefinition;
-    // child needed for loops
-    var loopCharacteristics;
-    // list with extension elements to remove
-    var toRemove;
-    // list with the attributes to remove
-    var attributesToRemove = [];
+    
+    if (element.type === 'label') return;
 
-    if (element.type !== 'label') {
-      extensionFilter = getExtensionFilters(element);
+    const businessObject = getBusinessObject(element);
 
-      // customExtension always allowed
-      extensionFilter.push('apex:CustomExtension');
+    const extensions = executeRules(element);
+    removeExtensions(element, businessObject, extensions, modeling);
 
-      // retrieve eventDefinition
-      eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
+    const eventDefinition = businessObject.eventDefinitions && businessObject.eventDefinitions[0];
+    if (eventDefinition) removeExtensions(element, eventDefinition, extensions, modeling);
 
-      // retrieve loopCharacteristics
-      ({loopCharacteristics} = businessObject);
+    const { loopCharacteristics } = businessObject;
+    if (loopCharacteristics) removeExtensions(element, loopCharacteristics, extensions, modeling);
 
-      // collect element which have to be removed
-      toRemove =
-        businessObject.extensionElements &&
-        businessObject.extensionElements.values &&
-        businessObject.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
-
-      // remove extensions
-      if (toRemove && toRemove.length > 0) {
-        toRemove.forEach((e) => {
-          removeExtension(element, businessObject, e, modeling);
-        });
-      }
-
-      // if event -> remove on eventDefinition level
-      if (eventDefinition) {
-        toRemove =
-          eventDefinition.extensionElements &&
-          eventDefinition.extensionElements.values &&
-          eventDefinition.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
-
-        if (toRemove && toRemove.length > 0) {
-          toRemove.forEach((e) => {
-            removeExtension(element, eventDefinition, e, modeling);
-          });
-        }
-      }
-
-      // if loop -> remove on loopCharacteristics level
-      if (loopCharacteristics) {
-        
-        extensionFilter = getLoopFilters(loopCharacteristics);
-        
-        toRemove =
-          loopCharacteristics.extensionElements &&
-          loopCharacteristics.extensionElements.values &&
-          loopCharacteristics.extensionElements.values.filter(e => !extensionFilter.includes(e.$type));
-
-        if (toRemove && toRemove.length > 0) {
-          toRemove.forEach((e) => {
-            removeExtension(element, loopCharacteristics, e, modeling);
-          });
-        }
-      }
-
-      attributesToRemove = getAttributesToRemove(element);
-
-      if (attributesToRemove && attributesToRemove.length > 0) {
-        attributesToRemove.forEach((e) => {
-          if (!businessObject.isImplicit && businessObject.get(e)) {
-            modeling.updateModdleProperties(element, businessObject, {
-              [e]: null,
-            });
-          }
-        });
-      }
-    }
+    removeInvalidAttributes(element, businessObject, modeling);
   });
 }
 
-function getAttributesToRemove(element) {
-  var filter = [];
+function removeInvalidAttributes(element, businessObject, modeling) {
+  const attributes = [];
+
   if (
-    !ModelingUtil.isAny(element, [
-      'bpmn:UserTask',
-      'bpmn:ServiceTask',
-      'bpmn:ScriptTask',
-      'bpmn:BusinessRuleTask',
-      'bpmn:SendTask',
-      'bpmn:ReceiveTask',
-    ]) &&
-    !(is(element, 'bpmn:IntermediateThrowEvent') && getMessageEvent(element)) &&
-    !(is(element, 'bpmn:IntermediateCatchEvent') && getMessageEvent(element)) &&
-    !(is(element, 'bpmn:StartEvent') && getMessageEvent(element)) &&
-    !(is(element, 'bpmn:EndEvent') && getMessageEvent(element)) &&
-    !(is(element, 'bpmn:BoundaryEvent') && getMessageEvent(element))
-  ) {
-    filter.push('apex:type');
-  }
-  if (
-    !is(element, 'bpmn:CallActivity') &&
-    !is(element, 'bpmn:Process') &&
-    !is(element, 'bpmn:AdHocSubProcess') &&
-    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexPage') &&
-    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexApproval') &&
-    !(is(element, 'bpmn:UserTask') && getBusinessObject(element).type === 'apexSimpleForm') &&
-    !(is(element, 'bpmn:ServiceTask') && getBusinessObject(element).type === 'sendMail')
-  ) {
-    filter.push('apex:manualInput');
-  }
-  return filter;
-}
-
-function getExtensionFilters(element) {
-  // filter gateways
-  if (
-    is(element, 'bpmn:ExclusiveGateway') ||
-    is(element, 'bpmn:ParallelGateway') ||
-    is(element, 'bpmn:InclusiveGateway') ||
-    is(element, 'bpmn:EventBasedGateway')
-  ) {
-    return getGatewayFilters(element);
-    // filter events
-  } else if (
-    is(element, 'bpmn:StartEvent') ||
-    is(element, 'bpmn:IntermediateThrowEvent') ||
-    is(element, 'bpmn:IntermediateCatchEvent') ||
-    is(element, 'bpmn:BoundaryEvent') ||
-    is(element, 'bpmn:EndEvent')
-  ) {
-    return getEventFilters(element);
-    // filter tasks
-  } else if (is(element, 'bpmn:Task')) {
-    return getTaskFilters(element);
-    // filter call activites
-  } else if (is(element, 'bpmn:CallActivity')) {
-    return getCallActivityFilters();
-    // filter processes
-  } else if (is(element, 'bpmn:Process') || is(element, 'bpmn:Participant')) {
-    return getProcessFilters(element);
-    // filter ad-hoc sub processes
-  } else if (is(element, 'bpmn:AdHocSubProcess')) {
-    return getAdHocProcessFilters(element);
-  }
-
-  return [];
-}
-
-function getGatewayFilters(element) {
-  // opening gateway
-  if (element.incoming.length === 1 && element.outgoing.length > 1) {
-    return ['apex:BeforeSplit'];
-    // closing gateway
-  } else if (element.incoming.length > 1 && element.outgoing.length === 1) {
-    return ['apex:AfterMerge'];
-    // opening & closing gateway
-  } else if (element.incoming.length > 1 && element.outgoing.length > 1) {
-    return ['apex:AfterMerge', 'apex:BeforeSplit'];
-  }
-
-  return [];
-}
-
-function getEventFilters(element) {
-  var filter = [];
-  var businessObject = getBusinessObject(element);
-
-  filter.push('apex:OnEvent');
-
-  if (businessObject.eventDefinitions && businessObject.eventDefinitions[0]) {
-    if (is(businessObject.eventDefinitions[0], 'bpmn:TimerEventDefinition')) {    
-      
-      filter.push('apex:BeforeEvent');
-
-      switch (businessObject.eventDefinitions[0].timerType) {
-        case 'oracleDate':
-          filter.push('apex:OracleDate');
-          break;
-        case 'oracleDuration':
-          filter.push('apex:OracleDuration');
-          break;
-        case 'oracleCycle':
-          filter.push('apex:OracleCycle');
-          break;
-        default:
-          // do nothing
-      }
-    } else if (is(businessObject.eventDefinitions[0], 'bpmn:MessageEventDefinition')) {
-      if (is(element, 'bpmn:IntermediateThrowEvent') || is(element, 'bpmn:EndEvent')) {
-        filter.push('apex:Endpoint');
-        filter.push('apex:MessageName');
-        filter.push('apex:CorrelationKey');
-        filter.push('apex:CorrelationValue');
-        filter.push('apex:Payload');
-      } else if (is(element, 'bpmn:IntermediateCatchEvent') || is(element, 'bpmn:StartEvent') || is(element, 'bpmn:BoundaryEvent')) {
-        filter.push('apex:MessageName');
-        filter.push('apex:CorrelationKey');
-        filter.push('apex:CorrelationValue');
-        filter.push('apex:PayloadVariable');
-      }
-    }
-  }
-
-  return filter;
-}
-
-function getLoopFilters(loopCharacteristics) {
-  var filter = [];
-
-  filter.push('apex:Description');
-  filter.push('apex:OutputCollection');
-  filter.push('apex:CompletionCondition');
-
-  if (!is(loopCharacteristics, 'bpmn:StandardLoopCharacteristics')) {
-    filter.push('apex:InputCollection');
-  }
+    !(
+      ModelingUtil.isAny(element, [ 'bpmn:UserTask', 'bpmn:ServiceTask', 'bpmn:ScriptTask', 'bpmn:BusinessRuleTask', 'bpmn:SendTask', 'bpmn:ReceiveTask' ]) ||
+      (
+        ModelingUtil.isAny(element, [ 'bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent', 'bpmn:StartEvent', 'bpmn:EndEvent', 'bpmn:BoundaryEvent' ])
+        &&
+        getMessageEvent(element)
+      )
+    )
+  ) attributes.push('apex:type');
   
-  return filter;
-}
-
-function getTaskFilters(element) {
-  var filter = [];
-  var businessObject = getBusinessObject(element);
-
-  if (!businessObject.loopCharacteristics) {
-    filter.push('apex:BeforeTask');
-    filter.push('apex:AfterTask');
-  }
-
-  // filter user tasks
-  if (is(element, 'bpmn:UserTask')) {
-    // assignment
-    filter.push('apex:PotentialUsers');
-    filter.push('apex:ExcludedUsers');
-    // scheduling
-    filter.push('apex:Priority');
-    filter.push('apex:DueOn');
-
-    switch (businessObject.type) {
-      case 'apexPage':
-        filter.push('apex:ApexPage');
-        filter.push('apex:PotentialGroups');
-        break;
-      case 'apexApproval':
-        filter.push('apex:ApexApproval');
-        filter.push('apex:BusinessAdmin');
-        break;
-      case 'apexSimpleForm':
-        filter.push('apex:ApexSimpleForm');
-        filter.push('apex:PotentialGroups');
-        break;
-      default:
-      // do nothing
-    }
-    // filter script tasks
-  } else if (is(element, 'bpmn:ScriptTask')) {
-    filter.push('apex:ExecutePlsql');
-    // filter service tasks
-  } else if (is(element, 'bpmn:ServiceTask')) {
-    switch (businessObject.type) {
-      case 'executePlsql':
-        filter.push('apex:ExecutePlsql');
-        break;
-      case 'sendMail':
-        filter.push('apex:SendMail');
-        break;
-      case 'apexAIGeneration':
-        filter.push('apex:AiService');
-        filter.push('apex:AiTemperature');
-        filter.push('apex:AiPrompt');
-        filter.push('apex:ResultVariable');
-        break;
-      default:
-      // do nothing
-    }
-    // filter business rule tasks
-  } else if (is(element, 'bpmn:BusinessRuleTask')) {
-    filter.push('apex:ExecutePlsql');
-    // filter send tasks
-  } else if (is(element, 'bpmn:SendTask')) {
-    switch (businessObject.type) {
-      case 'executePlsql':
-        filter.push('apex:ExecutePlsql');
-        break;
-      case 'simpleMessage':
-        filter.push('apex:Endpoint');
-        filter.push('apex:MessageName');
-        filter.push('apex:CorrelationKey');
-        filter.push('apex:CorrelationValue');
-        filter.push('apex:Payload');
-        break;
-      default:
-      // do nothing
-    }
-    // filter receive tasks
-  } else if (is(element, 'bpmn:ReceiveTask')) {
-    switch (businessObject.type) {
-      case 'executePlsql':
-        filter.push('apex:ExecutePlsql');
-        break;
-      case 'simpleMessage':
-        filter.push('apex:MessageName');
-        filter.push('apex:CorrelationKey');
-        filter.push('apex:CorrelationValue');
-        filter.push('apex:PayloadVariable');
-        break;
-      default:
-      // do nothing
-    }
-  }
-  return filter;
-}
-
-function getCallActivityFilters() {
-  var filter = [];
-
-  filter.push('apex:InVariables');
-  filter.push('apex:OutVariables');
-
-  return filter;
-}
-
-function getProcessFilters(element) {
-  var filter = [];
-  var businessObject = getBusinessObject(element);
-
-  filter.push('apex:Priority');
-  filter.push('apex:DueOn');
-
-  if (businessObject.isCallable === 'true') {
-    filter.push('apex:InVariables');
-    filter.push('apex:OutVariables');
-  }
-
-  if (businessObject.isStartable === 'true') {
-    filter.push('apex:PotentialStartingUsers');
-    filter.push('apex:PotentialStartingGroups');
-    filter.push('apex:ExcludedStartingUsers');
-  }
-
-  return filter;
-}
-
-function getAdHocProcessFilters(element) {
-  var filter = [];
+  if (
+    !(
+      ModelingUtil.isAny(element, [ 'bpmn:CallActivity', 'bpmn:Process', 'bpmn:AdHocSubProcess' ])
+      || (is(element, 'bpmn:UserTask') && businessObject.type === 'apexPage')
+      || (is(element, 'bpmn:UserTask') && businessObject.type === 'apexApproval')
+      || (is(element, 'bpmn:UserTask') && businessObject.type === 'apexSimpleForm')
+      || (is(element, 'bpmn:ServiceTask') && businessObject.type === 'sendMail')
+    )
+  ) attributes.push('apex:manualInput');
   
-  filter.push('apex:StartingActivities');
-  filter.push('apex:CompletionCondition');
-  filter.push('apex:TaskVisibility');
-
-  filter.push('apex:ApexPage');
-
-  filter.push('apex:Priority');
-  filter.push('apex:DueOn');
-
-  filter.push('apex:PotentialUsers');
-  filter.push('apex:PotentialGroups');
-  filter.push('apex:ExcludedUsers');
-
-  return filter;
+  attributes.forEach((e) => {
+    if (!businessObject.isImplicit && businessObject.get(e)) {
+      modeling.updateModdleProperties(element, businessObject, { [e]: null });
+    }
+  });
 }

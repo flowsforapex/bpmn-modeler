@@ -25,6 +25,8 @@ import {
 import { is, isAny } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import { getBusinessObject } from './helper/util';
 
+import { removeInvalidExtensionsElements } from './helper/validateXML';
+
 const LOW_PRIORITY = 500;
 export default function apexPropertiesProvider(
   propertiesPanel,
@@ -35,9 +37,9 @@ export default function apexPropertiesProvider(
   translate,
   showCustomExtensions
 ) {
-  // eventBus.on('saveXML.start', function () {
-  //   removeInvalidExtensionsElements(elementRegistry, modeling);
-  // });
+  eventBus.on('saveXML.start', function () {
+    removeInvalidExtensionsElements(elementRegistry, modeling);
+  });
 
   // TODO test if needed
   // eventBus.on('connection.added', function (event) {

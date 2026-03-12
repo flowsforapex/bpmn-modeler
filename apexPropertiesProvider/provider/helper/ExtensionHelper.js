@@ -1,6 +1,6 @@
 import { getBusinessObject } from './util';
 
-import { createExtensionElements, getExtension, getExtensionElements } from './extensions';
+import { createElement, createExtensionElements, getExtension, getExtensionElements } from './extensions';
 
 export default class ExtensionHelper {
   constructor(type) {
