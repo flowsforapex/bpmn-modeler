@@ -1,11 +1,11 @@
 var { is } = require('bpmn-js/lib/util/ModelUtil');
 var ModelingUtil = require('bpmn-js/lib/util/ModelUtil');
 
+import { getBusinessObject } from '../helper/util';
 import { getMessageEvent } from '../parts/message/SimpleMessageProps';
-import { adHocSubProcessExtensions, businessRuleTaskExtensions, callActivityExtensions, eventExtensions, gatewayExtensions, processExtensions, receiveTaskExtensions, scriptTaskExtensions, sendTaskExtensions, serviceTaskExtensions, subProcessExtensions, taskExtensions, userTaskExtensions } from './rules-config';
-import { getBusinessObject } from './util';
+import { adHocSubProcessExtensions, businessRuleTaskExtensions, callActivityExtensions, eventExtensions, gatewayExtensions, processExtensions, receiveTaskExtensions, scriptTaskExtensions, sendTaskExtensions, serviceTaskExtensions, subProcessExtensions, taskExtensions, userTaskExtensions } from './extensionConfig';
 
-import { removeExtension } from './extensions';
+import { removeExtension } from '../helper/extensions';
 
 const rulesConfig = {
   'bpmn:Gateway': gatewayExtensions,

@@ -20,12 +20,12 @@ import {
   subProcessSections,
   taskSections,
   userTaskSections
-} from './section-config';
+} from './sectionConfig';
 
 import { is, isAny } from 'bpmn-js/lib/features/modeling/util/ModelingUtil';
 import { getBusinessObject } from './helper/util';
 
-import { removeInvalidExtensionsElements } from './helper/validateXML';
+import { removeInvalidExtensionsElements } from './xml/cleanup';
 
 const LOW_PRIORITY = 500;
 export default function apexPropertiesProvider(
