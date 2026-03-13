@@ -1,5 +1,7 @@
 import { is, isAny } from "bpmn-js/lib/util/ModelUtil";
 
+import { isChildOf } from "../helper/util";
+
 export function gatewayExtensions(e, bo) {
   // opening gateway
   if (e.incoming.length === 1 && e.outgoing.length > 1) return ['apex:BeforeSplit'];
@@ -12,7 +14,7 @@ export function gatewayExtensions(e, bo) {
 };
 
 export function taskExtensions(e, bo) {
-  const extensions = [];
+  const extensions = ['apex:InputParameters', 'apex:OutputParameters'];
   
   if (bo.loopCharacteristics) {
     extensions.push('apex:Description');
@@ -25,6 +27,13 @@ export function taskExtensions(e, bo) {
   }
   else {
     extensions.push(['apex:BeforeTask', 'apex:AfterTask']);
+  }
+
+  if(isChildOf(e, 'bpmn:AdHocSubProcess')) {
+    extensions.push('apex:IsRepeatable');
+    extensions.push('apex:DisplayOrder');
+    extensions.push('apex:Grouping');
+    extensions.push('apex:Description');
   }
 
   return extensions;
@@ -131,6 +140,11 @@ export function callActivityExtensions(e, bo) {
 
 export function eventExtensions(e, bo) {
   const extensions = ['apex:OnEvent'];
+
+  if (is(e, 'bpmn:StartEvent')) {
+    extensions.push('apex:InputParameters');
+    extensions.push('apex:OutputParameters');
+  }
 
   const eventDefinition = bo.eventDefinitions && bo.eventDefinitions[0];
 
