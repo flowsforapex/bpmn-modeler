@@ -42,7 +42,7 @@ export default function PageItemProps(args) {
         id: `${idPrefix}-itemName`,
         element,
         listElement: pageItem,
-        helper: helper, // TODO check if helper is needed here
+        helper: helper,
         component: ItemNameProp,
         isEdited: isSelectEntryEdited,
       }
