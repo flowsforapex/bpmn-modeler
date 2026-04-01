@@ -20,6 +20,12 @@ export function getExtension(element, type) {
   })[0];
 }
 
+export function getExtensionValue(element, type) {
+  const extension = getExtension(element, type);
+  
+  return extension ? extension.value : null;
+}
+
 export function createElement(elementType, properties, parent, bpmnFactory) {
   const element = bpmnFactory.create(elementType, properties);
 

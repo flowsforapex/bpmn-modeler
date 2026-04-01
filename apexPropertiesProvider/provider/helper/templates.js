@@ -5,6 +5,7 @@ import { useService } from 'bpmn-js-properties-panel';
 import { getProperty, updateProperties } from './properties';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
+import ExtensionHelper from './ExtensionHelper';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
 function useContext() {
@@ -16,14 +17,16 @@ function useContext() {
   return { modeling, bpmnFactory, debounce, translate };
 }
 
-function useValue({ helper, element, listElement, parent }) {
+function useValue({ helper, extensionType, element, listElement, parent }) {
   
-  const get = (property) => helper
-    ? helper.getProperty({ element, property, listElement, parent })
+  const resolvedHelper = helper || extensionType && new ExtensionHelper(extensionType);
+  
+  const get = (property) => resolvedHelper
+    ? resolvedHelper.getProperty({ element, property, listElement, parent })
     : getProperty({ element, listElement, property });
 
-  const set = (values, context) => helper
-    ? helper.setProperty({ element, values, listElement, parent, ...context })
+  const set = (values, context) => resolvedHelper
+    ? resolvedHelper.setProperty({ element, values, listElement, parent, ...context })
     : updateProperties({ element, listElement, values, ...context });
 
   return { get, set };

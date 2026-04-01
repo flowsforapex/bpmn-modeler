@@ -1,5 +1,6 @@
 
 import {
+  isNumberFieldEntryEdited,
   isSelectEntryEdited,
   isTextAreaEntryEdited,
   isTextFieldEntryEdited
@@ -7,7 +8,7 @@ import {
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { html } from 'htm/preact';
 
@@ -60,7 +61,35 @@ export default function InOutParamProps(args) {
       listElement: param,
       component: ExpressionProp,
       isEdited: isTextFieldEntryEdited,
-    }
+    },
+    {
+      id: `${idPrefix}-itemType`,
+      element,
+      listElement: param,
+      component: ItemTypeProp,
+      isEdited: isSelectEntryEdited,
+    },
+    {
+      id: `${idPrefix}-maxLength`,
+      element,
+      listElement: param,
+      component: MaxLengthProp,
+      isEdited: isNumberFieldEntryEdited,
+    },
+    {
+      id: `${idPrefix}-placeholder`,
+      element,
+      listElement: param,
+      component: PlaceholderProp,
+      isEdited: isTextFieldEntryEdited,
+    },
+    {
+      id: `${idPrefix}-enum`,
+      element,
+      listElement: param,
+      component: EnumProp,
+      // isEdited: isTextAreaEntryEdited,
+    },
   );
 
   return entries;
@@ -180,6 +209,98 @@ function ExpressionProp(props) {
       listElement=${listElement}
       label=${translate('Expression')}
       property='source.expression'
+    />`;
+  }
+}
+
+function ItemTypeProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const options = [
+    { label: translate('Text'), value: 'text' },
+    { label: translate('Text Area'), value: 'textarea' },
+    { label: translate('Select'), value: 'select' },
+    { label: translate('Multi Select'), value: 'multiselect' },
+    { label: translate('Radio'), value: 'radio' },
+    { label: translate('Checkbox'), value: 'checkbox' },
+    { label: translate('Date Picker'), value: 'datepicker' },
+  ];
+
+  const cleanup = (value) => {
+    return {
+      ...(value !== 'userInput' && {'apexRendering.itemType': null}),
+    };
+  }
+
+  const expressionType = listElement.source.expressionType;
+
+  if (expressionType === 'userInput') {
+    return html`<${DefaultSelectEntry}
+      id=${id}
+      element=${element}
+      listElement=${listElement}
+      label=${translate('Item Type')}
+      property='apexRendering.itemType'
+      options=${options}
+      cleanup=${cleanup}
+    />`;
+  }
+}
+
+function MaxLengthProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = listElement.source.expressionType;
+
+  if (expressionType === 'userInput') {
+    return html`<${DefaultNumberEntry}
+      id=${id}
+      element=${element}
+      listElement=${listElement}
+      label=${translate('Max Length')}
+      property='apexRendering.maxLength'
+    />`;
+  }
+}
+function PlaceholderProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = listElement.source.expressionType;
+
+  if (expressionType === 'userInput') {
+    return html`<${DefaultTextFieldEntry}
+      id=${id}
+      element=${element}
+      listElement=${listElement}
+      label=${translate('Placeholder')}
+      property='apexRendering.placeholder'
+    />`;
+  }
+}
+function EnumProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  const expressionType = listElement.source.expressionType;
+
+  if (expressionType === 'userInput') {
+    return html`<${DefaultTextAreaEntry}
+      id=${id}
+      element=${element}
+      listElement=${listElement}
+      label=${translate('Enum')}
+      property='apexRendering.enum'
     />`;
   }
 }

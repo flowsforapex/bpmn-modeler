@@ -50,6 +50,105 @@
       ]
     },
     {
+      "name": "Control",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AiService",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AiProvider",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AiModel",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Objective",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Interval",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "TurnsPerSession",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "MaxTotalTurns",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ProcVarsToSubmit",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "BackgroundTaskSession",
       "extends": [ "bpmn:Process" ],
       "properties": [
@@ -93,10 +192,49 @@
           "name": "manualInput",
           "isAttr": true,
           "type": "String"
-        },
+        }
+      ]
+    },
+    {
+      "name": "Subject",
+      "superClass": [ "Element" ],
+      "properties": [
         {
-          "name": "subject",
-          "isAttr": true,
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Description",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AsyncBefore",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "AsyncAfter",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
           "type": "String"
         }
       ]
@@ -125,17 +263,6 @@
     },
     {
       "name": "Grouping",
-      "superClass": [ "Element" ],
-      "properties": [
-        {
-          "name": "value",
-          "isBody": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "Description",
       "superClass": [ "Element" ],
       "properties": [
         {
@@ -330,10 +457,6 @@
         { 
           "name": "apexRendering",
           "type": "ApexRendering"
-        },
-        { 
-          "name": "items",
-          "type": "Items"
         }
       ]
     },
@@ -388,16 +511,9 @@
         {
           "name": "placeholder",
           "type": "String"
-        }
-      ]
-    },
-    {
-      "name": "Items",
-      "type": "Items",
-      "superClass": [ "Element" ],
-      "properties": [
+        },
         {
-          "name": "type",
+          "name": "enum",
           "type": "String"
         }
       ]
@@ -1083,6 +1199,20 @@
     },
     {
       "name": "StartingActivities",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "expressionType",
+          "type": "String"
+        },
+        {
+          "name": "expression",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "StartCondition",
       "superClass": [ "Element" ],
       "properties": [
         {

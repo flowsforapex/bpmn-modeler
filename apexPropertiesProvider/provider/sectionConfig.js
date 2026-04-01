@@ -43,9 +43,10 @@ import ApexAIGenerationProps from './parts/serviceTask/ApexAIGenerationProps';
 import SendMailProps from './parts/serviceTask/SendMailProps';
 
 // subprocess
-import { AdHocSubProcessProps, CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
+import { AdHocSubProcessProps, AIProps, CompletionProps, DetailPageProps, StartingProps, VisibilityProps } from './parts/subprocess/AdHocSubprocessProps';
 
 // task
+import TaskAdHocProps from './parts/task/TaskAdHocProps';
 import TaskProps from './parts/task/TaskProps';
 import TaskTypeProps from './parts/task/TaskTypeProps';
 
@@ -81,6 +82,7 @@ const taskSectionsExclude = [
 ]
 
 export const taskSections = [
+  { id: 'adHoc', label: 'Ad Hoc', props: TaskAdHocProps },
   { id: 'procVars', label: 'Variable Expressions', props: ProcVarGroup, exclude: taskSectionsExclude },
   { id: 'parameters', label: 'Parameters', props: InOutParamGroup, exclude: taskSectionsExclude },
   { id: 'loop', label: multiInstanceHeading, props: MultiInstanceLoopProps, exclude: taskSectionsExclude },
@@ -163,6 +165,7 @@ export const processSections = [
 
 export const subProcessSections = [
   { id: 'loop', label: multiInstanceHeading, props: MultiInstanceLoopProps },
+  { id: 'ai', label: 'AI', props: AIProps },
   { id: 'starting', label: 'Starting Activities', props: StartingProps },
   { id: 'completion', label: 'Completion Condition', props: CompletionProps },
   { id: 'visibility', label: 'Visibility', props: VisibilityProps },
