@@ -29,7 +29,7 @@ export default class ExtensionHelper {
     // check if any of the values are not empty or undefined
     const hasValues = Object.values(values).some(v => v !== undefined && v !== '');
 
-    // if extensionElement is not existing
+    // if extensionElements are not existing
     if (!extensionElements && hasValues) {
       
       // create extension elements
@@ -64,7 +64,7 @@ export default class ExtensionHelper {
       updatedBusinessObject = extensionElements;
       update = { values: extensionElements.get('values').concat(extensionElement) };
     
-    // extension already existing
+    // extension elemens and extension already existing
     } else if (extensionElements && extensionElement) {
       
       // filter out removed properties
@@ -83,7 +83,7 @@ export default class ExtensionHelper {
           updatedBusinessObject = businessObject;
           update = { extensionElements: undefined};
         
-          // else: other extensions existing
+        // else: other extensions existing
         } else {
           
           // remove extension
@@ -91,7 +91,7 @@ export default class ExtensionHelper {
           update = { values: extensionElements.get('values').filter(v => v !== extensionElement)};
         }
       
-        // else: other properties existing
+      // else: other properties existing
       } else {
         
         // set empty properties to undefined (will be removed)
@@ -102,15 +102,11 @@ export default class ExtensionHelper {
         update = updatedValues;
       }
     
-    // fallback
+    // fallback: do nothing
     } else {
       return null;
     }
 
-    return modeling.updateModdleProperties(
-      element,
-      updatedBusinessObject,
-      update
-    );
+    return modeling.updateModdleProperties(element, updatedBusinessObject, update);
   }
 }

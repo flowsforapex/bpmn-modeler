@@ -20,12 +20,14 @@ export function getExtension(element, type) {
   })[0];
 }
 
+// get plain value of extension
 export function getExtensionValue(element, type) {
   const extension = getExtension(element, type);
   
   return extension ? extension.value : null;
 }
 
+// create element and set parent (if needed)
 export function createElement(elementType, properties, parent, bpmnFactory) {
   const element = bpmnFactory.create(elementType, properties);
 
@@ -36,6 +38,7 @@ export function createElement(elementType, properties, parent, bpmnFactory) {
   return element;
 }
 
+// create bpmn:extensionElements
 export function createExtensionElements(element, bpmnFactory) {
   const businessObject = getBusinessObject(element);
 
@@ -67,9 +70,5 @@ export function removeExtension(element, businessObject, toRemove, modeling) {
     };
   }
 
-  modeling.updateModdleProperties(
-    element,
-    updatedBusinessObject,
-    update
-  );
+  modeling.updateModdleProperties(element, updatedBusinessObject, update);
 }

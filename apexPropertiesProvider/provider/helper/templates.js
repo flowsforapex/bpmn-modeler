@@ -8,6 +8,7 @@ import { getContainer, openEditor } from '../plugins/monacoEditor';
 import ExtensionHelper from './ExtensionHelper';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
+// helper function to bundle all needed service hooks
 function useContext() {
   const modeling    = useService('modeling');
   const bpmnFactory = useService('bpmnFactory');
@@ -17,8 +18,10 @@ function useContext() {
   return { modeling, bpmnFactory, debounce, translate };
 }
 
+// helper function to use either helper or default getter/setter based on props
 function useValue({ helper, extensionType, element, listElement, parent }) {
   
+  // use passed helper or generate baseed on extensionType (single tag extensions)
   const resolvedHelper = helper || extensionType && new ExtensionHelper(extensionType);
   
   const get = (property) => resolvedHelper
@@ -164,8 +167,8 @@ export function DefaultToggleSwitchEntry(props) {
   const context = useContext();
   const { get, set } = useValue(props);
 
+  // conversion between string and boolean values
   const stringToBoolean = (v) => { return (v === (invert ? 'false' : 'true'))};
-
   const booleanToString = (v) => { return (v ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'))};
   
   const getValue = () => {
@@ -220,6 +223,7 @@ export function DefaultTextAreaEntryWithEditor(props) {
   const context = useContext();
   const { get, set } = useValue(props);
 
+  // append label with clickable icon
   const labelWithIcon =
     OpenDialogLabel(label, () => {
       
