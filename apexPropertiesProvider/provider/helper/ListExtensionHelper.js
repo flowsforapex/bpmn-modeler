@@ -7,6 +7,7 @@ import { updateProperties } from './properties';
 import { without } from 'min-dash';
 
 export default class ListExtensionHelper {
+  
   constructor({ listParentType, listType, entryType, listAttr, entryAttr, entryName }) {
     
     // type of the list parent e.g. apex:apexPage
@@ -23,15 +24,18 @@ export default class ListExtensionHelper {
     this.entryName = entryName;
   }
 
+  // get next name in line based on configuration and existing entries
   getNextName(element) {
     const name = this.entryName || this.listType.split(':')[1];
     return name + (this.getSubExtensionElements(element) ? (`_${this.getSubExtensionElements(element).length}`) : (`_${0}`));
   }
 
+  // get next sequence number
   getNextSequence(element) {
     return String((this.getSubExtensionElements(element) ? this.getSubExtensionElements(element).length : 0));
   }
 
+  // get list of sub extension elements
   getSubExtensionElements(element) {
     const { listParentType, listType, listAttr, entryAttr } = this;
 
@@ -44,6 +48,7 @@ export default class ListExtensionHelper {
     return extension && extension.get(entryAttr);
   }
 
+  // add new list element
   addSubElement(args) {
     const { listParentType, listType, entryType, listAttr, entryAttr } = this;
 
@@ -57,11 +62,7 @@ export default class ListExtensionHelper {
     if (!extensionElements) {
       extensionElements = createExtensionElements(element, bpmnFactory);
 
-      modeling.updateModdleProperties(
-        element,
-        businessObject,
-        { extensionElements },
-      );
+      modeling.updateModdleProperties(element, businessObject, { extensionElements });
     }
 
     let parent;
@@ -74,11 +75,7 @@ export default class ListExtensionHelper {
       if (!parent) {
         parent = createElement(listParentType, {}, extensionElements, bpmnFactory);
 
-        modeling.updateModdleProperties(
-          element,
-          extensionElements,
-          { values: [...extensionElements.get('values'), parent] },
-        );
+        modeling.updateModdleProperties(element, extensionElements, { values: [...extensionElements.get('values'), parent] });
       }
     }
     
@@ -94,17 +91,9 @@ export default class ListExtensionHelper {
         list = createElement(listType, {}, extensionElements, bpmnFactory);
 
         if (parent) {
-          modeling.updateModdleProperties(
-            element,
-            parent,
-            { [listAttr]: list },
-          );
+          modeling.updateModdleProperties(element, parent, { [listAttr]: list });
         } else {
-          modeling.updateModdleProperties(
-            element,
-            extensionElements,
-            { values: [...extensionElements.get('values'), list] },
-          );
+          modeling.updateModdleProperties( element, extensionElements, { values: [...extensionElements.get('values'), list] });
         }
       }
     }
@@ -121,13 +110,10 @@ export default class ListExtensionHelper {
     updateProperties({ element, listElement: newEntry, values: newProps, modeling, bpmnFactory });
 
     // (5) add entry to list
-    modeling.updateModdleProperties(
-      element,
-      list,
-      { [entryAttr]: [...list.get(entryAttr), newEntry] }
-    );
+    modeling.updateModdleProperties(element, list, { [entryAttr]: [...list.get(entryAttr), newEntry] });
   }
 
+  // remove list element
   removeSubElement(args) {
     const { listParentType, listType, listAttr, entryAttr } = this;
 
@@ -139,9 +125,11 @@ export default class ListExtensionHelper {
 
     let list;
     
+    // if list is nested in parent extension
     if (listParentType) {
       const parent = getExtension(element, listParentType);
       list = parent.get(listAttr);
+    // list is direct child of extension elements
     } else {
       list = getExtension(element, listType);
     }
@@ -150,12 +138,14 @@ export default class ListExtensionHelper {
       return;
     }
 
+    // get children
     const children = list.get(entryAttr);
 
     if (!children) {
       return;
     }
 
+    // remove element from list
     const newChildren = without(children, listElement);   
     
     let updatedBusinessObject = list;
@@ -195,10 +185,6 @@ export default class ListExtensionHelper {
       }
     }
     
-    modeling.updateModdleProperties(
-      element,
-      updatedBusinessObject,
-      update
-    );
+    modeling.updateModdleProperties(element, updatedBusinessObject, update);
   }
 }
