@@ -61,6 +61,7 @@ import SimpleFormProps from './parts/userTask/SimpleFormProps';
 
 // custom
 import CustomExtensionProps from './parts/CustomExtensionProps';
+import AsyncProps from './parts/scriptTask/AsyncProps';
 
 // helper for dynamic loop heading
 function multiInstanceHeading(element) {
@@ -104,6 +105,7 @@ export const userTaskSections = [
 export const scriptTaskSections = [
   { id: 'taskType', label: 'Task Type', props: TaskTypeProps },
   { id: 'executePlsql', label: 'PL/SQL', props: ExecutePlsqlProps },
+  { id: 'async', label: 'Async', props: AsyncProps },
   { id: 'procVars', label: 'Variable Expressions', props: ProcVarGroup },
   { id: 'parameters', label: 'Parameters', props: InOutParamGroup },
   { id: 'loop', label: multiInstanceHeading, props: MultiInstanceLoopProps }
