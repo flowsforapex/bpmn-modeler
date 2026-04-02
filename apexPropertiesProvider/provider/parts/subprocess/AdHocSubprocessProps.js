@@ -11,7 +11,7 @@ import PageItemsList from '../pageItems/PageItemsList';
 
 import { Quickpick } from '../../helper/Quickpick';
 
-import { DefaultNumberEntry, DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultNumberEntry, DefaultSelectEntry, DefaultSelectEntryAsync, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { isNumberFieldEntryEdited, isSelectEntryEdited, isTextAreaEntryEdited, isTextFieldEntryEdited } from '@bpmn-io/properties-panel';
 
@@ -64,6 +64,7 @@ export function AdHocSubProcessProps(args) {
         label: translate('Control Mode'),
         extensionType: 'apex:Control',
         property: 'value',
+        defaultValue: 'manual',
         component: DefaultSelectEntry,
         options: [
           { label: translate('Manual'), value: 'manual' },
@@ -124,9 +125,11 @@ export function AIProps(args) {
         id: 'objective',
         element,
         label: translate('AI Objective'),
+        description: translate('Array of Strings'),
         extensionType: 'apex:Objective',
         property: 'value',
-        component: DefaultTextAreaEntry,
+        language: 'json',
+        component: DefaultTextAreaEntryWithEditor,
         isEdited: isTextAreaEntryEdited,
       },
       {
@@ -160,9 +163,11 @@ export function AIProps(args) {
         id: 'procVarsToSubmit',
         element,
         label: translate('Process Variables To Submit'),
+        description: translate('Array of Strings'),
         extensionType: 'apex:ProcVarsToSubmit',
         property: 'value',
-        component: DefaultTextAreaEntry,
+        language: 'json',
+        component: DefaultTextAreaEntryWithEditor,
         isEdited: isTextAreaEntryEdited,
       },
     );
