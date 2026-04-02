@@ -8,14 +8,16 @@ import {
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
+import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { html } from 'htm/preact';
 
 export default function InOutParamProps(args) {
   
-  const { idPrefix, param, element } = args;
-  
+  const { idPrefix, param, element, helper } = args;
+
+  const isInput = helper.listType === 'apex:InputParameters';
+
   const entries = [];
 
   // Basic parameter fields
@@ -40,57 +42,84 @@ export default function InOutParamProps(args) {
       listElement: param,
       component: RequiredProp,
       // isEdited: isToggleSwitchEntryEdited,
-    },
+    }
+  );
+
+  if (isInput) {
+    entries.push(
+      {
+        id: `${idPrefix}-default`,
+        element,
+        listElement: param,
+        component: DefaultProp,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+  }
+  
+  entries.push(
     {
       id: `${idPrefix}-description`,
       element,
       listElement: param,
       component: DescriptionProp,
       isEdited: isTextAreaEntryEdited,
-    },
-    {
-      id: `${idPrefix}-expressionType`,
-      element,
-      listElement: param,
-      component: ExpressionTypeProp,
-      isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-expression`,
-      element,
-      listElement: param,
-      component: ExpressionProp,
-      isEdited: isTextFieldEntryEdited,
-    },
-    {
-      id: `${idPrefix}-itemType`,
-      element,
-      listElement: param,
-      component: ItemTypeProp,
-      isEdited: isSelectEntryEdited,
-    },
-    {
-      id: `${idPrefix}-maxLength`,
-      element,
-      listElement: param,
-      component: MaxLengthProp,
-      isEdited: isNumberFieldEntryEdited,
-    },
-    {
-      id: `${idPrefix}-placeholder`,
-      element,
-      listElement: param,
-      component: PlaceholderProp,
-      isEdited: isTextFieldEntryEdited,
-    },
-    {
-      id: `${idPrefix}-enum`,
-      element,
-      listElement: param,
-      component: EnumProp,
-      // isEdited: isTextAreaEntryEdited,
-    },
+    }
   );
+  
+  if (isInput) {
+    entries.push(
+      {
+        id: `${idPrefix}-expressionType`,
+        element,
+        listElement: param,
+        component: ExpressionTypeProp,
+        isEdited: isSelectEntryEdited,
+      },
+      {
+        id: `${idPrefix}-expression`,
+        element,
+        listElement: param,
+        component: ExpressionProp,
+        isEdited: isTextFieldEntryEdited,
+      }
+    );
+
+    const expressionType = param.source.expressionType;
+
+    if (expressionType === 'userInput') {
+      entries.push(
+        {
+          id: `${idPrefix}-itemType`,
+          element,
+          listElement: param,
+          component: ItemTypeProp,
+          isEdited: isSelectEntryEdited,
+        },
+        {
+          id: `${idPrefix}-maxLength`,
+          element,
+          listElement: param,
+          component: MaxLengthProp,
+          isEdited: isNumberFieldEntryEdited,
+        },
+        {
+          id: `${idPrefix}-placeholder`,
+          element,
+          listElement: param,
+          component: PlaceholderProp,
+          isEdited: isTextFieldEntryEdited,
+        },
+        {
+          id: `${idPrefix}-enum`,
+          element,
+          listElement: param,
+          component: EnumProp,
+          // isEdited: isTextAreaEntryEdited,
+        },
+      );
+    }
+  }
 
   return entries;
 }
@@ -147,6 +176,21 @@ function RequiredProp(props) {
     label=${translate('Required')}
     property=required
     defaultValue=false
+  />`;
+}
+
+function DefaultProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  return html`<${DefaultTextFieldEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Default')}
+    property=default
   />`;
 }
 
@@ -295,12 +339,14 @@ function EnumProp(props) {
   const expressionType = listElement.source.expressionType;
 
   if (expressionType === 'userInput') {
-    return html`<${DefaultTextAreaEntry}
+    return html`<${DefaultTextAreaEntryWithEditor}
       id=${id}
       element=${element}
       listElement=${listElement}
-      label=${translate('Enum')}
+      label=${translate('List Of Values')}
+      description=${translate('JSON Object')}
       property='apexRendering.enum'
+      language='json'
     />`;
   }
 }

@@ -1,6 +1,8 @@
 
 import { getBusinessObject } from '../../helper/util';
 
+import { is } from 'bpmn-js/lib/util/ModelUtil';
+
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import InOutParamList from './InOutParamList';
@@ -25,17 +27,6 @@ export default function (args) {
       }
     );
 
-    const outputHelper = new ListExtensionHelper(
-      {
-        listParentType: null,
-        listType: 'apex:OutputParameters',
-        entryType: 'apex:Parameter',
-        listAttr: null,
-        entryAttr: 'outputParameter',
-        entryName: null
-      }
-    );
-
     entries.push({
       id: 'inputParameters',
       element,
@@ -44,13 +35,27 @@ export default function (args) {
       helper: inputHelper,
     });
 
-    entries.push({
-      id: 'outputParameters',
-      element,
-      label: translate('Output Parameters'),
-      component: InOutParamList,
-      helper: outputHelper,
-    });
+    if (!is(element, 'bpmn:StartEvent')) {
+
+      const outputHelper = new ListExtensionHelper(
+        {
+          listParentType: null,
+          listType: 'apex:OutputParameters',
+          entryType: 'apex:Parameter',
+          listAttr: null,
+          entryAttr: 'outputParameter',
+          entryName: null
+        }
+      );
+    
+      entries.push({
+        id: 'outputParameters',
+        element,
+        label: translate('Output Parameters'),
+        component: InOutParamList,
+        helper: outputHelper,
+      });
+    }
   }
 
   return entries;
