@@ -61,17 +61,6 @@
       ]
     },
     {
-      "name": "AiService",
-      "superClass": [ "Element" ],
-      "properties": [
-        {
-          "name": "value",
-          "isBody": true,
-          "type": "String"
-        }
-      ]
-    },
-    {
       "name": "AiProvider",
       "superClass": [ "Element" ],
       "properties": [
@@ -642,6 +631,11 @@
       "name": "AiService",
       "superClass": [ "Element" ],
       "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        },
         {
           "name": "expressionType",
           "type": "String"

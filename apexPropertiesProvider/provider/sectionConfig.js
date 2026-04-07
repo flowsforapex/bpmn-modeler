@@ -114,6 +114,7 @@ export const scriptTaskSections = [
 export const serviceTaskSections = [
   { id: 'taskType', label: 'Task Type', props: TaskTypeProps },
   { id: 'executePlsql', label: 'PL/SQL', props: ExecutePlsqlProps },
+  { id: 'async', label: 'Async', props: AsyncProps },
   { id: 'sendMail', label: 'Mail', props: SendMailProps },
   { id: 'apexAIGeneration', label: 'APEX AI Generation', props: ApexAIGenerationProps },
   { id: 'procVars', label: 'Variable Expressions', props: ProcVarGroup },

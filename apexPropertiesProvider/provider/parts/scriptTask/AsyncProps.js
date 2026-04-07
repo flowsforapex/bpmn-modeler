@@ -11,7 +11,7 @@ export default function AsyncProps(args) {
   
   const entries = [];
 
-  if (is(element, 'bpmn:ScriptTask')) {
+  if (is(element, 'bpmn:ScriptTask') || is(element, 'bpmn:ServiceTask')) {
     entries.push(
       {
         id: 'asyncBefore',
