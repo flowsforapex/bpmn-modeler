@@ -146,11 +146,11 @@ function TypeProp(props) {
   const translate = useService('translate');
 
   const dataTypeOptions = [
-    { label: translate('string'), value: 'string' },
-    { label: translate('number'), value: 'number' },
-    { label: translate('boolean'), value: 'boolean' },
-    { label: translate('array'), value: 'array' },
-    { label: translate('object'), value: 'object' },
+    { label: translate('String'), value: 'string' },
+    { label: translate('Number'), value: 'number' },
+    { label: translate('Boolean'), value: 'boolean' },
+    { label: translate('Array'), value: 'array' },
+    { label: translate('Object'), value: 'object' },
   ];
 
   return html`<${DefaultSelectEntry}
@@ -273,12 +273,6 @@ function ItemTypeProp(props) {
     { label: translate('Date Picker'), value: 'datepicker' },
   ];
 
-  const cleanup = (value) => {
-    return {
-      ...(value !== 'userInput' && {'apexRendering.itemType': null}),
-    };
-  }
-
   const expressionType = listElement.source.expressionType;
 
   if (expressionType === 'userInput') {
@@ -289,7 +283,6 @@ function ItemTypeProp(props) {
       label=${translate('Item Type')}
       property='apexRendering.itemType'
       options=${options}
-      cleanup=${cleanup}
     />`;
   }
 }
