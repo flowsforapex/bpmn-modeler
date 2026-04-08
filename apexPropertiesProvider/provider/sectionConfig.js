@@ -35,6 +35,9 @@ import ProcVarGroup from './parts/processVariables/ProcVarGroup';
 // scheduling
 import SchedulingProps from './parts/scheduling/SchedulingProps';
 
+// scriptTask
+import AsyncProps from './parts/scriptTask/AsyncProps';
+
 // sequenceFlow
 import SequenceFlowProps from './parts/sequenceFlow/SequenceFlowProps';
 
@@ -61,7 +64,6 @@ import SimpleFormProps from './parts/userTask/SimpleFormProps';
 
 // custom
 import CustomExtensionProps from './parts/CustomExtensionProps';
-import AsyncProps from './parts/scriptTask/AsyncProps';
 
 // helper for dynamic loop heading
 function multiInstanceHeading(element) {

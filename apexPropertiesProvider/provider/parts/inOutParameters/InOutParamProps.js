@@ -1,6 +1,5 @@
 
 import {
-  isNumberFieldEntryEdited,
   isSelectEntryEdited,
   isTextAreaEntryEdited,
   isTextFieldEntryEdited
@@ -224,6 +223,7 @@ function ExpressionTypeProp(props) {
   const cleanup = (value) => {
     return {
       ...(value === 'userInput' && {'source.expression': null}),
+      ...(value !== 'userInput' && {'apexRendering.itemType': null, 'apexRendering.maxLength': null, 'apexRendering.placeholder': null, 'apexRendering.enum': null }),
     };
   }
 

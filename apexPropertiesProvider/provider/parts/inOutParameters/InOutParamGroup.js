@@ -1,11 +1,14 @@
 
-import { getBusinessObject } from '../../helper/util';
+import { useService } from 'bpmn-js-properties-panel';
+import { getBusinessObject, isChildOf } from '../../helper/util';
 
 import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 import ListExtensionHelper from '../../helper/ListExtensionHelper';
 
 import InOutParamList from './InOutParamList';
+
+import { Quickpick } from '../../helper/Quickpick';
 
 export default function (args) {
   const { element, translate } = args;
@@ -47,7 +50,15 @@ export default function (args) {
           entryName: null
         }
       );
-    
+      
+      if (isChildOf(element, 'bpmn:AdHocSubProcess'))  {
+        entries.push({
+          element,
+          helper: outputHelper,
+          component: QuickpickOutput,
+        });
+      }
+
       entries.push({
         id: 'outputParameters',
         element,
@@ -59,4 +70,38 @@ export default function (args) {
   }
 
   return entries;
+}
+
+function QuickpickOutput(props) {
+  const { element, helper } = props;
+
+  const translate = useService('translate');
+  const bpmnFactory = useService('bpmnFactory');
+  const modeling = useService('modeling');
+
+  return Quickpick(
+    {
+      text: translate('Generate default parameters'),
+      handler: () => {
+        helper.addSubElement({
+          element,
+          bpmnFactory,
+          modeling,
+          newProps: {
+            name: 'result',
+            type: 'string',
+          }
+        });
+        helper.addSubElement({
+          element,
+          bpmnFactory,
+          modeling,
+          newProps: {
+            name: 'keyOutputs',
+            type: 'object',
+          }
+        });
+      }
+    }
+  );
 }

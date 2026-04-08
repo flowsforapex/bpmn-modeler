@@ -16,6 +16,8 @@ export default function InOutParamList(args) {
   
   const params = helper.getSubExtensionElements(element) || [];
 
+  const isInput = helper.listType === 'apex:InputParameters';
+
   function addParam() {
     return helper.addSubElement({
         element,
@@ -23,7 +25,7 @@ export default function InOutParamList(args) {
         modeling,
         newProps: {
           name: helper.getNextName(element),
-          'source.expressionType': 'static',
+          ...(isInput && {'source.expressionType': 'static'}),
         }
       }
     );
