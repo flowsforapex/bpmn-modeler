@@ -14,7 +14,7 @@ export function gatewayExtensions(e, bo) {
 };
 
 export function taskExtensions(e, bo) {
-  const extensions = ['apex:InputParameters', 'apex:OutputParameters'];
+  const extensions = ['apex:InputParameters', 'apex:OutputParameters', 'apex:Subject', 'apex:Description'];
   
   if (bo.loopCharacteristics) {
     extensions.push('apex:Description');
@@ -33,7 +33,7 @@ export function taskExtensions(e, bo) {
     extensions.push('apex:IsRepeatable');
     extensions.push('apex:DisplayOrder');
     extensions.push('apex:Grouping');
-    extensions.push('apex:Description');
+    extensions.push('apex:StartCondition');
   }
 
   return extensions;
@@ -63,11 +63,11 @@ export function userTaskExtensions(e, bo) {
 }
 
 export function scriptTaskExtensions(e, bo) {
-  return ['apex:ExecutePlsql'];
+  return ['apex:ExecutePlsql','apex:AsyncBefore','apex:AsyncAfter'];
 }
 
 export function serviceTaskExtensions(e, bo) {
-  const extensions = [];
+  const extensions = ['apex:AsyncBefore','apex:AsyncAfter'];
   
   switch (bo.type) {
     case 'executePlsql':
@@ -218,6 +218,15 @@ export function subProcessExtensions(e, bo) {
 
 export function adHocSubProcessExtensions(e, bo) {
   return [
+    'apex:Control',
+    'apex:AiService',
+    'apex:AiProvider',
+    'apex:AiModel',
+    'apex:Objective',
+    'apex:Interval',
+    'apex:TurnsPerSession',
+    'apex:MaxTotalTurns',
+    'apex:ProcVarsToSubmit',
     'apex:StartingActivities',
     'apex:CompletionCondition',
     'apex:TaskVisibility',
