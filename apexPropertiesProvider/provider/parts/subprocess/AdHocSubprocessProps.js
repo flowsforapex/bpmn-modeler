@@ -70,6 +70,7 @@ export function AdHocSubProcessProps(args) {
           { label: translate('Manual'), value: 'manual' },
           { label: translate('AI'), value: 'ai' },
           { label: translate('Hybrid'), value: 'hybrid' },
+          { label: translate('Recommendation'), value: 'recommendation' },
         ],
         isEdited: isSelectEntryEdited,
       }
@@ -91,13 +92,24 @@ export function AIProps(args) {
 
   const control = getExtensionValue(businessObject, 'apex:Control');
 
-  if (is(element, 'bpmn:AdHocSubProcess') && (control === 'ai' || control === 'hybrid')) {
+  if (is(element, 'bpmn:AdHocSubProcess') && (control === 'ai' || control === 'hybrid' || control === 'recommendation')) {
 
     entries.push(
+      {
+        id: 'aiInterface',
+        element,
+        label: translate('AI Interface'),
+        description: translate('UC_AI or APEX_AI'),
+        extensionType: 'apex:AiService',
+        property: 'value',
+        component: DefaultTextFieldEntry,
+        isEdited: isTextFieldEntryEdited,
+      },
       {
         id: 'aiService',
         element,
         label: translate('AI Service'),
+        description: translate('APEX Static ID'),
         extensionType: 'apex:AiService',
         property: 'value',
         component: DefaultTextFieldEntry,
@@ -106,7 +118,8 @@ export function AIProps(args) {
       {
         id: 'aiProvider',
         element,
-        label: translate('AI Provider Constant'),
+        label: translate('AI Provider'),
+        description: translate('e.g. anthropic, openai'),
         extensionType: 'apex:AiProvider',
         property: 'value',
         component: DefaultTextFieldEntry,
@@ -115,7 +128,8 @@ export function AIProps(args) {
       {
         id: 'aiModel',
         element,
-        label: translate('AI Model Constant'),
+        label: translate('AI Model'),
+        description: translate('e.g. claude-4-5-sonnet'),
         extensionType: 'apex:AiModel',
         property: 'value',
         component: DefaultTextFieldEntry,
@@ -125,10 +139,8 @@ export function AIProps(args) {
         id: 'objective',
         element,
         label: translate('AI Objective'),
-        description: translate('Array of Strings'),
         extensionType: 'apex:Objective',
         property: 'value',
-        language: 'json',
         component: DefaultTextAreaEntryWithEditor,
         isEdited: isTextAreaEntryEdited,
       },

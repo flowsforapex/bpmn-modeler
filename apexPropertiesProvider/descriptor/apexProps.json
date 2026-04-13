@@ -61,6 +61,17 @@
       ]
     },
     {
+      "name": "AiInterface",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "value",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "AiProvider",
       "superClass": [ "Element" ],
       "properties": [
