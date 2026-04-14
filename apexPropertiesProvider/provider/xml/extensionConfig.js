@@ -218,7 +218,9 @@ export function subProcessExtensions(e, bo) {
 
 export function adHocSubProcessExtensions(e, bo) {
   return [
+    'apex:Subject',
     'apex:Control',
+    'apex:AiInterface',
     'apex:AiService',
     'apex:AiProvider',
     'apex:AiModel',
