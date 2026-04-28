@@ -28,7 +28,11 @@ module.exports = {
         {
           from: path.resolve(__dirname, "assets/fonts/codicon.ttf"),
           to: "assets/fonts/codicon.ttf",
-        }
+        },
+        {
+          from: path.resolve(__dirname, "diagrams"),
+          to: "assets/diagrams",
+        },
       ],
     }),
     new MonacoWebpackPlugin({
