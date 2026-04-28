@@ -1,5 +1,6 @@
 
 import {
+  isNumberFieldEntryEdited,
   isSelectEntryEdited,
   isTextAreaEntryEdited,
   isTextFieldEntryEdited
