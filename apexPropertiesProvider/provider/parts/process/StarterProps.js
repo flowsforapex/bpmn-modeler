@@ -65,7 +65,7 @@ function PotentialStartingUsers(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = potentialStartingUsersHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = potentialStartingUsersHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -156,7 +156,7 @@ function PotentialStartingGroups(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = potentialStartingGroupsHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = potentialStartingGroupsHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -247,7 +247,7 @@ function ExcludedStartingUsers(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = excludedStartingUsersHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = excludedStartingUsersHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 

@@ -55,7 +55,7 @@ export default function (args) {
       }
     );
 
-    const allowBinds = extensionHelper.getExtensionProperty(element, 'engine');
+    const allowBinds = extensionHelper.getProperty({element, property: 'engine'});
 
     if (allowBinds === 'true') {
       entries.push(

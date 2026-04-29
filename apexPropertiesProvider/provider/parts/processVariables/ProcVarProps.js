@@ -19,7 +19,7 @@ export default function ProcVarProps(args) {
 
   const entries = [];
 
-  const { varExpressionType, varDataType } = procVar;
+  const { varExpressionType, varDataType, varSourceType } = procVar;
 
   const dataTypeOptions = [
     { label: translate('Varchar2'), value: 'VARCHAR2' },
@@ -44,6 +44,7 @@ export default function ProcVarProps(args) {
     ...(varDataType !== 'CLOB' ? [{ label: translate('Expression (Legacy)'), value: 'plsqlExpression' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body'), value: 'plsqlRawFunctionBody' }] : []),
     ...(varDataType !== 'CLOB' ? [{ label: translate('Function Body (Legacy)'), value: 'plsqlFunctionBody' }] : []),
+    ...[{ label: translate('JSON Path Expression'), value: 'jsonPath' }],
   ];
 
   const expressionDescription = {
@@ -95,8 +96,25 @@ export default function ProcVarProps(args) {
     },
     sqlQueryArray: {
       JSON: translate('SQL query returning a JSON array'),
+    },
+    jsonPath: {
+      VARCHAR2: translate('Valid JSON path expression'),
+      NUMBER: translate('Valid JSON path expression'),
+      DATE: translate('Valid JSON path expression'),
+      TIMESTAMP_WITH_TIME_ZONE: translate('Valid JSON path expression'),
+      CLOB: translate('Valid JSON path expression'),
     }
   };
+
+  const sourceDescription = {
+    processVariable: translate('Name of the Process Variable'),
+  };
+
+  const sourceTypeOptions = [
+    ...[{ label: translate('Process Variable (JSON)'), value: 'processVariable' }],
+    ...[{ label: translate('Task Input Parameters'), value: 'taskInput' }],
+    ...[{ label: translate('Task Output Parameters'), value: 'taskOutput' }],
+  ];
 
   const editorTypes = [
     'sqlQuerySingle',
@@ -185,10 +203,51 @@ export default function ProcVarProps(args) {
         label: translate('Expression Type'),
         property: 'varExpressionType',
         options: expressionTypeOptions,
+        cleanup: (value) => {
+          return {
+                  ...(value !== 'jsonPath' && {varSourceType: null, varSource: null})
+                }; 
+          },
         component: DefaultSelectEntry,
         isEdited: isSelectEntryEdited,
       }
     );
+
+    if (varExpressionType === 'jsonPath') {
+      entries.push(
+        {
+          id: `${idPrefix}-varSourceType`,
+          element,
+          listElement: procVar,
+          label: translate('Source Type'),
+          property: 'varSourceType',
+          defaultValue: 'processVariable',
+          options: sourceTypeOptions,
+          cleanup: (value) => {
+          return {
+                  ...(value !== 'processVariable' && {varSource: null})
+                }; 
+          },
+          component: DefaultSelectEntry,
+          isEdited: isSelectEntryEdited,
+        }
+      );
+    }
+
+    if (varSourceType === 'processVariable') {
+      entries.push(
+        {
+          id: `${idPrefix}-varSource`,
+          element,
+          listElement: procVar,
+          label: translate('Source'),
+          description: sourceDescription[varSourceType],
+          property: 'varSource',
+          component: DefaultTextFieldEntry,
+          isEdited: isTextFieldEntryEdited,
+        }
+      );
+    }
 
     if (varExpressionType != null) {
 

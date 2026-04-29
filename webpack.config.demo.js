@@ -28,7 +28,11 @@ module.exports = {
         {
           from: path.resolve(__dirname, "assets/fonts/codicon.ttf"),
           to: "assets/fonts/codicon.ttf",
-        }
+        },
+        {
+          from: path.resolve(__dirname, "diagrams"),
+          to: "assets/diagrams",
+        },
       ],
     }),
     new MonacoWebpackPlugin({
@@ -54,6 +58,11 @@ module.exports = {
         type: "asset/resource",
       },
     ],
+  },
+  resolve: {
+    alias: {
+      'min-dom$': path.resolve(__dirname, 'min-dom-shim.js')
+    }
   },
   devtool: "source-map",
   devServer: {

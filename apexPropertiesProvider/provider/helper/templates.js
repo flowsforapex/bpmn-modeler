@@ -2,159 +2,128 @@ import { NumberFieldEntry, SelectEntry, TextAreaEntry, TextFieldEntry, ToggleSwi
 
 import { useService } from 'bpmn-js-properties-panel';
 
-import { getBusinessObject } from './util';
+import { getProperty, updateProperties } from './properties';
 
 import { getContainer, openEditor } from '../plugins/monacoEditor';
+import ExtensionHelper from './ExtensionHelper';
 import { OpenDialogLabel } from './OpenDialogLabel';
 
-export function DefaultNumberEntry(props) {
-  const { id, element, listElement, label, description, helper, property } = props;
-
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
+// helper function to bundle all needed service hooks
+function useContext() {
+  const modeling    = useService('modeling');
   const bpmnFactory = useService('bpmnFactory');
+  const debounce    = useService('debounceInput');
+  const translate   = useService('translate');
 
-   // business object passed in props for list elements
-   const businessObject = listElement || getBusinessObject(element);
+  return { modeling, bpmnFactory, debounce, translate };
+}
 
-  const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property) : businessObject[property]);
+// helper function to use either helper or default getter/setter based on props
+function useValue({ helper, extensionType, element, listElement, parent }) {
+  
+  // use passed helper or generate baseed on extensionType (single tag extensions)
+  const resolvedHelper = helper || extensionType && new ExtensionHelper(extensionType);
+  
+  const get = (property) => resolvedHelper
+    ? resolvedHelper.getProperty({ element, property, listElement, parent })
+    : getProperty({ element, listElement, property });
 
-    const setValue = (value) => {
-      if (helper) {
-        helper.setExtensionProperty(element, modeling, bpmnFactory, {
-          [property]: String(value),
-        });
-      } else {
-        modeling.updateModdleProperties(element, businessObject, {
-          [property]: String(value),
-        });
-      }
-    };
+  const set = (values, context) => resolvedHelper
+    ? resolvedHelper.setProperty({ element, values, listElement, parent, ...context })
+    : updateProperties({ element, listElement, values, ...context });
+
+  return { get, set };
+}
+
+export function DefaultNumberEntry(props) {
+  
+  const { id, element, label, description, property } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
+
+  const value = (v) => { return { [property]: v ? String(v) : v }};
 
   return NumberFieldEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue,
-    setValue,
-    debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextFieldEntry(props) {
-  const { id, element, listElement, label, description, helper, property, parent } = props;
+  
+  const { id, element, label, description, property } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
-  const getValue = () =>
-    (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
-
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const value = (v) => { return { [property]: v }};
 
   return new TextFieldEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultSelectEntry(props) {
-  const { id, element, listElement, label, description, helper, property, defaultValue, options, cleanup, parent } = props;
-
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
+  
+  const { id, element, label, description, property, defaultValue, options, cleanup } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
+  
   const getValue = () => {
-    var value;
-
-    if (defaultValue) {
-      value = (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
-
-      if (!value || !options.some(v => v.value === value)) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
-            [property]: defaultValue,
-          }, parent);
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: defaultValue,
-          });
-        }
-      }
+    
+    const value = get(property);
+    
+    // set default value if empty or value not in options
+    if (defaultValue && (!value || !options.some(v => v.value === value))) {
+      set({ [property]: defaultValue }, context);
+      return defaultValue;
     }
-
-    return (helper ? helper.getExtensionProperty(element, property, parent) : businessObject[property]);
+    
+    return value;
   };
 
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-        ...(cleanup && cleanup(value))
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-        ...(cleanup && cleanup(value))
-      });
-    }
-  };
+  const value = (v) => { return { [property]: v, ...(cleanup && cleanup(v)) }};
 
   return new SelectEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
+    id,
+    element,
+    label,
+    description,
     getValue: getValue,
-    setValue: setValue,
+    setValue: v => set(value(v), context),
     getOptions: () => options,
-    debounce: debounce,
+    debounce: context.debounce,
   });
 }
 
 export function DefaultSelectEntryAsync(props) {
-  const { id, element, listElement, label, description, helper, property, state, needsRefresh } = props;
-
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
+  
+  const { id, element, label, description, property, state, needsRefresh } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
+  
   const getOptions = () => {
-    const currValue = (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
-
-    const existing =
-      currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
-
+    
+    const currValue = get(property);
+    
+    const existing = currValue == null || (state && state.values && state.values.map(e => e.value).includes(currValue));
+   
     const result = [];
-
+   
     // only return values if list will not be refreshed
     if (state && !needsRefresh) {
       // only if state loaded, current value is not null and does not exist in list
@@ -173,183 +142,94 @@ export function DefaultSelectEntryAsync(props) {
         );
       }
     }
-
+    
     return result;
   };
 
-  const getValue = () =>
-    (helper ? (helper.getExtensionProperty(element, property)) : businessObject[property]);
-
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const value = (v) => { return { [property]: v }};
 
   return new SelectEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
-    getOptions: getOptions,
+    id,
+    element,
+    label,
+    description,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
+    getOptions,
   });
 }
 
 export function DefaultToggleSwitchEntry(props) {
-  const { id, element, listElement, label, description, helper, property, defaultValue, invert, cleanup, cleanupHelper } = props;
+  
+  const { id, element, label, description, property, defaultValue, invert, cleanup } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
+  // conversion between string and boolean values
+  const stringToBoolean = (v) => { return (v === (invert ? 'false' : 'true'))};
+  const booleanToString = (v) => { return (v ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'))};
+  
   const getValue = () => {
-    var value;
+    const value = get(property);
     
-    if (defaultValue) {
-      value = helper ? (helper.getExtensionProperty(element, property)) : businessObject[property];
-
-      if (!value) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
-            [property]: defaultValue,
-          });
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: defaultValue,
-          });
-        }
-      }
+    // set default value if empty
+    if (defaultValue && !value) {
+      set({ [property]: defaultValue }, context);
+      return stringToBoolean(defaultValue);
     }
-
-    return helper ? (helper.getExtensionProperty(element, property) === (invert ? 'false' : 'true')) : (businessObject[property] === (invert ? 'false' : 'true'));
-  };
     
-
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        // eslint-disable-next-line no-nested-ternary
-        [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        // eslint-disable-next-line no-nested-ternary
-        [property]: value ? (invert ? 'false' : 'true') : (invert ? 'true' : 'false'),
-      });
-    }
-
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        ...(cleanup && cleanup(value))
-      });
-    } else if (cleanupHelper) {
-      cleanupHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-        ...(cleanup && cleanup(value))
-      });
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        ...(cleanup && cleanup(value))
-      });
-    }
+    return stringToBoolean(value);
   };
+
+  const value = (v) => { return { [property]: booleanToString(v), ...(cleanup && cleanup(value)) }}
 
   return new ToggleSwitchEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
+    id,
+    element,
+    label,
+    description,
     getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextAreaEntry(props) {
-  const { id, element, listElement, label, description, helper, property, parent } = props;
+  
+  const { id, element, label, description, property } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const modeling = useService('modeling');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
-
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
+  const value = (v) => { return { [property]: v }};
 
   return new TextAreaEntry({
-    id: id,
-    element: element,
-    label: label,
-    description: description,
-    getValue: getValue,
-    setValue: setValue,
-    debounce: debounce,
+    id,
+    element,
+    label,
+    description,
+    getValue: () => get(property),
+    setValue: v => set(value(v), context),
+    debounce: context.debounce,
   });
 }
 
 export function DefaultTextAreaEntryWithEditor(props) {
-  const { id, element, listElement, label, description, helper, property, language, type, parent } = props;
+  
+  const { id, element, label, description, property, language, type } = props;
+  
+  const context = useContext();
+  const { get, set } = useValue(props);
 
-  const modeling = useService('modeling');
-  const translate = useService('translate');
-  const debounce = useService('debounceInput');
-  const bpmnFactory = useService('bpmnFactory');
-
-  // business object passed in props for list elements
-  const businessObject = listElement || getBusinessObject(element);
-
-  const getValue = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
-
-  const setValue = (value) => {
-    if (helper) {
-      helper.setExtensionProperty(element, modeling, bpmnFactory, {
-        [property]: value,
-      }, parent);
-    } else {
-      modeling.updateModdleProperties(element, businessObject, {
-        [property]: value,
-      });
-    }
-  };
-
+  // append label with clickable icon
   const labelWithIcon =
     OpenDialogLabel(label, () => {
-      var getProperty = () => (helper ? (helper.getExtensionProperty(element, property, parent)) : businessObject[property]);
-      var saveProperty = function (text) {
-        if (helper) {
-          helper.setExtensionProperty(element, modeling, bpmnFactory, {
-            [property]: text,
-          }, parent);
-        } else {
-          modeling.updateModdleProperties(element, businessObject, {
-            [property]: text,
-          });
-        }
-      };
+      
+      var getProperty = () => get(property);
+      var saveProperty = text => set({ [property]: text }, context);
+      
       openEditor(
         getProperty,
         saveProperty,
@@ -359,16 +239,18 @@ export function DefaultTextAreaEntryWithEditor(props) {
       );
     });
 
+  const value = (v) => { return { [property]: v }};
+
   return [
-    getContainer(translate, id),
+    getContainer(context.translate, id),
     new TextAreaEntry({
-      id: id,
-      element: element,
+      id,
+      element,
       label: labelWithIcon,
-      description: description,
-      getValue: getValue,
-      setValue: setValue,
-      debounce: debounce,
+      description,
+      getValue: () => get(property),
+      setValue: v => set(value(v), context),
+      debounce: context.debounce,
     })
   ];
 }

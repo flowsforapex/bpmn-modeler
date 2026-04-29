@@ -282,7 +282,8 @@ button.dialog.fa {
   color: var(--color-flows-dark-text);
 }
 .FLOWS-DARK .bio-properties-panel-group,
-.FLOWS-DARK .bio-properties-panel-group-header.sticky {
+.FLOWS-DARK .bio-properties-panel-group-header.sticky,
+.FLOWS-DARK .bio-properties-panel-list-entry-header.sticky {
    background-color: var(--color-flows-lighter-dark-background);
    color: var(--color-flows-dark-text);
  }

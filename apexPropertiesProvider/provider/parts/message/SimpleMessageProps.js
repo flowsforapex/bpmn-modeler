@@ -143,7 +143,7 @@ function DefaultExpression(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = helper.getExtensionProperty(element, 'expressionType', eventDefinition);
+  const expressionType = helper.getProperty({element, property: 'expressionType', parent: eventDefinition});
   
   const entries = [];
 

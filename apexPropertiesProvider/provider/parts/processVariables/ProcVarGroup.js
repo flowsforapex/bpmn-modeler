@@ -24,7 +24,7 @@ export default function (args) {
 
   if (!businessObject.loopCharacteristics) {
     if (
-      ModelingUtil.isAny(element, ['bpmn:Task', 'bpmn:UserTask', 'bpmn:ScriptTask', 'bpmn:ServiceTask', 'bpmn:ManualTask'])
+      ModelingUtil.isAny(element, ['bpmn:Task'])
     ) {
 
       type1 = {
@@ -137,21 +137,25 @@ export default function (args) {
     }
 
     const listExtensionHelper1 = type1 ? new ListExtensionHelper(
-      type1.type,
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null,
-      type1.name
+      {
+        listParentType: null,
+        listType: type1.type,
+        entryType: 'apex:ProcessVariable',
+        listAttr: null,
+        entryAttr: 'processVariable',
+        entryName: type1.name
+      }
     ) : null;
 
     const listExtensionHelper2 = type2 ? new ListExtensionHelper(
-      type2.type,
-      null,
-      'procVars',
-      'apex:ProcessVariable',
-      null,
-      type2.name
+      {
+        listParentType: null,
+        listType: type2.type,
+        entryType: 'apex:ProcessVariable',
+        listAttr: null,
+        entryAttr: 'processVariable',
+        entryName: type2.name
+      }
     ) : null;
 
     if (
