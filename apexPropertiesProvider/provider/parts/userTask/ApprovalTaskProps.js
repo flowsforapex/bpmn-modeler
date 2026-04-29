@@ -24,11 +24,14 @@ import { getApplications, getJSONParameters, getTasks } from '../../plugins/meta
 const extensionHelper = new ExtensionHelper('apex:ApexApproval');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexApproval',
-  'apex:Parameters',
-  'parameters',
-  'apex:Parameter',
-  'parameter'
+  {
+    listParentType: 'apex:ApexApproval',
+    listType: 'apex:Parameters',
+    entryType: 'apex:Parameter',
+    listAttr: 'parameters',
+    entryAttr: 'parameter',
+    entryName: null
+  }
 );
 
 export default function (args) {
@@ -102,8 +105,13 @@ export default function (args) {
       {
         text: translate('business_ref'),
         handler: () => {
-          extensionHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-            businessRef: '&F4A$BUSINESS_REF.',
+          extensionHelper.setProperty({
+            element,
+            values: {
+              businessRef: '&F4A$BUSINESS_REF.',
+            },
+            modeling,
+            bpmnFactory
           });
         }
       }
@@ -205,7 +213,7 @@ function TaskProp(props) {
 
   const [tasks, setTasks] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getTasks(applicationId).then(t => setTasks({ values: t, loaded: true, applicationId: applicationId }));
@@ -231,8 +239,8 @@ function ParametersQuickpick(props) {
   const bpmnFactory = useService('bpmnFactory');
   const modeling = useService('modeling');
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const taskStaticId = extensionHelper.getExtensionProperty(element, 'taskStaticId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
+  const taskStaticId = extensionHelper.getProperty({element, property: 'taskStaticId'});
   
   return Quickpick(
     {

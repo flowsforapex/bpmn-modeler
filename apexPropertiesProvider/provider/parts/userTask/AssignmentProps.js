@@ -83,7 +83,7 @@ function PotentialUsers(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = potentialUsersHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = potentialUsersHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -175,7 +175,7 @@ function PotentialGroups(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = potentialGroupsHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = potentialGroupsHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -267,7 +267,7 @@ function ExcludedUsers(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = excludedUsersHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = excludedUsersHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 
@@ -359,7 +359,7 @@ function BusinessAdmin(props) {
     'plsqlRawFunctionBody',
   ];
 
-  const expressionType = businessAdminHelper.getExtensionProperty(element, 'expressionType');
+  const expressionType = businessAdminHelper.getProperty({element, property: 'expressionType'});
 
   const entries = [];
 

@@ -45,7 +45,6 @@ export default function PageItemProps(args) {
         helper: helper,
         component: ItemNameProp,
         isEdited: isSelectEntryEdited,
-        helper: helper
       }
     );
   }
@@ -73,8 +72,8 @@ function ItemNameProp(props) {
 
   const [items, setItems] = useState({});
 
-  const applicationId = helper.getExtensionProperty(element, 'applicationId');
-  const pageId = helper.getExtensionProperty(element, 'pageId');
+  const applicationId = helper.getProperty({element, property: 'applicationId'});
+  const pageId = helper.getProperty({element, property: 'pageId'});
 
   useEffect(() => {
     getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));

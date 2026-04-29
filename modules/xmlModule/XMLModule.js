@@ -56,14 +56,24 @@ export class XMLModule {
         const approvalHelper = new ExtensionHelper('apex:ApexApproval');
 
         // get old priority value
-        const priority = approvalHelper.getExtensionProperty(element, 'priority');
+        const priority = approvalHelper.getProperty({element, property: 'priority'});
 
         if (priority) {
           // clear old value
-          approvalHelper.setExtensionProperty(element, this._modeling, this._bpmnFactory, { 'priority': null });
+          approvalHelper.setProperty({
+            element,
+            values: { 'priority': null },
+            modeling: this._modeling,
+            bpmnFactory: this._bpmnFactory
+          });
           // copy old priority value if no new value specified
-          if (!priorityHelper.getExtensionProperty(element, 'expression')) {
-            priorityHelper.setExtensionProperty(element, this._modeling, this._bpmnFactory, { 'expressionType': 'plsqlRawExpression', 'expression': priority });
+          if (!priorityHelper.getProperty({element, property: 'expression'})) {
+            priorityHelper.setProperty({
+              element,
+              values: { 'expressionType': 'plsqlRawExpression', 'expression': priority },
+              modeling: this._modeling,
+              bpmnFactory: this._bpmnFactory
+            });
           }
         }
       }

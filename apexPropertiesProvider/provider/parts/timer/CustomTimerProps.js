@@ -246,12 +246,18 @@ function DateString(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => dateHelper.getExtensionProperty(timerEventDefinition, 'date');
+  const getValue = () => dateHelper.getProperty({element: timerEventDefinition, property: 'date'});
 
   const setValue = (value) => {
-    dateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      date: value,
-    }, timerEventDefinition);
+    dateHelper.setProperty({
+      element,
+      values: {
+        date: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleDate') {
@@ -275,12 +281,18 @@ function FormatMask(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => dateHelper.getExtensionProperty(timerEventDefinition, 'formatMask');
+  const getValue = () => dateHelper.getProperty({element: timerEventDefinition, property: 'formatMask'});
 
   const setValue = (value) => {
-    dateHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      formatMask: value,
-    }, timerEventDefinition);
+    dateHelper.setProperty({
+      element,
+      values: {
+        formatMask: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleDate') {
@@ -304,12 +316,18 @@ function IntervalYM(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => durationHelper.getExtensionProperty(timerEventDefinition, 'intervalYM');
+  const getValue = () => durationHelper.getProperty({element: timerEventDefinition, property: 'intervalYM'});
 
   const setValue = (value) => {
-    durationHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      intervalYM: value,
-    }, timerEventDefinition);
+    durationHelper.setProperty({
+      element,
+      values: {
+        intervalYM: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleDuration') {
@@ -333,12 +351,18 @@ function IntervalDS(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => durationHelper.getExtensionProperty(timerEventDefinition, 'intervalDS');
+  const getValue = () => durationHelper.getProperty({element: timerEventDefinition, property: 'intervalDS'});
 
   const setValue = (value) => {
-    durationHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      intervalDS: value,
-    }, timerEventDefinition);
+    durationHelper.setProperty({
+      element,
+      values: {
+        intervalDS: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleDuration') {
@@ -362,12 +386,18 @@ function StartIntervalDS(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => cycleHelper.getExtensionProperty(timerEventDefinition, 'startIntervalDS');
+  const getValue = () => cycleHelper.getProperty({element: timerEventDefinition, property: 'startIntervalDS'});
 
   const setValue = (value) => {
-    cycleHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      startIntervalDS: value,
-    }, timerEventDefinition);
+    cycleHelper.setProperty({
+      element,
+      values: {
+        startIntervalDS: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleCycle') {
@@ -391,12 +421,18 @@ function RepeatIntervalDS(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => cycleHelper.getExtensionProperty(timerEventDefinition, 'repeatIntervalDS');
+  const getValue = () => cycleHelper.getProperty({element: timerEventDefinition, property: 'repeatIntervalDS'});
 
   const setValue = (value) => {
-    cycleHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      repeatIntervalDS: value,
-    }, timerEventDefinition);
+    cycleHelper.setProperty({
+      element,
+      values: {
+        repeatIntervalDS: value,
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleCycle') {
@@ -420,12 +456,18 @@ function MaxRuns(props) {
   const debounce = useService('debounceInput');
   const bpmnFactory = useService('bpmnFactory');
 
-  const getValue = () => cycleHelper.getExtensionProperty(timerEventDefinition, 'maxRuns');
+  const getValue = () => cycleHelper.getProperty({element: timerEventDefinition, property: 'maxRuns'});
 
   const setValue = (value) => {
-    cycleHelper.setExtensionProperty(element, modeling, bpmnFactory, {
-      maxRuns: String(value),
-    }, timerEventDefinition);
+    cycleHelper.setProperty({
+      element,
+      values: {
+        maxRuns: String(value),
+      },
+      parent: timerEventDefinition,
+      modeling,
+      bpmnFactory
+    });
   };
 
   if (timerEventDefinitionType === 'oracleCycle') {

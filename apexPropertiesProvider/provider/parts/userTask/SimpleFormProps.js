@@ -22,11 +22,14 @@ import { getApplications, getFormTemplates, getItems, getPages } from '../../plu
 const extensionHelper = new ExtensionHelper('apex:ApexSimpleForm');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexSimpleForm',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
+  {
+    listParentType: 'apex:ApexSimpleForm',
+    listType: 'apex:PageItems',
+    entryType: 'apex:PageItem',
+    listAttr: 'pageItems',
+    entryAttr: 'pageItem',
+    entryName: null
+  }
 );
 
 export default function (args) {
@@ -200,7 +203,7 @@ function PageProp(props) {
 
   const [pages, setPages] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));
@@ -225,8 +228,8 @@ function ItemProp(props) {
 
   const [items, setItems] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
-  const pageId = extensionHelper.getExtensionProperty(element, 'pageId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
+  const pageId = extensionHelper.getProperty({element, property: 'pageId'});
 
   useEffect(() => {
     getItems(applicationId, pageId).then(i => setItems({ values: i, loaded: true, applicationId: applicationId, pageId: pageId }));

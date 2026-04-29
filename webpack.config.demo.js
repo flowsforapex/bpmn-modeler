@@ -32,6 +32,10 @@ module.exports = {
           from: path.resolve(__dirname, "assets/monaco"),
           to: "assets/monaco",
         },
+        {
+          from: path.resolve(__dirname, "diagrams"),
+          to: "assets/diagrams",
+        },
       ],
     }),
   ],
@@ -54,6 +58,11 @@ module.exports = {
         type: "asset/resource",
       },
     ],
+  },
+  resolve: {
+    alias: {
+      'min-dom$': path.resolve(__dirname, 'min-dom-shim.js')
+    }
   },
   devtool: "source-map",
   devServer: {

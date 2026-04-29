@@ -22,11 +22,14 @@ import { getApplications, getPages } from '../../plugins/metaDataCollector';
 const extensionHelper = new ExtensionHelper('apex:ApexPage');
 
 const listExtensionHelper = new ListExtensionHelper(
-  'apex:ApexPage',
-  'apex:PageItems',
-  'pageItems',
-  'apex:PageItem',
-  'pageItem'
+  {
+    listParentType: 'apex:ApexPage',
+    listType: 'apex:PageItems',
+    entryType: 'apex:PageItem',
+    listAttr: 'pageItems',
+    entryAttr: 'pageItem',
+    entryName: null
+  }
 );
 
 export default function (args) {
@@ -164,7 +167,7 @@ function PageProp(props) {
 
   const [pages, setPages] = useState({});
 
-  const applicationId = extensionHelper.getExtensionProperty(element, 'applicationId');
+  const applicationId = extensionHelper.getProperty({element, property: 'applicationId'});
 
   useEffect(() => {
     getPages(applicationId).then(p => setPages({ values: p, loaded: true, applicationId: applicationId }));

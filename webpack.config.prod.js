@@ -37,4 +37,9 @@ module.exports = {
   optimization: {
     minimize: true,
   },
+  resolve: {
+    alias: {
+      'min-dom$': path.resolve(__dirname, 'min-dom-shim.js')
+    }
+  }
 };
