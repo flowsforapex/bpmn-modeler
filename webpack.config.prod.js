@@ -1,4 +1,3 @@
-const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const path = require("path");
 
 module.exports = {
@@ -14,9 +13,6 @@ module.exports = {
     libraryExport: "default",
   },
   plugins: [
-    new MonacoWebpackPlugin({
-      languages: ["sql", "json", "html"],
-    }),
   ],
   module: {
     rules: [

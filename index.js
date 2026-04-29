@@ -27,7 +27,7 @@ import css from './assets/css/style.css';
 import embeddedFontCSS from './assets/css/bpmn-embedded-font.css';
 import embeddedRulesCSS from './assets/css/bpmn-embedded-rules.css';
 
-import monacoCSS from 'monaco-editor/min/vs/editor/editor.main.css';
+import monacoCSS from './assets/monaco/vs/editor/editor.main.css';
 
 class Modeler extends HTMLElement {
   constructor() {

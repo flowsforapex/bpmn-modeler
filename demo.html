@@ -11,6 +11,15 @@
 
 <body>
   <f4a-modeler regionId="modeler" showCustomExtensions="true" themePluginClass="FLOWS-DARK" ></f4a-modeler>
+  <script src="assets/monaco/vs/loader.js"></script>
+  <script>
+    window._monacoReady = new Promise(function (resolve) {
+      require.config({ paths: { vs: 'assets/monaco/vs' } });
+      require(['vs/editor/editor.main'], function () {
+        resolve(window.monaco);
+      });
+    });
+</script>
   <script>
     // window.f4a = window.f4a || {};
     // window.f4a.language = 'test';
