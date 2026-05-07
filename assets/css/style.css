@@ -3,6 +3,7 @@
  */
 .flows4apex-modeler {
   --color-flows-modal-border: #888;
+  --color-flows-background: #f0f0f0;
   
   position: relative;
   display: block;
@@ -10,6 +11,9 @@
 .canvas {
   height: 80vh;
   background-color: var(--color-flows-canvas-background);
+}
+.bio-properties-panel-container {
+  background-color: var(--color-flows-background);
 }
 .properties-panel-parent {
   position: absolute;
