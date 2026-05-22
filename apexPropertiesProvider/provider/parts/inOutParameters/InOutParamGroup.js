@@ -38,7 +38,9 @@ export default function (args) {
       helper: inputHelper,
     });
 
-    if (!is(element, 'bpmn:StartEvent')) {
+    console.log(businessObject.type)
+
+    if (!is(element, 'bpmn:StartEvent') && !(is(element, 'bpmn:UserTask') && businessObject.type === 'apexAutoForm')) {
 
       const outputHelper = new ListExtensionHelper(
         {

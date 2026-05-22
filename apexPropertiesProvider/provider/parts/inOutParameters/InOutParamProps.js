@@ -11,6 +11,9 @@ import { useService } from 'bpmn-js-properties-panel';
 import { DefaultNumberEntry, DefaultSelectEntry, DefaultTextAreaEntry, DefaultTextAreaEntryWithEditor, DefaultTextFieldEntry, DefaultToggleSwitchEntry } from '../../helper/templates';
 
 import { html } from 'htm/preact';
+import { getBusinessObject } from '../../helper/util';
+
+import { is } from 'bpmn-js/lib/util/ModelUtil';
 
 export default function InOutParamProps(args) {
   
@@ -117,6 +120,27 @@ export default function InOutParamProps(args) {
           component: EnumProp,
           // isEdited: isTextAreaEntryEdited,
         },
+      );
+    }
+
+    const businessObject = getBusinessObject(element);
+
+    if (is(element, 'bpmn:UserTask') && businessObject.type === 'apexAutoForm') {
+      entries.push(
+        {
+          id: `${idPrefix}-outputVariableName`,
+          element,
+          listElement: param,
+          component: OutputVariableNameProp,
+          isEdited: isTextFieldEntryEdited,
+        },
+        {
+          id: `${idPrefix}-outputColumnName`,
+          element,
+          listElement: param,
+          component: OutputColumnNameProp,
+          isEdited: isTextFieldEntryEdited,
+        }
       );
     }
   }
@@ -343,4 +367,34 @@ function EnumProp(props) {
       language='json'
     />`;
   }
+}
+
+function OutputVariableNameProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  return html`<${DefaultTextFieldEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Output Variable Name')}
+    property=outputVariableName
+  />`;
+}
+
+function OutputColumnNameProp(props) {
+
+  const {id, element, listElement} = props;
+
+  const translate = useService('translate');
+
+  return html`<${DefaultTextFieldEntry}
+    id=${id}
+    element=${element}
+    listElement=${listElement}
+    label=${translate('Output Column Name')}
+    property=outputColumnName
+  />`;
 }
