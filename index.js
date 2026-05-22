@@ -145,7 +145,7 @@ class Modeler extends HTMLElement {
       },
       exporter: {
         name: 'Flows for APEX',
-        version: '25.1.0',
+        version: '26.1.0',
       },
       showCustomExtensions: this.showCustomExtensions
     });
