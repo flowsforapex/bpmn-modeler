@@ -60,6 +60,7 @@ import CustomTimerProps from './parts/timer/CustomTimerProps';
 import ApexPageProps from './parts/userTask/ApexPageProps';
 import ApprovalProps from './parts/userTask/ApprovalTaskProps';
 import AssignmentProps from './parts/userTask/AssignmentProps';
+import AutoFormProps from './parts/userTask/AutoFormProps';
 import SimpleFormProps from './parts/userTask/SimpleFormProps';
 
 // custom
@@ -97,6 +98,7 @@ export const userTaskSections = [
   { id: 'apexPage', label: 'APEX Page', props: ApexPageProps },
   { id: 'apexApproval', label: 'APEX Human Task', props: ApprovalProps },
   { id: 'simpleForm', label: 'APEX Simple Form', props: SimpleFormProps },
+  { id: 'autoForm', label: 'APEX Auto Form', props: AutoFormProps },
   { id: 'procVars', label: 'Variable Expressions', props: ProcVarGroup },
   { id: 'parameters', label: 'Parameters', props: InOutParamGroup },
   { id: 'assignment', label: 'Assignment', props: AssignmentProps },

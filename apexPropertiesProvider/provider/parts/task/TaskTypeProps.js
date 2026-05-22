@@ -21,6 +21,7 @@ export default function (args) {
       { label: translate('APEX Page'), value: 'apexPage' },
       { label: translate('APEX Human Task'), value: 'apexApproval' },
       { label: translate('APEX Simple Form'), value: 'apexSimpleForm' },
+      { label: translate('APEX Auto Form'), value: 'apexAutoForm' },
     ],
     'bpmn:ServiceTask': [
       { label: translate('Execute PL/SQL'), value: 'executePlsql' },

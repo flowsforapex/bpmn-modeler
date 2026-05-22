@@ -390,10 +390,6 @@
           "type": "String"
         },
         {
-          "name": "itemName",
-          "type": "String"
-        },
-        {
           "name": "pageItems",
           "type": "PageItems"
         },
@@ -403,6 +399,32 @@
         },
         {
           "name": "formTemplateId",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ApexAutoForm",
+      "superClass": [ "Element" ],
+      "properties": [
+        {
+          "name": "applicationId",
+          "type": "String"
+        },
+        {
+          "name": "pageId",
+          "type": "String"
+        },
+        {
+          "name": "pageItems",
+          "type": "PageItems"
+        },
+        {
+          "name": "outputAsObject",
+          "type": "String"
+        },
+        {
+          "name": "outputAsValues",
           "type": "String"
         }
       ]
