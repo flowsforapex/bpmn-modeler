@@ -10,18 +10,6 @@ export class XMLModule {
     this._elementRegistry = elementRegistry;
   }
 
-  static addCustomNamespace(xml) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'text/xml');
-
-    // change apex namespace
-    var [definitions] = xmlDoc.getElementsByTagName('bpmn:definitions');
-
-    if (definitions) definitions.setAttribute('xmlns:apex', 'https://flowsforapex.org');
-
-    return new XMLSerializer().serializeToString(xmlDoc);
-  }
-
   static addStyleToSVG(svg) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(svg, 'text/xml');
