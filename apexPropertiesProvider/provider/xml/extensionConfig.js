@@ -17,7 +17,6 @@ export function taskExtensions(e, bo) {
   const extensions = ['apex:InputParameters', 'apex:OutputParameters', 'apex:Subject', 'apex:Description'];
   
   if (bo.loopCharacteristics) {
-    extensions.push('apex:Description');
     extensions.push('apex:OutputCollection');
     extensions.push('apex:CompletionCondition');
 
@@ -26,7 +25,8 @@ export function taskExtensions(e, bo) {
     }
   }
   else {
-    extensions.push(['apex:BeforeTask', 'apex:AfterTask']);
+    extensions.push('apex:BeforeTask');
+    extensions.push('apex:AfterTask');
   }
 
   if(isChildOf(e, 'bpmn:AdHocSubProcess')) {
