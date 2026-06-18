@@ -177,10 +177,15 @@ class Modeler extends HTMLElement {
     canvas.zoom('fit-viewport', 'auto');
 
     const definitions = this.modeler.getDefinitions();
-    
+
     // custom namespace must be added manually for working default values 
     definitions.$attrs['xmlns:apex'] = 'https://flowsforapex.org';
-    definitions.$attrs['xsi:schemaLocation'] = [definitions.$attrs['xsi:schemaLocation'], 'https://flowsforapex.org/xsd/flows4apex-bpmn-ext-v26.1.xsd'].join(' ').trim();
+    
+    let schemaLocations = definitions.$attrs['xsi:schemaLocation']?.split(" ") || [];
+
+    schemaLocations = [...new Set([...schemaLocations, 'https://flowsforapex.org/xsd/flows4apex-bpmn-ext-v26.1.xsd'])]; // avoid duplicates
+    
+    definitions.$attrs['xsi:schemaLocation'] = schemaLocations.join(' ').trim();
 
     xmlModule.refactorElements();
 
