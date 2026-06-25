@@ -164,6 +164,7 @@ translate('Process ID');
 translate('Process name');
 translate('Process documentation');
 translate('Expanded pool/participant');
+translate('Ad-hoc sub-process');
 
 // missing linter messages
 translate('A gateway should not merge and split at the same time');
@@ -265,6 +266,7 @@ translate('Exclusive Gateway');
 translate('Parallel Gateway');
 translate('Complex Gateway');
 translate('Event Based Gateway');
+translate('Inclusive Gateway');
 
 translate('User Task');
 translate('Service Task');
@@ -285,3 +287,26 @@ translate('Participant');
 translate('Lane');
 translate('Collaboration');
 translate('Group');
+
+translate('Expanded Ad Hoc Sub Process');
+
+// properties panel group headers
+translate('APEX Role');
+translate('Assignment');
+translate('Async');
+translate('Background Task Session');
+translate('Custom');
+translate('Detail Page');
+translate('Details');
+translate('Execution');
+translate('In/Out Mapping');
+translate('In/Out Variables');
+translate('Mail');
+translate('Multi-Instance');
+translate('PL/SQL');
+translate('Potential Starters');
+translate('Scheduling');
+translate('Starting Activities');
+translate('Timer');
+translate('Variable Expressions');
+translate('Visibility');
